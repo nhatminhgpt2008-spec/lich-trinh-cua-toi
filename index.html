@@ -727,8 +727,9 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
         <summary aria-label="Thêm tùy chọn">⋯</summary>
         <div class="menu-pop">
           <button data-a="ics">Xuất sang Google/Apple Calendar (.ics)</button>
-          <button data-a="export">Sao lưu dữ liệu (.json)</button>
-          <button data-a="autobackup" id="abBtn">Bật tự động sao lưu (.json)</button>
+          <button data-a="export-new">Tạo file sao lưu (.json)</button>
+          <button data-a="export">Sao lưu (.json)</button>
+          <button data-a="autobackup" id="abBtn">Sao lưu tự động</button>
           <button data-a="autobackup-change" id="abChangeBtn" hidden>Đổi vị trí lưu…</button>
           <button data-a="cloud" id="cloudBtn" hidden>Đăng nhập Google để đồng bộ</button>
           <button data-a="notify" id="notifyBtn">Bật thông báo lịch</button>
@@ -754,7 +755,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
         <h2 class="gt">DEADLINE</h2>
         <span class="count" id="todoCount"></span>
         <div class="tabs" id="todoTabs">
-          <button data-f="week">Trong tuần</button><button data-f="all">Tất cả</button>
+          <button data-f="all">Tất cả</button><button data-f="week">Trong tuần</button>
         </div>
         <div class="tabs" id="todoStatus">
           <button data-s="all">Tất cả</button><button data-s="open">Chưa hoàn thành</button><button data-s="done">Đã hoàn thành</button>
@@ -1151,7 +1152,7 @@ const ab = {handle:null, ok:false, timer:0, busy:false, dirty:false};
 const abSupported = () => typeof window.showSaveFilePicker === 'function';
 function abUI(msg){
   const b = document.getElementById('abBtn'), c = document.getElementById('abChangeBtn'), i = document.getElementById('abInfo');
-  if(b){ b.hidden = !abSupported(); b.textContent = ab.handle ? 'Tắt tự động sao lưu' : 'Bật tự động sao lưu (.json)'; }
+  if(b){ b.hidden = !abSupported(); b.textContent = ab.handle ? 'Tắt sao lưu tự động (.json)' : 'Sao lưu tự động (.json)'; }
   if(c){ c.hidden = !abSupported() || !ab.handle; }   /* chỉ hiện khi đã bật, để đổi sang file/nơi lưu khác */
   if(i){ i.hidden = !msg; i.textContent = msg || ''; }
 }
@@ -1187,14 +1188,27 @@ async function abInit(){
   if(ab.ok){ abUI('Tự động sao lưu: ' + h.name); abWrite(); }
   else { abUI('Tự động sao lưu đang chờ quyền ghi file (bấm bất kỳ đâu để cho phép).'); document.addEventListener('pointerdown', abRegrant, {once:true, capture:true}); }
 }
-/* mở hộp thoại của hệ điều hành để chọn nơi lưu (tên file + thư mục); dùng chung cho lúc bật lần đầu và lúc đổi vị trí sau này */
-async function abPickFile(){
-  if(!abSupported()) return alert('Trình duyệt này không hỗ trợ tự động ghi file. Hãy dùng Chrome hoặc Edge (mở file .html trực tiếp), hoặc dùng “Sao lưu dữ liệu (.json)” thủ công.');
+/* chọn file .json đã có để ghi đè; File System Access API dùng hộp thoại Mở của hệ điều hành */
+async function abPickExistingFile(){
+  if(!abSupported()) return alert('Trình duyệt này không hỗ trợ chọn file để tự động ghi. Hãy dùng Chrome hoặc Edge trên trang HTTPS hoặc localhost.');
+  try{
+    const [h] = await window.showOpenFilePicker({multiple:false, types:[{description:'Dữ liệu lịch trình (.json)', accept:{'application/json':['.json']}}]});
+    ab.handle = h; ab.ok = false;
+    try{ ab.ok = (await h.requestPermission({mode:'readwrite'})) === 'granted'; }catch(e){}
+    if(!ab.ok) return abUI('Tự động sao lưu đang chờ quyền ghi file. Mở menu ⋯ và bấm lại để cấp quyền.');
+    await abSet(h); await abWrite();
+  }catch(e){
+    if(!e || e.name !== 'AbortError') alert('Không chọn được file ở đây. Hãy thử lại và chọn một file .json có sẵn.');
+  }
+}
+/* tạo file .json mới */
+async function abPickNewFile(){
+  if(!abSupported()) return alert('Trình duyệt này không hỗ trợ tự động ghi file. Hãy dùng Chrome hoặc Edge trên trang HTTPS hoặc localhost.');
   try{
     const h = await window.showSaveFilePicker({suggestedName: DATA_FILE, types:[{description:'Dữ liệu lịch trình (.json)', accept:{'application/json':['.json']}}]});
     ab.handle = h; ab.ok = true; await abSet(h); await abWrite();
   }catch(e){
-    if(!e || e.name !== 'AbortError') alert('Không chọn được file ở đây (trang đang chạy trong khung bị giới hạn). Hãy tải file .html về và mở trực tiếp bằng Chrome hoặc Edge, hoặc dùng “Sao lưu dữ liệu (.json)” thủ công.');
+    if(!e || e.name !== 'AbortError') alert('Không chọn được file ở đây. Hãy thử lại hoặc chọn một thư mục khác.');
   }
 }
 async function abToggle(){
@@ -1203,12 +1217,36 @@ async function abToggle(){
     if(!confirm('Tắt tự động sao lưu? File .json đã lưu vẫn được giữ nguyên.')) return;
     ab.handle = null; ab.ok = false; await abSet(null); abUI(); return;
   }
-  await abPickFile();
+  await abPickExistingFile();
 }
 /* đổi sang file / nơi lưu khác trong khi tự động sao lưu vẫn đang bật, không cần tắt rồi bật lại */
 async function abChangeLocation(){
   if(ab.handle && !ab.ok){ await abRegrant(); if(!ab.ok) return; }
-  await abPickFile();
+  await abPickExistingFile();
+}
+/* sao lưu thủ công vào file .json đã có */
+async function saveBackupFile(){
+  const data = JSON.stringify(state, null, 2);
+  if(!abSupported()){ return alert('Trình duyệt này không hỗ trợ chọn file để ghi đè. Hãy dùng Chrome hoặc Edge trên trang HTTPS hoặc localhost.'); }
+  try{
+    const [h] = await window.showOpenFilePicker({multiple:false, types:[{description:'Dữ liệu lịch trình (.json)', accept:{'application/json':['.json']}}]});
+    const w = await h.createWritable();
+    await w.write(data); await w.close();
+  }catch(e){
+    if(!e || e.name !== 'AbortError') alert('Không thể ghi file sao lưu ở đây. Hãy thử lại và chọn một file .json có sẵn.');
+  }
+}
+/* sao lưu thủ công: tạo file .json mới */
+async function saveBackupNewFile(){
+  const data = JSON.stringify(state, null, 2);
+  if(!abSupported()){ download(DATA_FILE, data, 'application/json'); return; }
+  try{
+    const h = await window.showSaveFilePicker({suggestedName: DATA_FILE, types:[{description:'Dữ liệu lịch trình (.json)', accept:{'application/json':['.json']}}]});
+    const w = await h.createWritable();
+    await w.write(data); await w.close();
+  }catch(e){
+    if(!e || e.name !== 'AbortError') alert('Không thể tạo file sao lưu ở đây. Hãy thử lại hoặc chọn một thư mục khác.');
+  }
 }
 function save(){
   try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
@@ -2752,7 +2790,8 @@ $('#menu').addEventListener('click', e => {
   if(a === 'autobackup-change') abChangeLocation();
   if(a === 'cloud') cloudToggle();
   if(a === 'notify') enableScheduleNotifications();
-  if(a === 'export') download(DATA_FILE, JSON.stringify(state,null,2), 'application/json');
+  if(a === 'export') saveBackupFile();
+  if(a === 'export-new') saveBackupNewFile();
   if(a === 'ics') download('lich-trinh.ics', toICS(), 'text/calendar');
   if(a === 'import') $('#file').click();
   if(a === 'reset' && confirm('Xóa toàn bộ dữ liệu hiện tại (lịch, deadline, ghi chú)? Bạn có thể nạp lại từ file .json.')){ state = emptyState(); state.view = innerWidth<800?'agenda':'table'; weekStart = mondayOf(todayStr()); save(); render(); }
@@ -3085,6 +3124,7 @@ function renderNowBar(){
 }
 const NOTIFY_KEY = KEY + ':schedule-notify';
 let notifyLastSig = '';
+let notifyCurrent = null;
 function scheduleNotifyEnabled(){
   try{ return localStorage.getItem(NOTIFY_KEY) === '1'; }catch(e){ return false; }
 }
@@ -3123,12 +3163,13 @@ function updateScheduleNotification(force = false){
   const nextPart = n ? `⏳ Tiếp theo: ${n.ev.title} · ${whenTxt(n.date)} · ${n.ev.start}–${n.ev.end} · sau ${fmtHMS(occStartMs(n) - now)}` : '';
   const body = [livePart, nextPart].filter(Boolean).join('\n');
   if(!body) return;
-  const bucket = x => x ? Math.floor(Math.max(0, (x - now) / 30000)) : -1;
-  const sig = [l ? occKey(l) : '', n ? occKey(n) : '', bucket(l ? occEndMs(l) : 0), bucket(n ? occStartMs(n) : 0)].join('|');
+  const second = x => x ? Math.floor(Math.max(0, (x - now) / 1000)) : -1;
+  const sig = [l ? occKey(l) : '', n ? occKey(n) : '', second(l ? occEndMs(l) : 0), second(n ? occStartMs(n) : 0)].join('|');
   if(!force && sig === notifyLastSig) return;
   notifyLastSig = sig;
   try{
-    new Notification(l ? 'Đang diễn ra' : 'Tiếp theo', {
+    if(notifyCurrent) notifyCurrent.close();
+    notifyCurrent = new Notification(l ? 'Đang diễn ra' : 'Tiếp theo', {
       body,
       tag: 'uit-planner-schedule',
       renotify: false,
@@ -3166,7 +3207,7 @@ document.getElementById('nowBar').addEventListener('click', e => {
 
 if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(() => {});
 setInterval(renderNowBar, 1000);
-setInterval(updateScheduleNotification, 30000);
+setInterval(updateScheduleNotification, 1000);
 document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible'){ renderNowBar(); updateScheduleNotification(); } });
 
 initHistory();
