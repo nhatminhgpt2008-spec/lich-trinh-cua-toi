@@ -731,6 +731,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
           <button data-a="autobackup" id="abBtn">Bật tự động sao lưu (.json)</button>
           <button data-a="autobackup-change" id="abChangeBtn" hidden>Đổi vị trí lưu…</button>
           <button data-a="cloud" id="cloudBtn" hidden>Đăng nhập Google để đồng bộ</button>
+          <button data-a="notify" id="notifyBtn">Bật thông báo lịch</button>
           <button data-a="import">Khôi phục từ file .json</button>
           <button data-a="print">In tuần này</button>
           <button data-a="reset" class="danger">Xóa toàn bộ dữ liệu</button>
@@ -2750,6 +2751,7 @@ $('#menu').addEventListener('click', e => {
   if(a === 'autobackup') abToggle();
   if(a === 'autobackup-change') abChangeLocation();
   if(a === 'cloud') cloudToggle();
+  if(a === 'notify') enableScheduleNotifications();
   if(a === 'export') download(DATA_FILE, JSON.stringify(state,null,2), 'application/json');
   if(a === 'ics') download('lich-trinh.ics', toICS(), 'text/calendar');
   if(a === 'import') $('#file').click();
@@ -3081,6 +3083,59 @@ function renderNowBar(){
   }
   el.innerHTML = (leftRows.length ? `<div class="nbcol">${leftRows.join('')}</div>` : '') + (rightRows.length ? `<div class="nbcol">${rightRows.join('')}</div>` : '');
 }
+const NOTIFY_KEY = KEY + ':schedule-notify';
+let notifyLastSig = '';
+function scheduleNotifyEnabled(){
+  try{ return localStorage.getItem(NOTIFY_KEY) === '1'; }catch(e){ return false; }
+}
+function updateNotifyButton(){
+  const b = $('#notifyBtn'); if(!b) return;
+  if(!('Notification' in window)){
+    b.textContent = 'Thông báo không hỗ trợ'; b.disabled = true; return;
+  }
+  if(Notification.permission === 'denied'){
+    b.textContent = 'Thông báo bị chặn'; b.disabled = true; return;
+  }
+  b.disabled = false;
+  b.textContent = scheduleNotifyEnabled() ? 'Đã bật thông báo lịch' : 'Bật thông báo lịch';
+}
+async function enableScheduleNotifications(){
+  if(!('Notification' in window)) return updateNotifyButton();
+  if(!window.isSecureContext){ alert('Thông báo thiết bị chỉ hoạt động khi mở trang qua HTTPS hoặc localhost.'); return; }
+  let p = Notification.permission;
+  if(p === 'default'){
+    try{ p = await Notification.requestPermission(); }catch(e){ p = 'denied'; }
+  }
+  if(p === 'granted'){
+    try{ localStorage.setItem(NOTIFY_KEY, '1'); }catch(e){}
+    notifyLastSig = '';
+    updateNotifyButton();
+    updateScheduleNotification(true);
+  } else {
+    updateNotifyButton();
+  }
+}
+function updateScheduleNotification(force = false){
+  if(!scheduleNotifyEnabled() || !('Notification' in window) || Notification.permission !== 'granted') return;
+  const {live, next, now} = upcoming(2);
+  const l = live[0], n = next[0];
+  const livePart = l ? `🔴 Đang diễn ra: ${l.ev.title} · ${l.ev.start}–${l.ev.end} · còn ${fmtHMS(occEndMs(l) - now)}` : '';
+  const nextPart = n ? `⏳ Tiếp theo: ${n.ev.title} · ${whenTxt(n.date)} · ${n.ev.start}–${n.ev.end} · sau ${fmtHMS(occStartMs(n) - now)}` : '';
+  const body = [livePart, nextPart].filter(Boolean).join('\n');
+  if(!body) return;
+  const bucket = x => x ? Math.floor(Math.max(0, (x - now) / 30000)) : -1;
+  const sig = [l ? occKey(l) : '', n ? occKey(n) : '', bucket(l ? occEndMs(l) : 0), bucket(n ? occStartMs(n) : 0)].join('|');
+  if(!force && sig === notifyLastSig) return;
+  notifyLastSig = sig;
+  try{
+    new Notification(l ? 'Đang diễn ra' : 'Tiếp theo', {
+      body,
+      tag: 'uit-planner-schedule',
+      renotify: false,
+      silent: true
+    });
+  }catch(e){}
+}
 function highlightSchedElement(el){
   if(!el) return;
   clearTimeout(highlightSchedElement.timer);
@@ -3111,10 +3166,12 @@ document.getElementById('nowBar').addEventListener('click', e => {
 
 if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(() => {});
 setInterval(renderNowBar, 1000);
-document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible') renderNowBar(); });
+setInterval(updateScheduleNotification, 30000);
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible'){ renderNowBar(); updateScheduleNotification(); } });
 
 initHistory();
 render();
+updateNotifyButton();
 if(!uiSaved) requestAnimationFrame(() => scrollToNow(false));   /* mở trang lần đầu: tự cuộn tới sự kiện hiện tại */
 abInit();
 if(uiSaved){
