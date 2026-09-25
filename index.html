@@ -650,7 +650,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
   .tools #viewSeg{flex:1 1 auto;min-width:0}
   .tools #viewSeg button{flex:1 1 auto;padding:0 8px!important;white-space:nowrap;justify-content:center}
   .tools #undoBtn,.tools #redoBtn,.tools #themeBtn,.menu summary{width:36px;padding:0!important;justify-content:center;flex:0 0 auto}
-  .tools #addBtn{position:fixed;left:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:25;width:54px;height:54px;padding:0!important;border-radius:50%;display:grid!important;place-items:center;font-size:0;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+  .tools #addBtn{position:fixed!important;left:14px;right:auto;top:auto;bottom:calc(14px + env(safe-area-inset-bottom,0px))!important;margin:0;z-index:999;width:54px;height:54px;padding:0!important;border-radius:50%;display:grid!important;place-items:center;font-size:0;box-shadow:0 6px 18px rgba(0,0,0,.4);transform:translateZ(0);-webkit-transform:translateZ(0)}
   .tools #addBtn::before{content:"+";font-size:30px;line-height:1;font-weight:400}
   .top .stats{flex:1 0 100%;flex-wrap:nowrap;overflow-x:auto;gap:6px;margin:0 -10px;padding:0 10px;scrollbar-width:none}
   .top .stats::-webkit-scrollbar,.legend::-webkit-scrollbar{display:none}
