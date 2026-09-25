@@ -1532,7 +1532,7 @@ function renderStats(all){
   const conf = act.filter(o => o.conflict).length;
   const hrs = (mins/60).toFixed(1).replace(/\.0$/,'');
   $('#stats').innerHTML =
-    `<div class="stat"><b>${act.length}</b><span>lịch trong tuần</span></div>
+    `<div class="stat"><b>${act.length}</b><span>buổi</span></div>
      <div class="stat"><b>${hrs}</b><span>giờ</span></div>
      <div class="stat bad"><b>${all.filter(o => o.cancelled).length}</b><span>nghỉ</span></div>
      <div class="stat warn"><b>${conf}</b><span>bị trùng</span></div>`;
