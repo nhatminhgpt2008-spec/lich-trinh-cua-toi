@@ -488,6 +488,32 @@ dialog h2{margin:0 0 14px;font-size:17px}
 .cpy:hover{border-color:var(--accent);color:var(--accent);opacity:1}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);max-width:90vw;background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .15s;z-index:200}
 .toast.on{opacity:1}
+/* highlight tam thoi khi banner dua den dung o lich */
+#sched .jump-highlight{
+  position:relative;
+  z-index:12;
+  animation:schedJumpHighlight 2.5s ease-in-out both;
+  will-change:box-shadow,outline;
+}
+@keyframes schedJumpHighlight{
+  0%,100%{
+    outline:0 solid transparent;
+    box-shadow:none;
+  }
+  12%{
+    outline:4px solid color-mix(in srgb,var(--accent) 90%,transparent);
+    box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 28%,transparent),0 0 28px 9px color-mix(in srgb,var(--accent) 60%,transparent);
+  }
+  42%{
+    outline:4px solid color-mix(in srgb,var(--accent) 72%,transparent);
+    box-shadow:0 0 0 8px color-mix(in srgb,var(--accent) 22%,transparent),0 0 36px 12px color-mix(in srgb,var(--accent) 55%,transparent);
+  }
+  72%{
+    outline:3px solid color-mix(in srgb,var(--accent) 45%,transparent);
+    box-shadow:0 0 0 5px color-mix(in srgb,var(--accent) 14%,transparent),0 0 24px 8px color-mix(in srgb,var(--accent) 34%,transparent);
+  }
+}
+
 @media print{.cpyw,.toast{display:none!important}}
 
 /* bộ chọn ngày kiểu lịch Windows */
@@ -651,7 +677,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
   .tools #viewSeg button{flex:1 1 auto;padding:0 8px!important;white-space:nowrap;justify-content:center}
   .tools #undoBtn,.tools #redoBtn,.tools #themeBtn,.menu summary{width:36px;padding:0!important;justify-content:center;flex:0 0 auto}
   .tools #addBtn{position:fixed!important;left:14px;right:auto;top:auto;bottom:calc(14px + env(safe-area-inset-bottom,0px))!important;margin:0;z-index:999;width:54px;height:54px;padding:0!important;border-radius:50%;display:grid!important;place-items:center;font-size:0;box-shadow:0 6px 18px rgba(0,0,0,.4);transform:translateZ(0);-webkit-transform:translateZ(0)}
-  .tools #addBtn::before{content:"+";font-size:30px;line-height:1;font-weight:400}
+  .tools #addBtn::before{content:"+";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:30px;line-height:1;font-weight:400}
   .top .stats{flex:1 0 100%;flex-wrap:nowrap;overflow-x:auto;gap:6px;margin:0 -10px;padding:0 10px;scrollbar-width:none}
   .top .stats::-webkit-scrollbar,.legend::-webkit-scrollbar{display:none}
   .stat{flex:0 0 auto;height:30px;padding:0 10px}
@@ -3045,11 +3071,11 @@ function renderNowBar(){
   const meta = (o, extra, pre) => `<span class="rg">${esc([pre, `${o.ev.start}–${o.ev.end}`, o.ev.room].filter(Boolean).join(' · '))} · </span><b class="cd">${esc(extra)}</b>`;
   const leftRows = [];
   live.slice(0, 2).forEach(o => leftRows.push(
-    `<div class="nb live"><span class="k">🔴<em> Đang diễn ra</em></span><span class="t">${esc(o.ev.title)}</span><span class="m">${meta(o, 'còn ' + fmtHMS(occEndMs(o) - now))}</span></div>`));
+    `<div class="nb live" data-id="${esc(o.ev.id)}" data-date="${esc(o.date)}"><span class="k">🔴<em> Đang diễn ra</em></span><span class="t">${esc(o.ev.title)}</span><span class="m">${meta(o, 'còn ' + fmtHMS(occEndMs(o) - now))}</span></div>`));
   next.slice(0, 1).forEach(o => leftRows.push(
-    `<div class="nb next"><span class="k">⏳<em> Tiếp theo</em></span><span class="t">${esc(o.ev.title)}</span><span class="m">${meta(o, 'sau ' + fmtHMS(occStartMs(o) - now), (n => n < 2 ? `${whenTxt(o.date)} · ${dm(o.date)}` : whenTxt(o.date))(daysBetween(todayStr(), o.date)))}</span></div>`));
+    `<div class="nb next" data-id="${esc(o.ev.id)}" data-date="${esc(o.date)}"><span class="k">⏳<em> Tiếp theo</em></span><span class="t">${esc(o.ev.title)}</span><span class="m">${meta(o, 'sau ' + fmtHMS(occStartMs(o) - now), (n => n < 2 ? `${whenTxt(o.date)} · ${dm(o.date)}` : whenTxt(o.date))(daysBetween(todayStr(), o.date)))}</span></div>`));
   const dls = state.todos.filter(t => !t.done && t.due).sort((a, b) => (a.due + (a.dueTime || '23:59')).localeCompare(b.due + (b.dueTime || '23:59')));
-  const rightRows = dls.map(dl => `<div class="nb dl"><span class="k">📌<em> Deadline</em></span><span class="t">${esc(dl.text)}</span><span class="m"><span class="rg">${esc(whenTxt(dl.due))}${dl.dueTime ? ' · ' + esc(dl.dueTime) : ''} · </span><b class="cd${dueLate(dl)?' late':''}">${esc(dueTxt(dl))}</b></span></div>`);
+  const rightRows = dls.map(dl => `<div class="nb dl" data-todo="${esc(dl.id)}"><span class="k">📌<em> Deadline</em></span><span class="t">${esc(dl.text)}</span><span class="m"><span class="rg">${esc(whenTxt(dl.due))}${dl.dueTime ? ' · ' + esc(dl.dueTime) : ''} · </span><b class="cd${dueLate(dl)?' late':''}">${esc(dueTxt(dl))}</b></span></div>`);
   el.hidden = false;
   if(!leftRows.length && !rightRows.length){
     el.innerHTML = '<div class="nb none"><span class="k">📭</span><span class="t">Không có lịch đang diễn ra hoặc sắp tới trong tuần này</span></div>';
@@ -3057,7 +3083,33 @@ function renderNowBar(){
   }
   el.innerHTML = (leftRows.length ? `<div class="nbcol">${leftRows.join('')}</div>` : '') + (rightRows.length ? `<div class="nbcol">${rightRows.join('')}</div>` : '');
 }
-document.getElementById('nowBar').addEventListener('click', () => $('#todayBtn').click());
+function highlightSchedElement(el){
+  if(!el) return;
+  clearTimeout(highlightSchedElement.timer);
+  el.classList.remove('jump-highlight');
+  void el.offsetWidth;
+  el.classList.add('jump-highlight');
+  highlightSchedElement.timer = setTimeout(() => el.classList.remove('jump-highlight'), 2500);
+}
+document.getElementById('nowBar').addEventListener('click', e => {
+  const row = e.target.closest('.nb'); if(!row) return;
+  if(row.dataset.todo){
+    const t = state.todos.find(x => x.id === row.dataset.todo);
+    if(t && t.due) weekStart = mondayOf(t.due);
+    render();
+    const el = $('#sched').querySelector(`[data-todo="${CSS.escape(row.dataset.todo)}"]`);
+    if(el){ el.scrollIntoView({block:'center', behavior:'smooth'}); highlightSchedElement(el); }
+    return;
+  }
+  if(row.dataset.id){
+    weekStart = mondayOf(row.dataset.date || todayStr());
+    render();
+    const el = $('#sched').querySelector(`[data-id="${CSS.escape(row.dataset.id)}"][data-date="${CSS.escape(row.dataset.date)}"]`) || $('#sched').querySelector(`[data-id="${CSS.escape(row.dataset.id)}"]`);
+    if(el){ el.scrollIntoView({block:'center', behavior:'smooth'}); highlightSchedElement(el); }
+    return;
+  }
+  $('#todayBtn').click();
+});
 
 if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(() => {});
 setInterval(renderNowBar, 1000);
