@@ -1498,7 +1498,7 @@ function render(){
   if(fx){
     const ser = fixedSeries('school'), oth = fixedSeries('other');
     $('#range').textContent = `${ser.length} lớp cố định · ${ser.reduce((s,x) => s + (+x.cur.tc || 0), 0)} tín chỉ` + (oth.length ? ` · ${oth.length} lịch cố định khác` : '');
-  } else $('#range').textContent = `Tuần ${dm(weekStart)} – ${dmy(end)}`;
+  } else $('#range').textContent = `${dmy(weekStart)} – ${dmy(end)}`;
   document.querySelector('.nav').hidden = fx;
   if(document.activeElement !== $('#jump')) $('#jump').value = weekStart;   /* đang gõ ngày bằng bàn phím thì không ghi đè giá trị */
   document.querySelectorAll('#viewSeg button').forEach(b => b.classList.toggle('on', b.dataset.v === state.view));
