@@ -623,6 +623,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
   .sheet{width:calc(58px + 7 * 138px);min-width:0;font-size:12px}
   .sheet col.c0{width:58px}
   .sheet .tl{position:sticky;left:0;z-index:6;background:var(--surface);padding:6px 2px;font-size:11.5px;box-shadow:1px 0 0 var(--line)}
+  .dlrow .tl .tlt{white-space:nowrap;font-size:10.5px;line-height:1.15}
   .sheet thead th:first-child{position:sticky;left:0;z-index:6}
   .sheet .dn th{padding:7px 2px 1px;font-size:12px}.sheet .dd th{padding:1px 2px 7px;font-size:11px}
   .sheet .wk th{font-size:12.5px}
@@ -691,6 +692,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
   .nowbar .nb .m{grid-row:1;grid-column:3;font-size:12.5px;color:var(--ink);white-space:nowrap}
   .nowbar .nb .rg{display:none}
   .nowbar .nb.none .t{font-size:12.5px;font-weight:600;color:var(--muted)}
+  .menu-pop{position:fixed;left:0;right:auto;top:0}
 }
 @media screen and (max-width:400px){
   .tools{gap:5px}
@@ -3192,6 +3194,28 @@ function highlightSchedElement(el){
   el.classList.add('jump-highlight');
   highlightSchedElement.timer = setTimeout(() => el.classList.remove('jump-highlight'), 2500);
 }
+function positionMobileMenu(){
+  const menu = document.getElementById('menu'), pop = menu && menu.querySelector('.menu-pop'), sum = menu && menu.querySelector('summary');
+  if(!menu || !pop || !sum || !menu.open || window.innerWidth > 700) return;
+  pop.style.left = '0px'; pop.style.top = '0px';
+  const sb = sum.getBoundingClientRect(), pb = pop.getBoundingClientRect();
+  const gap = 6, pad = 8;
+  const maxLeft = Math.max(pad, window.innerWidth - pb.width - pad);
+  let left = sb.left;
+  if(left > maxLeft) left = maxLeft;
+  let top = sb.bottom + gap;
+  if(top + pb.height > window.innerHeight - pad) top = sb.top - pb.height - gap;
+  if(top < pad) top = Math.max(pad, window.innerHeight - pb.height - pad);
+  pop.style.left = Math.round(left) + 'px';
+  pop.style.top = Math.round(top) + 'px';
+}
+
+document.getElementById('menu').addEventListener('toggle', () => {
+  if(document.getElementById('menu').open) requestAnimationFrame(positionMobileMenu);
+});
+window.addEventListener('resize', positionMobileMenu);
+window.addEventListener('scroll', positionMobileMenu, true);
+
 document.getElementById('nowBar').addEventListener('click', e => {
   const row = e.target.closest('.nb'); if(!row) return;
   if(row.dataset.todo){
