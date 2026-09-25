@@ -3137,10 +3137,17 @@ function updateNotifyButton(){
     b.textContent = 'Thông báo bị chặn'; b.disabled = true; return;
   }
   b.disabled = false;
-  b.textContent = scheduleNotifyEnabled() ? 'Đã bật thông báo lịch' : 'Bật thông báo lịch';
+  b.textContent = scheduleNotifyEnabled() ? 'Tắt thông báo lịch' : 'Bật thông báo lịch';
 }
 async function enableScheduleNotifications(){
   if(!('Notification' in window)) return updateNotifyButton();
+  if(scheduleNotifyEnabled()){
+    try{ localStorage.removeItem(NOTIFY_KEY); }catch(e){}
+    notifyLastSig = '';
+    if(notifyCurrent){ try{ notifyCurrent.close(); }catch(e){} notifyCurrent = null; }
+    updateNotifyButton();
+    return;
+  }
   if(!window.isSecureContext){ alert('Thông báo thiết bị chỉ hoạt động khi mở trang qua HTTPS hoặc localhost.'); return; }
   let p = Notification.permission;
   if(p === 'default'){
@@ -3168,7 +3175,8 @@ function updateScheduleNotification(force = false){
   if(!force && sig === notifyLastSig) return;
   notifyLastSig = sig;
   try{
-    if(notifyCurrent) notifyCurrent.close();
+    /* Cùng một tag để trình duyệt thay nội dung thông báo hiện tại,
+       không tạo thêm nhiều thông báo mới mỗi giây. Không đóng thông báo cũ trước khi cập nhật. */
     notifyCurrent = new Notification(l ? 'Đang diễn ra' : 'Tiếp theo', {
       body,
       tag: 'uit-planner-schedule',
