@@ -58,8 +58,13 @@ button{cursor:pointer}
 input[type=date],input[type=search],input[type=time],input[type=text],input[type=url],input[type=number],select,textarea,input:not([type]){height:36px;padding:0 10px;border:1px solid var(--line);background:var(--surface);border-radius:8px;min-width:0}
 textarea{height:auto;padding:8px 10px;width:100%;resize:vertical}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
-.seg button{border:0!important;border-radius:0!important;height:34px!important}
+.seg button{border:0!important;border-radius:0!important;height:34px!important;justify-content:center}
 .seg button.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.searchbox{position:relative;display:inline-flex;align-items:center;height:36px;width:36px;border:1px solid var(--line);background:var(--surface);border-radius:18px;overflow:hidden;flex:0 0 auto;transition:width .18s ease,border-color .18s ease}
+.searchbox:focus-within,.searchbox.has-val{width:240px;border-color:var(--accent)}
+.searchbox .q-ic{position:absolute;left:0;top:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:var(--muted);pointer-events:none}
+.searchbox input{border:0!important;background:transparent!important;height:34px!important;width:100%;padding:0 10px 0 36px!important;box-shadow:none}
+.searchbox input:focus{outline:none}
 .menu{position:relative}
 .menu summary{list-style:none;cursor:pointer}
 .menu summary::-webkit-details-marker{display:none}
@@ -640,12 +645,13 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
   .nav #jump{flex:1 1 auto;min-width:0}
   .tools{flex:1 0 100%;gap:6px;flex-wrap:wrap}
   .tools .grow{display:none}
-  .tools #q{order:-1;flex:1 0 100%;width:100%}
+  .tools #qWrap{order:-1;flex:0 0 auto;width:36px}
+  .tools #qWrap:focus-within,.tools #qWrap.has-val{flex:1 1 auto;width:100%}
   .tools #viewSeg{flex:1 1 auto;min-width:0}
-  .tools #viewSeg button{flex:1 1 auto;padding:0 8px!important;white-space:nowrap}
+  .tools #viewSeg button{flex:1 1 auto;padding:0 8px!important;white-space:nowrap;justify-content:center}
   .tools #undoBtn,.tools #redoBtn,.tools #themeBtn,.menu summary{width:36px;padding:0!important;justify-content:center;flex:0 0 auto}
-  .tools #addBtn{position:fixed;left:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:25;width:54px;height:54px;padding:0!important;border-radius:50%;justify-content:center;font-size:0;box-shadow:0 6px 18px rgba(0,0,0,.4)}
-  .tools #addBtn::before{content:"+";font-size:32px;line-height:1;font-weight:400;margin-top:-2px}
+  .tools #addBtn{position:fixed;left:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:25;width:54px;height:54px;padding:0!important;border-radius:50%;display:grid!important;place-items:center;font-size:0;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+  .tools #addBtn::before{content:"+";font-size:30px;line-height:1;font-weight:400}
   .top .stats{flex:1 0 100%;flex-wrap:nowrap;overflow-x:auto;gap:6px;margin:0 -10px;padding:0 10px;scrollbar-width:none}
   .top .stats::-webkit-scrollbar,.legend::-webkit-scrollbar{display:none}
   .stat{flex:0 0 auto;height:30px;padding:0 10px}
@@ -684,7 +690,10 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
     <div class="stats" id="stats"></div>
     <div class="tools">
       <span class="grow"></span>
-      <input type="search" id="q" placeholder="Tìm môn, phòng, giảng viên…" aria-label="Tìm lịch">
+      <div class="searchbox" id="qWrap">
+        <span class="q-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="2"/><line x1="15" y1="15" x2="20" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+        <input type="search" id="q" placeholder="Tìm môn, phòng, giảng viên…" aria-label="Tìm lịch">
+      </div>
       <div class="seg" id="viewSeg"><button data-v="table">Bảng</button><button data-v="agenda">Danh sách</button><button data-v="fixed">Lớp</button></div>
       <button class="primary" id="addBtn" title="Thêm lịch (N)">Thêm lịch</button>
       <button id="undoBtn" title="Hoàn tác (Ctrl+Z)" aria-label="Hoàn tác" disabled>↶</button>
@@ -2250,7 +2259,7 @@ $('#jump').onchange = e => {
 };
 $('#jump').onblur = () => { $('#jump').value = weekStart; };   /* rời ô thì đồng bộ lại về đầu tuần đang xem */
 $('#addBtn').onclick = () => openModal(null, defDate());
-$('#q').oninput = e => { query = e.target.value.trim().toLowerCase(); render(); };
+$('#q').oninput = e => { query = e.target.value.trim().toLowerCase(); $('#qWrap').classList.toggle('has-val', !!e.target.value); render(); };
 $('#viewSeg').onclick = e => { const b = e.target.closest('button'); if(b){ state.view = b.dataset.v; saveUI(); render(); } };
 $('#themeBtn').onclick = () => {
   const cur = document.documentElement.dataset.theme;
@@ -2977,7 +2986,7 @@ if(uiSaved){
   if(['all','open','done'].includes(uiSaved.ts)) todoStatus = uiSaved.ts;
   (uiSaved.hid || []).forEach(x => hiddenTypes.add(x));
   (uiSaved.ot || []).forEach(x => openTodos.add(x));
-  if(typeof uiSaved.q === 'string'){ $('#q').value = uiSaved.q; query = uiSaved.q.trim().toLowerCase(); }
+  if(typeof uiSaved.q === 'string'){ $('#q').value = uiSaved.q; query = uiSaved.q.trim().toLowerCase(); $('#qWrap').classList.toggle('has-val', !!uiSaved.q); }
   guideOpen = !!uiSaved.guide;
 }
 function uiRestoreDialog(d){
