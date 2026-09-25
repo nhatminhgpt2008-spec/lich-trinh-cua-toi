@@ -3126,6 +3126,7 @@ function renderNowBar(){
 const NOTIFY_KEY = KEY + ':schedule-notify';
 let notifyLastSig = '';
 let notifyCurrent = null;
+let notifySWRegistrationPromise = null;
 function scheduleNotifyEnabled(){
   try{ return localStorage.getItem(NOTIFY_KEY) === '1'; }catch(e){ return false; }
 }
@@ -3140,12 +3141,63 @@ function updateNotifyButton(){
   b.disabled = false;
   b.textContent = scheduleNotifyEnabled() ? 'Tắt thông báo lịch' : 'Bật thông báo lịch';
 }
+function getNotifySWRegistration(){
+  if(!('serviceWorker' in navigator) || !/^https?:$/.test(location.protocol)) return Promise.resolve(null);
+  if(notifySWRegistrationPromise) return notifySWRegistrationPromise;
+  notifySWRegistrationPromise = Promise.race([
+    navigator.serviceWorker.register('notify-sw.js', {scope:'./__notify__/'}).then(reg => {
+      if(reg.active) return reg;
+      return new Promise(resolve => {
+        const sw = reg.installing || reg.waiting;
+        if(!sw) return resolve(reg);
+        const done = () => { if(sw.state === 'activated') resolve(reg); };
+        sw.addEventListener('statechange', done);
+        setTimeout(() => resolve(reg), 2500);
+      });
+    }).catch(() => null),
+    new Promise(res => setTimeout(() => res(null), 3000))
+  ]);
+  return notifySWRegistrationPromise;
+}
+async function closeScheduleNotification(){
+  try{
+    const reg = await getNotifySWRegistration();
+    if(reg){
+      const list = await reg.getNotifications({tag:'uit-planner-schedule'});
+      list.forEach(n => { try{ n.close(); }catch(e){} });
+    }
+  }catch(e){}
+  if(notifyCurrent){ try{ notifyCurrent.close(); }catch(e){} notifyCurrent = null; }
+}
+async function showScheduleNotification(title, body){
+  try{
+    const reg = await getNotifySWRegistration();
+    if(reg && typeof reg.showNotification === 'function'){
+      await reg.showNotification(title, {
+        body,
+        tag:'uit-planner-schedule',
+        renotify:false,
+        silent:true
+      });
+      notifyCurrent = null;
+      return true;
+    }
+  }catch(e){}
+  try{
+    if('Notification' in window && Notification.permission === 'granted'){
+      if(notifyCurrent){ try{ notifyCurrent.close(); }catch(e){} }
+      notifyCurrent = new Notification(title, {body, tag:'uit-planner-schedule', renotify:false, silent:true});
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
 async function enableScheduleNotifications(){
   if(!('Notification' in window)) return updateNotifyButton();
   if(scheduleNotifyEnabled()){
     try{ localStorage.removeItem(NOTIFY_KEY); }catch(e){}
     notifyLastSig = '';
-    if(notifyCurrent){ try{ notifyCurrent.close(); }catch(e){} notifyCurrent = null; }
+    await closeScheduleNotification();
     updateNotifyButton();
     return;
   }
@@ -3163,7 +3215,7 @@ async function enableScheduleNotifications(){
     updateNotifyButton();
   }
 }
-function updateScheduleNotification(force = false){
+async function updateScheduleNotification(force = false){
   if(!scheduleNotifyEnabled() || !('Notification' in window) || Notification.permission !== 'granted') return;
   const {live, next, now} = upcoming(2);
   const l = live[0], n = next[0];
@@ -3171,20 +3223,11 @@ function updateScheduleNotification(force = false){
   const nextPart = n ? `⏳ Tiếp theo: ${n.ev.title} · ${whenTxt(n.date)} · ${n.ev.start}–${n.ev.end} · sau ${fmtHMS(occStartMs(n) - now)}` : '';
   const body = [livePart, nextPart].filter(Boolean).join('\n');
   if(!body) return;
-  const second = x => x ? Math.floor(Math.max(0, (x - now) / 1000)) : -1;
-  const sig = [l ? occKey(l) : '', n ? occKey(n) : '', second(l ? occEndMs(l) : 0), second(n ? occStartMs(n) : 0)].join('|');
-  if(!force && sig === notifyLastSig) return;
+  /* Giữ một thông báo duy nhất trên mobile và cập nhật nội dung của thông báo đó. */
+  const sig = [l ? occKey(l) : '', n ? occKey(n) : ''].join('|');
+  if(!force && sig === notifyLastSig && document.visibilityState === 'visible') return;
   notifyLastSig = sig;
-  try{
-    /* Cùng một tag để trình duyệt thay nội dung thông báo hiện tại,
-       không tạo thêm nhiều thông báo mới mỗi giây. Không đóng thông báo cũ trước khi cập nhật. */
-    notifyCurrent = new Notification(l ? 'Đang diễn ra' : 'Tiếp theo', {
-      body,
-      tag: 'uit-planner-schedule',
-      renotify: false,
-      silent: true
-    });
-  }catch(e){}
+  await showScheduleNotification(l ? 'Đang diễn ra' : 'Tiếp theo', body);
 }
 function highlightSchedElement(el){
   if(!el) return;
