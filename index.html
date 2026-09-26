@@ -1677,12 +1677,13 @@ function tableHTML(occs){
 
   const eventCellHTML = (o,d) => {
     const ev = o.ev, free = ev.kind === 'free', tag = tagOf(ev.type);
-    const cls = o.conflict ? 'c-conflict' : o.cancelled ? 'c-cancel' : '';
+    const cls = o.cancelled ? 'c-cancel' : '';
     const sty = `style="${cls ? '' : `--cc:${esc(tag.color)};`}${lv0(o)}"`, nof = !cls && !tag.fill ? ' nofill' : '';
     const codeLine = ev.code ? `<div class="cc">${esc(ev.code)}</div>` : '';
     const inner = free ? `<span class="ev-title">${esc(ev.title)}</span>` : `${codeLine}<div><b class="ev-title">${esc(ev.title)}</b></div>
       <div>🕒 ${ev.start} - ${ev.end}</div>${ev.room ? `<div>📍 ${esc(ev.room)}</div>` : ''}${ev.teacher ? `<div>👤 ${esc(ev.teacher)}</div>` : ''}${learnerTxt(ev) ? `<div>🎓 ${esc(learnerTxt(ev))}</div>` : ''}${evChips(ev)}`;
-    return `<div class="cell${liveCls(o)}${nof} ${cls} ${free?'free':''} ${matches(o)?'':'dim'}" ${sty} draggable="true" data-id="${ev.id}" data-date="${d}" data-s="${ev.start}" data-e="${ev.end}" tabindex="0" role="button" title="${esc(evTitleAttr(ev,d))}${o.cancelled?'\nNghỉ':''}">${copyBtns(ev,d)}${stateTag(o) ? `<div class="lvb">${stateTag(o)}</div>` : ''}${inner}</div>`;
+    const badges = stateTag(o) + (o.conflict ? '<span class="tag w">⚠ Trùng</span>' : '');
+    return `<div class="cell${liveCls(o)}${nof} ${cls} ${o.conflict ? 'conflict' : ''} ${free?'free':''} ${matches(o)?'':'dim'}" ${sty} draggable="true" data-id="${ev.id}" data-date="${d}" data-s="${ev.start}" data-e="${ev.end}" tabindex="0" role="button" title="${esc(evTitleAttr(ev,d))}${o.cancelled?'\nNghỉ':''}">${copyBtns(ev,d)}${badges ? `<div class="lvb">${badges}</div>` : ''}${inner}</div>`;
   };
 
   if(stacked){
