@@ -1575,7 +1575,7 @@ function renderStats(all){
     `<div class="stat"><b>${act.length}</b><span>buổi</span></div>
      <div class="stat"><b>${hrs}</b><span>giờ</span></div>
      <div class="stat bad"><b>${all.filter(o => o.cancelled).length}</b><span>nghỉ</span></div>
-     <div class="stat warn"><b>${conf}</b><span>bị trùng</span></div>`;
+     <div class="stat warn"><b>${conf}</b><span>trùng</span></div>`;
 }
 function renderLegend(all){
   const cnt = {}; all.forEach(o => cnt[o.ev.type] = (cnt[o.ev.type]||0)+1);
