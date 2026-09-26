@@ -82,7 +82,7 @@ textarea{height:auto;padding:8px 10px;width:100%;resize:vertical}
 .nowbar .nb.live{--nbc:var(--live-color)}
 .nowbar .nb.next{--nbc:var(--next-color)}
 .nowbar .nb.dl{--nbc:var(--dl)}
-.nowbar .nb .k{grid-row:1/3;font-size:11.5px;font-weight:700;white-space:nowrap;color:var(--ink)}
+.nowbar .nb .k{grid-row:1/3;min-width:100px;font-size:11.5px;font-weight:700;white-space:nowrap;color:var(--ink)}
 .nowbar .nb .k em{font-style:normal}
 .nowbar .nb .t{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nowbar .nb .m{font-size:12.5px;color:var(--muted)}
@@ -366,6 +366,7 @@ ul.todos{list-style:none;margin:0;padding:0 4px 0 0;display:grid;gap:2px;max-hei
 .fx th.c,.fx td.c{text-align:center}
 .fx th.r,.fx td.r{text-align:right}
 .fx .w-tc{width:56px}.fx .w-ht{width:76px}.fx .w-sv{width:100px}
+.fx th.nowrap .fx-sort{white-space:nowrap}
 .fx tbody tr{cursor:pointer}
 .fx tbody tr:hover{background:var(--line-soft)}
 .fx .n{width:40px;color:var(--muted)}
@@ -392,16 +393,15 @@ ul.todos{list-style:none;margin:0;padding:0 4px 0 0;display:grid;gap:2px;max-hei
 .fx .fx-row .fx-grab{width:22px;height:28px;padding:0;border:0;background:none;color:var(--muted);font-size:16px;line-height:1;cursor:grab;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;touch-action:none;user-select:none;transition:color .15s,background .15s}
 .fx .fx-row .fx-grab:hover,.fx .fx-row .fx-grab:focus-visible{color:var(--accent);background:var(--accent-soft)}
 /* Kéo thả Lớp: dùng cùng kiểu hiệu ứng như .lkrow của "Liên kết - đề cương, tài liệu".
-   Khi đang giữ chỉ có shadow ngoài + scale/rotate; không có inset border trên hàng. */
+   Khi đang giữ chỉ có shadow ngoài + scale, không nghiêng ô; không có inset border trên hàng. */
 .fx .fx-row.dragging{
   opacity:1;
   background:var(--surface);
-  scale:1.02;
-  rotate:-.7deg;
-  box-shadow:0 18px 32px -8px color-mix(in srgb,#000 60%,transparent);
+  scale:1.035;
+  box-shadow:0 18px 32px -8px color-mix(in srgb,#000 60%,transparent),0 0 0 2px var(--accent);
   z-index:50;
   cursor:grabbing;
-  transition:scale .15s,rotate .15s,box-shadow .2s;
+  transition:scale .15s,box-shadow .2s;
 }
 .fx .fx-row.dragging td{background:var(--surface)!important;box-shadow:none!important}
 .fx .fx-row.drop-before td{box-shadow:inset 0 2px 0 var(--accent)}
@@ -601,8 +601,8 @@ ul.todos{container-type:inline-size;margin-right:-8px}
 .lkrow{display:grid;grid-template-columns:22px minmax(0,1.5fr) minmax(0,1fr) 32px;gap:6px;align-items:center;border-radius:10px;position:relative}
 .lkrow .gr{height:32px;padding:0;border:0;background:none;color:var(--muted);font-size:17px;line-height:1;cursor:grab;touch-action:none;user-select:none;border-radius:6px}
 .lkrow .gr:hover,.lkrow .gr:focus-visible{color:var(--accent);background:var(--accent-soft)}
-.lkrow{transition:scale .15s,rotate .15s,box-shadow .2s}
-.lkrow.dragging{background:var(--surface);scale:1.035;rotate:-.7deg;box-shadow:0 18px 32px -8px color-mix(in srgb,#000 60%,transparent),0 0 0 2px var(--accent);z-index:50;cursor:grabbing;transition:scale .15s,rotate .15s,box-shadow .2s}
+.lkrow{transition:scale .15s,box-shadow .2s}
+.lkrow.dragging{background:var(--surface);scale:1.035;box-shadow:0 18px 32px -8px color-mix(in srgb,#000 60%,transparent),0 0 0 2px var(--accent);z-index:50;cursor:grabbing;transition:scale .15s,box-shadow .2s}
 body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!important}
 .lkrow.dragging .gr{cursor:grabbing;color:var(--accent)}
 .lkrow input{width:100%;min-width:0;color:var(--ink)}
@@ -1003,7 +1003,7 @@ function linkEditor(box, addBtn){
       follow(ev.clientY);
     };
     const up = () => {
-      r.style.transition = 'transform .2s cubic-bezier(.2,.8,.2,1), scale .15s, rotate .15s, box-shadow .2s';   // thả xuống: lướt về đúng ô
+      r.style.transition = 'transform .2s cubic-bezier(.2,.8,.2,1), scale .15s, box-shadow .2s';   // thả xuống: lướt về đúng ô
       r.style.transform = ''; r.classList.remove('dragging'); document.body.classList.remove('lk-grabbing');
       setTimeout(() => { r.style.transition = ''; }, 230);
       document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); document.removeEventListener('pointercancel', up);
@@ -1058,7 +1058,7 @@ const PERIODS = {
 const PSTART = {}, PEND = {};
 Object.entries(PERIODS).forEach(([n,p]) => { PSTART[p.s] = +n; PEND[p.e] = +n; });
 const tietOf = ev => { const a = PSTART[ev.start], b = PEND[ev.end]; return a && b && a <= b ? `tiết ${a}–${b}` : ''; };
-const slotTxt = (s,e) => tietOf({start:s,end:e}) || `${s}–${e}`;
+const slotTxt = (s,e) => `${s} - ${e}`;
 const HTGD = [
   ['LT','Lý thuyết'], ['HT1','Thực hành hình thức 1'], ['HT2','Thực hành hình thức 2'], ['TG','Lớp trợ giảng'], ['NK','Môn ngoại khoá (GDQP, GDTC)'],
   ['ĐA','Đồ án môn học'], ['TTTN','Thực tập tốt nghiệp'], ['KLTN','Khoá luận tốt nghiệp'], ['CĐ','Chuyên đề'], ['BT','Bài tập']
@@ -1788,9 +1788,9 @@ const shortNote = ev => !!ev.note && ev.note.length <= 50 && !/\n/.test(ev.note)
 function schedText(ev, room = true){
   const ds = [...evDays(ev)].sort((a,b) => a-b);
   if(isRec(ev) && ev.times){
-    return ds.map(d => `${dayShort(d)}: ${(ev.times[d]||[]).map(s => slotTxt(s.start,s.end)).join(', ')}`).join('; ') + (room && ev.room ? ', ' + ev.room : '');
+    return ds.map(d => `${dayShort(d)}, ${(ev.times[d]||[]).map(s => slotTxt(s.start,s.end)).join(', ')}`).join('; ') + (room && ev.room ? ', ' + ev.room : '');
   }
-  return [ds.map(dayShort).join(', '), tietOf(ev) || `${ev.start}–${ev.end}`, room && ev.room].filter(Boolean).join(', ');
+  return [ds.map(dayShort).join(', '), slotTxt(ev.start, ev.end), room && ev.room].filter(Boolean).join(', ');
 }
 function fixedSeries(kind = 'school'){
   const map = new Map(), today = todayStr();
@@ -1902,18 +1902,15 @@ function animateFixedReorder(kind, oldRects){
 }
 function fixedWhen(ev, vs, room = true){
   const skip = [...(ev.skip||[])].sort();
-  const range = ev.until ? `${dmy(ev.date)} - ${dmy(ev.until)}` : `Từ ${dmy(ev.date)}`;
-  const ver = (v, pre) => `<div class="hist">${pre}: ${esc(schedText(v, room))}${v.teacher && v.teacher !== ev.teacher ? ' · ' + esc(v.teacher) : ''}</div>`;
-  const older = vs.filter(v => v.date < ev.date).map(v => ver(v, v.until ? `Đến ${dmy(v.until)}` : 'Trước đó')).join('');
-  const newer = vs.filter(v => v.date > ev.date).map(v => ver(v, `Từ ${dmy(v.date)}`)).join('');
+  const range = ev.until ? `Từ ${dmy(ev.date)} - ${dmy(ev.until)}` : `Từ ${dmy(ev.date)}`;
   return `<div class="when">${esc(schedText(ev, room))}</div>${ev.repeat === 'biweekly' ? '<span class="badge alt">Cách tuần</span>' : ''}
-    <div class="sub">${range}</div>${skip.length ? `<div class="sub">Nghỉ ${skip.length} buổi: ${skip.slice(0,6).map(dm).join(', ')}${skip.length > 6 ? '…' : ''}</div>` : ''}${older}${newer}`;
+    <div class="sub">${range}</div>${skip.length ? `<div class="sub">Nghỉ ${skip.length} buổi: ${skip.slice(0,6).map(dm).join(', ')}${skip.length > 6 ? '…' : ''}</div>` : ''}`;
 }
 function fxRowNumber(i){ return `<span class="fx-index"><span class="fx-num">${i+1}</span><button type="button" class="fx-grab" title="Kéo để đổi vị trí" aria-label="Kéo để đổi vị trí">⠿</button></span>`; }
 function fixedHTML(){
   const today = todayStr();
   const kind = 'school', list = fixedList(kind);
-  let h = `<h3 class="fxh">Thời khóa biểu của trường</h3><div class="scroller"><table class="fx" data-fx-kind="${kind}"><thead><tr><th class="n">#</th>${fxSortTh(kind,'name','Lớp / Môn học')}${fxSortTh(kind,'tc','TC','c w-tc')}${fxSortTh(kind,'htgd','HTGD','w-ht')}${fxSortTh(kind,'when','Lịch học / Thời gian')}${fxSortTh(kind,'room','Phòng')}${fxSortTh(kind,'teacher','Giảng viên')}${fxSortTh(kind,'sv','Sĩ số','r w-sv')}${fxSortTh(kind,'note','Ghi chú')}<th>Liên kết</th></tr></thead><tbody>`;
+  let h = `<h3 class="fxh">Thời khóa biểu của trường</h3><div class="scroller"><table class="fx" data-fx-kind="${kind}"><thead><tr><th class="n">#</th>${fxSortTh(kind,'name','Môn học')}${fxSortTh(kind,'tc','TC','c w-tc')}${fxSortTh(kind,'htgd','HTGD','w-ht')}${fxSortTh(kind,'when','Thời gian')}${fxSortTh(kind,'room','Phòng')}${fxSortTh(kind,'teacher','Giảng viên')}${fxSortTh(kind,'sv','Sĩ số','r w-sv')}${fxSortTh(kind,'note','Ghi chú')}<th>Liên kết</th></tr></thead><tbody>`;
   if(!list.length) h += '<tr><td colspan="10" class="none">Chưa có lớp cố định. Bấm “Thêm lịch”, chọn Tag “Lớp chính thức” và Kiểu lặp Hằng tuần hoặc Cách tuần. Hoặc nạp file dữ liệu ở menu ⋯ → “Khôi phục từ file .json”.</td></tr>';
   list.forEach(({cur:ev, vs}, i) => {
     const cc = String(ev.code || '').split('.')[0];
@@ -1931,12 +1928,12 @@ function fixedHTML(){
       <td class="note">${esc(ev.note) || '<span class="sub">–</span>'}</td>
       <td>${linkHTML(ev) || '<span class="sub">–</span>'}</td></tr>`;
   });
-  h += `</tbody></table></div><div class="sheetbar"><span>Bấm vào một lớp để sửa hoặc xóa. Dùng tay nắm <b>⠿</b> để kéo đổi vị trí.</span></div>`;
+  h += `</tbody></table></div>`;
   return `<div class="card fxblk">` + h + guideHTML() + `</div>` + otherFixedHTML();
 }
 function otherFixedHTML(){
   const today = todayStr(), kind = 'other', list = fixedList(kind);
-  let h = `<div class="card fxblk"><h3 class="fxh">Lịch cố định khác (không thuộc thời khóa biểu trường)</h3><div class="scroller"><table class="fx" data-fx-kind="${kind}"><thead><tr><th class="n">#</th>${fxSortTh(kind,'name','Tên lịch / Nội dung')}${fxSortTh(kind,'tag','Tag')}${fxSortTh(kind,'when','Lịch / Thời gian')}${fxSortTh(kind,'room','Phòng / địa điểm')}${fxSortTh(kind,'teacher','Người phụ trách')}${fxSortTh(kind,'note','Ghi chú')}<th>Liên kết</th></tr></thead><tbody>`;
+  let h = `<div class="card fxblk"><h3 class="fxh">Lịch khác</h3><div class="scroller"><table class="fx" data-fx-kind="${kind}"><thead><tr><th class="n">#</th>${fxSortTh(kind,'name','Tên lịch / Nội dung')}${fxSortTh(kind,'tag','Tag')}${fxSortTh(kind,'when','Thời gian')}${fxSortTh(kind,'room','Phòng / địa điểm','nowrap')}${fxSortTh(kind,'teacher','Người phụ trách')}${fxSortTh(kind,'note','Ghi chú')}<th>Liên kết</th></tr></thead><tbody>`;
   if(!list.length) h += '<tr><td colspan="8" class="none">Chưa có lịch cố định khác. Bấm “Thêm lịch”, chọn Tag khác như gia sư, học thêm hoặc Kiểu ô “Lịch tự do”, rồi chọn Kiểu lặp.</td></tr>';
   list.forEach(({cur:ev, vs}, i) => {
     const tag = tagOf(ev.type), free = ev.kind === 'free';
@@ -2556,7 +2553,7 @@ function startFixedPointerDrag(e){
     sid: String(row.dataset.series),
     // Neo đúng tâm tay nắm ⠿ vào con trỏ để 6 dấu chấm luôn khớp với chuột.
     gripOffset: 0,
-    dragScale: 1.02,
+    dragScale: 1.035,
     pointerId: e.pointerId
   };
 
@@ -2590,8 +2587,9 @@ function finishFixedPointerDrag(cancel=false){
   }
 
   if(row?.isConnected){
-    row.style.transition = 'transform .2s cubic-bezier(.2,.8,.2,1), scale .15s, rotate .15s, box-shadow .2s';
+    row.style.transition = 'transform .2s cubic-bezier(.2,.8,.2,1), scale .15s, box-shadow .2s';
     row.style.transform = '';
+    row.classList.remove('dragging');
   }
 
   const kind = d.kind;
@@ -2604,13 +2602,10 @@ function finishFixedPointerDrag(cancel=false){
 
   if(!cancel && ids.includes(d.sid)){
     setTimeout(() => {
-      if(!row?.isConnected) return;
-      row.classList.remove('dragging');
-      row.style.transition = '';
+      if(row?.isConnected) row.style.transition = '';
       save();
     }, 210);
   }else{
-    row?.classList.remove('dragging');
     if(row){ row.style.transform=''; row.style.transition=''; }
   }
 }
@@ -3104,16 +3099,24 @@ function whenTxt(date){
   const n = daysBetween(todayStr(), date);
   return n === 0 ? 'Hôm nay' : n === 1 ? 'Ngày mai' : `${dowShort(date)} · ${dm(date)}`;
 }
+/* Dùng cho banner "Đang diễn ra/Tiếp theo" và thông báo điện thoại: luôn có
+   dạng "Hôm nay/Ngày mai/Thứ n · dd/mm" cho cả 2 mục, để 2 dòng cùng cấu
+   trúc và thẳng hàng với nhau (trước đây chỉ "Tiếp theo" có phần ngày nên
+   bị thụt so với "Đang diễn ra"). */
+function dayDm(date){
+  const n = daysBetween(todayStr(), date);
+  return `${n === 0 ? 'Hôm nay' : n === 1 ? 'Ngày mai' : dowShort(date)} · ${dm(date)}`;
+}
 const fmtHMS = ms => { const t = Math.max(0, Math.floor(ms / 1000)), h = Math.floor(t / 3600), m = Math.floor(t % 3600 / 60), sec = t % 60; return (h ? h + ':' + pad(m) : m) + ':' + pad(sec); };
 function renderNowBar(){
   const el = document.getElementById('nowBar'); if(!el) return;
   const {live, next, now} = upcoming(1);
-  const meta = (o, extra, pre) => `<span class="rg">${esc([pre, `${o.ev.start}–${o.ev.end}`, o.ev.room].filter(Boolean).join(' · '))} · </span><b class="cd">${esc(extra)}</b>`;
+  const meta = (o, extra, pre) => `<span class="rg">${esc([pre, `${o.ev.start} - ${o.ev.end}`].filter(Boolean).join(' · '))} · </span><b class="cd">${esc(extra)}</b>`;
   const leftRows = [];
   live.slice(0, 2).forEach(o => leftRows.push(
-    `<div class="nb live" data-id="${esc(o.ev.id)}" data-date="${esc(o.date)}"><span class="k">🔴<em> Đang diễn ra</em></span><span class="t">${esc(o.ev.title)}</span><span class="m">${meta(o, 'còn ' + fmtHMS(occEndMs(o) - now))}</span></div>`));
+    `<div class="nb live" data-id="${esc(o.ev.id)}" data-date="${esc(o.date)}"><span class="k">🔴<em> Đang diễn ra</em></span><span class="t">${esc(o.ev.title)}</span><span class="m">${meta(o, 'còn ' + fmtHMS(occEndMs(o) - now), dayDm(o.date))}</span></div>`));
   next.slice(0, 1).forEach(o => leftRows.push(
-    `<div class="nb next" data-id="${esc(o.ev.id)}" data-date="${esc(o.date)}"><span class="k">⏳<em> Tiếp theo</em></span><span class="t">${esc(o.ev.title)}</span><span class="m">${meta(o, 'sau ' + fmtHMS(occStartMs(o) - now), (n => n < 2 ? `${whenTxt(o.date)} · ${dm(o.date)}` : whenTxt(o.date))(daysBetween(todayStr(), o.date)))}</span></div>`));
+    `<div class="nb next" data-id="${esc(o.ev.id)}" data-date="${esc(o.date)}"><span class="k">⏳<em> Tiếp theo</em></span><span class="t">${esc(o.ev.title)}</span><span class="m">${meta(o, 'sau ' + fmtHMS(occStartMs(o) - now), dayDm(o.date))}</span></div>`));
   const dls = state.todos.filter(t => !t.done && t.due).sort((a, b) => (a.due + (a.dueTime || '23:59')).localeCompare(b.due + (b.dueTime || '23:59')));
   const rightRows = dls.map(dl => `<div class="nb dl" data-todo="${esc(dl.id)}"><span class="k">📌<em> Deadline</em></span><span class="t">${esc(dl.text)}</span><span class="m"><span class="rg">${esc(whenTxt(dl.due))}${dl.dueTime ? ' · ' + esc(dl.dueTime) : ''} · </span><b class="cd${dueLate(dl)?' late':''}">${esc(dueTxt(dl))}</b></span></div>`);
   el.hidden = false;
@@ -3126,7 +3129,7 @@ function renderNowBar(){
 const NOTIFY_KEY = KEY + ':schedule-notify';
 let notifyLastSig = '';
 let notifyCurrent = null;
-let notifySWRegistrationPromise = null;
+let swRegistrationPromise = null;
 function scheduleNotifyEnabled(){
   try{ return localStorage.getItem(NOTIFY_KEY) === '1'; }catch(e){ return false; }
 }
@@ -3143,8 +3146,8 @@ function updateNotifyButton(){
 }
 function getNotifySWRegistration(){
   if(!('serviceWorker' in navigator) || !/^https?:$/.test(location.protocol)) return Promise.resolve(null);
-  if(notifySWRegistrationPromise) return notifySWRegistrationPromise;
-  notifySWRegistrationPromise = navigator.serviceWorker.register('notify-sw.js', {scope:'./__notify__/'}).then(reg => new Promise(resolve => {
+  if(swRegistrationPromise) return swRegistrationPromise;
+  swRegistrationPromise = navigator.serviceWorker.register('sw.js').then(reg => new Promise(resolve => {
     if(reg.active) return resolve(reg);
     const sw = reg.installing || reg.waiting;
     if(!sw) return resolve(reg);
@@ -3152,7 +3155,7 @@ function getNotifySWRegistration(){
     sw.addEventListener('statechange', done);
     if(sw.state === 'activated') done();
   })).catch(() => null);
-  return notifySWRegistrationPromise;
+  return swRegistrationPromise;
 }
 /* Gọi thẳng registration.showNotification()/getNotifications() từ trang —
    không cần "nhắn tin" (postMessage) qua lại với service worker rồi chờ
@@ -3214,8 +3217,8 @@ async function updateScheduleNotification(force = false){
   if(!scheduleNotifyEnabled() || !('Notification' in window) || Notification.permission !== 'granted') return;
   const {live, next, now} = upcoming(2);
   const l = live[0], n = next[0];
-  const livePart = l ? `🔴 Đang diễn ra: ${l.ev.title} · ${l.ev.start}–${l.ev.end} · còn ${fmtHMS(occEndMs(l) - now)}` : '';
-  const nextPart = n ? `⏳ Tiếp theo: ${n.ev.title} · ${whenTxt(n.date)} · ${n.ev.start}–${n.ev.end} · sau ${fmtHMS(occStartMs(n) - now)}` : '';
+  const livePart = l ? `🔴 Đang diễn ra: ${l.ev.title} · ${dayDm(l.date)} · ${l.ev.start} - ${l.ev.end} · còn ${fmtHMS(occEndMs(l) - now)}` : '';
+  const nextPart = n ? `⏳ Tiếp theo: ${n.ev.title} · ${dayDm(n.date)} · ${n.ev.start} - ${n.ev.end} · sau ${fmtHMS(occStartMs(n) - now)}` : '';
   const body = [livePart, nextPart].filter(Boolean).join('\n');
   if(!body) return;
   /* Giữ một thông báo duy nhất trên mobile và cập nhật lại theo từng giây.
@@ -3277,7 +3280,6 @@ document.getElementById('nowBar').addEventListener('click', e => {
   $('#todayBtn').click();
 });
 
-if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(() => {});
 setInterval(renderNowBar, 1000);
 setInterval(updateScheduleNotification, 1000);
 document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible'){ renderNowBar(); updateScheduleNotification(); } });
