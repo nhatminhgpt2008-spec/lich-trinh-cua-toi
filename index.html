@@ -1905,7 +1905,7 @@ function fixedWhen(ev, vs, room = true){
   const skip = [...(ev.skip||[])].sort();
   const range = ev.until ? `Từ ${dmy(ev.date)} - ${dmy(ev.until)}` : `Từ ${dmy(ev.date)}`;
   return `<div class="when">${esc(schedText(ev, room))}</div>${ev.repeat === 'biweekly' ? '<span class="badge alt">Cách tuần</span>' : ''}
-    <div class="sub">${range}</div>${skip.length ? `<div class="sub">Nghỉ ${skip.length} buổi: ${skip.slice(0,6).map(dm).join(', ')}${skip.length > 6 ? '…' : ''}</div>` : ''}`;
+    <div class="sub">${range}</div>${skip.length ? `<div class="sub">Nghỉ ${skip.length} buổi: ${skip.slice(0,6).map(dmy).join(', ')}${skip.length > 6 ? '…' : ''}</div>` : ''}`;
 }
 function fxRowNumber(i){ return `<span class="fx-index"><span class="fx-num">${i+1}</span><button type="button" class="fx-grab" title="Kéo để đổi vị trí" aria-label="Kéo để đổi vị trí">⠿</button></span>`; }
 function fixedHTML(){
