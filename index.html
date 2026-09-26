@@ -75,7 +75,6 @@ textarea{height:auto;padding:8px 10px;width:100%;resize:vertical}
 /* banner đang diễn ra / tiếp theo */
 .nowbar{display:grid;gap:6px;align-items:start;margin:0 0 8px;padding:6px 0;position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg)}
 .nowbar .nbcol{display:grid;gap:6px;min-width:0}
-.nowbar .nb.none{grid-column:1/-1}
 .nowbar .nb{font-variant-numeric:tabular-nums}
 .nowbar .nb.none{--nbc:var(--muted);cursor:default;background:var(--surface)}
 .nowbar .nb{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:center;padding:8px 12px;border-radius:12px;border:1px solid var(--line);border-left:5px solid var(--nbc,var(--accent));background:color-mix(in srgb,var(--nbc,var(--accent)) 14%,var(--surface));cursor:pointer}
@@ -83,6 +82,7 @@ textarea{height:auto;padding:8px 10px;width:100%;resize:vertical}
 .nowbar .nb.next{--nbc:var(--next-color)}
 .nowbar .nb.dl{--nbc:var(--dl)}
 .nowbar .nb .k{grid-row:1/3;min-width:100px;font-size:11.5px;font-weight:700;white-space:nowrap;color:var(--ink)}
+.nowbar .nb.none .k{min-width:0;grid-row:1}
 .nowbar .nb .k em{font-style:normal}
 .nowbar .nb .t{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nowbar .nb .m{font-size:12.5px;color:var(--muted)}
@@ -686,7 +686,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
   /* banner: mỗi mục đúng 1 dòng — biểu tượng · tên · đếm ngược */
   .nowbar{gap:4px;margin:0 -10px 6px;padding:6px 10px;box-shadow:0 6px 10px -8px rgba(0,0,0,.5)}
   .nowbar .nb{grid-template-columns:auto minmax(0,1fr) auto;gap:0 8px;padding:7px 10px;border-radius:10px;align-items:center}
-  .nowbar .nb .k{grid-row:1;grid-column:1;font-size:15px}
+  .nowbar .nb .k{grid-row:1;grid-column:1;font-size:15px;min-width:0}
   .nowbar .nb .k em{display:none}
   .nowbar .nb .t{grid-row:1;grid-column:2;font-size:13.5px}
   .nowbar .nb .m{grid-row:1;grid-column:3;font-size:12.5px;color:var(--ink);white-space:nowrap}
@@ -1537,7 +1537,7 @@ function render(){
   document.querySelector('.layout').classList.toggle('fx-on', fx);
   if(fx){
     const ser = fixedSeries('school'), oth = fixedSeries('other');
-    $('#range').textContent = `${ser.length} lớp cố định · ${ser.reduce((s,x) => s + (+x.cur.tc || 0), 0)} tín chỉ` + (oth.length ? ` · ${oth.length} lịch cố định khác` : '');
+    $('#range').textContent = `${ser.length} lớp · ${ser.reduce((s,x) => s + (+x.cur.tc || 0), 0)} tín chỉ` + (oth.length ? ` · ${oth.length} lịch khác` : '');
   } else $('#range').textContent = `${dmy(weekStart)} – ${dmy(end)}`;
   document.querySelector('.nav').hidden = fx;
   if(document.activeElement !== $('#jump')) $('#jump').value = weekStart;   /* đang gõ ngày bằng bàn phím thì không ghi đè giá trị */
@@ -1949,7 +1949,7 @@ function otherFixedHTML(){
       <td class="note">${esc(ev.note) || '<span class="sub">–</span>'}</td>
       <td>${linkHTML(ev) || '<span class="sub">–</span>'}</td></tr>`;
   });
-  return h + `</tbody></table></div><div class="sheetbar"><span>Bấm vào một dòng để sửa hoặc xóa. Dùng tay nắm <b>⠿</b> để kéo đổi vị trí.</span></div></div>`;
+  return h + `</tbody></table></div></div>`;
 }
 
 /* ---------- việc cần làm ---------- */
@@ -3121,7 +3121,7 @@ function renderNowBar(){
   const rightRows = dls.map(dl => `<div class="nb dl" data-todo="${esc(dl.id)}"><span class="k">📌<em> Deadline</em></span><span class="t">${esc(dl.text)}</span><span class="m"><span class="rg">${esc(whenTxt(dl.due))}${dl.dueTime ? ' · ' + esc(dl.dueTime) : ''} · </span><b class="cd${dueLate(dl)?' late':''}">${esc(dueTxt(dl))}</b></span></div>`);
   el.hidden = false;
   if(!leftRows.length && !rightRows.length){
-    el.innerHTML = '<div class="nb none"><span class="k">📭</span><span class="t">Không có lịch đang diễn ra hoặc sắp tới trong tuần này</span></div>';
+    el.innerHTML = '<div class="nb none"><span class="k">📭</span><span class="t">Không có lịch sắp diễn ra</span></div>';
     return;
   }
   el.innerHTML = (leftRows.length ? `<div class="nbcol">${leftRows.join('')}</div>` : '') + (rightRows.length ? `<div class="nbcol">${rightRows.join('')}</div>` : '');
@@ -3217,18 +3217,19 @@ async function updateScheduleNotification(force = false){
   if(!scheduleNotifyEnabled() || !('Notification' in window) || Notification.permission !== 'granted') return;
   const {live, next, now} = upcoming(2);
   const l = live[0], n = next[0];
-  const livePart = l ? `🔴 Đang diễn ra: ${l.ev.title} · ${dayDm(l.date)} · ${l.ev.start} - ${l.ev.end} · còn ${fmtHMS(occEndMs(l) - now)}` : '';
-  const nextPart = (!l && n) ? `⏳ Tiếp theo: ${n.ev.title} · ${dayDm(n.date)} · ${n.ev.start} - ${n.ev.end} · sau ${fmtHMS(occStartMs(n) - now)}` : '';
-  const body = [livePart, nextPart].filter(Boolean).join('\n');
-  if(!body) return;
+  if(!l && !n) return;
+  const title = l ? `🔴 Đang diễn ra: ${l.ev.title}` : `⏳ Tiếp theo: ${n.ev.title}`;
+  const body = l
+    ? `${dayDm(l.date)} · ${l.ev.start} - ${l.ev.end} · còn ${fmtHMS(occEndMs(l) - now)}`
+    : `${dayDm(n.date)} · ${n.ev.start} - ${n.ev.end} · sau ${fmtHMS(occStartMs(n) - now)}`;
   /* Giữ một thông báo duy nhất trên mobile và cập nhật lại theo từng giây.
      Dùng chính nội dung có đếm ngược làm chữ ký để khi người dùng xóa
      thông báo, lần cập nhật tiếp theo vẫn tạo lại thông báo; đồng thời
      thời gian trong thông báo thay đổi liên tục theo từng giây. */
-  const sig = body;
+  const sig = title + '|' + body;
   if(!force && sig === notifyLastSig) return;
   notifyLastSig = sig;
-  await showScheduleNotification(l ? 'Đang diễn ra' : 'Tiếp theo', body);
+  await showScheduleNotification(title, body);
 }
 function highlightSchedElement(el){
   if(!el) return;
