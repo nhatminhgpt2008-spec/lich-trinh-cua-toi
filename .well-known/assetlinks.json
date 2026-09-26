@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.nhatminhgpt2008_spec.twa",
+        "sha256_cert_fingerprints": ["6B:0E:90:81:1D:DA:CD:68:A7:B4:9D:EE:B1:97:62:3A:5A:85:DF:97:12:A6:B5:F5:C1:E4:AB:63:3B:FB:8E:2C"]
+      }
+    }]
