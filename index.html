@@ -3218,7 +3218,7 @@ async function updateScheduleNotification(force = false){
   const {live, next, now} = upcoming(2);
   const l = live[0], n = next[0];
   const livePart = l ? `🔴 Đang diễn ra: ${l.ev.title} · ${dayDm(l.date)} · ${l.ev.start} - ${l.ev.end} · còn ${fmtHMS(occEndMs(l) - now)}` : '';
-  const nextPart = n ? `⏳ Tiếp theo: ${n.ev.title} · ${dayDm(n.date)} · ${n.ev.start} - ${n.ev.end} · sau ${fmtHMS(occStartMs(n) - now)}` : '';
+  const nextPart = (!l && n) ? `⏳ Tiếp theo: ${n.ev.title} · ${dayDm(n.date)} · ${n.ev.start} - ${n.ev.end} · sau ${fmtHMS(occStartMs(n) - now)}` : '';
   const body = [livePart, nextPart].filter(Boolean).join('\n');
   if(!body) return;
   /* Giữ một thông báo duy nhất trên mobile và cập nhật lại theo từng giây.
