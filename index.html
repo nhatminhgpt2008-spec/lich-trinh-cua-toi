@@ -3126,10 +3126,7 @@ function renderNowBar(){
 const NOTIFY_KEY = KEY + ':schedule-notify';
 let notifyLastSig = '';
 let notifyCurrent = null;
-let notifyGen = 0;
 let notifySWRegistrationPromise = null;
-let notifySendBusy = false;
-let notifySendQueued = null;
 function scheduleNotifyEnabled(){
   try{ return localStorage.getItem(NOTIFY_KEY) === '1'; }catch(e){ return false; }
 }
@@ -3157,31 +3154,14 @@ function getNotifySWRegistration(){
   })).catch(() => null);
   return notifySWRegistrationPromise;
 }
-async function sendNotifySW(message){
-  notifySendQueued = message;
-  if(notifySendBusy) return true;
-  notifySendBusy = true;
-  try{
-    while(notifySendQueued){
-      const msg = notifySendQueued;
-      notifySendQueued = null;
-      const reg = await getNotifySWRegistration(), sw = reg && reg.active;
-      if(!sw) return false;
-      const acknowledged = await new Promise(resolve => {
-        const ch = new MessageChannel(); let done = false;
-        const finish = ok => { if(done) return; done = true; resolve(ok === true); };
-        ch.port1.onmessage = e => finish(e && e.data === true);
-        try{ sw.postMessage(msg, [ch.port2]); }catch(e){ finish(false); return; }
-        setTimeout(() => finish(false), 1500);
-      });
-      if(!acknowledged) return false;
-    }
-    return true;
-  }catch(e){ return false; }
-  finally{ notifySendBusy = false; }
-}
+/* Gọi thẳng registration.showNotification()/getNotifications() từ trang —
+   không cần "nhắn tin" (postMessage) qua lại với service worker rồi chờ
+   phản hồi mới coi là xong. Cách cũ có một hàng đợi gộp các lượt gọi chồng
+   nhau: mỗi vòng gửi/nhận có thể mất hơn 1 giây (do đánh thức service worker
+   trên điện thoại), nên lượt cập nhật kế tiếp bị gộp vào lượt đang chạy dở
+   thay vì hiển thị riêng — nhìn như thông báo chỉ cập nhật mỗi 2 giây thay
+   vì mỗi giây. Gọi trực tiếp thế này thì mỗi lượt độc lập, không bị gộp. */
 async function closeScheduleNotification(){
-  await sendNotifySW({type:'schedule-state', enabled:false});
   try{
     const reg = await getNotifySWRegistration();
     if(reg){
@@ -3192,15 +3172,15 @@ async function closeScheduleNotification(){
   if(notifyCurrent){ try{ notifyCurrent.close(); }catch(e){} notifyCurrent = null; }
 }
 async function showScheduleNotification(title, body){
-  const gen = ++notifyGen;
+  const opts = {body, tag:'uit-planner-schedule', renotify:false, requireInteraction:true, silent:true, icon:'icon-512.png', badge:'icon-192.png'};
   try{
-    const sent = await sendNotifySW({type:'schedule-state', enabled:true, title, body, gen});
-    if(sent){ notifyCurrent = null; return true; }
+    const reg = await getNotifySWRegistration();
+    if(reg){ await reg.showNotification(title, opts); notifyCurrent = null; return true; }
   }catch(e){}
   try{
     if('Notification' in window && Notification.permission === 'granted'){
       if(notifyCurrent){ try{ notifyCurrent.close(); }catch(e){} }
-      notifyCurrent = new Notification(title, {body, tag:'uit-planner-schedule', renotify:false, requireInteraction:true, silent:true, icon:'icon-512.png', badge:'icon-192.png'});
+      notifyCurrent = new Notification(title, opts);
       return true;
     }
   }catch(e){}
