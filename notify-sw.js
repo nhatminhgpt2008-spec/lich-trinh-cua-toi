@@ -1,5 +1,13 @@
 const NOTIFY_TAG = 'uit-planner-schedule';
 
+/* Không có 2 dòng này, mỗi lần cập nhật file notify-sw.js, bản cũ vẫn tiếp
+   tục chạy (SW mới bị kẹt ở trạng thái "waiting") cho tới khi đóng hết mọi
+   tab đang mở — đây là lý do phổ biến khiến thông báo "im re" trên điện
+   thoại sau khi sửa code. skipWaiting + clients.claim đảm bảo bản mới được
+   dùng ngay từ lần tải lại trang kế tiếp. */
+self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('activate', event => event.waitUntil(self.clients.claim()));
+
 self.addEventListener('message', event => {
   const d = event.data || {};
   if(d.type !== 'schedule-state') return;
@@ -13,6 +21,8 @@ self.addEventListener('message', event => {
           renotify: false,
           requireInteraction: true,
           silent: true,
+          icon: 'icon-512.png',
+          badge: 'icon-192.png',
           data: {gen: d.gen || 0}
         });
       }else{
