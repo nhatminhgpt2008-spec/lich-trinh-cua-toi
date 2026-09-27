@@ -71,6 +71,16 @@ textarea{height:auto;padding:8px 10px;width:100%;resize:vertical}
 .menu-pop{position:absolute;right:0;top:42px;z-index:30;min-width:230px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px;box-shadow:0 12px 30px rgba(0,0,0,.18)}
 .menu-pop button{display:block;width:100%;text-align:left;border:0;background:none;padding:8px 10px;border-radius:6px;height:auto}
 .menu-pop button:hover{background:var(--line-soft)}
+.acct{height:36px;padding:0 10px;border:1px solid var(--line);background:var(--surface);border-radius:8px;display:inline-flex;align-items:center;gap:8px;max-width:220px}
+.acct:hover{border-color:var(--accent)}
+.acct .av{width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:0 0 auto}
+.acct .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12.5px}
+.acct .sy{width:7px;height:7px;border-radius:50%;background:var(--muted);flex:0 0 auto}
+.acct .sy.ok{background:var(--accent)}.acct .sy.bad{background:var(--danger)}.acct .sy.busy{background:var(--warn)}
+.authSeg{margin:8px 0}
+.authSeg button{flex:1;justify-content:center}
+dialog h3{font-size:14px;margin:18px 0 8px;padding-top:14px;border-top:1px solid var(--line)}
+dialog .btn.danger{border-color:var(--danger)}
 
 /* banner đang diễn ra / tiếp theo */
 .nowbar{display:grid;gap:6px;align-items:start;margin:0 0 8px;padding:6px 0;background:var(--bg)}   /* bỏ sticky: cuộn theo trang bình thường, không bám/nổi lên khi scroll nữa */
@@ -737,6 +747,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
       <button id="undoBtn" title="Hoàn tác (Ctrl+Z)" aria-label="Hoàn tác" disabled>↶</button>
       <button id="redoBtn" title="Làm lại (Ctrl+Y)" aria-label="Làm lại" disabled>↷</button>
       <button id="themeBtn" title="Đổi giao diện sáng/tối" aria-label="Đổi giao diện">◐</button>
+      <button type="button" class="acct" id="acctChip" hidden><span class="av" id="acctAv"></span><span class="nm" id="acctNm"></span><span class="sy" id="acctSy" title=""></span></button>
       <details class="menu" id="menu">
         <summary aria-label="Thêm tùy chọn">⋯</summary>
         <div class="menu-pop">
@@ -745,8 +756,8 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
           <button data-a="export">Sao lưu (.json)</button>
           <button data-a="autobackup" id="abBtn">Sao lưu tự động</button>
           <button data-a="autobackup-change" id="abChangeBtn" hidden>Đổi vị trí lưu…</button>
-          <button data-a="cloud" id="cloudBtn" hidden>Đăng nhập Google để đồng bộ</button>
           <button data-a="notify" id="notifyBtn">Bật thông báo lịch</button>
+          <button data-a="legacy-migrate" id="legacyMigrateBtn" hidden>Nhập dữ liệu từ bản đồng bộ cũ</button>
           <button data-a="import">Khôi phục từ file .json</button>
           <button data-a="print">In tuần này</button>
           <button data-a="reset" class="danger">Xóa toàn bộ dữ liệu</button>
@@ -902,6 +913,82 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
     <div class="actions"><span class="grow"></span><button type="button" class="btn" id="scopeCancel">Hủy</button></div>
   </form>
 </dialog>
+
+<!-- Đăng nhập / Đăng ký / Quên mật khẩu -->
+<dialog id="authDlg">
+  <form id="authForm" autocomplete="off">
+    <h2 id="authTitle">Đăng nhập</h2>
+    <div class="seg authSeg" id="authSeg">
+      <button type="button" data-m="login" class="on">Đăng nhập</button>
+      <button type="button" data-m="register">Đăng ký</button>
+    </div>
+    <p class="hint" id="authHint" hidden></p>
+    <div class="fgrid">
+      <label class="full" data-f="name" hidden>Họ tên<input name="name" maxlength="80" autocomplete="name"></label>
+      <label class="full" data-f="email">Email<input name="email" type="email" maxlength="180" autocomplete="email"></label>
+      <label class="full" data-f="pass">Mật khẩu<input name="pass" type="password" maxlength="200" autocomplete="current-password"></label>
+      <label class="full" data-f="pass2" hidden>Nhập lại mật khẩu<input name="pass2" type="password" maxlength="200" autocomplete="new-password"></label>
+    </div>
+    <p class="err" id="authErr"></p>
+    <div class="actions">
+      <button type="button" class="btn" id="authForgot">Quên mật khẩu?</button>
+      <span class="grow"></span>
+      <button type="button" class="btn" id="authClose">Hủy</button>
+      <button type="submit" class="btn primary" id="authSubmit">Đăng nhập</button>
+    </div>
+    <div class="actions" id="authGoogleWrap"><button type="button" class="btn" id="authGoogle" style="width:100%;justify-content:center">Đăng nhập bằng Google</button></div>
+  </form>
+</dialog>
+
+<!-- Tài khoản của tôi -->
+<dialog id="profileDlg">
+  <form id="profileForm" autocomplete="off" onsubmit="return false">
+    <h2>Tài khoản của tôi</h2>
+    <div class="fgrid">
+      <label class="full">Tên hiển thị<input name="name" maxlength="80"></label>
+      <label class="full">Email<input name="email" disabled></label>
+    </div>
+    <p class="hint" id="profileVerifyHint" hidden>Email chưa được xác minh. <a href="#" id="profileResendVerify">Gửi lại email xác minh</a></p>
+    <p class="err" id="profileErr"></p>
+    <div class="actions"><span class="grow"></span><button type="button" class="btn primary" id="profileSaveName">Lưu tên</button></div>
+
+    <h3>Đổi mật khẩu</h3>
+    <div class="fgrid" id="pwFields">
+      <label class="full">Mật khẩu hiện tại<input name="curPass" type="password" autocomplete="current-password"></label>
+      <label class="full">Mật khẩu mới<input name="newPass" type="password" autocomplete="new-password"></label>
+    </div>
+    <p class="err" id="pwErr"></p>
+    <div class="actions"><span class="grow"></span><button type="button" class="btn" id="pwSave">Đổi mật khẩu</button></div>
+
+    <h3>Đồng bộ &amp; dữ liệu</h3>
+    <p class="syncinfo" id="profileSyncInfo"></p>
+    <div class="actions">
+      <button type="button" class="btn" id="profileExport">Tải xuống dữ liệu (.json)</button>
+      <span class="grow"></span>
+      <button type="button" class="btn" id="profileLogout">Đăng xuất</button>
+    </div>
+
+    <h3>Xóa tài khoản</h3>
+    <p class="hint">Xóa tài khoản sẽ xóa dữ liệu cloud liên quan đến tài khoản này. Hành động này có thể không thể hoàn tác. Dữ liệu trên thiết bị này vẫn được giữ lại.</p>
+    <div class="fgrid"><label class="full">Nhập <b>XÓA TÀI KHOẢN</b> để xác nhận<input name="delConfirm" autocomplete="off"></label></div>
+    <p class="err" id="delErr"></p>
+    <div class="actions"><span class="grow"></span><button type="button" class="btn danger" id="profileDelete">Xóa tài khoản</button><button type="button" class="btn" id="profileClose">Đóng</button></div>
+  </form>
+</dialog>
+
+<!-- Xử lý dữ liệu cục bộ khi đăng nhập lần đầu / xung đột -->
+<dialog id="syncChoiceDlg">
+  <form onsubmit="return false">
+    <h2 id="syncChoiceTitle">Dữ liệu trên thiết bị này</h2>
+    <p id="syncChoiceMsg" class="hint"></p>
+    <div class="actions" style="flex-direction:column;align-items:stretch">
+      <button type="button" class="btn primary" id="syncChoiceUpload" style="justify-content:center">Đồng bộ dữ liệu thiết bị này lên tài khoản</button>
+      <button type="button" class="btn" id="syncChoiceKeepCloud" style="justify-content:center">Giữ dữ liệu trên tài khoản (bỏ dữ liệu thiết bị)</button>
+      <button type="button" class="btn" id="syncChoiceCancel" style="justify-content:center">Hủy (chưa quyết định)</button>
+    </div>
+  </form>
+</dialog>
+
 <input type="file" id="file" accept=".json,application/json" hidden>
 
 <script>
@@ -1138,201 +1225,29 @@ function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && Array.isArray(s.events) && Array.isArray(s.todos)) return norm(s); }catch(e){}
   return null;
 }
-/* ---------- đồng bộ giữa các thiết bị ----------
-   Hai cách, tự chọn theo nơi trang được mở:
-   1) Trong claude.ai: dùng kho dữ liệu của trang (tài liệu planner/main).
-   2) Trang tự host (GitHub Pages, Netlify...): dùng Firebase (Firestore + đăng nhập Google), KHÔNG cần tài khoản Claude.
-      Điền cấu hình Firebase vào FIREBASE_CONFIG bên dưới trước khi đưa trang lên host.
-   Mở file .html trực tiếp trên máy thì chỉ lưu trong trình duyệt của máy đó. Bản nào sửa sau cùng thì thắng. */
-const FIREBASE_CONFIG = {apiKey:"AIzaSyBDTSH53jn66Ct1EY0n1RtuPF9CCC4PcT4", authDomain:"lich-trinh-cua-toi.firebaseapp.com", projectId:"lich-trinh-cua-toi", appId:"1:983762899352:web:c83a0b41abbcf6bc5edbed"};   // ví dụ: {apiKey:"AIza...", authDomain:"ten-du-an.firebaseapp.com", projectId:"ten-du-an", appId:"1:123:web:abc"}
+/* ---------- tài khoản & đồng bộ đám mây ----------
+   Xác thực + lưu trữ dùng Firebase Authentication (Email/Mật khẩu + Google)
+   và Cloud Firestore. Mỗi tài khoản chỉ đọc/ghi được đúng dữ liệu của
+   chính mình: dữ liệu lịch của tài khoản có uid X nằm ở tài liệu
+   users/{X}/planner/main, và Firestore Security Rules (xem firestore.rules)
+   chặn mọi truy cập nếu request.auth.uid khác X — kể cả khi ai đó sửa uid
+   ở phía trình duyệt, server vẫn từ chối.
+   Khi chưa đăng nhập, ứng dụng vẫn hoạt động bình thường và chỉ lưu trong
+   localStorage của thiết bị (local-first). Khi đăng nhập, dữ liệu vừa lưu
+   local vừa đồng bộ hai chiều lên tài khoản. */
+const FIREBASE_CONFIG = {apiKey:"AIzaSyBDTSH53jn66Ct1EY0n1RtuPF9CCC4PcT4", authDomain:"lich-trinh-cua-toi.firebaseapp.com", projectId:"lich-trinh-cua-toi", appId:"1:983762899352:web:c83a0b41abbcf6bc5edbed"};
 const FB_VER = '10.12.2';
-const SYNC_KEY = 'W2IBZZ2Y-RmVfNp2xezZWWlJEXvowfsV';   // khóa bí mật của bạn: ai mở trang này là vào được dữ liệu. Nếu muốn đăng nhập Google thay vì khóa, đổi thành ''
+const LEGACY_SYNC_KEY = 'W2IBZZ2Y-RmVfNp2xezZWWlJEXvowfsV';   // khóa đồng bộ dùng chung trước đây (không gắn với tài khoản nào) — chỉ dùng để nhập dữ liệu cũ một lần, xem migrateLegacyShared()
 const TS_KEY = KEY + ':ts';
-let syncTs = 0;                                 // thời điểm sửa gần nhất của dữ liệu trên thiết bị này
-try{ syncTs = +localStorage.getItem(TS_KEY) || 0; }catch(e){}
+const tsKeyFor = uid => TS_KEY + (uid ? (':' + uid) : '');
+let curUid = null;
+let syncTs = 0;
+try{ syncTs = +localStorage.getItem(tsKeyFor(null)) || 0; }catch(e){}
 const sync = {doc:null, ready:false, timer:0, busy:false, dirty:false, readOnly:false, unsub:null};
 let pendingRemote = null;
 const hasData = st => !!(st.events.length || st.todos.length || Object.keys(st.notes || {}).length);
-const syncInfo = t => { const el = document.getElementById('syncInfo'); if(el){ el.hidden = !t; el.textContent = t || ''; } };
-const saveTs = () => { try{ localStorage.setItem(TS_KEY, String(syncTs)); }catch(e){} };
-/* ---------- tự động sao lưu ra file .json của bạn ----------
-   Dùng File System Access API (Chrome/Edge, mở file .html trực tiếp hoặc qua web server): chọn file một lần,
-   sau đó mỗi lần lưu dữ liệu, trang tự ghi đè file đó. Mỗi lần mở lại trình duyệt có thể cần bấm cho phép ghi file một lần. */
-const AB_DB = 'uit-planner-fs', AB_STORE = 'h';
-const abIdb = () => new Promise((res, rej) => { const r = indexedDB.open(AB_DB, 1); r.onupgradeneeded = () => r.result.createObjectStore(AB_STORE); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
-async function abGet(){ try{ const db = await abIdb(); return await new Promise((res, rej) => { const q = db.transaction(AB_STORE).objectStore(AB_STORE).get('file'); q.onsuccess = () => res(q.result || null); q.onerror = () => rej(q.error); }); }catch(e){ return null; } }
-async function abSet(h){ try{ const db = await abIdb(); await new Promise((res, rej) => { const tx = db.transaction(AB_STORE, 'readwrite'); if(h) tx.objectStore(AB_STORE).put(h, 'file'); else tx.objectStore(AB_STORE).delete('file'); tx.oncomplete = res; tx.onerror = () => rej(tx.error); }); }catch(e){} }
-const ab = {handle:null, ok:false, timer:0, busy:false, dirty:false};
-const abSupported = () => typeof window.showSaveFilePicker === 'function';
-function abUI(msg){
-  const b = document.getElementById('abBtn'), c = document.getElementById('abChangeBtn'), i = document.getElementById('abInfo');
-  if(b){ b.hidden = !abSupported(); b.textContent = ab.handle ? 'Tắt sao lưu tự động (.json)' : 'Sao lưu tự động (.json)'; }
-  if(c){ c.hidden = !abSupported() || !ab.handle; }   /* chỉ hiện khi đã bật, để đổi sang file/nơi lưu khác */
-  if(i){ i.hidden = !msg; i.textContent = msg || ''; }
-}
-async function abWrite(){
-  if(!ab.handle || !ab.ok) return;
-  if(ab.busy){ ab.dirty = true; return; }
-  ab.busy = true;
-  try{
-    do{
-      ab.dirty = false;
-      const w = await ab.handle.createWritable();
-      await w.write(JSON.stringify(state, null, 2)); await w.close();
-    } while(ab.dirty);
-    abUI('Tự động sao lưu: ' + ab.handle.name + ' · lần cuối ' + new Date().toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'}));
-  }catch(e){
-    ab.ok = false;
-    abUI('Tự động sao lưu bị lỗi hoặc mất quyền ghi file. Mở menu ⋯ và bấm lại để bật.');
-  }
-  ab.busy = false;
-}
-function abSoon(){ if(ab.handle && ab.ok){ clearTimeout(ab.timer); ab.timer = setTimeout(abWrite, 1500); } }
-async function abRegrant(){
-  if(!ab.handle || ab.ok) return;
-  try{ ab.ok = (await ab.handle.requestPermission({mode:'readwrite'})) === 'granted'; }catch(e){}
-  if(ab.ok) abWrite(); else abUI('Tự động sao lưu đang chờ quyền ghi file. Mở menu ⋯ và bấm lại để cấp quyền.');
-}
-async function abInit(){
-  abUI();
-  if(!abSupported()) return;
-  const h = await abGet(); if(!h) return;
-  ab.handle = h;
-  try{ ab.ok = (await h.queryPermission({mode:'readwrite'})) === 'granted'; }catch(e){}
-  if(ab.ok){ abUI('Tự động sao lưu: ' + h.name); abWrite(); }
-  else { abUI('Tự động sao lưu đang chờ quyền ghi file (bấm bất kỳ đâu để cho phép).'); document.addEventListener('pointerdown', abRegrant, {once:true, capture:true}); }
-}
-/* chọn file .json đã có để ghi đè; File System Access API dùng hộp thoại Mở của hệ điều hành */
-async function abPickExistingFile(){
-  if(!abSupported()) return alert('Trình duyệt này không hỗ trợ chọn file để tự động ghi. Hãy dùng Chrome hoặc Edge trên trang HTTPS hoặc localhost.');
-  try{
-    const [h] = await window.showOpenFilePicker({multiple:false, types:[{description:'Dữ liệu lịch trình (.json)', accept:{'application/json':['.json']}}]});
-    ab.handle = h; ab.ok = false;
-    try{ ab.ok = (await h.requestPermission({mode:'readwrite'})) === 'granted'; }catch(e){}
-    if(!ab.ok) return abUI('Tự động sao lưu đang chờ quyền ghi file. Mở menu ⋯ và bấm lại để cấp quyền.');
-    await abSet(h); await abWrite();
-  }catch(e){
-    if(!e || e.name !== 'AbortError') alert('Không chọn được file ở đây. Hãy thử lại và chọn một file .json có sẵn.');
-  }
-}
-/* tạo file .json mới */
-async function abPickNewFile(){
-  if(!abSupported()) return alert('Trình duyệt này không hỗ trợ tự động ghi file. Hãy dùng Chrome hoặc Edge trên trang HTTPS hoặc localhost.');
-  try{
-    const h = await window.showSaveFilePicker({suggestedName: DATA_FILE, types:[{description:'Dữ liệu lịch trình (.json)', accept:{'application/json':['.json']}}]});
-    ab.handle = h; ab.ok = true; await abSet(h); await abWrite();
-  }catch(e){
-    if(!e || e.name !== 'AbortError') alert('Không chọn được file ở đây. Hãy thử lại hoặc chọn một thư mục khác.');
-  }
-}
-async function abToggle(){
-  if(ab.handle && !ab.ok){ await abRegrant(); if(ab.ok) return; }
-  if(ab.handle){
-    if(!confirm('Tắt tự động sao lưu? File .json đã lưu vẫn được giữ nguyên.')) return;
-    ab.handle = null; ab.ok = false; await abSet(null); abUI(); return;
-  }
-  await abPickExistingFile();
-}
-/* đổi sang file / nơi lưu khác trong khi tự động sao lưu vẫn đang bật, không cần tắt rồi bật lại */
-async function abChangeLocation(){
-  if(ab.handle && !ab.ok){ await abRegrant(); if(!ab.ok) return; }
-  await abPickExistingFile();
-}
-/* sao lưu thủ công vào file .json đã có */
-async function saveBackupFile(){
-  const data = JSON.stringify(state, null, 2);
-  if(!abSupported()){ return alert('Trình duyệt này không hỗ trợ chọn file để ghi đè. Hãy dùng Chrome hoặc Edge trên trang HTTPS hoặc localhost.'); }
-  try{
-    const [h] = await window.showOpenFilePicker({multiple:false, types:[{description:'Dữ liệu lịch trình (.json)', accept:{'application/json':['.json']}}]});
-    const w = await h.createWritable();
-    await w.write(data); await w.close();
-  }catch(e){
-    if(!e || e.name !== 'AbortError') alert('Không thể ghi file sao lưu ở đây. Hãy thử lại và chọn một file .json có sẵn.');
-  }
-}
-/* sao lưu thủ công: tạo file .json mới */
-async function saveBackupNewFile(){
-  const data = JSON.stringify(state, null, 2);
-  if(!abSupported()){ download(DATA_FILE, data, 'application/json'); return; }
-  try{
-    const h = await window.showSaveFilePicker({suggestedName: DATA_FILE, types:[{description:'Dữ liệu lịch trình (.json)', accept:{'application/json':['.json']}}]});
-    const w = await h.createWritable();
-    await w.write(data); await w.close();
-  }catch(e){
-    if(!e || e.name !== 'AbortError') alert('Không thể tạo file sao lưu ở đây. Hãy thử lại hoặc chọn một thư mục khác.');
-  }
-}
-function save(){
-  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
-  syncTs = Date.now(); saveTs();
-  abSoon();
-  if(sync.ready) pushSoon();
-  commitHistory();
-}
-// giống save() nhưng không ghi vào lịch sử hoàn tác/làm lại — dùng cho các thay đổi không phải dữ liệu (chế độ xem, giao diện sáng/tối)
-function saveUI(){
-  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
-  syncTs = Date.now(); saveTs();
-  abSoon();
-  if(sync.ready) pushSoon();
-}
-// giống save() nhưng gộp lịch sử theo đợt gõ (tránh mỗi ký tự gõ vào ghi chú lại thành một bước hoàn tác riêng)
-function saveNotes(){
-  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
-  syncTs = Date.now(); saveTs();
-  abSoon();
-  if(sync.ready) pushSoon();
-  commitHistoryDebounced();
-}
-
-/* ---------- hoàn tác / làm lại (undo / redo) ---------- */
-let hist = [];
-let histIndex = -1;
-let histSuppressed = false;
-let histTimer = null;
-function snapshotState(){ return JSON.stringify(state); }
-function initHistory(){ hist = [snapshotState()]; histIndex = 0; updateHistBtns(); }
-function commitHistory(){
-  if(histSuppressed) return;
-  clearTimeout(histTimer);
-  const snap = snapshotState();
-  if(histIndex >= 0 && hist[histIndex] === snap) return;   // không có gì thay đổi thật sự
-  hist = hist.slice(0, histIndex + 1);
-  hist.push(snap);
-  histIndex = hist.length - 1;
-  updateHistBtns();
-}
-function commitHistoryDebounced(){
-  if(histSuppressed) return;
-  clearTimeout(histTimer);
-  histTimer = setTimeout(commitHistory, 800);
-}
-function restoreSnapshot(snap){
-  histSuppressed = true;
-  try{
-    state = JSON.parse(snap);
-    try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
-    syncTs = Date.now(); saveTs();
-    abSoon();
-    if(sync.ready) pushSoon();
-  } finally { histSuppressed = false; }
-  fixView(); render(); renderTodos(); updateHistBtns();
-}
-function undo(){
-  clearTimeout(histTimer); commitHistory();
-  if(histIndex <= 0) return;
-  histIndex--; restoreSnapshot(hist[histIndex]);
-}
-function redo(){
-  clearTimeout(histTimer); commitHistory();
-  if(histIndex >= hist.length - 1) return;
-  histIndex++; restoreSnapshot(hist[histIndex]);
-}
-function updateHistBtns(){
-  const u = $('#undoBtn'), r = $('#redoBtn');
-  if(u) u.disabled = histIndex <= 0;
-  if(r) r.disabled = histIndex >= hist.length - 1;
-}
+const syncInfo = t => { const el = document.getElementById('syncInfo'); if(el){ el.hidden = !t; el.textContent = t || ''; } const p = document.getElementById('profileSyncInfo'); if(p) p.textContent = t || ''; };
+const saveTs = () => { try{ localStorage.setItem(tsKeyFor(curUid), String(syncTs)); }catch(e){} };
 function pushSoon(){ clearTimeout(sync.timer); sync.timer = setTimeout(pushNow, 800); }
 async function pushNow(){
   if(!sync.doc || sync.readOnly) return;
@@ -1341,11 +1256,11 @@ async function pushNow(){
   try{
     do{
       sync.dirty = false;
-      await sync.doc.set({json: JSON.stringify(state), ts: syncTs});
+      await sync.doc.set({json: JSON.stringify(state), ts: syncTs, updatedAt: firebase.firestore.FieldValue.serverTimestamp()});
     } while(sync.dirty);
-    syncInfo('Đồng bộ giữa các thiết bị: đang bật');
+    setAcctSync('ok'); syncInfo('Đã đồng bộ');
   }catch(e){
-    syncInfo('Đồng bộ lỗi (' + ((e && e.code) || '?') + '). Dữ liệu vẫn được lưu trên thiết bị này.');
+    setAcctSync('bad'); syncInfo('Đồng bộ lỗi (' + ((e && e.code) || '?') + '). Dữ liệu vẫn được lưu trên thiết bị này.');
   }
   sync.busy = false;
 }
@@ -1361,34 +1276,60 @@ function applyRemote(){
   state = st; syncTs = r.ts;
   try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
   saveTs(); initHistory(); render(); abSoon();
-  syncInfo('Đồng bộ giữa các thiết bị: vừa cập nhật từ thiết bị khác');
+  setAcctSync('ok'); syncInfo('Vừa cập nhật từ thiết bị/tài khoản khác');
 }
 const inClaude = !!(window.claude && typeof claude.use === 'function');
-function attach(doc, legacyGet){
+function detach(){
   if(sync.unsub){ try{ sync.unsub(); }catch(e){} sync.unsub = null; }
+  sync.doc = null; sync.ready = false; sync.readOnly = false;
+}
+function attach(doc, opts){
+  opts = opts || {};
+  detach();
   sync.doc = doc; sync.ready = false;
-  syncInfo('Đồng bộ giữa các thiết bị: đang kết nối…');
+  setAcctSync('busy'); syncInfo('Đang kết nối…');
   sync.unsub = doc.onSnapshot(async snap => {
     const d = snap.exists ? snap.data() : null, rts = d ? (+d.ts || 0) : 0;
-    if(d && typeof d.json === 'string' && rts > syncTs){ pendingRemote = {json:d.json, ts:rts}; applyRemote(); }
     if(!sync.ready && !snap.metadata.fromCache){
       sync.ready = true;
-      if(sync.readOnly){ syncInfo('Đồng bộ giữa các thiết bị: chế độ chỉ xem (tài khoản này chưa có quyền sửa)'); return; }
+      if(sync.readOnly){ setAcctSync('ok'); syncInfo('Chế độ chỉ xem (tài khoản này chưa có quyền sửa)'); return; }
       if(!d){
-        // chưa có bản dùng chung: chuyển bản riêng cũ (nếu có), rồi mới tới dữ liệu trên máy
-        try{
-          const ld = legacyGet ? await legacyGet() : null;
-          if(ld && typeof ld.json === 'string' && (+ld.ts || 0) > syncTs){ pendingRemote = {json:ld.json, ts:+ld.ts}; applyRemote(); }
-        }catch(e){}
-        if(hasData(state)){ if(!syncTs){ syncTs = Date.now(); saveTs(); } pushNow(); }
-        else syncInfo('Đồng bộ giữa các thiết bị: đang bật');
-      }
-      else if(rts < syncTs) pushNow();                                   // bản trên máy mới hơn bản dùng chung
-      else syncInfo('Đồng bộ giữa các thiết bị: đang bật');
+        if(opts.legacyGet){
+          try{
+            const ld = await opts.legacyGet();
+            if(ld && typeof ld.json === 'string' && (+ld.ts || 0) > syncTs){ pendingRemote = {json:ld.json, ts:+ld.ts}; applyRemote(); return; }
+          }catch(e){}
+        }
+        // chưa có dữ liệu trên tài khoản: nếu thiết bị đang có dữ liệu, hỏi trước khi đẩy lên (mục 13)
+        if(hasData(state) && opts.askOnFirstSync){
+          openSyncChoice({
+            title: 'Bạn đang có dữ liệu trên thiết bị này',
+            msg: 'Tài khoản này chưa có dữ liệu lịch trên đám mây. Bạn muốn đồng bộ dữ liệu hiện có trên thiết bị này lên tài khoản không?',
+            onUpload: () => { if(!syncTs) syncTs = Date.now(); saveTs(); pushNow(); },
+            onKeepCloud: () => { state = emptyState(); save(); render(); if(!syncTs) syncTs = Date.now(); saveTs(); pushNow(); },
+          });
+        } else if(hasData(state)){
+          if(!syncTs){ syncTs = Date.now(); saveTs(); } pushNow();
+        } else { setAcctSync('ok'); syncInfo('Đã đồng bộ'); }
+      } else if(d && typeof d.json === 'string' && rts > syncTs && opts.askOnConflict && syncTs > 0 && hasData(state)){
+        // cả máy và tài khoản đều có dữ liệu khác nhau, chưa rõ bản nào là "đang dùng": hỏi thay vì âm thầm ghi đè (mục 14)
+        openSyncChoice({
+          title: 'Dữ liệu trên thiết bị và trên tài khoản đang khác nhau',
+          msg: 'Thiết bị này có dữ liệu chưa đồng bộ, trong khi tài khoản đã có dữ liệu khác (có thể từ thiết bị khác). Chọn bản bạn muốn giữ:',
+          uploadLabel: 'Giữ dữ liệu trên thiết bị này',
+          onUpload: () => { pendingRemote = null; syncTs = Date.now(); saveTs(); pushNow(); },
+          onKeepCloud: () => { pendingRemote = {json:d.json, ts:rts}; applyRemote(); },
+        });
+      } else if(d && typeof d.json === 'string' && rts > syncTs){
+        pendingRemote = {json:d.json, ts:rts}; applyRemote();
+      } else if(rts < syncTs) pushNow();
+      else { setAcctSync('ok'); syncInfo('Đã đồng bộ'); }
+      return;
     }
-  }, e => syncInfo(e && e.code === 'permission-denied'
-        ? 'Không có quyền đọc/ghi dữ liệu. Kiểm tra lại Rules của Firestore (khóa trong Rules phải khớp SYNC_KEY trong trang).'
-        : 'Đồng bộ bị ngắt (' + ((e && e.code) || '?') + '). Tải lại trang để thử lại.'));
+    if(sync.ready && d && typeof d.json === 'string' && rts > syncTs){ pendingRemote = {json:d.json, ts:rts}; applyRemote(); }
+  }, e => { setAcctSync('bad'); syncInfo(e && e.code === 'permission-denied'
+        ? 'Không có quyền đọc/ghi dữ liệu của tài khoản này.'
+        : 'Đồng bộ bị ngắt (' + ((e && e.code) || '?') + '). Tải lại trang để thử lại.'); });
 }
 async function startSync(){
   if(!inClaude) return startCloud();                                    // trang tự host: dùng Firebase
@@ -1396,54 +1337,250 @@ async function startSync(){
   try{ [db, user] = await Promise.all([claude.use('db'), claude.use('user')]); if(user) uid = await user.id(); }catch(e){}
   if(!db){ syncInfo('Chưa bật đồng bộ: dữ liệu chỉ lưu trên thiết bị này.'); return; }
   try{ if(user && (await user.can('data.write')) === false) sync.readOnly = true; }catch(e){}
-  attach(db.doc('planner/main'), async () => {
+  attach(db.doc('planner/main'), {legacyGet: async () => {
     if(!uid) return null;
     const ls = await db.doc('data/users/' + uid + '/planner').get();
     return ls.exists ? ls.data() : null;
-  });
+  }});
 }
-/* ---------- Firebase (không cần tài khoản Claude) ---------- */
+/* ---------- Firebase Auth + Firestore (đăng ký/đăng nhập tài khoản) ---------- */
 const fb = {auth:null, db:null, user:null, ready:false};
-function cloudUI(){
-  const b = document.getElementById('cloudBtn'); if(!b) return;
-  b.hidden = inClaude || !FIREBASE_CONFIG || !fb.ready || !!SYNC_KEY;
-  b.textContent = fb.user ? 'Đăng xuất Google (' + (fb.user.email || '') + ')' : 'Đăng nhập Google để đồng bộ';
-}
 const loadScript = src => new Promise((res, rej) => { const el = document.createElement('script'); el.src = src; el.onload = res; el.onerror = () => rej(new Error(src)); document.head.appendChild(el); });
+function initials(nameOrEmail){
+  const s = (nameOrEmail || '').trim(); if(!s) return '?';
+  const parts = s.split(/\s+/);
+  if(parts.length > 1) return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+  return s[0].toUpperCase();
+}
+function setAcctSync(state){
+  const el = document.getElementById('acctSy'); if(!el) return;
+  el.className = 'sy' + (state ? ' ' + state : '');
+  el.title = state === 'ok' ? 'Đã đồng bộ' : state === 'busy' ? 'Đang đồng bộ…' : state === 'bad' ? 'Đồng bộ lỗi' : 'Chưa đăng nhập';
+}
+function updateAcctUI(){
+  const chip = document.getElementById('acctChip'), av = document.getElementById('acctAv'), nm = document.getElementById('acctNm');
+  if(!chip) return;
+  chip.hidden = inClaude || !FIREBASE_CONFIG;
+  const u = fb.user;
+  if(u){
+    av.textContent = initials(u.displayName || u.email);
+    nm.textContent = u.displayName || u.email || '';
+    chip.title = u.email || '';
+    setAcctSync(sync.doc ? undefined : 'bad');
+  } else {
+    av.textContent = '?'; nm.textContent = 'Đăng nhập / Đăng ký'; chip.title = '';
+    setAcctSync(null);
+  }
+  const lm = document.getElementById('legacyMigrateBtn'); if(lm) lm.hidden = !u;
+}
 async function startCloud(){
   if(!FIREBASE_CONFIG){ syncInfo('Chưa thiết lập đồng bộ đám mây: dữ liệu chỉ lưu trên thiết bị này.'); return; }
   if(location.protocol !== 'http:' && location.protocol !== 'https:'){ syncInfo('Đồng bộ đám mây cần mở trang qua địa chỉ web (https://…), không mở file trực tiếp.'); return; }
   try{
     const base = 'https://www.gstatic.com/firebasejs/' + FB_VER + '/';
     await loadScript(base + 'firebase-app-compat.js');
-    await Promise.all(SYNC_KEY ? [loadScript(base + 'firebase-firestore-compat.js')] : [loadScript(base + 'firebase-auth-compat.js'), loadScript(base + 'firebase-firestore-compat.js')]);
+    await Promise.all([loadScript(base + 'firebase-auth-compat.js'), loadScript(base + 'firebase-firestore-compat.js')]);
     firebase.initializeApp(FIREBASE_CONFIG);
     fb.db = firebase.firestore();
-    if(!SYNC_KEY) fb.auth = firebase.auth();
-  }catch(e){ syncInfo('Không tải được Firebase (đang offline?). Dữ liệu vẫn được lưu trên thiết bị này.'); return; }
+    fb.auth = firebase.auth();
+    try{ await fb.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL); }catch(e){}
+  }catch(e){ syncInfo('Không tải được dịch vụ tài khoản (đang offline?). Dữ liệu vẫn được lưu trên thiết bị này.'); return; }
   fb.ready = true;
-  if(SYNC_KEY){ attach(fb.db.doc('planner/' + SYNC_KEY)); return; }     // chế độ khóa: không cần đăng nhập
-  syncInfo('Đồng bộ giữa các thiết bị: chưa đăng nhập. Mở menu ⋯ để đăng nhập Google.');
+  updateAcctUI();
+  syncInfo('Chưa đăng nhập. Dữ liệu chỉ lưu trên thiết bị này.');
   fb.auth.onAuthStateChanged(u => {
-    fb.user = u; cloudUI();
-    if(u){ attach(fb.db.doc('planner/main')); }
-    else {
-      if(sync.unsub){ try{ sync.unsub(); }catch(e){} sync.unsub = null; }
-      sync.doc = null; sync.ready = false;
-      syncInfo('Đồng bộ giữa các thiết bị: chưa đăng nhập. Mở menu ⋯ để đăng nhập Google.');
+    fb.user = u; curUid = u ? u.uid : null;
+    try{ syncTs = +localStorage.getItem(tsKeyFor(curUid)) || 0; }catch(e){ syncTs = 0; }
+    updateAcctUI();
+    if(u){
+      attach(fb.db.doc('users/' + u.uid + '/planner/main'), {askOnFirstSync:true, askOnConflict:true});
+    } else {
+      detach();
+      syncInfo('Chưa đăng nhập. Dữ liệu chỉ lưu trên thiết bị này.');
     }
   });
 }
-async function cloudToggle(){
-  if(!fb.auth) return;
-  if(fb.user){ if(confirm('Đăng xuất Google trên thiết bị này? Dữ liệu vẫn được giữ trên thiết bị và trên đám mây.')) fb.auth.signOut(); return; }
+function friendlyAuthErr(e){
+  const c = e && e.code || '';
+  const map = {
+    'auth/invalid-email':'Email không đúng định dạng.',
+    'auth/missing-email':'Vui lòng nhập email.',
+    'auth/user-not-found':'Email hoặc mật khẩu không đúng.',
+    'auth/wrong-password':'Email hoặc mật khẩu không đúng.',
+    'auth/invalid-credential':'Email hoặc mật khẩu không đúng.',
+    'auth/invalid-login-credentials':'Email hoặc mật khẩu không đúng.',
+    'auth/email-already-in-use':'Email này đã được đăng ký. Hãy đăng nhập hoặc dùng "Quên mật khẩu?".',
+    'auth/weak-password':'Mật khẩu quá yếu (cần ít nhất 6 ký tự).',
+    'auth/too-many-requests':'Bạn thao tác quá nhiều lần. Vui lòng thử lại sau ít phút.',
+    'auth/network-request-failed':'Lỗi mạng. Kiểm tra kết nối Internet và thử lại.',
+    'auth/popup-closed-by-user':'', 'auth/cancelled-popup-request':'',
+    'auth/requires-recent-login':'Vì lý do bảo mật, hãy đăng xuất và đăng nhập lại trước khi thực hiện thao tác này.',
+  };
+  return map.hasOwnProperty(c) ? map[c] : 'Có lỗi xảy ra (' + (c || 'không rõ') + '). Vui lòng thử lại.';
+}
+/* ---------- hộp thoại Đăng nhập / Đăng ký / Quên mật khẩu ---------- */
+const authDlg = document.getElementById('authDlg'), authForm = document.getElementById('authForm');
+let authMode = 'login', authBusy = false;
+function setAuthMode(m){
+  authMode = m;
+  document.getElementById('authSeg').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.m === m));
+  document.querySelector('#authDlg [data-f=name]').hidden = m !== 'register';
+  document.querySelector('#authDlg [data-f=pass2]').hidden = m !== 'register';
+  document.querySelector('#authDlg [data-f=pass]').hidden = m === 'reset';
+  document.getElementById('authForgot').hidden = m !== 'login';
+  document.getElementById('authGoogleWrap').hidden = m === 'reset';
+  document.getElementById('authTitle').textContent = m === 'login' ? 'Đăng nhập' : m === 'register' ? 'Đăng ký tài khoản' : 'Quên mật khẩu';
+  document.getElementById('authSubmit').textContent = m === 'login' ? 'Đăng nhập' : m === 'register' ? 'Đăng ký' : 'Gửi email đặt lại mật khẩu';
+  document.getElementById('authErr').textContent = '';
+  const hint = document.getElementById('authHint');
+  if(m === 'reset'){ hint.hidden = false; hint.textContent = 'Nhập email của bạn, chúng tôi sẽ gửi liên kết đặt lại mật khẩu.'; }
+  else hint.hidden = true;
+}
+function openAuth(mode){
+  if(!fb.auth){ alert('Đang tải dịch vụ tài khoản, vui lòng thử lại sau vài giây.'); return; }
+  authForm.reset(); setAuthMode(mode || 'login'); authDlg.showModal();
+}
+document.getElementById('authSeg').addEventListener('click', e => { const b = e.target.closest('button'); if(b) setAuthMode(b.dataset.m); });
+document.getElementById('authForgot').addEventListener('click', () => setAuthMode('reset'));
+document.getElementById('authClose').addEventListener('click', () => authDlg.close());
+authDlg.addEventListener('click', e => { if(e.target === authDlg) authDlg.close(); });
+authForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  if(authBusy) return;
+  const f = authForm.elements, errEl = document.getElementById('authErr');
+  const email = f.email.value.trim(), pass = f.pass.value;
+  errEl.textContent = '';
+  if(!email){ errEl.textContent = 'Vui lòng nhập email.'; return; }
+  if(authMode !== 'reset' && !pass){ errEl.textContent = 'Vui lòng nhập mật khẩu.'; return; }
+  if(authMode === 'register'){
+    if(pass.length < 6){ errEl.textContent = 'Mật khẩu cần ít nhất 6 ký tự.'; return; }
+    if(pass !== f.pass2.value){ errEl.textContent = 'Hai mật khẩu không khớp.'; return; }
+  }
+  authBusy = true; document.getElementById('authSubmit').disabled = true;
+  try{
+    if(authMode === 'login'){
+      await fb.auth.signInWithEmailAndPassword(email, pass);
+      authDlg.close();
+    } else if(authMode === 'register'){
+      const cred = await fb.auth.createUserWithEmailAndPassword(email, pass);
+      if(f.name.value.trim()) try{ await cred.user.updateProfile({displayName: f.name.value.trim()}); }catch(e){}
+      try{ await cred.user.sendEmailVerification(); }catch(e){}
+      authDlg.close();
+      alert('Đăng ký thành công! Chúng tôi đã gửi một email xác minh tới ' + email + '. Vui lòng kiểm tra hộp thư (kể cả mục spam) và xác minh email của bạn.');
+    } else {
+      await fb.auth.sendPasswordResetEmail(email);
+      authDlg.close();
+      alert('Đã gửi email đặt lại mật khẩu tới ' + email + '. Vui lòng kiểm tra hộp thư.');
+    }
+  }catch(err){ errEl.textContent = friendlyAuthErr(err); }
+  authBusy = false; document.getElementById('authSubmit').disabled = false;
+});
+document.getElementById('authGoogle').addEventListener('click', async () => {
+  if(!fb.auth || authBusy) return;
   const prov = new firebase.auth.GoogleAuthProvider();
-  try{ await fb.auth.signInWithPopup(prov); }
+  try{ await fb.auth.signInWithPopup(prov); authDlg.close(); }
   catch(e){
     if(e && (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment')){ fb.auth.signInWithRedirect(prov); return; }
     if(e && (e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request')) return;
-    alert('Đăng nhập không thành công (' + ((e && e.code) || '?') + '). Kiểm tra lại tên miền được phép trong Firebase → Authentication → Settings → Authorized domains.');
+    document.getElementById('authErr').textContent = friendlyAuthErr(e);
   }
+});
+/* ---------- hộp thoại Tài khoản của tôi ---------- */
+const profileDlg = document.getElementById('profileDlg'), profileForm = document.getElementById('profileForm');
+function openProfile(){
+  if(!fb.user) return;
+  profileForm.elements.name.value = fb.user.displayName || '';
+  profileForm.elements.email.value = fb.user.email || '';
+  profileForm.elements.curPass.value = ''; profileForm.elements.newPass.value = ''; profileForm.elements.delConfirm.value = '';
+  document.getElementById('profileErr').textContent = ''; document.getElementById('pwErr').textContent = ''; document.getElementById('delErr').textContent = '';
+  const vh = document.getElementById('profileVerifyHint'); vh.hidden = !!fb.user.emailVerified;
+  document.getElementById('profileSyncInfo').textContent = document.getElementById('syncInfo').textContent || 'Đã đồng bộ';
+  profileDlg.showModal();
+}
+document.getElementById('acctChip').addEventListener('click', () => { fb.user ? openProfile() : openAuth('login'); });
+document.getElementById('profileClose').addEventListener('click', () => profileDlg.close());
+profileDlg.addEventListener('click', e => { if(e.target === profileDlg) profileDlg.close(); });
+document.getElementById('profileResendVerify').addEventListener('click', async e => {
+  e.preventDefault(); if(!fb.user) return;
+  try{ await fb.user.sendEmailVerification(); alert('Đã gửi lại email xác minh tới ' + fb.user.email + '.'); }
+  catch(err){ alert(friendlyAuthErr(err)); }
+});
+document.getElementById('profileSaveName').addEventListener('click', async () => {
+  if(!fb.user) return;
+  const name = profileForm.elements.name.value.trim(), errEl = document.getElementById('profileErr');
+  errEl.textContent = '';
+  try{ await fb.user.updateProfile({displayName: name}); updateAcctUI(); errEl.textContent = 'Đã lưu.'; errEl.style.color = 'var(--accent)'; }
+  catch(err){ errEl.style.color = ''; errEl.textContent = friendlyAuthErr(err); }
+});
+document.getElementById('pwSave').addEventListener('click', async () => {
+  if(!fb.user) return;
+  const cur = profileForm.elements.curPass.value, np = profileForm.elements.newPass.value, errEl = document.getElementById('pwErr');
+  errEl.textContent = '';
+  if(!cur || !np){ errEl.textContent = 'Vui lòng nhập đủ mật khẩu hiện tại và mật khẩu mới.'; return; }
+  if(np.length < 6){ errEl.textContent = 'Mật khẩu mới cần ít nhất 6 ký tự.'; return; }
+  try{
+    const cred = firebase.auth.EmailAuthProvider.credential(fb.user.email, cur);
+    await fb.user.reauthenticateWithCredential(cred);
+    await fb.user.updatePassword(np);
+    profileForm.elements.curPass.value = ''; profileForm.elements.newPass.value = '';
+    errEl.style.color = 'var(--accent)'; errEl.textContent = 'Đã đổi mật khẩu.';
+  }catch(err){ errEl.style.color = ''; errEl.textContent = friendlyAuthErr(err); }
+});
+document.getElementById('profileExport').addEventListener('click', () => download(DATA_FILE, JSON.stringify(state, null, 2), 'application/json'));
+document.getElementById('profileLogout').addEventListener('click', async () => {
+  profileDlg.close();
+  try{ await fb.auth.signOut(); }catch(e){}
+});
+document.getElementById('profileDelete').addEventListener('click', async () => {
+  if(!fb.user) return;
+  const errEl = document.getElementById('delErr');
+  errEl.textContent = '';
+  if(profileForm.elements.delConfirm.value.trim() !== 'XÓA TÀI KHOẢN'){ errEl.textContent = 'Vui lòng nhập đúng "XÓA TÀI KHOẢN" để xác nhận.'; return; }
+  if(!confirm('Xóa vĩnh viễn tài khoản và toàn bộ dữ liệu đám mây liên quan? Hành động này không thể hoàn tác.')) return;
+  try{
+    const uid = fb.user.uid;
+    detach();
+    try{ await fb.db.doc('users/' + uid + '/planner/main').delete(); }catch(e){}
+    await fb.user.delete();
+    profileDlg.close();
+    alert('Đã xóa tài khoản. Dữ liệu trên thiết bị này vẫn được giữ lại.');
+  }catch(err){
+    if(err && err.code === 'auth/requires-recent-login'){ errEl.textContent = 'Vì lý do bảo mật, hãy đăng xuất, đăng nhập lại rồi thử xóa tài khoản lại ngay sau đó.'; }
+    else errEl.textContent = friendlyAuthErr(err);
+  }
+});
+/* ---------- hộp thoại xử lý dữ liệu cục bộ (mục 13, 14) ---------- */
+const syncChoiceDlg = document.getElementById('syncChoiceDlg');
+function openSyncChoice(opt){
+  document.getElementById('syncChoiceTitle').textContent = opt.title;
+  document.getElementById('syncChoiceMsg').textContent = opt.msg;
+  const up = document.getElementById('syncChoiceUpload');
+  up.textContent = opt.uploadLabel || 'Đồng bộ dữ liệu thiết bị này lên tài khoản';
+  const onUpload = () => { syncChoiceDlg.close(); opt.onUpload && opt.onUpload(); };
+  const onKeep = () => { syncChoiceDlg.close(); opt.onKeepCloud && opt.onKeepCloud(); };
+  const onCancel = () => { syncChoiceDlg.close(); };
+  up.onclick = onUpload;
+  document.getElementById('syncChoiceKeepCloud').onclick = onKeep;
+  document.getElementById('syncChoiceCancel').onclick = onCancel;
+  syncChoiceDlg.showModal();
+}
+/* ---------- nhập dữ liệu một lần từ chế độ đồng bộ-bằng-khóa cũ (trước khi có tài khoản) ----------
+   Trước đây trang dùng LEGACY_SYNC_KEY: ai có đường link là xem/sửa được, không có tài khoản riêng.
+   Hàm này CHỈ chạy khi người dùng đã đăng nhập và tự bấm nút trong menu ⋯ — không tự động chạy cho
+   người dùng mới, để tránh vô tình gán dữ liệu của người trước cho một tài khoản bất kỳ. */
+async function migrateLegacyShared(){
+  if(!fb.user || !fb.db){ alert('Vui lòng đăng nhập trước.'); return; }
+  if(!confirm('Nhập dữ liệu từ bản đồng bộ-bằng-khóa cũ (trước khi có tài khoản) vào tài khoản hiện tại? Chỉ nên làm việc này một lần, trên đúng tài khoản của bạn.')) return;
+  try{
+    const snap = await fb.db.doc('planner/' + LEGACY_SYNC_KEY).get();
+    if(!snap.exists){ alert('Không tìm thấy dữ liệu cũ.'); return; }
+    const d = snap.data();
+    if(!d || typeof d.json !== 'string'){ alert('Dữ liệu cũ không hợp lệ.'); return; }
+    const ts = +d.ts || Date.now();
+    if(ts <= syncTs){ alert('Dữ liệu trên tài khoản hiện tại đã mới hơn hoặc bằng bản cũ — không cần nhập lại.'); return; }
+    pendingRemote = {json:d.json, ts}; applyRemote();
+    alert('Đã nhập dữ liệu cũ vào tài khoản này.');
+  }catch(e){ alert('Không đọc được dữ liệu cũ (' + ((e && e.code) || '?') + ').'); }
 }
 
 let state = load();
@@ -2824,8 +2961,8 @@ $('#menu').addEventListener('click', e => {
   if(a === 'print') window.print();
   if(a === 'autobackup') abToggle();
   if(a === 'autobackup-change') abChangeLocation();
-  if(a === 'cloud') cloudToggle();
   if(a === 'notify') enableScheduleNotifications();
+  if(a === 'legacy-migrate') migrateLegacyShared();
   if(a === 'export') saveBackupFile();
   if(a === 'export-new') saveBackupNewFile();
   if(a === 'ics') download('lich-trinh.ics', toICS(), 'text/calendar');
