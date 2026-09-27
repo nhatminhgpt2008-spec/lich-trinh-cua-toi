@@ -540,7 +540,8 @@ dialog h2{margin:0 0 14px;font-size:17px}
 .actions{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
 .grow{flex:1}
 /* "Tài khoản của tôi" */
-#profileDlg{width:min(560px,94vw);height:min(640px,86dvh);display:flex;flex-direction:column}
+#profileDlg{width:min(560px,94vw);height:min(640px,86dvh)}
+#profileDlg[open]{display:flex;flex-direction:column}
 #profileDlg form{padding:18px;overflow-y:auto;flex:1;min-height:0}
 /* header dạng lưới: cột avatar cố định + cột tên/email co giãn + cột nút bên phải, để tên/email co lại thay vì đè lên nút */
 .acctModalHead{display:grid;grid-template-columns:44px 1fr auto;grid-template-rows:auto auto;column-gap:12px;row-gap:6px;align-items:center;padding-bottom:14px;margin-bottom:6px;border-bottom:1px solid var(--line);flex:0 0 auto}
