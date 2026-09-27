@@ -78,7 +78,7 @@ textarea{height:auto;padding:8px 10px;width:100%;resize:vertical}
 .acct .sy{width:7px;height:7px;border-radius:50%;background:var(--muted);flex:0 0 auto}
 .acct .sy.ok{background:var(--accent)}.acct .sy.bad{background:var(--danger)}.acct .sy.busy{background:var(--warn)}
 .authSeg{margin:8px 0}
-.authSeg button{flex:1;justify-content:center}
+.authSeg button{flex:1;justify-content:center;white-space:nowrap;padding:0 6px;font-size:13.5px}
 dialog h3{font-size:14px;margin:18px 0 8px;padding-top:14px;border-top:1px solid var(--line)}
 dialog .btn.danger{border-color:var(--danger)}
 
@@ -475,6 +475,31 @@ dialog h2{margin:0 0 14px;font-size:17px}
 .fgrid input,.fgrid select{width:100%;color:var(--ink)}
 .fgrid input:disabled{opacity:.45;cursor:not-allowed}
 .syncinfo{margin-top:4px;padding:8px 10px 4px;border-top:1px solid var(--line);font-size:11.5px;line-height:1.4;color:var(--muted)}
+.pf-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.pf-head .av{width:52px;height:52px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;flex:0 0 auto}
+.pf-head .who{min-width:0;flex:1}
+.pf-head .who .nm{font-size:15.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pf-head .who .em{font-size:12.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pf-head .verify{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--line-soft);color:var(--muted);white-space:nowrap;flex:0 0 auto}
+.pf-head .verify.ok{background:var(--accent-soft);color:var(--accent)}
+dialog h3{display:flex;align-items:center;gap:8px}
+dialog h3 .ic{width:18px;height:18px;flex:0 0 auto;opacity:.75}
+details.pf-sec{border-top:1px solid var(--line);padding-top:14px;margin:18px 0 8px}
+details.pf-sec:first-of-type{border-top:0;margin-top:0;padding-top:0}
+details.pf-sec>summary{list-style:none;cursor:pointer;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;color:var(--ink)}
+details.pf-sec>summary::-webkit-details-marker{display:none}
+details.pf-sec>summary:focus{outline:none}
+details.pf-sec>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+details.pf-sec>summary::after{content:'';margin-left:auto;width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .15s}
+details.pf-sec[open]>summary::after{transform:rotate(45deg)}
+details.pf-sec>.pf-body{padding-top:12px}
+.pf-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line-soft)}
+.pf-row:first-child{border-top:0;padding-top:0}
+.pf-row .lbl{font-size:13.5px}
+.pf-row .sub{font-size:11.5px;color:var(--muted);margin-top:2px}
+.danger-zone{border:1px solid var(--cancel-bd);background:var(--cancel-bg);border-radius:10px;padding:12px 14px}
+.danger-zone p{margin:0 0 10px;font-size:12.5px;color:var(--ink);line-height:1.5}
+.danger-zone .fgrid{margin-bottom:0}
 .fgrid .full{grid-column:1/-1}
 .hint{grid-column:1/-1;font-size:12.5px;color:var(--muted);background:var(--line-soft);padding:6px 10px;border-radius:8px;margin:0}
 .err{color:var(--danger);min-height:18px;margin:8px 0 0;font-size:13px}
@@ -943,36 +968,67 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
 <!-- Tài khoản của tôi -->
 <dialog id="profileDlg">
   <form id="profileForm" autocomplete="off" onsubmit="return false">
-    <h2>Tài khoản của tôi</h2>
-    <div class="fgrid">
-      <label class="full">Tên hiển thị<input name="name" maxlength="80"></label>
-      <label class="full">Email<input name="email" disabled></label>
-    </div>
-    <p class="hint" id="profileVerifyHint" hidden>Email chưa được xác minh. <a href="#" id="profileResendVerify">Gửi lại email xác minh</a></p>
-    <p class="err" id="profileErr"></p>
-    <div class="actions"><span class="grow"></span><button type="button" class="btn primary" id="profileSaveName">Lưu tên</button></div>
-
-    <h3>Đổi mật khẩu</h3>
-    <div class="fgrid" id="pwFields">
-      <label class="full">Mật khẩu hiện tại<input name="curPass" type="password" autocomplete="current-password"></label>
-      <label class="full">Mật khẩu mới<input name="newPass" type="password" autocomplete="new-password"></label>
-    </div>
-    <p class="err" id="pwErr"></p>
-    <div class="actions"><span class="grow"></span><button type="button" class="btn" id="pwSave">Đổi mật khẩu</button></div>
-
-    <h3>Đồng bộ &amp; dữ liệu</h3>
-    <p class="syncinfo" id="profileSyncInfo"></p>
-    <div class="actions">
-      <button type="button" class="btn" id="profileExport">Tải xuống dữ liệu (.json)</button>
-      <span class="grow"></span>
-      <button type="button" class="btn" id="profileLogout">Đăng xuất</button>
+    <div class="pf-head">
+      <span class="av" id="pfAv"></span>
+      <div class="who">
+        <div class="nm" id="pfName">&nbsp;</div>
+        <div class="em" id="pfEmail">&nbsp;</div>
+      </div>
+      <span class="verify" id="profileVerifyHint" hidden>Chưa xác minh · <a href="#" id="profileResendVerify">gửi lại</a></span>
+      <span class="verify ok" id="pfVerifiedBadge" hidden>Đã xác minh</span>
     </div>
 
-    <h3>Xóa tài khoản</h3>
-    <p class="hint">Xóa tài khoản sẽ xóa dữ liệu cloud liên quan đến tài khoản này. Hành động này có thể không thể hoàn tác. Dữ liệu trên thiết bị này vẫn được giữ lại.</p>
-    <div class="fgrid"><label class="full">Nhập <b>XÓA TÀI KHOẢN</b> để xác nhận<input name="delConfirm" autocomplete="off"></label></div>
-    <p class="err" id="delErr"></p>
-    <div class="actions"><span class="grow"></span><button type="button" class="btn danger" id="profileDelete">Xóa tài khoản</button><button type="button" class="btn" id="profileClose">Đóng</button></div>
+    <details class="pf-sec" open>
+      <summary>Thông tin cá nhân</summary>
+      <div class="pf-body">
+        <div class="fgrid">
+          <label class="full">Tên hiển thị<input name="name" maxlength="80"></label>
+          <label class="full" hidden>Email<input name="email" disabled></label>
+        </div>
+        <p class="err" id="profileErr"></p>
+        <div class="actions"><span class="grow"></span><button type="button" class="btn primary" id="profileSaveName">Lưu tên</button></div>
+      </div>
+    </details>
+
+    <details class="pf-sec">
+      <summary>Đổi mật khẩu</summary>
+      <div class="pf-body">
+        <div class="fgrid" id="pwFields">
+          <label class="full">Mật khẩu hiện tại<input name="curPass" type="password" autocomplete="current-password"></label>
+          <label class="full">Mật khẩu mới<input name="newPass" type="password" autocomplete="new-password"></label>
+        </div>
+        <p class="err" id="pwErr"></p>
+        <div class="actions"><span class="grow"></span><button type="button" class="btn" id="pwSave">Đổi mật khẩu</button></div>
+      </div>
+    </details>
+
+    <details class="pf-sec" open>
+      <summary>Đồng bộ &amp; dữ liệu</summary>
+      <div class="pf-body">
+        <div class="pf-row">
+          <div><div class="lbl">Trạng thái đồng bộ</div><div class="sub" id="profileSyncInfo">—</div></div>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn" id="profileExport">Tải xuống dữ liệu (.json)</button>
+          <span class="grow"></span>
+          <button type="button" class="btn" id="profileLogout">Đăng xuất</button>
+        </div>
+      </div>
+    </details>
+
+    <details class="pf-sec">
+      <summary>Xóa tài khoản</summary>
+      <div class="pf-body">
+        <div class="danger-zone">
+          <p>Thao tác này xóa vĩnh viễn dữ liệu trên đám mây của tài khoản. Dữ liệu trên thiết bị này vẫn được giữ lại.</p>
+          <div class="fgrid"><label class="full">Nhập <b>XÓA TÀI KHOẢN</b> để xác nhận<input name="delConfirm" autocomplete="off" placeholder="XÓA TÀI KHOẢN"></label></div>
+          <p class="err" id="delErr"></p>
+          <div class="actions"><span class="grow"></span><button type="button" class="btn danger" id="profileDelete">Xóa tài khoản</button></div>
+        </div>
+      </div>
+    </details>
+
+    <div class="actions" style="margin-top:18px"><span class="grow"></span><button type="button" class="btn" id="profileClose">Đóng</button></div>
   </form>
 </dialog>
 
@@ -1673,7 +1729,11 @@ function openProfile(){
   profileForm.elements.email.value = fb.user.email || '';
   profileForm.elements.curPass.value = ''; profileForm.elements.newPass.value = ''; profileForm.elements.delConfirm.value = '';
   document.getElementById('profileErr').textContent = ''; document.getElementById('pwErr').textContent = ''; document.getElementById('delErr').textContent = '';
-  const vh = document.getElementById('profileVerifyHint'); vh.hidden = !!fb.user.emailVerified;
+  document.getElementById('pfAv').textContent = initials(fb.user.displayName || fb.user.email);
+  document.getElementById('pfName').textContent = fb.user.displayName || fb.user.email || '';
+  document.getElementById('pfEmail').textContent = fb.user.email || '';
+  const vh = document.getElementById('profileVerifyHint'), vok = document.getElementById('pfVerifiedBadge');
+  vh.hidden = !!fb.user.emailVerified; vok.hidden = !fb.user.emailVerified;
   document.getElementById('profileSyncInfo').textContent = document.getElementById('syncInfo').textContent || 'Đã đồng bộ';
   profileDlg.showModal();
 }
@@ -1716,7 +1776,7 @@ document.getElementById('profileDelete').addEventListener('click', async () => {
   const errEl = document.getElementById('delErr');
   errEl.textContent = '';
   if(profileForm.elements.delConfirm.value.trim() !== 'XÓA TÀI KHOẢN'){ errEl.textContent = 'Vui lòng nhập đúng "XÓA TÀI KHOẢN" để xác nhận.'; return; }
-  if(!confirm('Xóa vĩnh viễn tài khoản và toàn bộ dữ liệu đám mây liên quan? Hành động này không thể hoàn tác.')) return;
+  if(!confirm('⚠️ XÁC NHẬN LẦN CUỐI\n\nTài khoản "' + (fb.user.email || '') + '" và toàn bộ dữ liệu trên đám mây sẽ bị xóa vĩnh viễn, không thể khôi phục.\n\nDữ liệu trên thiết bị này vẫn được giữ lại.\n\nBấm OK để xóa ngay.')) return;
   try{
     const uid = fb.user.uid;
     detach();
