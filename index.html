@@ -1967,11 +1967,12 @@ function dueChip(t){
 }
 /* bản chữ thường (không có khung chip) của dueChip, dùng cho banner “Đang diễn ra / Tiếp theo” để cùng kiểu chữ đậm với “sau …” của lịch tiếp theo */
 function dueTxt(t){
-  const n = daysBetween(todayStr(), t.due);
-  if(n < 0) return `Quá hạn ${-n} ngày`;
-  if(n === 0) return t.dueTime && t.dueTime < nowHM() ? 'Quá giờ' : 'còn hôm nay';
-  if(n === 1) return 'còn ngày mai';
-  return `còn ${n} ngày`;
+  if(dueLate(t)){
+    const n = daysBetween(todayStr(), t.due);
+    return n < 0 ? `Quá hạn ${-n} ngày` : 'Quá giờ';
+  }
+  const end = new Date(`${t.due}T${t.dueTime || '23:59'}:59`).getTime();
+  return 'còn ' + fmtHMS(end - Date.now());
 }
 const dueLate = t => { const n = daysBetween(todayStr(), t.due); return n < 0 || (n === 0 && t.dueTime && t.dueTime < nowHM()); };
 /* tiêu đề · nội dung chính · liên kết (dùng chung cho deadline và ghi chú) */
@@ -3108,18 +3109,29 @@ function dayDm(date){
   const n = daysBetween(todayStr(), date);
   return `${n === 0 ? 'Hôm nay' : n === 1 ? 'Ngày mai' : dowShort(date)} · ${dm(date)}`;
 }
-const fmtHMS = ms => { const t = Math.max(0, Math.floor(ms / 1000)), h = Math.floor(t / 3600), m = Math.floor(t % 3600 / 60), sec = t % 60; return (h ? h + ':' + pad(m) : m) + ':' + pad(sec); };
+const fmtHMS = ms => {
+  const t = Math.max(0, Math.floor(ms / 1000));
+  const Y = 365*86400, M = 30*86400;
+  const y = Math.floor(t / Y), afterY = t % Y;
+  const mo = Math.floor(afterY / M), afterMo = afterY % M;
+  const d = Math.floor(afterMo / 86400), afterD = afterMo % 86400;
+  const h = Math.floor(afterD / 3600), m = Math.floor(afterD % 3600 / 60), sec = afterD % 60;
+  if(y) return `${y} năm ${mo} tháng`;
+  if(mo) return `${mo} tháng ${d} ngày`;
+  if(d) return `${d} ngày ${pad(h)}:${pad(m)}:${pad(sec)}`;
+  return (h ? h + ':' + pad(m) : m) + ':' + pad(sec);
+};
 function renderNowBar(){
   const el = document.getElementById('nowBar'); if(!el) return;
   const {live, next, now} = upcoming(1);
   const meta = (o, extra, pre) => `<span class="rg">${esc([pre, `${o.ev.start} - ${o.ev.end}`].filter(Boolean).join(' · '))} · </span><b class="cd">${esc(extra)}</b>`;
   const leftRows = [];
   live.slice(0, 2).forEach(o => leftRows.push(
-    `<div class="nb live" data-id="${esc(o.ev.id)}" data-date="${esc(o.date)}"><span class="k">🔴<em> Đang diễn ra</em></span><span class="t">${esc(o.ev.title)}</span><span class="m">${meta(o, 'còn ' + fmtHMS(occEndMs(o) - now), dayDm(o.date))}</span></div>`));
+    `<div class="nb live" data-id="${esc(o.ev.id)}" data-date="${esc(o.date)}"><span class="k">🔴<em> Đang diễn ra</em></span><span class="t">${esc(o.ev.title)}</span><span class="m">${meta(o, 'còn ' + fmtHMS(occEndMs(o) - now), dm(o.date))}</span></div>`));
   next.slice(0, 1).forEach(o => leftRows.push(
-    `<div class="nb next" data-id="${esc(o.ev.id)}" data-date="${esc(o.date)}"><span class="k">⏳<em> Tiếp theo</em></span><span class="t">${esc(o.ev.title)}</span><span class="m">${meta(o, 'sau ' + fmtHMS(occStartMs(o) - now), dayDm(o.date))}</span></div>`));
+    `<div class="nb next" data-id="${esc(o.ev.id)}" data-date="${esc(o.date)}"><span class="k">⏳<em> Tiếp theo</em></span><span class="t">${esc(o.ev.title)}</span><span class="m">${meta(o, 'còn ' + fmtHMS(occStartMs(o) - now), dm(o.date))}</span></div>`));
   const dls = state.todos.filter(t => !t.done && t.due).sort((a, b) => (a.due + (a.dueTime || '23:59')).localeCompare(b.due + (b.dueTime || '23:59')));
-  const rightRows = dls.map(dl => `<div class="nb dl" data-todo="${esc(dl.id)}"><span class="k">📌<em> Deadline</em></span><span class="t">${esc(dl.text)}</span><span class="m"><span class="rg">${esc(whenTxt(dl.due))}${dl.dueTime ? ' · ' + esc(dl.dueTime) : ''} · </span><b class="cd${dueLate(dl)?' late':''}">${esc(dueTxt(dl))}</b></span></div>`);
+  const rightRows = dls.map(dl => `<div class="nb dl" data-todo="${esc(dl.id)}"><span class="k">📌<em> Deadline</em></span><span class="t">${esc(dl.text)}</span><span class="m"><span class="rg">${esc(dm(dl.due))}${dl.dueTime ? ' · ' + esc(dl.dueTime) : ''} · </span><b class="cd${dueLate(dl)?' late':''}">${esc(dueTxt(dl))}</b></span></div>`);
   el.hidden = false;
   if(!leftRows.length && !rightRows.length){
     el.innerHTML = '<div class="nb none"><span class="k">📭</span><span class="t">Không có lịch sắp diễn ra</span></div>';
