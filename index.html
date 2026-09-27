@@ -73,7 +73,7 @@ textarea{height:auto;padding:8px 10px;width:100%;resize:vertical}
 .menu-pop button:hover{background:var(--line-soft)}
 
 /* banner đang diễn ra / tiếp theo */
-.nowbar{display:grid;gap:6px;align-items:start;margin:0 0 8px;padding:6px 0;position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg)}
+.nowbar{display:grid;gap:6px;align-items:start;margin:0 0 8px;padding:6px 0;background:var(--bg)}   /* bỏ sticky: cuộn theo trang bình thường, không bám/nổi lên khi scroll nữa */
 .nowbar .nbcol{display:grid;gap:6px;min-width:0}
 .nowbar .nb{font-variant-numeric:tabular-nums}
 .nowbar .nb.none{--nbc:var(--muted);cursor:default;background:var(--surface)}
@@ -152,8 +152,8 @@ textarea{height:auto;padding:8px 10px;width:100%;resize:vertical}
 }
 /* viền đều 1px khi đang diễn ra: bỏ phần viền trái dày 4px của Danh sách để khớp với vòng glow tròn đều, mượt như ở Bảng */
 .ag.live{border-left-width:1px}
-/* hover không được đổi màu nền (trước đây .cell:hover đè lên khiến ô đổi màu khi rê chuột) */
-.cell.live:hover{background:color-mix(in srgb,var(--live-color) 26%,var(--surface))}
+/* hover: đổi đúng sắc thái của chính ô đó (không rơi về màu môn học như .cell:hover mặc định), đồng thời tạo hiệu ứng sáng nhẹ khi rê chuột cho cả ô đỏ (đang diễn ra) và ô vàng (sắp diễn ra) */
+.cell.live:hover,.ag.live:hover{background:color-mix(in srgb,var(--live-color) 34%,var(--surface))}
 
 /* lớp phủ giữ đúng một tông màu, dùng chung cho cả Bảng và Danh sách */
 .ag.live::after,.cell.live::after{
@@ -202,9 +202,10 @@ textarea{height:auto;padding:8px 10px;width:100%;resize:vertical}
   50%{box-shadow:0 0 0 4px color-mix(in srgb,var(--live-color) 55%,transparent)}
 }
 .tag.live i{width:6px;height:6px;border-radius:50%;background:currentColor;animation:livedot 1.6s ease-in-out infinite;will-change:opacity}
-.ag.next{border-radius:10px;border-color:color-mix(in srgb,var(--next-color) 70%,transparent);background:color-mix(in srgb,var(--next-color) 26%,var(--bgt));--pulse-color:var(--next-color);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pulse-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--pulse-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--pulse-color) 55%,transparent);animation:schedulePulse 1.6s ease-in-out infinite}
-.cell.next{--pulse-color:var(--next-color);border-radius:10px;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pulse-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--pulse-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--pulse-color) 55%,transparent);animation:schedulePulse 1.6s ease-in-out infinite}
-.cell.next::after{content:"";position:absolute;top:0;right:0;bottom:0;left:0;border-radius:inherit;background:color-mix(in srgb,var(--next-color) 26%,transparent);pointer-events:none}
+.ag.next{border-radius:10px;border-left-width:1px;border-color:color-mix(in srgb,var(--next-color) 70%,transparent);background:color-mix(in srgb,var(--next-color) 26%,var(--surface));--pulse-color:var(--next-color);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pulse-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--pulse-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--pulse-color) 55%,transparent);animation:schedulePulse 1.6s ease-in-out infinite}
+.ag.next::after,.cell.next::after{content:"";position:absolute;inset:0;border-radius:inherit;background:color-mix(in srgb,var(--next-color) 26%,transparent);pointer-events:none}
+.cell.next{--pulse-color:var(--next-color);border-radius:10px;background:color-mix(in srgb,var(--next-color) 26%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pulse-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--pulse-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--pulse-color) 55%,transparent);animation:schedulePulse 1.6s ease-in-out infinite}
+.cell.next:hover,.ag.next:hover{background:color-mix(in srgb,var(--next-color) 34%,var(--surface))}
 .tag.next{background:var(--next-color);color:var(--next-ink);padding:0 7px 0 5px;border:1px solid var(--next-color);font-weight:800;display:inline-flex;align-items:center;gap:4px;box-shadow:0 1px 4px color-mix(in srgb,var(--next-color) 60%,transparent);animation:nextpulse 1.6s ease-in-out infinite}
 .tag.next::before{content:"⏳";font-size:9.5px;line-height:1}
 @keyframes nextpulse{50%{box-shadow:0 0 0 4px color-mix(in srgb,var(--next-color) 55%,transparent)}}
@@ -222,7 +223,16 @@ textarea{height:auto;padding:8px 10px;width:100%;resize:vertical}
 /* deadline chưa hoàn thành: hiện ở ngày hạn chót (Bảng: hàng “Deadline”; Danh sách: thẻ theo giờ hạn chót) */
 .tag.dl{background:var(--dl);color:var(--dl-ink)}
 /* Danh sách: Deadline chưa hoàn thành dùng cùng kiểu badge với "Đã hoàn thành", chỉ đổi sang đỏ */
-.ag.dl .tag.dl:not(.ok){display:inline-flex;align-items:center;background:var(--cancel-bd);color:#fff;border:1px solid var(--cancel-bd);padding:1px 7px;border-radius:99px;font-size:10.5px;font-weight:700;line-height:1.25;box-shadow:none}
+.ag.dl .tag.dl:not(.ok),.ag.dl .chip{height:19px;box-sizing:border-box;line-height:17px}   /* ép cùng chiều cao cố định cho mọi ô: "Chưa hoàn thành", "Quá hạn", "còn ..." */
+.ag.dl .tag.dl:not(.ok){display:inline-flex;align-items:center;background:var(--cancel-bd);color:#fff;border:1px solid var(--cancel-bd);padding:0 7px;border-radius:99px;font-size:10.5px;font-weight:700;box-shadow:none}
+.ag.dl .chip{display:inline-flex;align-items:center;justify-content:center;padding:0 7px;font-size:10.5px;font-weight:700;border:1px solid transparent}
+.ag.dl .chip:not(.late){white-space:nowrap;font-variant-numeric:tabular-nums}
+.ag.dl .chip.sz-hm{width:90px}    /* chỉ giờ:phút:giây, ví dụ "còn 12:34:56" */
+.ag.dl .chip.sz-d1{width:128px}   /* 1 chữ số ngày (1-9), ví dụ "còn 9 ngày 23:59:59" */
+.ag.dl .chip.sz-d2{width:134px}   /* 2 chữ số ngày (10-99), ví dụ "còn 29 ngày 23:59:59" */
+.ag.dl .chip.sz-d3{width:140px}   /* 3 chữ số ngày (100+), ví dụ "còn 120 ngày 23:59:59" */
+.ag.dl .chip.sz-mo{width:134px}   /* theo tháng, ví dụ "còn 11 tháng 29 ngày" */
+.ag.dl .chip.sz-y{width:126px}    /* theo năm, ví dụ "còn 9 năm 11 tháng" */
 .ag.dl{--bd:var(--dl);--bgt:color-mix(in srgb,var(--dl) 16%,var(--surface))}
 .ag.dl .et small{color:var(--dl);font-weight:700}
 .ag.dl .ag-time.all{font-size:11.5px;white-space:nowrap}
@@ -231,6 +241,9 @@ textarea{height:auto;padding:8px 10px;width:100%;resize:vertical}
 .dlcell .dlt{font-weight:600;font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink);opacity:.85;letter-spacing:.2px;margin:1px 0 3px}
 .dlcell .chip{margin:2px 0 0}
 .dlcell.dim,.ag.dl.dim{opacity:.25}
+.dlcell.done{background:color-mix(in srgb,var(--accent) 30%,var(--surface));box-shadow:inset 0 0 0 2px var(--accent)}
+.dlcell.done:hover{background:color-mix(in srgb,var(--accent) 38%,var(--surface))}
+.ag.dl.done{--bd:var(--accent);--bgt:color-mix(in srgb,var(--accent) 20%,var(--surface))}
 .dlrow th.tl{background:color-mix(in srgb,var(--dl) 12%,var(--surface));color:var(--dl);font-weight:700}
 .dlrow td{background:color-mix(in srgb,var(--dl) 4%,var(--surface))}
 .dlrow .stk{min-height:42px}
@@ -1601,14 +1614,17 @@ function liveInfo(o){
   const left = e - now;
   return {pct: Math.round((now - s) / (e - s) * 100), left: fmtDur(left)};
 }
-/* sự kiện sắp diễn ra: chọn lịch gần nhất trong toàn bộ phạm vi đang hiển thị
-   (không giới hạn trong hôm nay, nên nếu hôm nay không còn lịch thì ngày mai/ngày sau vẫn hoạt động) */
+/* sự kiện sắp diễn ra: LUÔN chọn lịch gần nhất trên toàn bộ lịch trình (tuần này + tuần sau),
+   không phụ thuộc vào tuần đang xem trên màn hình — tránh việc mỗi tuần lại tự nhận buổi đầu tiên
+   của tuần đó là "sắp diễn ra" khi người dùng bấm xem các tuần trong tương lai */
 let nextKey = null;
 const occKey = o => o.ev.id + '|' + o.date + '|' + o.ev.start;
 const occStartMs = o => o.ev.start ? new Date(`${o.date}T${o.ev.start}:00`).getTime() : NaN;
-function calcNext(occs){
+function calcNext(){
+  const mon = mondayOf(todayStr());
+  const pool = [...weekOccs(mon), ...weekOccs(addDays(mon, 7))];
   const now = Date.now();
-  const c = occs.filter(o => !o.cancelled && o.ev.kind !== 'free' && Number.isFinite(occStartMs(o)) && occStartMs(o) > now)
+  const c = pool.filter(o => !o.cancelled && o.ev.kind !== 'free' && Number.isFinite(occStartMs(o)) && occStartMs(o) > now)
                 .sort((a,b) => occStartMs(a) - occStartMs(b)
                   || toMin(a.ev.end) - toMin(b.ev.end)
                   || String(a.ev.title||'').localeCompare(String(b.ev.title||'')))[0];
@@ -1656,13 +1672,13 @@ function dlTitleAttr(t){
 function dlLinkHTML(t){ return t.body ? '<span class="ind">📝</span>' : ''; }
 function dlCellHTML(t){
   return `<div class="dlcell${t.done?' done':''} ${dlMatch(t)?'':'dim'}" data-todo="${t.id}" tabindex="0" role="button" title="${esc(dlTitleAttr(t))}">
-    <div><b>${esc(t.text)}</b>${dlLinkHTML(t)}</div><div class="dlt">⏰ ${t.dueTime ? esc(t.dueTime) : 'Cả ngày'}</div>${dlChips(t)}<div>${t.done ? '<span class="chip ok">✓ Đã hoàn thành</span>' : dueChip(t)}</div></div>`;
+    <div><b>${esc(t.text)}</b>${dlLinkHTML(t)}</div><div class="dlt">⏰ ${t.dueTime ? esc(t.dueTime) : 'Cả ngày'}</div>${dlChips(t)}<div>${t.done ? '<span class="chip ok">Đã hoàn thành</span>' : dueChip(t)}</div></div>`;
 }
 function dlArticleHTML(t){
   const parts = ['⏰ Hạn chót ' + (t.dueTime || 'cả ngày'), t.on && '🗓 Tạo ' + dmy(t.on) + (t.onTime ? ' ' + t.onTime : '')].filter(Boolean).map(esc).join(' · ');
   return `<article class="ag dl${t.done?' done':''} ${dlMatch(t)?'':'dim'}" data-todo="${t.id}" tabindex="0" role="button">
         <div class="ag-time${t.dueTime ? '' : ' all'}">${t.dueTime ? esc(t.dueTime) : 'Cả ngày'}<br><small>hạn chót</small></div>
-        <div><div class="et"><small>Deadline</small>${esc(t.text)}<span class="tag dl${t.done?' ok':''}">${t.done?'✓ Đã hoàn thành':'✕ Chưa hoàn thành'}</span>${dueChip(t)}</div>
+        <div><div class="et"><small>Deadline</small>${esc(t.text)}<span class="tag dl${t.done?' ok':''}">${t.done?'Đã hoàn thành':'Chưa hoàn thành'}</span>${dueChipAgenda(t)}</div>
         <div class="em">${parts}</div>
         ${hasLinks(t) ? `<div class="ag-links">${dlChips(t)}</div>` : ''}
         ${t.body ? `<div class="ex">📝 ${esc(t.body)}</div>` : ''}</div></article>`;
@@ -1670,7 +1686,7 @@ function dlArticleHTML(t){
 const lv0 = o => { const l = liveInfo(o); return l ? `--p:${l.pct}%;` : ''; };
 function tableHTML(occs){
   const today = todayStr();
-  calcNext(occs);
+  calcNext();
   const days = Array.from({length:7}, (_,i) => addDays(weekStart,i));
   const dls = shownDeadlines();
   const stacked = !!state.tableStacked;
@@ -1712,7 +1728,7 @@ function tableHTML(occs){
       }
       h += `<td class="day-stack slot" data-date="${d}" data-s="" data-e=""><div class="stk">${body}</div></td>`;
     }
-    h += `</tr></tbody></table></div><div class="sheetbar"><button type="button" class="btn" id="stackToggle" aria-pressed="true">↕ Theo khung giờ</button><button type="button" class="btn" id="addRow">+ Thêm dòng</button><span>Đang dồn ô theo từng thứ; cột Tuần và hàng Deadline được giữ nguyên; các ô được sắp từ sớm đến muộn.</span></div>`;
+    h += `</tr></tbody></table></div><div class="sheetbar"><button type="button" class="btn" id="stackToggle" aria-pressed="true">↕ Theo khung giờ</button><button type="button" class="btn" id="addRow">+ Thêm dòng</button></div>`;
     return h;
   }
 
@@ -1758,7 +1774,7 @@ function emHTML(o, parts){
 }
 function agendaHTML(occs){
   const today = todayStr();
-  calcNext(occs);
+  calcNext();
   let html = '<div class="agenda">';
   for(let i=0;i<7;i++){
     const date = addDays(weekStart,i);
@@ -1960,10 +1976,32 @@ const nowHM = () => { const d = new Date(); return pad(d.getHours()) + ':' + pad
 function dueChip(t){
   if(t.done || !t.due) return '';
   const n = daysBetween(todayStr(), t.due);
-  if(n < 0) return `<span class="chip late">⚠ Quá hạn ${-n} ngày</span>`;
-  if(n === 0) return t.dueTime && t.dueTime < nowHM() ? '<span class="chip late">⚠ Quá giờ</span>' : '<span class="chip soon">Hôm nay</span>';
+  if(n < 0) return `<span class="chip late">Quá hạn ${-n} ngày</span>`;
+  if(n === 0) return t.dueTime && t.dueTime < nowHM() ? '<span class="chip late">Quá giờ</span>' : '<span class="chip soon">Hôm nay</span>';
   if(n === 1) return '<span class="chip soon">Ngày mai</span>';
   return `<span class="chip${n <= 3 ? ' soon' : ''}">Còn ${n} ngày</span>`;
+}
+/* bản dùng cho thẻ Danh sách: quá hạn vẫn hiện dạng ô (pill) như dueChip; còn hạn thì hiện chữ đếm ngược trực tiếp "còn ...", viền vàng khi sắp đến hạn (hôm nay/ngày mai/≤3 ngày) */
+/* phân loại "quy mô" thời gian còn lại để gán kích thước cố định riêng cho từng loại: hm (giờ/phút), d (vài ngày), dd (nhiều ngày ≥10), mo (tháng), y (năm) */
+function hmsScale(ms){
+  const t = Math.max(0, Math.floor(ms / 1000));
+  const Y = 365*86400, M = 30*86400;
+  const y = Math.floor(t / Y), afterY = t % Y;
+  const mo = Math.floor(afterY / M), afterMo = afterY % M;
+  const d = Math.floor(afterMo / 86400);
+  if(y) return 'y';
+  if(mo) return 'mo';
+  if(d >= 100) return 'd3';
+  if(d >= 10) return 'd2';
+  if(d >= 1) return 'd1';
+  return 'hm';
+}
+function dueEndMs(t){ return new Date(`${t.due}T${t.dueTime || '23:59'}:59`).getTime(); }
+function dueChipAgenda(t){
+  if(t.done || !t.due) return '';
+  if(dueLate(t)) return dueChip(t);
+  const n = daysBetween(todayStr(), t.due);
+  return `<span class="chip${n <= 3 ? ' soon' : ''} sz-${hmsScale(dueEndMs(t) - Date.now())}">${esc(dueTxt(t))}</span>`;
 }
 /* bản chữ thường (không có khung chip) của dueChip, dùng cho banner “Đang diễn ra / Tiếp theo” để cùng kiểu chữ đậm với “sau …” của lịch tiếp theo */
 function dueTxt(t){
@@ -3111,7 +3149,7 @@ const fmtHMS = ms => {
 };
 function renderNowBar(){
   const el = document.getElementById('nowBar'); if(!el) return;
-  const {live, next, now} = upcoming(1);
+  const {live, next, now} = upcoming(2);
   const meta = (o, extra, pre) => `<span class="rg">${esc([pre, `${o.ev.start} - ${o.ev.end}`].filter(Boolean).join(' · '))} · </span><b class="cd">${esc(extra)}</b>`;
   const leftRows = [];
   live.slice(0, 2).forEach(o => leftRows.push(
@@ -3121,11 +3159,8 @@ function renderNowBar(){
   const dls = state.todos.filter(t => !t.done && t.due).sort((a, b) => (a.due + (a.dueTime || '23:59')).localeCompare(b.due + (b.dueTime || '23:59')));
   const rightRows = dls.map(dl => `<div class="nb dl" data-todo="${esc(dl.id)}"><span class="k">📌<em> Deadline</em></span><span class="t">${esc(dl.text)}</span><span class="m"><span class="rg">${esc(dm(dl.due))}${dl.dueTime ? ' · ' + esc(dl.dueTime) : ''} · </span><b class="cd${dueLate(dl)?' late':''}">${esc(dueTxt(dl))}</b></span></div>`);
   el.hidden = false;
-  if(!leftRows.length && !rightRows.length){
-    el.innerHTML = '<div class="nb none"><span class="k">📭</span><span class="t">Không có lịch sắp diễn ra</span></div>';
-    return;
-  }
-  el.innerHTML = (leftRows.length ? `<div class="nbcol">${leftRows.join('')}</div>` : '') + (rightRows.length ? `<div class="nbcol">${rightRows.join('')}</div>` : '');
+  const leftHTML = leftRows.length ? leftRows.join('') : '<div class="nb none"><span class="k">📭</span><span class="t">Không có lịch sắp diễn ra</span></div>';
+  el.innerHTML = `<div class="nbcol">${leftHTML}</div>` + (rightRows.length ? `<div class="nbcol">${rightRows.join('')}</div>` : '');
 }
 const NOTIFY_KEY = KEY + ':schedule-notify';
 let notifyLastSig = '';
@@ -3283,6 +3318,18 @@ document.getElementById('nowBar').addEventListener('click', e => {
 });
 
 setInterval(renderNowBar, 1000);
+/* cập nhật chữ đếm ngược "còn ..." trong các thẻ Deadline ở mục Danh sách mỗi giây, không render lại cả danh sách */
+function tickAgendaCountdowns(){
+  document.querySelectorAll('.ag.dl .chip:not(.late)').forEach(el => {
+    const art = el.closest('[data-todo]'); if(!art) return;
+    const t = state.todos.find(x => x.id === art.dataset.todo); if(!t) return;
+    el.textContent = dueTxt(t);
+    el.classList.toggle('soon', daysBetween(todayStr(), t.due) <= 3);
+    el.classList.remove('sz-y', 'sz-mo', 'sz-d3', 'sz-d2', 'sz-d1', 'sz-hm');
+    el.classList.add('sz-' + hmsScale(dueEndMs(t) - Date.now()));
+  });
+}
+setInterval(tickAgendaCountdowns, 1000);
 setInterval(updateScheduleNotification, 1000);
 document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible'){ renderNowBar(); updateScheduleNotification(); } });
 
