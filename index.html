@@ -1225,6 +1225,186 @@ function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && Array.isArray(s.events) && Array.isArray(s.todos)) return norm(s); }catch(e){}
   return null;
 }
+
+/* ---------- tự động sao lưu ra file .json của bạn ----------
+   Dùng File System Access API (Chrome/Edge, mở file .html trực tiếp hoặc qua web server): chọn file một lần,
+   sau đó mỗi lần lưu dữ liệu, trang tự ghi đè file đó. Mỗi lần mở lại trình duyệt có thể cần bấm cho phép ghi file một lần. */
+const AB_DB = 'uit-planner-fs', AB_STORE = 'h';
+const abIdb = () => new Promise((res, rej) => { const r = indexedDB.open(AB_DB, 1); r.onupgradeneeded = () => r.result.createObjectStore(AB_STORE); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+async function abGet(){ try{ const db = await abIdb(); return await new Promise((res, rej) => { const q = db.transaction(AB_STORE).objectStore(AB_STORE).get('file'); q.onsuccess = () => res(q.result || null); q.onerror = () => rej(q.error); }); }catch(e){ return null; } }
+async function abSet(h){ try{ const db = await abIdb(); await new Promise((res, rej) => { const tx = db.transaction(AB_STORE, 'readwrite'); if(h) tx.objectStore(AB_STORE).put(h, 'file'); else tx.objectStore(AB_STORE).delete('file'); tx.oncomplete = res; tx.onerror = () => rej(tx.error); }); }catch(e){} }
+const ab = {handle:null, ok:false, timer:0, busy:false, dirty:false};
+const abSupported = () => typeof window.showSaveFilePicker === 'function';
+function abUI(msg){
+  const b = document.getElementById('abBtn'), c = document.getElementById('abChangeBtn'), i = document.getElementById('abInfo');
+  if(b){ b.hidden = !abSupported(); b.textContent = ab.handle ? 'Tắt sao lưu tự động (.json)' : 'Sao lưu tự động (.json)'; }
+  if(c){ c.hidden = !abSupported() || !ab.handle; }   /* chỉ hiện khi đã bật, để đổi sang file/nơi lưu khác */
+  if(i){ i.hidden = !msg; i.textContent = msg || ''; }
+}
+async function abWrite(){
+  if(!ab.handle || !ab.ok) return;
+  if(ab.busy){ ab.dirty = true; return; }
+  ab.busy = true;
+  try{
+    do{
+      ab.dirty = false;
+      const w = await ab.handle.createWritable();
+      await w.write(JSON.stringify(state, null, 2)); await w.close();
+    } while(ab.dirty);
+    abUI('Tự động sao lưu: ' + ab.handle.name + ' · lần cuối ' + new Date().toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'}));
+  }catch(e){
+    ab.ok = false;
+    abUI('Tự động sao lưu bị lỗi hoặc mất quyền ghi file. Mở menu ⋯ và bấm lại để bật.');
+  }
+  ab.busy = false;
+}
+function abSoon(){ if(ab.handle && ab.ok){ clearTimeout(ab.timer); ab.timer = setTimeout(abWrite, 1500); } }
+async function abRegrant(){
+  if(!ab.handle || ab.ok) return;
+  try{ ab.ok = (await ab.handle.requestPermission({mode:'readwrite'})) === 'granted'; }catch(e){}
+  if(ab.ok) abWrite(); else abUI('Tự động sao lưu đang chờ quyền ghi file. Mở menu ⋯ và bấm lại để cấp quyền.');
+}
+async function abInit(){
+  abUI();
+  if(!abSupported()) return;
+  const h = await abGet(); if(!h) return;
+  ab.handle = h;
+  try{ ab.ok = (await h.queryPermission({mode:'readwrite'})) === 'granted'; }catch(e){}
+  if(ab.ok){ abUI('Tự động sao lưu: ' + h.name); abWrite(); }
+  else { abUI('Tự động sao lưu đang chờ quyền ghi file (bấm bất kỳ đâu để cho phép).'); document.addEventListener('pointerdown', abRegrant, {once:true, capture:true}); }
+}
+/* chọn file .json đã có để ghi đè; File System Access API dùng hộp thoại Mở của hệ điều hành */
+async function abPickExistingFile(){
+  if(!abSupported()) return alert('Trình duyệt này không hỗ trợ chọn file để tự động ghi. Hãy dùng Chrome hoặc Edge trên trang HTTPS hoặc localhost.');
+  try{
+    const [h] = await window.showOpenFilePicker({multiple:false, types:[{description:'Dữ liệu lịch trình (.json)', accept:{'application/json':['.json']}}]});
+    ab.handle = h; ab.ok = false;
+    try{ ab.ok = (await h.requestPermission({mode:'readwrite'})) === 'granted'; }catch(e){}
+    if(!ab.ok) return abUI('Tự động sao lưu đang chờ quyền ghi file. Mở menu ⋯ và bấm lại để cấp quyền.');
+    await abSet(h); await abWrite();
+  }catch(e){
+    if(!e || e.name !== 'AbortError') alert('Không chọn được file ở đây. Hãy thử lại và chọn một file .json có sẵn.');
+  }
+}
+/* tạo file .json mới */
+async function abPickNewFile(){
+  if(!abSupported()) return alert('Trình duyệt này không hỗ trợ tự động ghi file. Hãy dùng Chrome hoặc Edge trên trang HTTPS hoặc localhost.');
+  try{
+    const h = await window.showSaveFilePicker({suggestedName: DATA_FILE, types:[{description:'Dữ liệu lịch trình (.json)', accept:{'application/json':['.json']}}]});
+    ab.handle = h; ab.ok = true; await abSet(h); await abWrite();
+  }catch(e){
+    if(!e || e.name !== 'AbortError') alert('Không chọn được file ở đây. Hãy thử lại hoặc chọn một thư mục khác.');
+  }
+}
+async function abToggle(){
+  if(ab.handle && !ab.ok){ await abRegrant(); if(ab.ok) return; }
+  if(ab.handle){
+    if(!confirm('Tắt tự động sao lưu? File .json đã lưu vẫn được giữ nguyên.')) return;
+    ab.handle = null; ab.ok = false; await abSet(null); abUI(); return;
+  }
+  await abPickExistingFile();
+}
+/* đổi sang file / nơi lưu khác trong khi tự động sao lưu vẫn đang bật, không cần tắt rồi bật lại */
+async function abChangeLocation(){
+  if(ab.handle && !ab.ok){ await abRegrant(); if(!ab.ok) return; }
+  await abPickExistingFile();
+}
+/* sao lưu thủ công vào file .json đã có */
+async function saveBackupFile(){
+  const data = JSON.stringify(state, null, 2);
+  if(!abSupported()){ return alert('Trình duyệt này không hỗ trợ chọn file để ghi đè. Hãy dùng Chrome hoặc Edge trên trang HTTPS hoặc localhost.'); }
+  try{
+    const [h] = await window.showOpenFilePicker({multiple:false, types:[{description:'Dữ liệu lịch trình (.json)', accept:{'application/json':['.json']}}]});
+    const w = await h.createWritable();
+    await w.write(data); await w.close();
+  }catch(e){
+    if(!e || e.name !== 'AbortError') alert('Không thể ghi file sao lưu ở đây. Hãy thử lại và chọn một file .json có sẵn.');
+  }
+}
+/* sao lưu thủ công: tạo file .json mới */
+async function saveBackupNewFile(){
+  const data = JSON.stringify(state, null, 2);
+  if(!abSupported()){ download(DATA_FILE, data, 'application/json'); return; }
+  try{
+    const h = await window.showSaveFilePicker({suggestedName: DATA_FILE, types:[{description:'Dữ liệu lịch trình (.json)', accept:{'application/json':['.json']}}]});
+    const w = await h.createWritable();
+    await w.write(data); await w.close();
+  }catch(e){
+    if(!e || e.name !== 'AbortError') alert('Không thể tạo file sao lưu ở đây. Hãy thử lại hoặc chọn một thư mục khác.');
+  }
+}
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+  syncTs = Date.now(); saveTs();
+  abSoon();
+  if(sync.ready) pushSoon();
+  commitHistory();
+}
+// giống save() nhưng không ghi vào lịch sử hoàn tác/làm lại — dùng cho các thay đổi không phải dữ liệu (chế độ xem, giao diện sáng/tối)
+function saveUI(){
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+  syncTs = Date.now(); saveTs();
+  abSoon();
+  if(sync.ready) pushSoon();
+}
+// giống save() nhưng gộp lịch sử theo đợt gõ (tránh mỗi ký tự gõ vào ghi chú lại thành một bước hoàn tác riêng)
+function saveNotes(){
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+  syncTs = Date.now(); saveTs();
+  abSoon();
+  if(sync.ready) pushSoon();
+  commitHistoryDebounced();
+}
+
+/* ---------- hoàn tác / làm lại (undo / redo) ---------- */
+let hist = [];
+let histIndex = -1;
+let histSuppressed = false;
+let histTimer = null;
+function snapshotState(){ return JSON.stringify(state); }
+function initHistory(){ hist = [snapshotState()]; histIndex = 0; updateHistBtns(); }
+function commitHistory(){
+  if(histSuppressed) return;
+  clearTimeout(histTimer);
+  const snap = snapshotState();
+  if(histIndex >= 0 && hist[histIndex] === snap) return;   // không có gì thay đổi thật sự
+  hist = hist.slice(0, histIndex + 1);
+  hist.push(snap);
+  histIndex = hist.length - 1;
+  updateHistBtns();
+}
+function commitHistoryDebounced(){
+  if(histSuppressed) return;
+  clearTimeout(histTimer);
+  histTimer = setTimeout(commitHistory, 800);
+}
+function restoreSnapshot(snap){
+  histSuppressed = true;
+  try{
+    state = JSON.parse(snap);
+    try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+    syncTs = Date.now(); saveTs();
+    abSoon();
+    if(sync.ready) pushSoon();
+  } finally { histSuppressed = false; }
+  fixView(); render(); renderTodos(); updateHistBtns();
+}
+function undo(){
+  clearTimeout(histTimer); commitHistory();
+  if(histIndex <= 0) return;
+  histIndex--; restoreSnapshot(hist[histIndex]);
+}
+function redo(){
+  clearTimeout(histTimer); commitHistory();
+  if(histIndex >= hist.length - 1) return;
+  histIndex++; restoreSnapshot(hist[histIndex]);
+}
+function updateHistBtns(){
+  const u = $('#undoBtn'), r = $('#redoBtn');
+  if(u) u.disabled = histIndex <= 0;
+  if(r) r.disabled = histIndex >= hist.length - 1;
+}
+
 /* ---------- tài khoản & đồng bộ đám mây ----------
    Xác thực + lưu trữ dùng Firebase Authentication (Email/Mật khẩu + Google)
    và Cloud Firestore. Mỗi tài khoản chỉ đọc/ghi được đúng dữ liệu của
