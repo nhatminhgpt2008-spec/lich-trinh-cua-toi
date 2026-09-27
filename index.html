@@ -41,7 +41,40 @@ body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 "Be Vietnam Pr
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.app{max-width:none;margin:0 auto;padding:12px 16px}
+.app{max-width:none;margin:0 auto;padding:12px 16px;display:none}
+body.authed .app{display:block}
+/* ===== màn hình chờ + trang đăng nhập toàn màn hình ===== */
+#bootScreen{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--bg);color:var(--muted)}
+body.authed #bootScreen,body.gate #bootScreen{display:none}
+.bootSpin{width:32px;height:32px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:bootspin .8s linear infinite}
+@keyframes bootspin{to{transform:rotate(360deg)}}
+#authGate{position:fixed;inset:0;z-index:9998;display:none;align-items:center;justify-content:center;padding:24px;background:var(--bg);overflow:auto}
+body.gate #authGate{display:flex}
+.authGateCard{width:100%;max-width:400px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px 24px;box-shadow:0 24px 60px -24px rgba(0,0,0,.4);position:relative}
+.authGateBrand{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:22px}
+.authGateBrand img{width:40px;height:40px;border-radius:10px;flex:0 0 auto}
+.authGateBrand h1{margin:0;font-size:24px;font-weight:700;letter-spacing:-.01em;line-height:1.2}
+.authResetHead{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;margin-bottom:22px}
+.authResetHead img{width:44px;height:44px;border-radius:11px;margin-bottom:4px}
+.authResetHead h2{margin:0;font-size:19px;font-weight:700;letter-spacing:-.01em}
+.authResetHead p{margin:0;font-size:13px;color:var(--muted);line-height:1.5;max-width:300px}
+.authGateNote{margin-top:14px;font-size:12.5px;color:var(--muted);text-align:center;line-height:1.5}
+.authGateNote.warn{color:var(--warn)}
+#authGateRetry{width:100%;justify-content:center;margin-top:10px}
+.authSeg{margin:0 0 14px;width:100%;display:flex}
+.authSeg button{flex:1;display:flex;align-items:center;justify-content:center;white-space:nowrap;padding:0 6px;font-size:13.5px}
+.authLblRow{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.forgotLink{border:0;background:none;padding:0;height:auto;color:var(--accent);font-size:12.5px;font-weight:600;cursor:pointer}
+.forgotLink:hover{text-decoration:underline}
+.authSubmitBtn{width:100%;justify-content:center;height:44px;font-size:15px;margin-top:14px}
+.authDivider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--muted);font-size:12px}
+.authDivider span{flex:1;height:1px;background:var(--line)}
+.authGoogleBtn{width:100%;justify-content:center;gap:8px;height:42px}
+#authGate .fgrid input{background:var(--bg);border:1.5px solid var(--line);height:42px}
+#authGate .fgrid input:focus-visible{border-color:var(--accent)}
+.authBackBtn{position:absolute;top:16px;left:16px;width:36px;height:36px;padding:0;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);background:var(--surface);border-radius:50%;color:var(--ink);font-size:16px;line-height:1}
+.authBackBtn svg{display:block}
+.authBackBtn:hover{border-color:var(--accent);color:var(--accent)}
 
 /* header */
 .top{display:flex;flex-wrap:wrap;align-items:center;gap:12px 8px;margin-bottom:14px}
@@ -55,10 +88,10 @@ button{cursor:pointer}
 .btn:hover,.nav button:hover,.tools button:hover,.menu summary:hover{border-color:var(--accent)}
 .primary{background:var(--accent)!important;color:var(--accent-ink)!important;border-color:var(--accent)!important;font-weight:600}
 .danger{color:var(--danger)!important}
-input[type=date],input[type=search],input[type=time],input[type=text],input[type=url],input[type=number],select,textarea,input:not([type]){height:36px;padding:0 10px;border:1px solid var(--line);background:var(--surface);border-radius:8px;min-width:0}
+input[type=date],input[type=search],input[type=time],input[type=text],input[type=url],input[type=number],input[type=email],input[type=password],select,textarea,input:not([type]){height:36px;padding:0 10px;border:1px solid var(--line);background:var(--surface);border-radius:8px;min-width:0}
 textarea{height:auto;padding:8px 10px;width:100%;resize:vertical}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
-.seg button{border:0!important;border-radius:0!important;height:34px!important;justify-content:center}
+.seg button{border:0!important;border-radius:0!important;height:34px!important;justify-content:center;background:transparent;color:var(--ink)}
 .seg button.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
 .searchbox{position:relative;display:inline-flex;align-items:center;height:36px;width:36px;border:1px solid var(--line);background:var(--surface);border-radius:18px;overflow:hidden;flex:0 0 auto;transition:width .18s ease,border-color .18s ease}
 .searchbox:focus-within,.searchbox.has-val{width:240px;border-color:var(--accent)}
@@ -77,8 +110,25 @@ textarea{height:auto;padding:8px 10px;width:100%;resize:vertical}
 .acct .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12.5px}
 .acct .sy{width:7px;height:7px;border-radius:50%;background:var(--muted);flex:0 0 auto}
 .acct .sy.ok{background:var(--accent)}.acct .sy.bad{background:var(--danger)}.acct .sy.busy{background:var(--warn)}
+/* nhóm mục trong menu ⋯: rộng vừa đủ theo chữ dài nhất, chỉ xuống dòng khi màn hình quá hẹp */
+.menu-pop{max-height:min(72vh,520px);overflow-y:auto;overflow-x:hidden;width:max-content;min-width:230px;max-width:min(90vw,340px)}
+.menu-pop button{white-space:normal;line-height:1.35}
+.menu-pop .syncinfo.mtop{margin-top:0;padding-top:0;border-top:0;margin-bottom:4px;white-space:normal}
+.menu-group{padding:2px 0 4px}
+.menu-group+.menu-group{margin-top:2px;padding-top:8px;border-top:1px solid var(--line)}
+.menu-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:4px 10px 4px;white-space:nowrap}
+.menu-group.danger-group{padding-bottom:0}
+.menu-pop button.danger{color:var(--danger)}
+@media (prefers-reduced-motion:no-preference){
+  dialog[open]{animation:dlgIn .16s ease}
+  dialog.closing{animation:dlgOut .16s ease forwards}
+  .menu[open] .menu-pop{animation:popIn .14s ease}
+}
+@keyframes dlgIn{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes dlgOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(6px) scale(.98)}}
+@keyframes popIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 .authSeg{margin:8px 0}
-.authSeg button{flex:1;justify-content:center;white-space:nowrap;padding:0 6px;font-size:13.5px}
+.authSeg button{flex:1;justify-content:center}
 dialog h3{font-size:14px;margin:18px 0 8px;padding-top:14px;border-top:1px solid var(--line)}
 dialog .btn.danger{border-color:var(--danger)}
 
@@ -468,43 +518,81 @@ fieldset.rep .fgrid{grid-template-columns:1fr 1fr}
 /* dialog */
 dialog{border:1px solid var(--line);border-radius:14px;padding:0;background:var(--surface);color:var(--ink);width:min(560px,94vw);box-shadow:0 20px 60px rgba(0,0,0,.35)}
 dialog::backdrop{background:rgba(8,14,11,.5)}
+/* dự phòng cho trình duyệt/webview không hỗ trợ đầy đủ "lớp nổi" (top layer) khi showModal():
+   ép mọi <dialog> đang mở luôn định vị cố định giữa màn hình thay vì nằm theo dòng chảy trang
+   (nếu không, dialog sẽ cuộn theo trang và lộ ra ở bất kỳ vị trí nào trong DOM, kể cả cuối trang) */
+dialog[open]{position:fixed;top:0;right:0;bottom:0;left:0;margin:auto;z-index:5000;max-height:90vh}
+#dlgFallbackBackdrop{position:fixed;inset:0;background:rgba(8,14,11,.5);z-index:4999;display:none}
+#dlgFallbackBackdrop.on{display:block}
 dialog form{padding:20px}
 dialog h2{margin:0 0 14px;font-size:17px}
+.dlgHead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.dlgHead h2{margin:0 0 14px}
+.dlgHead .iconbtn{flex:0 0 auto;margin-top:-2px}
 .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
 .fgrid label{display:grid;gap:4px;font-size:12.5px;color:var(--muted)}
 .fgrid input,.fgrid select{width:100%;color:var(--ink)}
 .fgrid input:disabled{opacity:.45;cursor:not-allowed}
 .syncinfo{margin-top:4px;padding:8px 10px 4px;border-top:1px solid var(--line);font-size:11.5px;line-height:1.4;color:var(--muted)}
-.pf-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
-.pf-head .av{width:52px;height:52px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;flex:0 0 auto}
-.pf-head .who{min-width:0;flex:1}
-.pf-head .who .nm{font-size:15.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pf-head .who .em{font-size:12.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pf-head .verify{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--line-soft);color:var(--muted);white-space:nowrap;flex:0 0 auto}
-.pf-head .verify.ok{background:var(--accent-soft);color:var(--accent)}
-dialog h3{display:flex;align-items:center;gap:8px}
-dialog h3 .ic{width:18px;height:18px;flex:0 0 auto;opacity:.75}
-details.pf-sec{border-top:1px solid var(--line);padding-top:14px;margin:18px 0 8px}
-details.pf-sec:first-of-type{border-top:0;margin-top:0;padding-top:0}
-details.pf-sec>summary{list-style:none;cursor:pointer;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;color:var(--ink)}
-details.pf-sec>summary::-webkit-details-marker{display:none}
-details.pf-sec>summary:focus{outline:none}
-details.pf-sec>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
-details.pf-sec>summary::after{content:'';margin-left:auto;width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .15s}
-details.pf-sec[open]>summary::after{transform:rotate(45deg)}
-details.pf-sec>.pf-body{padding-top:12px}
-.pf-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line-soft)}
-.pf-row:first-child{border-top:0;padding-top:0}
-.pf-row .lbl{font-size:13.5px}
-.pf-row .sub{font-size:11.5px;color:var(--muted);margin-top:2px}
-.danger-zone{border:1px solid var(--cancel-bd);background:var(--cancel-bg);border-radius:10px;padding:12px 14px}
-.danger-zone p{margin:0 0 10px;font-size:12.5px;color:var(--ink);line-height:1.5}
-.danger-zone .fgrid{margin-bottom:0}
 .fgrid .full{grid-column:1/-1}
 .hint{grid-column:1/-1;font-size:12.5px;color:var(--muted);background:var(--line-soft);padding:6px 10px;border-radius:8px;margin:0}
 .err{color:var(--danger);min-height:18px;margin:8px 0 0;font-size:13px}
 .actions{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
 .grow{flex:1}
+/* "Tài khoản của tôi" */
+#profileDlg{width:min(560px,94vw);height:min(640px,86dvh);display:flex;flex-direction:column}
+#profileDlg form{padding:18px;overflow-y:auto;flex:1;min-height:0}
+/* header dạng lưới: cột avatar cố định + cột tên/email co giãn + cột nút bên phải, để tên/email co lại thay vì đè lên nút */
+.acctModalHead{display:grid;grid-template-columns:44px 1fr auto;grid-template-rows:auto auto;column-gap:12px;row-gap:6px;align-items:center;padding-bottom:14px;margin-bottom:6px;border-bottom:1px solid var(--line);flex:0 0 auto}
+.avBig{grid-row:1/3;grid-column:1;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700}
+.acctModalName{grid-row:1;grid-column:2;min-width:0;font-size:15px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.acctModalEmail{grid-row:2;grid-column:2;min-width:0;display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted)}
+.acctModalEmail span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.acctModalVerify{font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--line-soft);color:var(--muted);white-space:nowrap;flex:0 0 auto}
+.acctModalVerify.ok{background:var(--accent-soft);color:var(--accent)}
+.acctModalVerify.warn{background:var(--line-soft);color:var(--warn)}
+.iconbtn{grid-row:1;grid-column:3;justify-self:end;width:30px;height:30px;padding:0;border:1px solid var(--line);border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:16px;line-height:1;color:var(--muted)}
+.iconbtn:hover{border-color:var(--accent);color:var(--ink)}
+.verifyHint{margin:0 0 12px;flex:0 0 auto}
+.acctSection{border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden;flex:0 0 auto}
+.acctSectionSummary{all:unset;box-sizing:border-box;list-style:none;cursor:pointer;padding:10px 12px;font-size:13.5px;font-weight:600;display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;color:var(--ink)}
+.acctSectionSummary::-webkit-details-marker{display:none}
+.acctSectionSummary::marker{content:""}
+/* mũi tên vẽ bằng CSS (không dùng ký tự chữ) để luôn canh giữa hàng theo chiều dọc */
+.acctArrow{width:8px;height:8px;flex:0 0 auto;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .18s ease}
+.acctSection.open .acctArrow{transform:rotate(-135deg)}
+.acctSectionSummary:hover{background:var(--line-soft)}
+/* hiệu ứng mở/đóng nội dung từng mục: co giãn chiều cao mượt bằng grid-template-rows */
+.acctSectionCollapse{display:grid;grid-template-rows:0fr;transition:grid-template-rows .22s ease}
+.acctSectionCollapse>.acctSectionBody{overflow:hidden;min-height:0;padding:0}
+.acctSection.open .acctSectionCollapse{grid-template-rows:1fr}
+.acctSectionPad{padding:2px 12px 14px}
+.acctSection.danger{border-color:color-mix(in srgb,var(--danger) 40%,var(--line))}
+.acctSection.danger .acctSectionSummary{color:var(--danger)}
+.acctSection.danger .acctSectionBody{background:color-mix(in srgb,var(--danger) 6%,transparent)}
+/* Tên hiển thị: ô nhập + nút Lưu tên trên cùng một hàng */
+.inline-input{display:flex;gap:8px;align-items:center}
+.inline-input input{flex:1;min-width:0}
+/* Mật khẩu hiện tại: ô nhập + nút xem mật khẩu */
+.pwInputWrap{position:relative;display:flex}
+.pwInputWrap input{flex:1;min-width:0;padding-right:36px}
+.pwToggle{position:absolute;right:3px;top:50%;transform:translateY(-50%);width:28px;height:28px;border:0;background:none;cursor:pointer;font-size:15px;line-height:1;color:var(--muted);display:flex;align-items:center;justify-content:center;border-radius:6px}
+.pwToggle:hover{color:var(--ink);background:var(--line-soft)}
+/* Xóa tài khoản: nhãn xác nhận + ô nhập trên cùng một hàng */
+.fgrid label.delConfirmRow{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.delConfirmRow input{flex:1;min-width:140px}
+/* Trạng thái đồng bộ trong "Dữ liệu cá nhân" */
+#profileSyncInfo{display:inline-flex;align-items:center;gap:7px;border-top:0;margin-top:0;padding:6px 12px;border-radius:99px;background:var(--line-soft);color:var(--ink);font-weight:600;font-size:12.5px}
+#profileSyncInfo:empty{display:none;padding:0}
+#profileSyncInfo::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);flex:0 0 auto}
+/* Nút đăng xuất ở cuối hộp thoại tài khoản */
+.footerLogout{gap:6px}
+@media (max-width:480px){
+  .acctModalHead{grid-template-columns:40px 1fr auto}
+}
+@media (max-width:560px){
+  #profileDlg{height:92dvh}
+}
 #dlgScope{width:min(420px,94vw)}
 .scopeOpts{display:flex;flex-direction:column;gap:8px;margin:2px 0 4px}
 .scopeOpts .btn{width:100%;height:auto;min-height:42px;padding:10px 14px;justify-content:center;text-align:center;white-space:normal;line-height:1.3;font-size:14px;background:var(--line-soft);border-color:var(--muted)}
@@ -691,8 +779,9 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
   .ag .et{font-size:14px}
   /* hộp thoại kiểu bảng trượt từ dưới lên, đủ rộng, chữ nhập ≥16px để iOS không tự phóng to */
   dialog{width:100%;max-width:100%;max-height:92dvh;margin:auto 0 0;border-radius:16px 16px 0 0;overflow:auto;overscroll-behavior:contain}
+  dialog[open]{max-height:92dvh;margin:auto 0 0}
   dialog form{padding:16px 14px calc(18px + env(safe-area-inset-bottom,0px))}
-  dialog input,dialog select,dialog textarea{font-size:16px}
+  dialog input,dialog select,dialog textarea,#authGate input{font-size:16px}
   .lkrow .lu,.lkrow .ln{font-size:15px}
   .below{margin-top:12px}
   .sheetbar span{font-size:12px}
@@ -712,7 +801,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
   .brand h1{font-size:17px}
   .brand p{font-size:12px}
   .btn,.nav button,.tools button,.menu summary{height:34px;padding:0 10px}
-  input[type=date],input[type=search],input[type=time],input[type=text],select{height:34px}
+  input[type=date],input[type=search],input[type=time],input[type=text],input[type=email],input[type=password],select{height:34px}
   .nav{flex:1 0 100%;flex-wrap:nowrap;gap:6px}
   .nav #jump{flex:1 1 auto;min-width:0}
   .tools{flex:1 0 100%;gap:6px;flex-wrap:wrap}
@@ -751,6 +840,8 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
 </style>
 </head>
 <body>
+<script>if(window.claude && typeof claude.use === 'function') document.body.classList.add('authed');</script>
+<div id="bootScreen"><div class="bootSpin" aria-hidden="true"></div><p>Đang kiểm tra đăng nhập…</p></div>
 <div class="app">
   <header class="top">
     <div class="brand"><h1>Lịch trình của tôi</h1><p id="range"></p></div>
@@ -772,22 +863,35 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
       <button id="undoBtn" title="Hoàn tác (Ctrl+Z)" aria-label="Hoàn tác" disabled>↶</button>
       <button id="redoBtn" title="Làm lại (Ctrl+Y)" aria-label="Làm lại" disabled>↷</button>
       <button id="themeBtn" title="Đổi giao diện sáng/tối" aria-label="Đổi giao diện">◐</button>
-      <button type="button" class="acct" id="acctChip" hidden><span class="av" id="acctAv"></span><span class="nm" id="acctNm"></span><span class="sy" id="acctSy" title=""></span></button>
+      <button type="button" class="acct" id="acctChip" hidden aria-label="Tài khoản"><span class="av" id="acctAv"></span><span class="nm" id="acctNm"></span><span class="sy" id="acctSy" title=""></span></button>
       <details class="menu" id="menu">
         <summary aria-label="Thêm tùy chọn">⋯</summary>
         <div class="menu-pop">
-          <button data-a="ics">Xuất sang Google/Apple Calendar (.ics)</button>
-          <button data-a="export-new">Tạo file sao lưu (.json)</button>
-          <button data-a="export">Sao lưu (.json)</button>
-          <button data-a="autobackup" id="abBtn">Sao lưu tự động</button>
-          <button data-a="autobackup-change" id="abChangeBtn" hidden>Đổi vị trí lưu…</button>
-          <button data-a="notify" id="notifyBtn">Bật thông báo lịch</button>
-          <button data-a="legacy-migrate" id="legacyMigrateBtn" hidden>Nhập dữ liệu từ bản đồng bộ cũ</button>
-          <button data-a="import">Khôi phục từ file .json</button>
-          <button data-a="print">In tuần này</button>
-          <button data-a="reset" class="danger">Xóa toàn bộ dữ liệu</button>
-          <div class="syncinfo" id="abInfo" hidden></div>
-          <div class="syncinfo" id="syncInfo" hidden></div>
+          <div class="syncinfo mtop" id="syncInfo" hidden></div>
+          <div class="menu-group">
+            <div class="menu-label">Lịch &amp; chia sẻ</div>
+            <button data-a="ics">Xuất lịch (.ics)</button>
+            <button data-a="print">In tuần này</button>
+          </div>
+          <div class="menu-group">
+            <div class="menu-label">Dữ liệu</div>
+            <button data-a="export-new">Tạo file sao lưu (.json)</button>
+            <button data-a="export">Sao lưu (.json)</button>
+            <button data-a="import">Khôi phục dữ liệu (.json)</button>
+          </div>
+          <div class="menu-group">
+            <div class="menu-label">Sao lưu tự động</div>
+            <button data-a="autobackup" id="abBtn">Sao lưu tự động</button>
+            <button data-a="autobackup-change" id="abChangeBtn" hidden>Đổi vị trí lưu…</button>
+            <div class="syncinfo" id="abInfo" hidden></div>
+          </div>
+          <div class="menu-group">
+            <div class="menu-label">Thông báo</div>
+            <button data-a="notify" id="notifyBtn">Bật thông báo lịch</button>
+          </div>
+          <div class="menu-group danger-group">
+            <button data-a="reset" class="danger">Xóa toàn bộ dữ liệu</button>
+          </div>
         </div>
       </details>
     </div>
@@ -825,7 +929,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
 
 <dialog id="dlg">
   <form id="f" autocomplete="off">
-    <h2 id="dlgTitle">Thêm lịch</h2>
+    <div class="dlgHead"><h2 id="dlgTitle">Thêm lịch</h2><button type="button" class="iconbtn" id="dlgCloseX" aria-label="Đóng">×</button></div>
     <div class="fgrid">
       <label>Kiểu ô<select name="cat"><option value="class">Lịch học của trường</option><option value="other">Lịch khác</option><option value="free">Lịch tự do</option></select></label>
       <label>Tag<select name="type"></select></label>
@@ -881,7 +985,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
 </dialog>
 <dialog id="dlgTags">
   <form id="tagForm" autocomplete="off">
-    <h2>Quản lý tag</h2>
+    <div class="dlgHead"><h2>Quản lý tag</h2><button type="button" class="iconbtn" id="tagCloseX" aria-label="Đóng">×</button></div>
     <div class="tagrows" id="tagRows"></div>
     <h3 class="subh">Màu ô đặc biệt</h3>
     <div class="tagrows" id="stRows">
@@ -899,7 +1003,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
 </dialog>
 <dialog id="dlgRow">
   <form id="rowForm" autocomplete="off">
-    <h2 id="rowTitle">Thêm dòng</h2>
+    <div class="dlgHead"><h2 id="rowTitle">Thêm dòng</h2><button type="button" class="iconbtn" id="rowCloseX" aria-label="Đóng">×</button></div>
     <div class="fgrid">
       <label class="full">Tên dòng - không bắt buộc<input name="label" maxlength="40" placeholder="Ví dụ: Nghỉ trưa"></label>
       <label>Bắt đầu<input type="text" class="t24" name="start" inputmode="numeric" maxlength="5" placeholder="HH:MM" autocomplete="off" required></label>
@@ -911,7 +1015,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
 </dialog>
 <dialog id="dlgTodo">
   <form id="todoEditForm" autocomplete="off">
-    <h2 id="todoDlgTitle">Sửa deadline</h2>
+    <div class="dlgHead"><h2 id="todoDlgTitle">Sửa deadline</h2><button type="button" class="iconbtn" id="todoCloseX" aria-label="Đóng">×</button></div>
     <div class="fgrid">
       <label class="full">Tiêu đề<textarea name="text" rows="2" required></textarea></label>
       <label class="full">Nội dung chính - bấm nút ▸ ở danh sách để xem<textarea name="body" rows="5" placeholder="Yêu cầu, checklist, ghi chú chi tiết…"></textarea></label>
@@ -929,7 +1033,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
 </dialog>
 <dialog id="dlgScope">
   <form id="scopeForm" onsubmit="return false" autocomplete="off">
-    <h2 id="scopeTitle">Áp dụng cho</h2>
+    <div class="dlgHead"><h2 id="scopeTitle">Áp dụng cho</h2><button type="button" class="iconbtn" id="scopeCloseX" aria-label="Đóng">×</button></div>
     <div class="scopeOpts">
       <button type="button" class="btn" id="scopeOne">Chỉ buổi này</button>
       <button type="button" class="btn" id="scopeFrom">Từ tuần này trở đi</button>
@@ -939,103 +1043,113 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
   </form>
 </dialog>
 
-<!-- Đăng nhập / Đăng ký / Quên mật khẩu -->
-<dialog id="authDlg">
-  <form id="authForm" autocomplete="off">
-    <h2 id="authTitle">Đăng nhập</h2>
-    <div class="seg authSeg" id="authSeg">
-      <button type="button" data-m="login" class="on">Đăng nhập</button>
-      <button type="button" data-m="register">Đăng ký</button>
+<!-- Trang đăng nhập toàn màn hình: hiện khi chưa đăng nhập, thay cho hộp thoại cũ.
+     Đăng nhập xong thì JS (xem startCloud/onAuthStateChanged) tự gỡ lớp này và hiện trang chính. -->
+<div id="authGate">
+  <div class="authGateCard">
+    <button type="button" class="authBackBtn" id="authBack" hidden aria-label="Quay lại đăng nhập"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5M5 12l6.5-6.5M5 12l6.5 6.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <div class="authGateBrand" id="authBrandRow">
+      <img src="icon-192.png" alt="" width="40" height="40">
+      <h1>Lịch trình của tôi</h1>
     </div>
-    <p class="hint" id="authHint" hidden></p>
-    <div class="fgrid">
-      <label class="full" data-f="name" hidden>Họ tên<input name="name" maxlength="80" autocomplete="name"></label>
-      <label class="full" data-f="email">Email<input name="email" type="email" maxlength="180" autocomplete="email"></label>
-      <label class="full" data-f="pass">Mật khẩu<input name="pass" type="password" maxlength="200" autocomplete="current-password"></label>
-      <label class="full" data-f="pass2" hidden>Nhập lại mật khẩu<input name="pass2" type="password" maxlength="200" autocomplete="new-password"></label>
+    <div class="authResetHead" id="authResetHead" hidden>
+      <img src="icon-192.png" alt="">
+      <h2>Đặt lại mật khẩu</h2>
+      <p>Nhập email của bạn, chúng tôi sẽ gửi liên kết đặt lại mật khẩu.</p>
     </div>
-    <p class="err" id="authErr"></p>
-    <div class="actions">
-      <button type="button" class="btn" id="authForgot">Quên mật khẩu?</button>
-      <span class="grow"></span>
-      <button type="button" class="btn" id="authClose">Hủy</button>
-      <button type="submit" class="btn primary" id="authSubmit">Đăng nhập</button>
-    </div>
-    <div class="actions" id="authGoogleWrap"><button type="button" class="btn" id="authGoogle" style="width:100%;justify-content:center">Đăng nhập bằng Google</button></div>
-  </form>
-</dialog>
+    <form id="authForm" autocomplete="off">
+      <div class="seg authSeg" id="authSeg">
+        <button type="button" data-m="login" class="on">Đăng nhập</button>
+        <button type="button" data-m="register">Đăng ký</button>
+      </div>
+      <div class="fgrid">
+        <label class="full" data-f="name" hidden>Họ tên<input name="name" maxlength="80" autocomplete="name"></label>
+        <label class="full" data-f="email">Email<input name="email" type="email" maxlength="180" autocomplete="email"></label>
+        <label class="full" data-f="pass">
+          <span class="authLblRow">Mật khẩu<button type="button" class="forgotLink" id="authForgot">Quên mật khẩu?</button></span>
+          <input name="pass" type="password" maxlength="200" autocomplete="current-password">
+        </label>
+        <label class="full" data-f="pass2" hidden>Nhập lại mật khẩu<input name="pass2" type="password" maxlength="200" autocomplete="new-password"></label>
+      </div>
+      <p class="err" id="authErr"></p>
+      <button type="submit" class="btn primary authSubmitBtn" id="authSubmit">Đăng nhập</button>
+      <div class="authDivider" id="authDivider"><span></span>hoặc<span></span></div>
+      <div id="authGoogleWrap"><button type="button" class="btn authGoogleBtn" id="authGoogle"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.03l2.97-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .98 4.97L3.95 7.3C4.66 5.17 6.65 3.58 9 3.58z"/></svg>Đăng nhập bằng Google</button></div>
+    </form>
+    <p class="authGateNote" id="authGateNote" hidden></p>
+    <button type="button" class="btn" id="authGateRetry" hidden>Thử lại kết nối</button>
+  </div>
+</div>
 
 <!-- Tài khoản của tôi -->
 <dialog id="profileDlg">
   <form id="profileForm" autocomplete="off" onsubmit="return false">
-    <div class="pf-head">
-      <span class="av" id="pfAv"></span>
-      <div class="who">
-        <div class="nm" id="pfName">&nbsp;</div>
-        <div class="em" id="pfEmail">&nbsp;</div>
-      </div>
-      <span class="verify" id="profileVerifyHint" hidden>Chưa xác minh · <a href="#" id="profileResendVerify">gửi lại</a></span>
-      <span class="verify ok" id="pfVerifiedBadge" hidden>Đã xác minh</span>
+    <div class="acctModalHead">
+      <span class="avBig" id="profileAv"></span>
+      <div class="acctModalName" id="profileNameDisplay"></div>
+      <button type="button" class="iconbtn" id="profileCloseX" aria-label="Đóng">×</button>
+      <div class="acctModalEmail"><span id="profileEmailDisplay"></span><span class="acctModalVerify" id="profileVerifyBadge"></span></div>
     </div>
+    <p class="hint verifyHint" id="profileVerifyHint" hidden>Email chưa được xác minh. <a href="#" id="profileResendVerify">Gửi lại email xác minh</a></p>
 
-    <details class="pf-sec" open>
-      <summary>Thông tin cá nhân</summary>
-      <div class="pf-body">
+    <div class="acctSection">
+      <button type="button" class="acctSectionSummary" aria-expanded="false">Thông tin cá nhân<span class="acctArrow" aria-hidden="true"></span></button>
+      <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
         <div class="fgrid">
-          <label class="full">Tên hiển thị<input name="name" maxlength="80"></label>
-          <label class="full" hidden>Email<input name="email" disabled></label>
+          <label class="full">Tên hiển thị
+            <div class="inline-input">
+              <input name="name" maxlength="80">
+              <button type="button" class="btn primary" id="profileSaveName">Lưu tên</button>
+            </div>
+          </label>
         </div>
         <p class="err" id="profileErr"></p>
-        <div class="actions"><span class="grow"></span><button type="button" class="btn primary" id="profileSaveName">Lưu tên</button></div>
-      </div>
-    </details>
+      </div></div></div>
+    </div>
 
-    <details class="pf-sec">
-      <summary>Đổi mật khẩu</summary>
-      <div class="pf-body">
+    <div class="acctSection">
+      <button type="button" class="acctSectionSummary" aria-expanded="false">Mật khẩu<span class="acctArrow" aria-hidden="true"></span></button>
+      <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
         <div class="fgrid" id="pwFields">
-          <label class="full">Mật khẩu hiện tại<input name="curPass" type="password" autocomplete="current-password"></label>
+          <label class="full">Mật khẩu hiện tại
+            <div class="pwInputWrap">
+              <input name="curPass" type="password" autocomplete="current-password">
+              <button type="button" class="pwToggle" id="curPassToggle" aria-label="Hiện mật khẩu hiện tại" tabindex="-1">👁</button>
+            </div>
+          </label>
           <label class="full">Mật khẩu mới<input name="newPass" type="password" autocomplete="new-password"></label>
         </div>
         <p class="err" id="pwErr"></p>
         <div class="actions"><span class="grow"></span><button type="button" class="btn" id="pwSave">Đổi mật khẩu</button></div>
-      </div>
-    </details>
+      </div></div></div>
+    </div>
 
-    <details class="pf-sec" open>
-      <summary>Đồng bộ &amp; dữ liệu</summary>
-      <div class="pf-body">
-        <div class="pf-row">
-          <div><div class="lbl">Trạng thái đồng bộ</div><div class="sub" id="profileSyncInfo">—</div></div>
-        </div>
-        <div class="actions">
-          <button type="button" class="btn" id="profileExport">Tải xuống dữ liệu (.json)</button>
-          <span class="grow"></span>
-          <button type="button" class="btn" id="profileLogout">Đăng xuất</button>
-        </div>
-      </div>
-    </details>
+    <div class="acctSection">
+      <button type="button" class="acctSectionSummary" aria-expanded="false">Dữ liệu cá nhân<span class="acctArrow" aria-hidden="true"></span></button>
+      <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
+        <p class="syncinfo" id="profileSyncInfo"></p>
+        <div class="actions"><button type="button" class="btn" id="profileExport">Tải xuống dữ liệu (.json)</button></div>
+      </div></div></div>
+    </div>
 
-    <details class="pf-sec">
-      <summary>Xóa tài khoản</summary>
-      <div class="pf-body">
-        <div class="danger-zone">
-          <p>Thao tác này xóa vĩnh viễn dữ liệu trên đám mây của tài khoản. Dữ liệu trên thiết bị này vẫn được giữ lại.</p>
-          <div class="fgrid"><label class="full">Nhập <b>XÓA TÀI KHOẢN</b> để xác nhận<input name="delConfirm" autocomplete="off" placeholder="XÓA TÀI KHOẢN"></label></div>
-          <p class="err" id="delErr"></p>
-          <div class="actions"><span class="grow"></span><button type="button" class="btn danger" id="profileDelete">Xóa tài khoản</button></div>
-        </div>
-      </div>
-    </details>
+    <div class="acctSection danger">
+      <button type="button" class="acctSectionSummary" aria-expanded="false">Xóa tài khoản<span class="acctArrow" aria-hidden="true"></span></button>
+      <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
+        <div class="fgrid"><label class="full delConfirmRow"><span>Nhập <b>XÓA TÀI KHOẢN</b> để xác nhận</span><input name="delConfirm" autocomplete="off"></label></div>
+        <p class="hint">Xóa tài khoản sẽ xóa dữ liệu cloud liên quan đến tài khoản này. Hành động này có thể không thể hoàn tác. Dữ liệu trên thiết bị này vẫn được giữ lại.</p>
+        <p class="err" id="delErr"></p>
+        <div class="actions"><span class="grow"></span><button type="button" class="btn danger" id="profileDelete">Xóa tài khoản</button></div>
+      </div></div></div>
+    </div>
 
-    <div class="actions" style="margin-top:18px"><span class="grow"></span><button type="button" class="btn" id="profileClose">Đóng</button></div>
+    <div class="actions" style="margin-top:14px"><span class="grow"></span><button type="button" class="btn footerLogout" id="profileLogout" aria-label="Đăng xuất"><span aria-hidden="true">⏻</span><span class="lbl">Đăng xuất</span></button></div>
   </form>
 </dialog>
 
 <!-- Xử lý dữ liệu cục bộ khi đăng nhập lần đầu / xung đột -->
 <dialog id="syncChoiceDlg">
   <form onsubmit="return false">
-    <h2 id="syncChoiceTitle">Dữ liệu trên thiết bị này</h2>
+    <div class="dlgHead"><h2 id="syncChoiceTitle">Dữ liệu trên thiết bị này</h2><button type="button" class="iconbtn" id="syncChoiceCloseX" aria-label="Đóng">×</button></div>
     <p id="syncChoiceMsg" class="hint"></p>
     <div class="actions" style="flex-direction:column;align-items:stretch">
       <button type="button" class="btn primary" id="syncChoiceUpload" style="justify-content:center">Đồng bộ dữ liệu thiết bị này lên tài khoản</button>
@@ -1051,6 +1165,27 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
 'use strict';
 /* ---------- tiện ích ngày giờ ---------- */
 const $ = s => document.querySelector(s);
+/* dự phòng: một số trình duyệt/webview không tự tạo lớp nền mờ (::backdrop) cho <dialog> khi thiếu top layer,
+   nên tự vẽ một lớp nền mờ riêng và đồng bộ theo trạng thái mở/đóng của MỌI <dialog> trên trang */
+(() => {
+  const bd = document.createElement('div');
+  bd.id = 'dlgFallbackBackdrop';
+  document.body.appendChild(bd);
+  const sync = () => bd.classList.toggle('on', !!document.querySelector('dialog[open]'));
+  new MutationObserver(sync).observe(document.body, {subtree:true, attributes:true, attributeFilter:['open']});
+  sync();
+})();
+/* đóng <dialog> có hiệu ứng mờ dần/thu nhỏ thay vì biến mất đột ngột */
+function closeDialog(d){
+  if(!d || !d.open) return;
+  if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches){ d.close(); return; }
+  if(d.classList.contains('closing')) return;
+  d.classList.add('closing');
+  let done = false;
+  const finish = () => { if(done) return; done = true; d.classList.remove('closing'); d.removeEventListener('animationend', finish); d.close(); };
+  d.addEventListener('animationend', finish);
+  setTimeout(finish, 220);
+}
 const pad = n => String(n).padStart(2,'0');
 const fmt = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const parse = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y,m-1,d); };
@@ -1225,7 +1360,7 @@ const seriesOf = ev => ev.series || ev.id;
 /* ---------- dữ liệu ----------
    Code KHÔNG chứa lịch học nào. Toàn bộ dữ liệu (lớp cố định, sự kiện, deadline, ghi chú)
    nằm trong file lich-trinh-data.json:
-   • Mở menu ⋯ → “Khôi phục từ file .json” để nạp file.
+   • Mở menu ⋯ → “Khôi phục dữ liệu (.json)” để nạp file.
    • Nếu trang được mở qua web server (cùng thư mục với file .json), lần chạy đầu tiên sẽ tự nạp. */
 const KEY = 'uit-planner-v2';
 const SCHEMA = 6;
@@ -1473,7 +1608,6 @@ function updateHistBtns(){
    local vừa đồng bộ hai chiều lên tài khoản. */
 const FIREBASE_CONFIG = {apiKey:"AIzaSyBDTSH53jn66Ct1EY0n1RtuPF9CCC4PcT4", authDomain:"lich-trinh-cua-toi.firebaseapp.com", projectId:"lich-trinh-cua-toi", appId:"1:983762899352:web:c83a0b41abbcf6bc5edbed"};
 const FB_VER = '10.12.2';
-const LEGACY_SYNC_KEY = 'W2IBZZ2Y-RmVfNp2xezZWWlJEXvowfsV';   // khóa đồng bộ dùng chung trước đây (không gắn với tài khoản nào) — chỉ dùng để nhập dữ liệu cũ một lần, xem migrateLegacyShared()
 const TS_KEY = KEY + ':ts';
 const tsKeyFor = uid => TS_KEY + (uid ? (':' + uid) : '');
 let curUid = null;
@@ -1607,11 +1741,28 @@ function updateAcctUI(){
     av.textContent = '?'; nm.textContent = 'Đăng nhập / Đăng ký'; chip.title = '';
     setAcctSync(null);
   }
-  const lm = document.getElementById('legacyMigrateBtn'); if(lm) lm.hidden = !u;
 }
+/* ---------- trang chính <-> trang đăng nhập toàn màn hình ----------
+   Khi chưa đăng nhập, chỉ hiển thị #authGate (trang chính bị ẩn bằng CSS).
+   Đăng nhập xong thì gateShowApp() tự chuyển sang trang chính và tải dữ liệu
+   của đúng tài khoản đó (xem attach() ở onAuthStateChanged bên dưới). */
+const LAST_AUTHED_KEY = KEY + ':lastAuthed';
+const PROFILE_OPEN_KEY = KEY + ':profileOpen';
+function gateShowApp(){ document.body.classList.add('authed'); document.body.classList.remove('gate'); }
+function gateShowLogin(){ document.body.classList.add('gate'); document.body.classList.remove('authed'); }
+function gateNote(text, opts){
+  opts = opts || {};
+  const n = document.getElementById('authGateNote'), r = document.getElementById('authGateRetry');
+  if(n){ n.hidden = !text; n.textContent = text || ''; n.classList.toggle('warn', !!opts.warn); }
+  if(r) r.hidden = !opts.retry;
+}
+document.getElementById('authGateRetry').addEventListener('click', () => { gateNote('Đang thử kết nối lại…'); startCloud(); });
 async function startCloud(){
-  if(!FIREBASE_CONFIG){ syncInfo('Chưa thiết lập đồng bộ đám mây: dữ liệu chỉ lưu trên thiết bị này.'); return; }
-  if(location.protocol !== 'http:' && location.protocol !== 'https:'){ syncInfo('Đồng bộ đám mây cần mở trang qua địa chỉ web (https://…), không mở file trực tiếp.'); return; }
+  // Không có cấu hình Firebase hoặc mở file trực tiếp (không qua web server): không thể có hệ thống
+  // tài khoản thật, nên không chặn bằng trang đăng nhập — vào thẳng trang chính như trước, chỉ lưu cục bộ.
+  if(!FIREBASE_CONFIG){ gateShowApp(); syncInfo('Chưa thiết lập đồng bộ đám mây: dữ liệu chỉ lưu trên thiết bị này.'); return; }
+  if(location.protocol !== 'http:' && location.protocol !== 'https:'){ gateShowApp(); syncInfo('Đồng bộ đám mây cần mở trang qua địa chỉ web (https://…), không mở file trực tiếp.'); return; }
+  gateNote('');
   try{
     const base = 'https://www.gstatic.com/firebasejs/' + FB_VER + '/';
     await loadScript(base + 'firebase-app-compat.js');
@@ -1620,18 +1771,36 @@ async function startCloud(){
     fb.db = firebase.firestore();
     fb.auth = firebase.auth();
     try{ await fb.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL); }catch(e){}
-  }catch(e){ syncInfo('Không tải được dịch vụ tài khoản (đang offline?). Dữ liệu vẫn được lưu trên thiết bị này.'); return; }
+  }catch(e){
+    // Không tải được SDK (thường do mất mạng). Nếu lần trước trên thiết bị này đã từng đăng nhập, cho
+    // vào thẳng trang chính (dữ liệu cục bộ) thay vì khoá cứng; nếu chưa từng đăng nhập, giữ ở trang
+    // đăng nhập kèm nút "Thử lại kết nối" vì chưa thể xác thực ai để tải dữ liệu của đúng tài khoản.
+    let lastAuthed = null; try{ lastAuthed = localStorage.getItem(LAST_AUTHED_KEY); }catch(e2){}
+    if(lastAuthed === '1'){
+      gateShowApp();
+      syncInfo('Không thể kết nối để xác thực lại (có thể đang mất mạng). Đang dùng dữ liệu đã lưu trên thiết bị; mở lại khi có mạng để đồng bộ.');
+    } else {
+      gateShowLogin();
+      gateNote('Không tải được dịch vụ tài khoản (kiểm tra kết nối Internet).', {warn:true, retry:true});
+    }
+    return;
+  }
   fb.ready = true;
   updateAcctUI();
-  syncInfo('Chưa đăng nhập. Dữ liệu chỉ lưu trên thiết bị này.');
   fb.auth.onAuthStateChanged(u => {
     fb.user = u; curUid = u ? u.uid : null;
     try{ syncTs = +localStorage.getItem(tsKeyFor(curUid)) || 0; }catch(e){ syncTs = 0; }
     updateAcctUI();
+    try{ localStorage.setItem(LAST_AUTHED_KEY, u ? '1' : '0'); }catch(e){}
     if(u){
+      gateNote('');
+      gateShowApp();
       attach(fb.db.doc('users/' + u.uid + '/planner/main'), {askOnFirstSync:true, askOnConflict:true});
+      let wasProfileOpen = false; try{ wasProfileOpen = localStorage.getItem(PROFILE_OPEN_KEY) === '1'; }catch(e){}
+      if(wasProfileOpen && !profileDlg.open) openProfile();
     } else {
       detach();
+      gateShowLogin();
       syncInfo('Chưa đăng nhập. Dữ liệu chỉ lưu trên thiết bị này.');
     }
   });
@@ -1655,37 +1824,39 @@ function friendlyAuthErr(e){
   return map.hasOwnProperty(c) ? map[c] : 'Có lỗi xảy ra (' + (c || 'không rõ') + '). Vui lòng thử lại.';
 }
 /* ---------- hộp thoại Đăng nhập / Đăng ký / Quên mật khẩu ---------- */
-const authDlg = document.getElementById('authDlg'), authForm = document.getElementById('authForm');
+const authGate = document.getElementById('authGate'), authForm = document.getElementById('authForm');
 let authMode = 'login', authBusy = false;
 function setAuthMode(m){
   authMode = m;
   document.getElementById('authSeg').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.m === m));
-  document.querySelector('#authDlg [data-f=name]').hidden = m !== 'register';
-  document.querySelector('#authDlg [data-f=pass2]').hidden = m !== 'register';
-  document.querySelector('#authDlg [data-f=pass]').hidden = m === 'reset';
+  document.getElementById('authSeg').hidden = m === 'reset';
+  document.getElementById('authBack').hidden = m !== 'reset';
+  document.querySelector('#authGate [data-f=name]').hidden = m !== 'register';
+  document.querySelector('#authGate [data-f=pass2]').hidden = m !== 'register';
+  document.querySelector('#authGate [data-f=pass]').hidden = m === 'reset';
   document.getElementById('authForgot').hidden = m !== 'login';
-  document.getElementById('authGoogleWrap').hidden = m === 'reset';
-  document.getElementById('authTitle').textContent = m === 'login' ? 'Đăng nhập' : m === 'register' ? 'Đăng ký tài khoản' : 'Quên mật khẩu';
+  document.getElementById('authGoogleWrap').hidden = m !== 'login';
+  document.getElementById('authDivider').hidden = m !== 'login';
   document.getElementById('authSubmit').textContent = m === 'login' ? 'Đăng nhập' : m === 'register' ? 'Đăng ký' : 'Gửi email đặt lại mật khẩu';
   document.getElementById('authErr').textContent = '';
-  const hint = document.getElementById('authHint');
-  if(m === 'reset'){ hint.hidden = false; hint.textContent = 'Nhập email của bạn, chúng tôi sẽ gửi liên kết đặt lại mật khẩu.'; }
-  else hint.hidden = true;
+  document.getElementById('authBrandRow').hidden = m === 'reset';
+  document.getElementById('authResetHead').hidden = m !== 'reset';
 }
+document.getElementById('authBack').addEventListener('click', () => setAuthMode('login'));
 function openAuth(mode){
-  if(!fb.auth){ alert('Đang tải dịch vụ tài khoản, vui lòng thử lại sau vài giây.'); return; }
-  authForm.reset(); setAuthMode(mode || 'login'); authDlg.showModal();
+  // Không còn hộp thoại để mở: trang đăng nhập toàn màn hình luôn hiển thị sẵn khi chưa đăng nhập.
+  // Hàm này chỉ còn tác dụng đặt lại tab (đăng nhập/đăng ký) khi được gọi từ nơi khác trong app.
+  authForm.reset(); setAuthMode(mode || 'login');
 }
 document.getElementById('authSeg').addEventListener('click', e => { const b = e.target.closest('button'); if(b) setAuthMode(b.dataset.m); });
 document.getElementById('authForgot').addEventListener('click', () => setAuthMode('reset'));
-document.getElementById('authClose').addEventListener('click', () => authDlg.close());
-authDlg.addEventListener('click', e => { if(e.target === authDlg) authDlg.close(); });
 authForm.addEventListener('submit', async e => {
   e.preventDefault();
   if(authBusy) return;
   const f = authForm.elements, errEl = document.getElementById('authErr');
   const email = f.email.value.trim(), pass = f.pass.value;
   errEl.textContent = '';
+  if(!fb.auth){ errEl.textContent = 'Đang tải dịch vụ tài khoản, vui lòng thử lại sau vài giây (kiểm tra kết nối mạng).'; return; }
   if(!email){ errEl.textContent = 'Vui lòng nhập email.'; return; }
   if(authMode !== 'reset' && !pass){ errEl.textContent = 'Vui lòng nhập mật khẩu.'; return; }
   if(authMode === 'register'){
@@ -1696,25 +1867,25 @@ authForm.addEventListener('submit', async e => {
   try{
     if(authMode === 'login'){
       await fb.auth.signInWithEmailAndPassword(email, pass);
-      authDlg.close();
+      // Đăng nhập xong: onAuthStateChanged (bên dưới) sẽ tự ẩn trang đăng nhập và chuyển sang trang chính.
     } else if(authMode === 'register'){
       const cred = await fb.auth.createUserWithEmailAndPassword(email, pass);
       if(f.name.value.trim()) try{ await cred.user.updateProfile({displayName: f.name.value.trim()}); }catch(e){}
       try{ await cred.user.sendEmailVerification(); }catch(e){}
-      authDlg.close();
       alert('Đăng ký thành công! Chúng tôi đã gửi một email xác minh tới ' + email + '. Vui lòng kiểm tra hộp thư (kể cả mục spam) và xác minh email của bạn.');
     } else {
       await fb.auth.sendPasswordResetEmail(email);
-      authDlg.close();
       alert('Đã gửi email đặt lại mật khẩu tới ' + email + '. Vui lòng kiểm tra hộp thư.');
+      setAuthMode('login');
     }
   }catch(err){ errEl.textContent = friendlyAuthErr(err); }
   authBusy = false; document.getElementById('authSubmit').disabled = false;
 });
 document.getElementById('authGoogle').addEventListener('click', async () => {
-  if(!fb.auth || authBusy) return;
+  if(!fb.auth){ document.getElementById('authErr').textContent = 'Đang tải dịch vụ tài khoản, vui lòng thử lại sau vài giây.'; return; }
+  if(authBusy) return;
   const prov = new firebase.auth.GoogleAuthProvider();
-  try{ await fb.auth.signInWithPopup(prov); authDlg.close(); }
+  try{ await fb.auth.signInWithPopup(prov); /* onAuthStateChanged sẽ chuyển trang */ }
   catch(e){
     if(e && (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment')){ fb.auth.signInWithRedirect(prov); return; }
     if(e && (e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request')) return;
@@ -1726,20 +1897,43 @@ const profileDlg = document.getElementById('profileDlg'), profileForm = document
 function openProfile(){
   if(!fb.user) return;
   profileForm.elements.name.value = fb.user.displayName || '';
-  profileForm.elements.email.value = fb.user.email || '';
   profileForm.elements.curPass.value = ''; profileForm.elements.newPass.value = ''; profileForm.elements.delConfirm.value = '';
+  profileForm.elements.curPass.type = 'password';
+  const cpt = document.getElementById('curPassToggle'); cpt.textContent = '👁'; cpt.setAttribute('aria-label', 'Hiện mật khẩu hiện tại');
   document.getElementById('profileErr').textContent = ''; document.getElementById('pwErr').textContent = ''; document.getElementById('delErr').textContent = '';
-  document.getElementById('pfAv').textContent = initials(fb.user.displayName || fb.user.email);
-  document.getElementById('pfName').textContent = fb.user.displayName || fb.user.email || '';
-  document.getElementById('pfEmail').textContent = fb.user.email || '';
-  const vh = document.getElementById('profileVerifyHint'), vok = document.getElementById('pfVerifiedBadge');
-  vh.hidden = !!fb.user.emailVerified; vok.hidden = !fb.user.emailVerified;
+  const vh = document.getElementById('profileVerifyHint'); vh.hidden = !!fb.user.emailVerified;
   document.getElementById('profileSyncInfo').textContent = document.getElementById('syncInfo').textContent || 'Đã đồng bộ';
+  document.getElementById('profileAv').textContent = initials(fb.user.displayName || fb.user.email);
+  document.getElementById('profileNameDisplay').textContent = fb.user.displayName || fb.user.email || '';
+  document.getElementById('profileEmailDisplay').textContent = fb.user.email || '';
+  const badge = document.getElementById('profileVerifyBadge');
+  badge.textContent = fb.user.emailVerified ? '✓ Đã xác minh' : 'Chưa xác minh';
+  badge.className = 'acctModalVerify' + (fb.user.emailVerified ? ' ok' : ' warn');
+  document.querySelectorAll('#profileForm .acctSection.open').forEach(s => { s.classList.remove('open'); s.querySelector('.acctSectionSummary').setAttribute('aria-expanded', 'false'); });
   profileDlg.showModal();
+  try{ localStorage.setItem(PROFILE_OPEN_KEY, '1'); }catch(e){}
 }
+profileDlg.addEventListener('close', () => { try{ localStorage.removeItem(PROFILE_OPEN_KEY); }catch(e){} });
 document.getElementById('acctChip').addEventListener('click', () => { fb.user ? openProfile() : openAuth('login'); });
-document.getElementById('profileClose').addEventListener('click', () => profileDlg.close());
-profileDlg.addEventListener('click', e => { if(e.target === profileDlg) profileDlg.close(); });
+document.getElementById('profileCloseX').addEventListener('click', () => closeDialog(profileDlg));
+document.getElementById('curPassToggle').addEventListener('click', () => {
+  const inp = profileForm.elements.curPass, btn = document.getElementById('curPassToggle');
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  btn.textContent = show ? '🙈' : '👁';
+  btn.setAttribute('aria-label', show ? 'Ẩn mật khẩu hiện tại' : 'Hiện mật khẩu hiện tại');
+});
+profileDlg.addEventListener('click', e => { if(e.target === profileDlg) closeDialog(profileDlg); });
+/* mỗi lần chỉ mở một mục (accordion) + reset về trạng thái đóng hết mỗi khi mở lại hộp thoại */
+const acctAccordionSections = Array.from(document.querySelectorAll('#profileForm .acctSection'));
+acctAccordionSections.forEach(sec => {
+  const head = sec.querySelector('.acctSectionSummary');
+  head.addEventListener('click', () => {
+    const willOpen = !sec.classList.contains('open');
+    acctAccordionSections.forEach(s => { s.classList.remove('open'); s.querySelector('.acctSectionSummary').setAttribute('aria-expanded', 'false'); });
+    if(willOpen){ sec.classList.add('open'); head.setAttribute('aria-expanded', 'true'); }
+  });
+});
 document.getElementById('profileResendVerify').addEventListener('click', async e => {
   e.preventDefault(); if(!fb.user) return;
   try{ await fb.user.sendEmailVerification(); alert('Đã gửi lại email xác minh tới ' + fb.user.email + '.'); }
@@ -1768,7 +1962,7 @@ document.getElementById('pwSave').addEventListener('click', async () => {
 });
 document.getElementById('profileExport').addEventListener('click', () => download(DATA_FILE, JSON.stringify(state, null, 2), 'application/json'));
 document.getElementById('profileLogout').addEventListener('click', async () => {
-  profileDlg.close();
+  closeDialog(profileDlg);
   try{ await fb.auth.signOut(); }catch(e){}
 });
 document.getElementById('profileDelete').addEventListener('click', async () => {
@@ -1776,13 +1970,13 @@ document.getElementById('profileDelete').addEventListener('click', async () => {
   const errEl = document.getElementById('delErr');
   errEl.textContent = '';
   if(profileForm.elements.delConfirm.value.trim() !== 'XÓA TÀI KHOẢN'){ errEl.textContent = 'Vui lòng nhập đúng "XÓA TÀI KHOẢN" để xác nhận.'; return; }
-  if(!confirm('⚠️ XÁC NHẬN LẦN CUỐI\n\nTài khoản "' + (fb.user.email || '') + '" và toàn bộ dữ liệu trên đám mây sẽ bị xóa vĩnh viễn, không thể khôi phục.\n\nDữ liệu trên thiết bị này vẫn được giữ lại.\n\nBấm OK để xóa ngay.')) return;
+  if(!confirm('Xóa vĩnh viễn tài khoản và toàn bộ dữ liệu đám mây liên quan? Hành động này không thể hoàn tác.')) return;
   try{
     const uid = fb.user.uid;
     detach();
     try{ await fb.db.doc('users/' + uid + '/planner/main').delete(); }catch(e){}
     await fb.user.delete();
-    profileDlg.close();
+    closeDialog(profileDlg);
     alert('Đã xóa tài khoản. Dữ liệu trên thiết bị này vẫn được giữ lại.');
   }catch(err){
     if(err && err.code === 'auth/requires-recent-login'){ errEl.textContent = 'Vì lý do bảo mật, hãy đăng xuất, đăng nhập lại rồi thử xóa tài khoản lại ngay sau đó.'; }
@@ -1796,33 +1990,15 @@ function openSyncChoice(opt){
   document.getElementById('syncChoiceMsg').textContent = opt.msg;
   const up = document.getElementById('syncChoiceUpload');
   up.textContent = opt.uploadLabel || 'Đồng bộ dữ liệu thiết bị này lên tài khoản';
-  const onUpload = () => { syncChoiceDlg.close(); opt.onUpload && opt.onUpload(); };
-  const onKeep = () => { syncChoiceDlg.close(); opt.onKeepCloud && opt.onKeepCloud(); };
-  const onCancel = () => { syncChoiceDlg.close(); };
+  const onUpload = () => { closeDialog(syncChoiceDlg); opt.onUpload && opt.onUpload(); };
+  const onKeep = () => { closeDialog(syncChoiceDlg); opt.onKeepCloud && opt.onKeepCloud(); };
+  const onCancel = () => { closeDialog(syncChoiceDlg); };
   up.onclick = onUpload;
   document.getElementById('syncChoiceKeepCloud').onclick = onKeep;
   document.getElementById('syncChoiceCancel').onclick = onCancel;
+  document.getElementById('syncChoiceCloseX').onclick = onCancel;
   syncChoiceDlg.showModal();
 }
-/* ---------- nhập dữ liệu một lần từ chế độ đồng bộ-bằng-khóa cũ (trước khi có tài khoản) ----------
-   Trước đây trang dùng LEGACY_SYNC_KEY: ai có đường link là xem/sửa được, không có tài khoản riêng.
-   Hàm này CHỈ chạy khi người dùng đã đăng nhập và tự bấm nút trong menu ⋯ — không tự động chạy cho
-   người dùng mới, để tránh vô tình gán dữ liệu của người trước cho một tài khoản bất kỳ. */
-async function migrateLegacyShared(){
-  if(!fb.user || !fb.db){ alert('Vui lòng đăng nhập trước.'); return; }
-  if(!confirm('Nhập dữ liệu từ bản đồng bộ-bằng-khóa cũ (trước khi có tài khoản) vào tài khoản hiện tại? Chỉ nên làm việc này một lần, trên đúng tài khoản của bạn.')) return;
-  try{
-    const snap = await fb.db.doc('planner/' + LEGACY_SYNC_KEY).get();
-    if(!snap.exists){ alert('Không tìm thấy dữ liệu cũ.'); return; }
-    const d = snap.data();
-    if(!d || typeof d.json !== 'string'){ alert('Dữ liệu cũ không hợp lệ.'); return; }
-    const ts = +d.ts || Date.now();
-    if(ts <= syncTs){ alert('Dữ liệu trên tài khoản hiện tại đã mới hơn hoặc bằng bản cũ — không cần nhập lại.'); return; }
-    pendingRemote = {json:d.json, ts}; applyRemote();
-    alert('Đã nhập dữ liệu cũ vào tài khoản này.');
-  }catch(e){ alert('Không đọc được dữ liệu cũ (' + ((e && e.code) || '?') + ').'); }
-}
-
 let state = load();
 const firstRun = !state;
 if(!state) state = emptyState();
@@ -2305,7 +2481,7 @@ function fixedHTML(){
   const today = todayStr();
   const kind = 'school', list = fixedList(kind);
   let h = `<h3 class="fxh">Thời khóa biểu của trường</h3><div class="scroller"><table class="fx" data-fx-kind="${kind}"><thead><tr><th class="n">#</th>${fxSortTh(kind,'name','Môn học')}${fxSortTh(kind,'tc','TC','c w-tc')}${fxSortTh(kind,'htgd','HTGD','w-ht')}${fxSortTh(kind,'when','Thời gian')}${fxSortTh(kind,'room','Phòng')}${fxSortTh(kind,'teacher','Giảng viên')}${fxSortTh(kind,'sv','Sĩ số','r w-sv')}${fxSortTh(kind,'note','Ghi chú')}<th>Liên kết</th></tr></thead><tbody>`;
-  if(!list.length) h += '<tr><td colspan="10" class="none">Chưa có lớp cố định. Bấm “Thêm lịch”, chọn Tag “Lớp chính thức” và Kiểu lặp Hằng tuần hoặc Cách tuần. Hoặc nạp file dữ liệu ở menu ⋯ → “Khôi phục từ file .json”.</td></tr>';
+  if(!list.length) h += '<tr><td colspan="10" class="none">Chưa có lớp cố định. Bấm “Thêm lịch”, chọn Tag “Lớp chính thức” và Kiểu lặp Hằng tuần hoặc Cách tuần. Hoặc nạp file dữ liệu ở menu ⋯ → “Khôi phục dữ liệu (.json)”.</td></tr>';
   list.forEach(({cur:ev, vs}, i) => {
     const cc = String(ev.code || '').split('.')[0];
     const occ = nextHit(ev, mondayOf(today)) || firstDate(ev);
@@ -2480,9 +2656,9 @@ function askScope({title, one=false, oneLabel='Chỉ buổi này', fromLabel='T�
     let out = null;
     $('#scopeTitle').textContent = title;
     $('#scopeOne').hidden = !one; $('#scopeOne').textContent = oneLabel; $('#scopeFrom').textContent = fromLabel; $('#scopeAll').textContent = allLabel;
-    const pick = v => () => { out = v; dlgScope.close(); };
+    const pick = v => () => { out = v; closeDialog(dlgScope); };
     $('#scopeOne').onclick = pick('one'); $('#scopeFrom').onclick = pick('from');
-    $('#scopeAll').onclick = pick('all'); $('#scopeCancel').onclick = pick(null);
+    $('#scopeAll').onclick = pick('all'); $('#scopeCancel').onclick = pick(null); $('#scopeCloseX').onclick = pick(null);
     dlgScope.onclose = () => res(out);
     dlgScope.showModal();
     $('#scopeFrom').focus();
@@ -2685,7 +2861,7 @@ f.addEventListener('submit', async e => {
   if(!ev){
     state.events.push({id:uid(), skip:[], ...d});
   } else if(isRec(ev) && d.repeat !== 'none'){
-    if(!editChanged(ev, d)){ dlg.close(); return; }
+    if(!editChanged(ev, d)){ closeDialog(dlg); return; }
     const occ = editing.date || ev.date, from = mondayOf(occ);
     const slotSpecific = !!(editing.slot && ev.times && (ev.times[wd(occ)]||[]).length > 1);
     const c = await askScope({
@@ -2704,14 +2880,15 @@ f.addEventListener('submit', async e => {
   }
   extra.forEach(x => state.events.push({id:uid(), skip:[], ...x}));
   weekStart = mondayOf(editing.id && d.repeat !== 'none' ? weekStart : d.date);
-  save(); dlg.close(); render();
+  save(); closeDialog(dlg); render();
 });
-$('#closeBtn').onclick = () => dlg.close();
-dlg.addEventListener('click', e => { if(e.target === dlg) dlg.close(); });
+$('#closeBtn').onclick = () => closeDialog(dlg);
+$('#dlgCloseX').onclick = () => closeDialog(dlg);
+dlg.addEventListener('click', e => { if(e.target === dlg) closeDialog(dlg); });
 $('#delBtn').onclick = async () => {
   const ev = state.events.find(e => e.id === editing.id); if(!ev) return;
   if(!isRec(ev)){
-    if(confirm(`Xóa “${ev.title}”?`)){ releaseOverride(ev); state.events = state.events.filter(e => e !== ev); save(); dlg.close(); render(); }
+    if(confirm(`Xóa “${ev.title}”?`)){ releaseOverride(ev); state.events = state.events.filter(e => e !== ev); save(); closeDialog(dlg); render(); }
     return;
   }
   const occ = editing.date || ev.date;
@@ -2722,7 +2899,7 @@ $('#delBtn').onclick = async () => {
   if(!c) return;
   if(c === 'all'){ const k = seriesOf(ev); state.events = state.events.filter(e => !(isRec(e) && seriesOf(e) === k)); }
   else truncateFrom(ev, occ);
-  save(); dlg.close(); render();
+  save(); closeDialog(dlg); render();
 };
 
 /* ---------- sự kiện giao diện ---------- */
@@ -3141,10 +3318,11 @@ todoEditForm.addEventListener('submit', e => {
   const d = {text, body:el.body.value.trim(), links, link:links[0] ? links[0].url : '', linkName:links[0] ? links[0].name : '', on:el.on.value, onTime:el.on.value ? onTime : '', due:el.noDue.checked ? '' : el.due.value, dueTime:!el.noDue.checked && el.due.value ? dueTime : '', done:el.done.checked};
   if(todoEditing){ const t = state.todos.find(x => x.id === todoEditing); if(t) Object.assign(t, d); }
   else state.todos.push({id:uid(), ...d});
-  save(); dlgTodo.close(); render();
+  save(); closeDialog(dlgTodo); render();
 });
-$('#todoClose').onclick = () => dlgTodo.close();
-dlgTodo.addEventListener('click', e => { if(e.target === dlgTodo) dlgTodo.close(); });
+$('#todoClose').onclick = () => closeDialog(dlgTodo);
+$('#todoCloseX').onclick = () => closeDialog(dlgTodo);
+dlgTodo.addEventListener('click', e => { if(e.target === dlgTodo) closeDialog(dlgTodo); });
 
 ['on','onTime'].forEach(k => todoEditForm.elements[k].addEventListener('input', () => { todoAuto = false; }));
 dlgTodo.addEventListener('close', () => { clearInterval(todoClock); todoAuto = false; });
@@ -3202,7 +3380,6 @@ $('#menu').addEventListener('click', e => {
   if(a === 'autobackup') abToggle();
   if(a === 'autobackup-change') abChangeLocation();
   if(a === 'notify') enableScheduleNotifications();
-  if(a === 'legacy-migrate') migrateLegacyShared();
   if(a === 'export') saveBackupFile();
   if(a === 'export-new') saveBackupNewFile();
   if(a === 'ics') download('lich-trinh.ics', toICS(), 'text/calendar');
@@ -3281,7 +3458,8 @@ $('#tagAdd').onclick = () => {
   tagDraft.push({id:'tag_'+uid(), name:'', color:randomTagColor(), fill:true}); drawTagRows();
   [...document.querySelectorAll('#tagRows .tn')].pop().focus();
 };
-$('#tagClose').onclick = () => dlgTags.close();
+$('#tagClose').onclick = () => closeDialog(dlgTags);
+$('#tagCloseX').onclick = () => closeDialog(dlgTags);
 tagForm.addEventListener('submit', e => {
   e.preventDefault();
   if(tagDraft.some(t => !t.name.trim())) return alert('Mỗi tag cần có tên.');
@@ -3293,7 +3471,7 @@ tagForm.addEventListener('submit', e => {
   [...hiddenTypes].forEach(k => { if(!SYS_HIDDEN.has(k) && !ids.has(k)) hiddenTypes.delete(k); });
   state.status = {};
   for(const [k,id] of [['dl','#stDl'],['cancel','#stCancel'],['conflict','#stConflict']]){ const v = $(id).value.toLowerCase(); state.status[k] = v === STATUS_DEF[themeNow()][k] ? null : v; }
-  save(); dlgTags.close(); render();
+  save(); closeDialog(dlgTags); render();
 });
 
 /* dòng tự do */
@@ -3316,10 +3494,11 @@ rowForm.addEventListener('submit', e => {
   d.start = ts; d.end = te;
   if(toMin(d.end) <= toMin(d.start)) { $('#rowErr').textContent = 'Giờ kết thúc phải sau giờ bắt đầu.'; return; }
   if(rowEditing) Object.assign(state.rows.find(x => x.id === rowEditing), d); else state.rows.push({id:uid(), ...d});
-  save(); dlgRow.close(); render();
+  save(); closeDialog(dlgRow); render();
 });
-$('#rowClose').onclick = () => dlgRow.close();
-[dlgTags, dlgRow, dlgScope].forEach(d => d.addEventListener('click', e => { if(e.target === d) d.close(); }));
+$('#rowClose').onclick = () => closeDialog(dlgRow);
+$('#rowCloseX').onclick = () => closeDialog(dlgRow);
+[dlgTags, dlgRow, dlgScope].forEach(d => d.addEventListener('click', e => { if(e.target === d) closeDialog(d); }));
 
 /* phím tắt */
 document.addEventListener('keydown', e => {

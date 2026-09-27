@@ -1,7 +1,7 @@
 /* Service worker gộp: vừa cài app ra màn hình chính / mở offline (sw.js cũ),
    vừa xử lý việc bấm vào thông báo lịch học (notify-sw.js cũ). Gộp làm một
    để chỉ cần đăng ký (register) một service worker duy nhất thay vì hai. */
-const CACHE = 'lich-v1';
+const CACHE = 'lich-v2';   // đổi số phiên bản mỗi khi cần ép trình duyệt cập nhật bản mới (bản cũ đã cache trang, F5 thường không đủ để lấy bản mới nếu không đổi số này)
 
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', e => e.waitUntil(
@@ -12,7 +12,7 @@ self.addEventListener('fetch', e => {
   const r = e.request;
   if(r.method !== 'GET' || r.mode !== 'navigate') return;   // chỉ cache trang chính; Firebase/font để nguyên
   e.respondWith(
-    fetch(r).then(res => { const c = res.clone(); caches.open(CACHE).then(ch => ch.put('./', c)); return res; })
+    fetch(r, {cache:'no-store'}).then(res => { const c = res.clone(); caches.open(CACHE).then(ch => ch.put('./', c)); return res; })   // no-store: luôn lấy bản mới nhất từ mạng, không dùng cache HTTP của trình duyệt cho trang chính
       .catch(() => caches.match('./'))
   );
 });
