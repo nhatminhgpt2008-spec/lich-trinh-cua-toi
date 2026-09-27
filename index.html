@@ -3097,18 +3097,6 @@ function upcoming(weeks = 2){   // weeks = 1: chỉ tuần này (dùng cho banne
     next: occs.filter(o => occStartMs(o) > now).sort(byStart)
   };
 }
-function whenTxt(date){
-  const n = daysBetween(todayStr(), date);
-  return n === 0 ? 'Hôm nay' : n === 1 ? 'Ngày mai' : `${dowShort(date)} · ${dm(date)}`;
-}
-/* Dùng cho banner "Đang diễn ra/Tiếp theo" và thông báo điện thoại: luôn có
-   dạng "Hôm nay/Ngày mai/Thứ n · dd/mm" cho cả 2 mục, để 2 dòng cùng cấu
-   trúc và thẳng hàng với nhau (trước đây chỉ "Tiếp theo" có phần ngày nên
-   bị thụt so với "Đang diễn ra"). */
-function dayDm(date){
-  const n = daysBetween(todayStr(), date);
-  return `${n === 0 ? 'Hôm nay' : n === 1 ? 'Ngày mai' : dowShort(date)} · ${dm(date)}`;
-}
 const fmtHMS = ms => {
   const t = Math.max(0, Math.floor(ms / 1000));
   const Y = 365*86400, M = 30*86400;
@@ -3233,8 +3221,8 @@ async function updateScheduleNotification(force = false){
   if(!l && !n) return;
   const title = l ? `🔴 Đang diễn ra: ${l.ev.title}` : `⏳ Tiếp theo: ${n.ev.title}`;
   const body = l
-    ? `${dayDm(l.date)} · ${l.ev.start} - ${l.ev.end} · còn ${fmtHMS(occEndMs(l) - now)}`
-    : `${dayDm(n.date)} · ${n.ev.start} - ${n.ev.end} · sau ${fmtHMS(occStartMs(n) - now)}`;
+    ? `${dm(l.date)} · ${l.ev.start} - ${l.ev.end} · còn ${fmtHMS(occEndMs(l) - now)}`
+    : `${dm(n.date)} · ${n.ev.start} - ${n.ev.end} · còn ${fmtHMS(occStartMs(n) - now)}`;
   /* Giữ một thông báo duy nhất trên mobile và cập nhật lại theo từng giây.
      Dùng chính nội dung có đếm ngược làm chữ ký để khi người dùng xóa
      thông báo, lần cập nhật tiếp theo vẫn tạo lại thông báo; đồng thời
