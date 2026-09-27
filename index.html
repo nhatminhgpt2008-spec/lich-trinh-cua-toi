@@ -84,8 +84,8 @@ body.gate #authGate{display:flex}
 .nav,.tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .tools{flex:1 1 auto}
 .tools button:disabled{opacity:.35;cursor:not-allowed}
-.btn,.nav button,.tools button,.menu summary{height:36px;padding:0 12px;border:1px solid var(--line);background:var(--surface);border-radius:8px;display:inline-flex;align-items:center;gap:6px}
-.btn:hover,.nav button:hover,.tools button:hover,.menu summary:hover{border-color:var(--accent)}
+.btn,.nav button,.tools button{height:36px;padding:0 12px;border:1px solid var(--line);background:var(--surface);border-radius:8px;display:inline-flex;align-items:center;gap:6px}
+.btn:hover,.nav button:hover,.tools button:hover{border-color:var(--accent)}
 .primary{background:var(--accent)!important;color:var(--accent-ink)!important;border-color:var(--accent)!important;font-weight:600}
 .danger{color:var(--danger)!important}
 input[type=date],input[type=search],input[type=time],input[type=text],input[type=url],input[type=number],input[type=email],input[type=password],select,textarea,input:not([type]){height:36px;padding:0 10px;border:1px solid var(--line);background:var(--surface);border-radius:8px;min-width:0}
@@ -98,35 +98,18 @@ textarea{height:auto;padding:8px 10px;width:100%;resize:vertical}
 .searchbox .q-ic{position:absolute;left:0;top:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:var(--muted);pointer-events:none}
 .searchbox input{border:0!important;background:transparent!important;height:34px!important;width:100%;padding:0 10px 0 36px!important;box-shadow:none}
 .searchbox input:focus{outline:none}
-.menu{position:relative}
-.menu summary{list-style:none;cursor:pointer}
-.menu summary::-webkit-details-marker{display:none}
-.menu-pop{position:absolute;right:0;top:42px;z-index:30;min-width:230px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px;box-shadow:0 12px 30px rgba(0,0,0,.18)}
-.menu-pop button{display:block;width:100%;text-align:left;border:0;background:none;padding:8px 10px;border-radius:6px;height:auto}
-.menu-pop button:hover{background:var(--line-soft)}
 .acct{height:36px;padding:0 10px;border:1px solid var(--line);background:var(--surface);border-radius:8px;display:inline-flex;align-items:center;gap:8px;max-width:220px}
 .acct:hover{border-color:var(--accent)}
 .acct .av{width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:0 0 auto}
 .acct .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12.5px}
 .acct .sy{width:7px;height:7px;border-radius:50%;background:var(--muted);flex:0 0 auto}
 .acct .sy.ok{background:var(--accent)}.acct .sy.bad{background:var(--danger)}.acct .sy.busy{background:var(--warn)}
-/* nhóm mục trong menu ⋯: rộng vừa đủ theo chữ dài nhất, chỉ xuống dòng khi màn hình quá hẹp */
-.menu-pop{max-height:min(72vh,520px);overflow-y:auto;overflow-x:hidden;width:max-content;min-width:230px;max-width:min(90vw,340px)}
-.menu-pop button{white-space:normal;line-height:1.35}
-.menu-pop .syncinfo.mtop{margin-top:0;padding-top:0;border-top:0;margin-bottom:4px;white-space:normal}
-.menu-group{padding:2px 0 4px}
-.menu-group+.menu-group{margin-top:2px;padding-top:8px;border-top:1px solid var(--line)}
-.menu-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:4px 10px 4px;white-space:nowrap}
-.menu-group.danger-group{padding-bottom:0}
-.menu-pop button.danger{color:var(--danger)}
 @media (prefers-reduced-motion:no-preference){
   dialog[open]{animation:dlgIn .16s ease}
   dialog.closing{animation:dlgOut .16s ease forwards}
-  .menu[open] .menu-pop{animation:popIn .14s ease}
 }
 @keyframes dlgIn{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}
 @keyframes dlgOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(6px) scale(.98)}}
-@keyframes popIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 .authSeg{margin:8px 0}
 .authSeg button{flex:1;justify-content:center}
 dialog h3{font-size:14px;margin:18px 0 8px;padding-top:14px;border-top:1px solid var(--line)}
@@ -579,9 +562,12 @@ dialog h2{margin:0 0 14px;font-size:17px}
 .pwInputWrap input{flex:1;min-width:0;padding-right:36px}
 .pwToggle{position:absolute;right:3px;top:50%;transform:translateY(-50%);width:28px;height:28px;border:0;background:none;cursor:pointer;font-size:15px;line-height:1;color:var(--muted);display:flex;align-items:center;justify-content:center;border-radius:6px}
 .pwToggle:hover{color:var(--ink);background:var(--line-soft)}
-/* Xóa tài khoản: nhãn xác nhận + ô nhập trên cùng một hàng */
-.fgrid label.delConfirmRow{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
-.delConfirmRow input{flex:1;min-width:140px}
+/* Xóa tài khoản: nhãn xác nhận + ô nhập nằm trong hai cột, tự xếp thành một cột trên màn hình hẹp */
+.fgrid label.delConfirmRow{display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,1fr);align-items:center;gap:8px;min-width:0;margin-top:10px}
+.delConfirmRow span{min-width:0;overflow-wrap:anywhere}
+.delConfirmRow input{width:100%;min-width:0}
+.delConfirmHint{margin-top:8px}
+.delConfirmHint{margin-top:10px;line-height:1.45}
 /* Trạng thái đồng bộ trong "Dữ liệu cá nhân" */
 #profileSyncInfo{display:inline-flex;align-items:center;gap:7px;border-top:0;margin-top:0;padding:6px 12px;border-radius:99px;background:var(--line-soft);color:var(--ink);font-weight:600;font-size:12.5px}
 #profileSyncInfo:empty{display:none;padding:0}
@@ -789,7 +775,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 @media print{
-  body{background:#fff}.tools,.nav,aside,.legend,.menu{display:none!important}
+  body{background:#fff}.tools,.nav,aside,.legend{display:none!important}
   .layout{grid-template-columns:1fr}.app{padding:0}.scroller{overflow:visible}
 }
 /* ===== Giao diện điện thoại gọn ===== */
@@ -801,7 +787,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
   .top .brand{margin:0;flex:1 0 100%;display:flex;align-items:baseline;gap:2px 10px;flex-wrap:wrap}
   .brand h1{font-size:17px}
   .brand p{font-size:12px}
-  .btn,.nav button,.tools button,.menu summary{height:34px;padding:0 10px}
+  .btn,.nav button,.tools button{height:34px;padding:0 10px}
   input[type=date],input[type=search],input[type=time],input[type=text],input[type=email],input[type=password],select{height:34px}
   .nav{flex:1 0 100%;flex-wrap:nowrap;gap:6px}
   .nav #jump{flex:1 1 auto;min-width:0}
@@ -811,7 +797,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
   .tools #qWrap:focus-within,.tools #qWrap.has-val{flex:1 1 auto;width:100%}
   .tools #viewSeg{flex:1 1 auto;min-width:0}
   .tools #viewSeg button{flex:1 1 auto;padding:0 8px!important;white-space:nowrap;justify-content:center}
-  .tools #undoBtn,.tools #redoBtn,.tools #themeBtn,.menu summary{width:36px;padding:0!important;justify-content:center;flex:0 0 auto}
+  .tools #undoBtn,.tools #redoBtn,.tools #themeBtn{width:36px;padding:0!important;justify-content:center;flex:0 0 auto}
   .tools #addBtn{position:fixed!important;left:14px;right:auto;top:auto;bottom:calc(14px + env(safe-area-inset-bottom,0px))!important;margin:0;z-index:999;width:54px;height:54px;padding:0!important;border-radius:50%;display:grid!important;place-items:center;font-size:0;box-shadow:0 6px 18px rgba(0,0,0,.4);transform:translateZ(0);-webkit-transform:translateZ(0)}
   .tools #addBtn::before{content:"+";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:30px;line-height:1;font-weight:400}
   .top .stats{flex:1 0 100%;flex-wrap:nowrap;overflow-x:auto;gap:6px;margin:0 -10px;padding:0 10px;scrollbar-width:none}
@@ -830,12 +816,11 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
   .nowbar .nb .m{grid-row:1;grid-column:3;font-size:12.5px;color:var(--ink);white-space:nowrap}
   .nowbar .nb .rg{display:none}
   .nowbar .nb.none .t{font-size:12.5px;font-weight:600;color:var(--muted)}
-  .menu-pop{position:fixed;left:0;right:auto;top:0}
 }
 @media screen and (max-width:400px){
   .tools{gap:5px}
   .tools #viewSeg button{padding:0 6px!important;font-size:13px}
-  .tools #undoBtn,.tools #redoBtn,.tools #themeBtn,.menu summary{width:32px}
+  .tools #undoBtn,.tools #redoBtn,.tools #themeBtn{width:32px}
   .nav button{padding:0 8px}
 }
 </style>
@@ -865,36 +850,6 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
       <button id="redoBtn" title="Làm lại (Ctrl+Y)" aria-label="Làm lại" disabled>↷</button>
       <button id="themeBtn" title="Đổi giao diện sáng/tối" aria-label="Đổi giao diện">◐</button>
       <button type="button" class="acct" id="acctChip" hidden aria-label="Tài khoản"><span class="av" id="acctAv"></span><span class="nm" id="acctNm"></span><span class="sy" id="acctSy" title=""></span></button>
-      <details class="menu" id="menu">
-        <summary aria-label="Thêm tùy chọn">⋯</summary>
-        <div class="menu-pop">
-          <div class="syncinfo mtop" id="syncInfo" hidden></div>
-          <div class="menu-group">
-            <div class="menu-label">Lịch &amp; chia sẻ</div>
-            <button data-a="ics">Xuất lịch (.ics)</button>
-            <button data-a="print">In tuần này</button>
-          </div>
-          <div class="menu-group">
-            <div class="menu-label">Dữ liệu</div>
-            <button data-a="export-new">Tạo file sao lưu (.json)</button>
-            <button data-a="export">Sao lưu (.json)</button>
-            <button data-a="import">Khôi phục dữ liệu (.json)</button>
-          </div>
-          <div class="menu-group">
-            <div class="menu-label">Sao lưu tự động</div>
-            <button data-a="autobackup" id="abBtn">Sao lưu tự động</button>
-            <button data-a="autobackup-change" id="abChangeBtn" hidden>Đổi vị trí lưu…</button>
-            <div class="syncinfo" id="abInfo" hidden></div>
-          </div>
-          <div class="menu-group">
-            <div class="menu-label">Thông báo</div>
-            <button data-a="notify" id="notifyBtn">Bật thông báo lịch</button>
-          </div>
-          <div class="menu-group danger-group">
-            <button data-a="reset" class="danger">Xóa toàn bộ dữ liệu</button>
-          </div>
-        </div>
-      </details>
     </div>
   </header>
 
@@ -1133,11 +1088,48 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
       </div></div></div>
     </div>
 
+    <div class="acctSection">
+      <button type="button" class="acctSectionSummary" aria-expanded="false">Lịch &amp; chia sẻ<span class="acctArrow" aria-hidden="true"></span></button>
+      <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
+        <div class="actions"><button type="button" class="btn" data-a="ics">Xuất lịch (.ics)</button><button type="button" class="btn" data-a="print">In tuần này</button></div>
+      </div></div></div>
+    </div>
+
+    <div class="acctSection">
+      <button type="button" class="acctSectionSummary" aria-expanded="false">Sao lưu &amp; khôi phục file (.json)<span class="acctArrow" aria-hidden="true"></span></button>
+      <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
+        <div class="actions"><button type="button" class="btn" data-a="export-new">Tạo file sao lưu (.json)</button><button type="button" class="btn" data-a="export">Sao lưu (.json)</button><button type="button" class="btn" data-a="import">Khôi phục dữ liệu (.json)</button></div>
+      </div></div></div>
+    </div>
+
+    <div class="acctSection">
+      <button type="button" class="acctSectionSummary" aria-expanded="false">Sao lưu tự động<span class="acctArrow" aria-hidden="true"></span></button>
+      <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
+        <div class="actions"><button type="button" class="btn" data-a="autobackup" id="abBtn">Sao lưu tự động</button><button type="button" class="btn" data-a="autobackup-change" id="abChangeBtn" hidden>Đổi vị trí lưu…</button></div>
+        <p class="syncinfo" id="abInfo" hidden></p>
+      </div></div></div>
+    </div>
+
+    <div class="acctSection">
+      <button type="button" class="acctSectionSummary" aria-expanded="false">Thông báo<span class="acctArrow" aria-hidden="true"></span></button>
+      <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
+        <div class="actions"><button type="button" class="btn" data-a="notify" id="notifyBtn">Bật thông báo lịch</button></div>
+      </div></div></div>
+    </div>
+
+    <div class="acctSection danger">
+      <button type="button" class="acctSectionSummary" aria-expanded="false">Xóa toàn bộ dữ liệu (thiết bị này)<span class="acctArrow" aria-hidden="true"></span></button>
+      <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
+        <p class="hint">Xóa toàn bộ lịch, deadline, ghi chú đang lưu trên thiết bị này (và trên cloud nếu tài khoản đang đồng bộ). Bạn có thể nạp lại từ file .json đã sao lưu.</p>
+        <div class="actions"><span class="grow"></span><button type="button" class="btn danger" data-a="reset">Xóa toàn bộ dữ liệu</button></div>
+      </div></div></div>
+    </div>
+
     <div class="acctSection danger">
       <button type="button" class="acctSectionSummary" aria-expanded="false">Xóa tài khoản<span class="acctArrow" aria-hidden="true"></span></button>
       <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
         <div class="fgrid"><label class="full delConfirmRow"><span>Nhập <b>XÓA TÀI KHOẢN</b> để xác nhận</span><input name="delConfirm" autocomplete="off"></label></div>
-        <p class="hint">Xóa tài khoản sẽ xóa dữ liệu cloud liên quan đến tài khoản này. Hành động này có thể không thể hoàn tác. Dữ liệu trên thiết bị này vẫn được giữ lại.</p>
+        <p class="hint delConfirmHint">Xóa tài khoản sẽ xóa dữ liệu cloud liên quan đến tài khoản này. Hành động này có thể không thể hoàn tác. Dữ liệu trên thiết bị này vẫn được giữ lại.</p>
         <p class="err" id="delErr"></p>
         <div class="actions"><span class="grow"></span><button type="button" class="btn danger" id="profileDelete">Xóa tài khoản</button></div>
       </div></div></div>
@@ -1361,7 +1353,7 @@ const seriesOf = ev => ev.series || ev.id;
 /* ---------- dữ liệu ----------
    Code KHÔNG chứa lịch học nào. Toàn bộ dữ liệu (lớp cố định, sự kiện, deadline, ghi chú)
    nằm trong file lich-trinh-data.json:
-   • Mở menu ⋯ → “Khôi phục dữ liệu (.json)” để nạp file.
+   • Mở “Tài khoản của tôi” → “Sao lưu & khôi phục file (.json)” → “Khôi phục dữ liệu (.json)” để nạp file.
    • Nếu trang được mở qua web server (cùng thư mục với file .json), lần chạy đầu tiên sẽ tự nạp. */
 const KEY = 'uit-planner-v2';
 const SCHEMA = 6;
@@ -1446,7 +1438,7 @@ async function abWrite(){
     abUI('Tự động sao lưu: ' + ab.handle.name + ' · lần cuối ' + new Date().toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'}));
   }catch(e){
     ab.ok = false;
-    abUI('Tự động sao lưu bị lỗi hoặc mất quyền ghi file. Mở menu ⋯ và bấm lại để bật.');
+    abUI('Tự động sao lưu bị lỗi hoặc mất quyền ghi file. Mở "Tài khoản của tôi" và bấm lại để bật.');
   }
   ab.busy = false;
 }
@@ -1454,7 +1446,7 @@ function abSoon(){ if(ab.handle && ab.ok){ clearTimeout(ab.timer); ab.timer = se
 async function abRegrant(){
   if(!ab.handle || ab.ok) return;
   try{ ab.ok = (await ab.handle.requestPermission({mode:'readwrite'})) === 'granted'; }catch(e){}
-  if(ab.ok) abWrite(); else abUI('Tự động sao lưu đang chờ quyền ghi file. Mở menu ⋯ và bấm lại để cấp quyền.');
+  if(ab.ok) abWrite(); else abUI('Tự động sao lưu đang chờ quyền ghi file. Mở "Tài khoản của tôi" và bấm lại để cấp quyền.');
 }
 async function abInit(){
   abUI();
@@ -1472,7 +1464,7 @@ async function abPickExistingFile(){
     const [h] = await window.showOpenFilePicker({multiple:false, types:[{description:'Dữ liệu lịch trình (.json)', accept:{'application/json':['.json']}}]});
     ab.handle = h; ab.ok = false;
     try{ ab.ok = (await h.requestPermission({mode:'readwrite'})) === 'granted'; }catch(e){}
-    if(!ab.ok) return abUI('Tự động sao lưu đang chờ quyền ghi file. Mở menu ⋯ và bấm lại để cấp quyền.');
+    if(!ab.ok) return abUI('Tự động sao lưu đang chờ quyền ghi file. Mở "Tài khoản của tôi" và bấm lại để cấp quyền.');
     await abSet(h); await abWrite();
   }catch(e){
     if(!e || e.name !== 'AbortError') alert('Không chọn được file ở đây. Hãy thử lại và chọn một file .json có sẵn.');
@@ -1525,28 +1517,17 @@ async function saveBackupNewFile(){
     if(!e || e.name !== 'AbortError') alert('Không thể tạo file sao lưu ở đây. Hãy thử lại hoặc chọn một thư mục khác.');
   }
 }
-function save(){
+function persistLocal(){
   try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
   syncTs = Date.now(); saveTs();
   abSoon();
   if(sync.ready) pushSoon();
-  commitHistory();
 }
+function save(){ persistLocal(); commitHistory(); }
 // giống save() nhưng không ghi vào lịch sử hoàn tác/làm lại — dùng cho các thay đổi không phải dữ liệu (chế độ xem, giao diện sáng/tối)
-function saveUI(){
-  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
-  syncTs = Date.now(); saveTs();
-  abSoon();
-  if(sync.ready) pushSoon();
-}
+function saveUI(){ persistLocal(); }
 // giống save() nhưng gộp lịch sử theo đợt gõ (tránh mỗi ký tự gõ vào ghi chú lại thành một bước hoàn tác riêng)
-function saveNotes(){
-  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
-  syncTs = Date.now(); saveTs();
-  abSoon();
-  if(sync.ready) pushSoon();
-  commitHistoryDebounced();
-}
+function saveNotes(){ persistLocal(); commitHistoryDebounced(); }
 
 /* ---------- hoàn tác / làm lại (undo / redo) ---------- */
 let hist = [];
@@ -1617,8 +1598,47 @@ try{ syncTs = +localStorage.getItem(tsKeyFor(null)) || 0; }catch(e){}
 const sync = {doc:null, ready:false, timer:0, busy:false, dirty:false, readOnly:false, unsub:null};
 let pendingRemote = null;
 const hasData = st => !!(st.events.length || st.todos.length || Object.keys(st.notes || {}).length);
-const syncInfo = t => { const el = document.getElementById('syncInfo'); if(el){ el.hidden = !t; el.textContent = t || ''; } const p = document.getElementById('profileSyncInfo'); if(p) p.textContent = t || ''; };
+const syncInfo = t => { const p = document.getElementById('profileSyncInfo'); if(p) p.textContent = t || ''; };
 const saveTs = () => { try{ localStorage.setItem(tsKeyFor(curUid), String(syncTs)); }catch(e){} };
+/* ---------- dữ liệu cục bộ theo từng "chủ sở hữu" (chống lẫn dữ liệu khi đổi TÀI KHOẢN trên cùng thiết bị) ----------
+   localStorage[KEY] là nơi lưu "đang hoạt động". OWNER_KEY ghi lại state hiện tại đang thuộc về ai: '' (chưa
+   từng đăng nhập / dữ liệu khách) hoặc một uid cụ thể. Khi Firebase Auth báo có TÀI KHOẢN mới đăng nhập:
+   - Nếu trước đó là dữ liệu khách (prevOwner null/'') → dữ liệu đó chưa từng thuộc về ai, chưa có rủi ro lộ
+     sang người khác, nên GIỮ NGUYÊN `state` để luồng hỏi-trước-khi-đồng-bộ có sẵn trong attach()
+     (askOnFirstSync/askOnConflict) tự lo — không tự ý xóa hay tự ý đẩy lên.
+   - Nếu trước đó đã là một TÀI KHOẢN khác (prevOwner là uid khác newUid) → đó là dữ liệu của người khác,
+     không được để lọt sang tài khoản mới: cất vào ô nhớ riêng của chủ cũ rồi nạp đúng ô nhớ (hoặc trống)
+     của chủ mới trước khi attach() kịp chạy. Áp dụng tương tự khi đăng xuất (newUid = null): dữ liệu của
+     tài khoản vừa đăng xuất được cất riêng, không "biến thành" dữ liệu khách của thiết bị. */
+const OWNER_KEY = KEY + ':owner';
+const GUEST_KEY = KEY + ':guest';   // ô nhớ riêng, ổn định cho dữ liệu "khách" (chưa đăng nhập) — KHÔNG dùng chung với KEY,
+                                     // vì KEY là "tấm gương" của bất kỳ chủ nào đang hoạt động và bị ghi đè liên tục.
+const localKeyFor = uid => uid ? (KEY + ':u:' + uid) : GUEST_KEY;
+function readOwnerLocal(uid){
+  try{ const s = JSON.parse(localStorage.getItem(localKeyFor(uid))); if(s && Array.isArray(s.events) && Array.isArray(s.todos)) return norm(s); }catch(e){}
+  return null;
+}
+function writeOwnerLocal(uid, st){ try{ localStorage.setItem(localKeyFor(uid), JSON.stringify(st)); }catch(e){} }
+function switchLocalOwner(newUid){
+  newUid = newUid || null;
+  let prevOwner = null; try{ prevOwner = localStorage.getItem(OWNER_KEY) || null; }catch(e){}
+  if(prevOwner === newUid) return;   // chủ không đổi (vd. token tự làm mới): giữ nguyên state đang chỉnh dở
+  if(!prevOwner){
+    // Trước đó là dữ liệu khách chưa từng gắn với tài khoản nào: không có gì để "lộ" — giữ nguyên state,
+    // để attach() tự hỏi người dùng có muốn đồng bộ dữ liệu này lên tài khoản mới hay không (mục 13).
+    try{ localStorage.setItem(OWNER_KEY, newUid || ''); }catch(e){}
+    return;
+  }
+  // Trước đó là một TÀI KHOẢN cụ thể khác newUid (đổi sang tài khoản khác, hoặc đăng xuất): dữ liệu đang có
+  // là của prevOwner, phải cất riêng, không được để state/localStorage[KEY] lọt sang chủ mới.
+  if(hasData(state)) writeOwnerLocal(prevOwner, state);
+  const own = readOwnerLocal(newUid);
+  state = own || emptyState();
+  state.view = innerWidth < 800 ? 'agenda' : 'table';
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+  try{ localStorage.setItem(OWNER_KEY, newUid || ''); }catch(e){}
+  initHistory(); fixView(); render();
+}
 function pushSoon(){ clearTimeout(sync.timer); sync.timer = setTimeout(pushNow, 800); }
 async function pushNow(){
   if(!sync.doc || sync.readOnly) return;
@@ -1791,6 +1811,7 @@ async function startCloud(){
   fb.auth.onAuthStateChanged(u => {
     fb.user = u; curUid = u ? u.uid : null;
     try{ syncTs = +localStorage.getItem(tsKeyFor(curUid)) || 0; }catch(e){ syncTs = 0; }
+    switchLocalOwner(curUid);   // đảm bảo `state` đang có đúng là dữ liệu của curUid, không phải của tài khoản trước đó trên máy này
     updateAcctUI();
     try{ localStorage.setItem(LAST_AUTHED_KEY, u ? '1' : '0'); }catch(e){}
     if(u){
@@ -1903,7 +1924,6 @@ function openProfile(){
   const cpt = document.getElementById('curPassToggle'); cpt.textContent = '👁'; cpt.setAttribute('aria-label', 'Hiện mật khẩu hiện tại');
   document.getElementById('profileErr').textContent = ''; document.getElementById('pwErr').textContent = ''; document.getElementById('delErr').textContent = '';
   const vh = document.getElementById('profileVerifyHint'); vh.hidden = !!fb.user.emailVerified;
-  document.getElementById('profileSyncInfo').textContent = document.getElementById('syncInfo').textContent || 'Đã đồng bộ';
   document.getElementById('profileAv').textContent = initials(fb.user.displayName || fb.user.email);
   document.getElementById('profileNameDisplay').textContent = fb.user.displayName || fb.user.email || '';
   document.getElementById('profileEmailDisplay').textContent = fb.user.email || '';
@@ -1975,10 +1995,13 @@ document.getElementById('profileDelete').addEventListener('click', async () => {
   try{
     const uid = fb.user.uid;
     detach();
-    try{ await fb.db.doc('users/' + uid + '/planner/main').delete(); }catch(e){}
+    let dataDeleted = true;
+    try{ await fb.db.doc('users/' + uid + '/planner/main').delete(); }catch(e){ dataDeleted = false; }
     await fb.user.delete();
     closeDialog(profileDlg);
-    alert('Đã xóa tài khoản. Dữ liệu trên thiết bị này vẫn được giữ lại.');
+    alert(dataDeleted
+      ? 'Đã xóa tài khoản. Dữ liệu trên thiết bị này vẫn được giữ lại.'
+      : 'Đã xóa tài khoản, nhưng không thể xóa dữ liệu đám mây liên quan (có thể do mất mạng). Dữ liệu trên thiết bị này vẫn được giữ lại; liên hệ quản trị viên nếu cần xóa hẳn dữ liệu cũ trên máy chủ.');
   }catch(err){
     if(err && err.code === 'auth/requires-recent-login'){ errEl.textContent = 'Vì lý do bảo mật, hãy đăng xuất, đăng nhập lại rồi thử xóa tài khoản lại ngay sau đó.'; }
     else errEl.textContent = friendlyAuthErr(err);
@@ -2004,6 +2027,15 @@ let state = load();
 const firstRun = !state;
 if(!state) state = emptyState();
 state.view = innerWidth < 800 ? 'agenda' : 'table';   // máy tính mở bằng trang Bảng, điện thoại mở bằng Danh sách theo ngày
+// Thiết bị đã có dữ liệu từ trước khi có OWNER_KEY/GUEST_KEY (bản cũ hơn): coi dữ liệu đó là của "khách"
+// (owner = '') và sao chép sang GUEST_KEY, để switchLocalOwner() không hiểu nhầm là "chưa từng thuộc về
+// ai" rồi bỏ qua/xóa mất khi có người đăng nhập lần đầu trên thiết bị này.
+try{
+  if(localStorage.getItem(OWNER_KEY) === null && hasData(state)){
+    localStorage.setItem(OWNER_KEY, '');
+    if(localStorage.getItem(GUEST_KEY) === null) localStorage.setItem(GUEST_KEY, JSON.stringify(state));
+  }
+}catch(e){}
 let weekStart = mondayOf(todayStr());
 let todoFilter = 'all';
 let todoStatus = 'open';
@@ -2482,7 +2514,7 @@ function fixedHTML(){
   const today = todayStr();
   const kind = 'school', list = fixedList(kind);
   let h = `<h3 class="fxh">Thời khóa biểu của trường</h3><div class="scroller"><table class="fx" data-fx-kind="${kind}"><thead><tr><th class="n">#</th>${fxSortTh(kind,'name','Môn học')}${fxSortTh(kind,'tc','TC','c w-tc')}${fxSortTh(kind,'htgd','HTGD','w-ht')}${fxSortTh(kind,'when','Thời gian')}${fxSortTh(kind,'room','Phòng')}${fxSortTh(kind,'teacher','Giảng viên')}${fxSortTh(kind,'sv','Sĩ số','r w-sv')}${fxSortTh(kind,'note','Ghi chú')}<th>Liên kết</th></tr></thead><tbody>`;
-  if(!list.length) h += '<tr><td colspan="10" class="none">Chưa có lớp cố định. Bấm “Thêm lịch”, chọn Tag “Lớp chính thức” và Kiểu lặp Hằng tuần hoặc Cách tuần. Hoặc nạp file dữ liệu ở menu ⋯ → “Khôi phục dữ liệu (.json)”.</td></tr>';
+  if(!list.length) h += '<tr><td colspan="10" class="none">Chưa có lớp cố định. Bấm “Thêm lịch”, chọn Tag “Lớp chính thức” và Kiểu lặp Hằng tuần hoặc Cách tuần. Hoặc nạp file dữ liệu ở “Tài khoản của tôi” → “Khôi phục dữ liệu (.json)”.</td></tr>';
   list.forEach(({cur:ev, vs}, i) => {
     const cc = String(ev.code || '').split('.')[0];
     const occ = nextHit(ev, mondayOf(today)) || firstDate(ev);
@@ -3373,10 +3405,9 @@ function toICS(){
   L.push('END:VCALENDAR');
   return L.join('\r\n');
 }
-$('#menu').addEventListener('click', e => {
+profileForm.addEventListener('click', e => {
   const b = e.target.closest('button'); if(!b) return;
-  $('#menu').open = false;
-  const a = b.dataset.a;
+  const a = b.dataset.a; if(!a) return;
   if(a === 'print') window.print();
   if(a === 'autobackup') abToggle();
   if(a === 'autobackup-change') abChangeLocation();
@@ -3706,6 +3737,7 @@ const fmtHMS = ms => {
 };
 function renderNowBar(){
   const el = document.getElementById('nowBar'); if(!el) return;
+  if(state.view === 'fixed'){ el.hidden = true; return; }   // mục "Lớp": không hiện banner Tiếp theo/Đang diễn ra/Deadline
   const {live, next, now} = upcoming(2);
   const meta = (o, extra, pre) => `<span class="rg">${esc([pre, `${o.ev.start} - ${o.ev.end}`].filter(Boolean).join(' · '))} · </span><b class="cd">${esc(extra)}</b>`;
   const leftRows = [];
@@ -3832,27 +3864,6 @@ function highlightSchedElement(el){
   el.classList.add('jump-highlight');
   highlightSchedElement.timer = setTimeout(() => el.classList.remove('jump-highlight'), 2500);
 }
-function positionMobileMenu(){
-  const menu = document.getElementById('menu'), pop = menu && menu.querySelector('.menu-pop'), sum = menu && menu.querySelector('summary');
-  if(!menu || !pop || !sum || !menu.open || window.innerWidth > 700) return;
-  pop.style.left = '0px'; pop.style.top = '0px';
-  const sb = sum.getBoundingClientRect(), pb = pop.getBoundingClientRect();
-  const gap = 6, pad = 8;
-  const maxLeft = Math.max(pad, window.innerWidth - pb.width - pad);
-  let left = sb.left;
-  if(left > maxLeft) left = maxLeft;
-  let top = sb.bottom + gap;
-  if(top + pb.height > window.innerHeight - pad) top = sb.top - pb.height - gap;
-  if(top < pad) top = Math.max(pad, window.innerHeight - pb.height - pad);
-  pop.style.left = Math.round(left) + 'px';
-  pop.style.top = Math.round(top) + 'px';
-}
-
-document.getElementById('menu').addEventListener('toggle', () => {
-  if(document.getElementById('menu').open) requestAnimationFrame(positionMobileMenu);
-});
-window.addEventListener('resize', positionMobileMenu);
-window.addEventListener('scroll', positionMobileMenu, true);
 
 document.getElementById('nowBar').addEventListener('click', e => {
   const row = e.target.closest('.nb'); if(!row) return;
