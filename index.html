@@ -648,6 +648,18 @@ dialog h2{margin:0 0 14px;font-size:17px}
 .cpy:hover{border-color:var(--accent);color:var(--accent);opacity:1}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);max-width:90vw;background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .15s;z-index:200}
 .toast.on{opacity:1}
+/* thanh đề xuất cài web thành ứng dụng (PWA) */
+.pwaBar{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:150;width:calc(100% - 24px);max-width:460px;display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.28);animation:pwaIn .25s ease-out}
+.pwaBar[hidden]{display:none}
+body:not(.authed):not(.gate) .pwaBar{display:none}
+.pwaBar img{width:40px;height:40px;border-radius:10px;flex:none}
+.pwaBar .pwaTx{flex:1 1 auto;min-width:0;line-height:1.35}
+.pwaBar .pwaTx b{display:block;font-size:13.5px}
+.pwaBar .pwaTx span{display:block;font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+.pwaBar .pwaAct{display:flex;gap:6px;flex:none}
+@keyframes pwaIn{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+@media (max-width:420px){.pwaBar{flex-wrap:wrap}.pwaBar .pwaAct{width:100%;justify-content:flex-end}}
+@media print{.pwaBar{display:none!important}}
 /* highlight tam thoi khi banner dua den dung o lich */
 #sched .jump-highlight{
   position:relative;
@@ -1013,6 +1025,11 @@ ul.todos{padding-right:12px}
     </div>
   </form>
 </dialog>
+<div class="pwaBar" id="pwaBar" role="region" aria-label="Cài đặt ứng dụng" hidden>
+  <img src="icon-192.png" alt="" width="40" height="40">
+  <div class="pwaTx"><b>Cài Lịch trình làm ứng dụng</b><span id="pwaMsg">Mở nhanh từ màn hình chính hoặc thanh tác vụ, giao diện toàn màn hình, dùng được cả khi mất mạng.</span></div>
+  <div class="pwaAct"><button type="button" class="btn" id="pwaLater">Để sau</button><button type="button" class="btn primary" id="pwaInstall">Cài đặt</button></div>
+</div>
 <dialog id="dlgTags">
   <form id="tagForm" autocomplete="off">
     <div class="dlgHead"><h2>Quản lý tag</h2><button type="button" class="iconbtn" id="tagCloseX" aria-label="Đóng">×</button></div>
@@ -1174,6 +1191,14 @@ ul.todos{padding-right:12px}
       <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
         <div class="actions"><button type="button" class="btn" data-a="ab-download">Tải bản sao lưu (.json)</button><button type="button" class="btn" data-a="import">Khôi phục dữ liệu (.json)</button></div>
         <p class="syncinfo" id="abInfo" hidden></p>
+      </div></div></div>
+    </div>
+
+    <div class="acctSection">
+      <button type="button" class="acctSectionSummary" aria-expanded="false">Ứng dụng<span class="acctArrow" aria-hidden="true"></span></button>
+      <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
+        <p class="syncinfo" id="pwaInfo"></p>
+        <div class="actions"><button type="button" class="btn" id="pwaBtn2">Cài đặt ứng dụng</button></div>
       </div></div></div>
     </div>
 
@@ -3975,6 +4000,45 @@ initHistory();
 render();
 updateNotifyButton();
 if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) getNotifySWRegistration();
+/* ===== Đề xuất cài trang web thành ứng dụng (PWA) =====
+   Chrome/Edge/Android: bắt sự kiện beforeinstallprompt rồi gọi prompt() khi bấm "Cài đặt".
+   iPhone/iPad (Safari) không có sự kiện này → hướng dẫn "Chia sẻ → Thêm vào Màn hình chính".
+   Đã chạy trong cửa sổ ứng dụng (standalone) thì không đề xuất nữa. "Để sau" ẩn thanh 7 ngày. */
+const PWA_DISMISS_KEY = KEY + ':pwa-dismiss';
+let pwaPrompt = null;
+const pwaInstalled = () => matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: window-controls-overlay)').matches || navigator.standalone === true;
+const pwaIsIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const pwaHttp = () => /^https?:$/.test(location.protocol);
+const PWA_IOS_TXT = 'Bấm nút Chia sẻ (ô vuông có mũi tên ↑) ở thanh của Safari, rồi chọn “Thêm vào Màn hình chính”.';
+function pwaDismissed(){ try{ return Date.now() < Number(localStorage.getItem(PWA_DISMISS_KEY) || 0); }catch(_){ return false; } }
+function pwaUpdateUI(){
+  const bar = $('#pwaBar'), can = pwaHttp() && !pwaInstalled() && (!!pwaPrompt || pwaIsIOS());
+  if(bar){
+    bar.hidden = !(can && !pwaDismissed());
+    if(!pwaPrompt && pwaIsIOS()){ $('#pwaMsg').textContent = PWA_IOS_TXT; $('#pwaInstall').hidden = true; } else $('#pwaInstall').hidden = false;
+  }
+  const info = $('#pwaInfo'), btn = $('#pwaBtn2');
+  if(info && btn){
+    btn.hidden = !can || (!pwaPrompt && pwaIsIOS());
+    info.textContent = pwaInstalled() ? 'Bạn đang dùng bản ứng dụng đã cài trên thiết bị này.'
+      : pwaPrompt ? 'Cài về thiết bị để mở nhanh, chạy toàn màn hình và dùng được khi mất mạng.'
+      : pwaIsIOS() ? PWA_IOS_TXT
+      : 'Trình duyệt chưa cho phép cài ngay. Với Chrome/Edge, mở menu ⋮ → “Cài đặt ứng dụng” (hoặc bấm biểu tượng cài đặt bên phải thanh địa chỉ). Nếu đã cài rồi, hãy mở ứng dụng từ màn hình chính / menu Start.';
+  }
+}
+async function pwaInstall(){
+  if(!pwaPrompt) return;
+  const p = pwaPrompt; pwaPrompt = null;   // mỗi sự kiện chỉ dùng được 1 lần
+  try{ p.prompt(); const r = await p.userChoice; if(r && r.outcome === 'accepted') toast('Đang cài đặt ứng dụng…'); }catch(_){}
+  pwaUpdateUI();
+}
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); pwaPrompt = e; pwaUpdateUI(); });
+window.addEventListener('appinstalled', () => { pwaPrompt = null; pwaUpdateUI(); toast('Đã cài đặt ứng dụng'); });
+matchMedia('(display-mode: standalone)').addEventListener?.('change', pwaUpdateUI);
+$('#pwaInstall').addEventListener('click', pwaInstall);
+$('#pwaBtn2').addEventListener('click', pwaInstall);
+$('#pwaLater').addEventListener('click', () => { try{ localStorage.setItem(PWA_DISMISS_KEY, String(Date.now() + 7*864e5)); }catch(_){} pwaUpdateUI(); });
+pwaUpdateUI();
 if(!uiSaved) requestAnimationFrame(() => scrollToNow(false));   /* mở trang lần đầu: tự cuộn tới sự kiện hiện tại */
 abInit();
 if(uiSaved){
