@@ -22,7 +22,7 @@
   --warn:#e39b00; --danger:#c73a30;
   --cell-cancel:#e04a42; --cell-cancel-ink:#ffffff; --cell-conflict:#ffe680; --cell-conflict-ink:#2a1d00;
   --live-color:#e5484d; --live-ink:#ffffff; --next-color:#ffb300; --next-ink:#2a1900;
-  --dl:#2b7fd0; --dl-ink:#ffffff;
+  --dl:#2e9d66; --dl-ink:#ffffff;
 }
 [data-theme=dark]{
   --bg:#0f1412; --surface:#171e1b; --ink:#e7ede9; --muted:#93a19a; --line:#28322e; --line-soft:#1f2723;
@@ -31,7 +31,7 @@
   --warn:#f0b429; --danger:#ef6a60;
   --cell-cancel:#a83a33; --cell-cancel-ink:#ffffff; --cell-conflict:#6b5a10; --cell-conflict-ink:#fff3c0;
   --live-color:#ff6b6a; --live-ink:#280505; --next-color:#ffcc33; --next-ink:#2a1900;
-  --dl:#5aa2f0; --dl-ink:#04162b;
+  --dl:#5bc288; --dl-ink:#062314;
 }
 *{box-sizing:border-box}
 html{color-scheme:light dark;scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -130,7 +130,7 @@ dialog .btn.danger{border-color:var(--danger)}
 .nowbar .nb{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:center;padding:8px 12px;border-radius:12px;border:1px solid var(--line);border-left:5px solid var(--nbc,var(--accent));background:color-mix(in srgb,var(--nbc,var(--accent)) 14%,var(--surface));cursor:pointer}
 .nowbar .nb.live{--nbc:var(--live-color)}
 .nowbar .nb.next{--nbc:var(--next-color)}
-.nowbar .nb.dl{--nbc:var(--dl)}
+.nowbar .nb.dl{--nbc:var(--cancel-bd)}   /* banner chỉ liệt kê deadline CHƯA hoàn thành → đỏ, khớp ô ở Bảng/Danh sách */
 .nowbar .nb .k{grid-row:1/3;min-width:100px;font-size:11.5px;font-weight:700;white-space:nowrap;color:var(--ink)}
 .nowbar .nb.none .k{min-width:0;grid-row:1}
 .nowbar .nb .k em{font-style:normal}
@@ -286,8 +286,9 @@ dialog .btn.danger{border-color:var(--danger)}
 .ag.dl .chip.sz-d3{width:140px}   /* 3 chữ số ngày (100+), ví dụ "còn 120 ngày 23:59:59" */
 .ag.dl .chip.sz-mo{width:134px}   /* theo tháng, ví dụ "còn 11 tháng 29 ngày" */
 .ag.dl .chip.sz-y{width:126px}    /* theo năm, ví dụ "còn 9 năm 11 tháng" */
-.ag.dl{--bd:var(--dl);--bgt:color-mix(in srgb,var(--dl) 16%,var(--surface))}
-.ag.dl .et small{color:var(--dl);font-weight:700}
+.ag.dl{--bd:var(--cancel-bd);--bgt:color-mix(in srgb,var(--cancel-bd) 14%,var(--surface))}   /* thẻ Danh sách: chưa hoàn thành = đỏ; đã hoàn thành = xanh accent (luật .ag.dl.done bên dưới) */
+.ag.dl .et small{color:var(--cancel-bd);font-weight:700}
+.ag.dl.done .et small{color:var(--accent)}
 .ag.dl .ag-time.all{font-size:11.5px;white-space:nowrap}
 .dlcell{border-radius:10px;padding:5px 6px;text-align:center;line-height:1.4;cursor:pointer;overflow-wrap:anywhere;background:color-mix(in srgb,var(--dl) 22%,var(--surface));color:var(--ink);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--dl) 60%,transparent)}
 .dlcell:hover{background:color-mix(in srgb,var(--dl) 30%,var(--surface))}
@@ -301,6 +302,27 @@ dialog .btn.danger{border-color:var(--danger)}
 .dlrow td{background:color-mix(in srgb,var(--dl) 4%,var(--surface))}
 .dlrow .stk{min-height:42px}
 .dlrow .dlcell{min-width:0}
+/* hàng Deadline ở Bảng: nổi bật hẳn — nền đậm hơn, viền trên/dưới dày màu deadline, chữ nhãn đậm */
+.dlrow th.tl{background:color-mix(in srgb,var(--dl) 20%,var(--surface));color:var(--dl);font-weight:800;letter-spacing:.6px}
+.dlrow td{background:color-mix(in srgb,var(--dl) 8%,var(--surface))}
+/* viền hàng Deadline: phải có tiền tố .sheet để thắng luật `.sheet th,.sheet td{border:1px solid var(--line)}` khai báo phía dưới (cùng độ ưu tiên thì luật đứng sau thắng, nên trước đây các viền này bị ghi đè) */
+.sheet .dlrow th,.sheet .dlrow td{border-top:2px solid color-mix(in srgb,var(--dl) 75%,var(--line));border-bottom:2px solid color-mix(in srgb,var(--dl) 75%,var(--line))}
+.sheet .dlrow td{border-left:2px solid color-mix(in srgb,var(--dl) 45%,var(--line));border-right:2px solid color-mix(in srgb,var(--dl) 45%,var(--line))}
+.sheet .dlrow th.tl{border-left:4px solid var(--dl);border-right:2px solid color-mix(in srgb,var(--dl) 45%,var(--line))}
+.dlrow .dlcell{background:color-mix(in srgb,var(--dl) 26%,var(--surface));box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--dl) 85%,var(--surface));font-weight:700}
+.dlrow .dlcell:hover{background:color-mix(in srgb,var(--dl) 36%,var(--surface))}
+.dlrow .dlcell.done{background:color-mix(in srgb,var(--accent) 30%,var(--surface));box-shadow:inset 0 0 0 2px var(--accent)}
+.dlrow .dlcell.dim{opacity:.25}
+/* ô deadline ở Bảng: CHƯA hoàn thành = đỏ (cùng tông với nhãn "Chưa hoàn thành" ở Danh sách), ĐÃ hoàn thành = xanh accent; rê chuột thì sáng đậm hơn giống các ô khác */
+.dlcell:not(.done){--pc:var(--cancel-bd);background:color-mix(in srgb,var(--pc) 20%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pc) 60%,transparent)}
+.dlcell:not(.done):hover{background:color-mix(in srgb,var(--pc) 28%,var(--surface))}
+.dlrow .dlcell:not(.done){background:color-mix(in srgb,var(--pc) 24%,var(--surface));box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--pc) 85%,var(--surface))}
+.dlrow .dlcell:not(.done):hover{background:color-mix(in srgb,var(--pc) 34%,var(--surface))}
+.dlrow .dlcell.done:hover{background:color-mix(in srgb,var(--accent) 38%,var(--surface))}   /* trước đây bị luật .dlrow .dlcell:hover (đứng trước, cùng độ ưu tiên) làm mất hiệu ứng ở ô đã hoàn thành */
+.chip.pend{background:var(--cancel-bd);color:#fff;box-shadow:none;font-weight:700}
+/* các chip trạng thái trong ô deadline: cùng 1 dòng nếu đủ rộng; nếu cột quá hẹp thì tự xuống dòng nguyên chip (nowrap từng chip nên không bị cắt chữ hay đè nhau) */
+.dlcell .dlst{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:3px 4px;margin-top:3px}
+.dlcell .dlst .chip{margin:0;white-space:nowrap;font-size:10.5px;padding:1px 6px}
 .chip.ok,.tag.dl.ok{background:var(--accent);color:var(--accent-ink);font-weight:700;box-shadow:none}
 @media (prefers-reduced-motion:reduce){.tag.next,.tag.live,.ag.live,.cell.live,.ag.next,.cell.next,.tag.live i{animation:none}}
 .cell .lvb{margin-bottom:3px;position:relative;z-index:1}.cell .lvb .tag{margin:0}
@@ -345,7 +367,7 @@ ul.todos{list-style:none;margin:0;padding:0 4px 0 0;display:grid;gap:2px;height:
 .todo .tx{cursor:text}
 .todo.done .tx{text-decoration:line-through;color:var(--muted)}
 .todo .meta{display:block;font-size:12px;color:var(--muted)}
-.chip{display:inline-flex;align-items:center;gap:3px;padding:1px 8px;border-radius:99px;font-size:11.5px;font-weight:700;margin-left:4px;background:color-mix(in srgb,var(--dl) 18%,var(--surface));color:var(--dl);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--dl) 45%,transparent)}   /* mặc định (còn nhiều ngày): tông xanh dương của deadline, rõ hơn màu xám cũ */
+.chip{display:inline-flex;align-items:center;gap:3px;padding:1px 8px;border-radius:99px;font-size:11.5px;font-weight:700;margin-left:4px;background:color-mix(in srgb,var(--ink) 9%,var(--surface));color:var(--ink);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink) 28%,transparent)}   /* trung tính (không xanh/đỏ) để không lẫn với màu trạng thái của ô; cũ: mặc định (còn nhiều ngày): tông xanh dương của deadline, rõ hơn màu xám cũ */
 .chip.soon{background:color-mix(in srgb,var(--warn) 30%,var(--surface));color:var(--ink);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--warn) 65%,transparent)}   /* sắp đến hạn (hôm nay/ngày mai/≤3 ngày): tông vàng cam */
 .chip.late{background:var(--cancel-bd);color:#fff;box-shadow:none;font-weight:800}   /* quá hạn/quá giờ: đỏ đậm, nổi bật nhất */
 .todo .x{border:0;background:none;color:var(--muted);font-size:18px;line-height:1;height:24px;padding:0;visibility:hidden}
@@ -1259,7 +1281,7 @@ const DEFAULT_TAGS = [
 ];
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const uid = () => Math.random().toString(36).slice(2,9);
-const STATUS_DEF = {light:{dl:'#2b7fd0', cancel:'#e04a42', conflict:'#ffe680'}, dark:{dl:'#5aa2f0', cancel:'#a83a33', conflict:'#6b5a10'}};
+const STATUS_DEF = {light:{dl:'#2e9d66', cancel:'#e04a42', conflict:'#ffe680'}, dark:{dl:'#5bc288', cancel:'#a83a33', conflict:'#6b5a10'}};
 const themeNow = () => document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
 const statusColor = k => (state.status && state.status[k]) || STATUS_DEF[themeNow()][k];
 function inkOn(h){ const n = parseInt(h.slice(1),16); return (0.299*(n>>16&255) + 0.587*(n>>8&255) + 0.114*(n&255)) > 150 ? '#1d1a10' : '#ffffff'; }
@@ -2282,7 +2304,7 @@ function dlTitleAttr(t){
 function dlLinkHTML(t){ return t.body ? '<span class="ind">📝</span>' : ''; }
 function dlCellHTML(t){
   return `<div class="dlcell${t.done?' done':''} ${dlMatch(t)?'':'dim'}" data-todo="${t.id}" tabindex="0" role="button" title="${esc(dlTitleAttr(t))}">
-    <div><b>${esc(t.text)}</b>${dlLinkHTML(t)}</div><div class="dlt">⏰ ${t.dueTime ? esc(t.dueTime) : 'Cả ngày'}</div>${dlChips(t)}<div>${t.done ? '<span class="chip ok">Đã hoàn thành</span>' : dueChip(t)}</div></div>`;
+    <div><b>${esc(t.text)}</b>${dlLinkHTML(t)}</div><div class="dlt">⏰ ${t.dueTime ? esc(t.dueTime) : 'Cả ngày'}</div>${dlChips(t)}<div class="dlst">${t.done ? '<span class="chip ok">Đã hoàn thành</span>' : '<span class="chip pend">Chưa hoàn thành</span>' + dueChip(t)}</div></div>`;
 }
 function dlArticleHTML(t){
   const parts = ['⏰ Hạn chót ' + (t.dueTime || 'cả ngày'), t.on && '🗓 Tạo ' + dmy(t.on) + (t.onTime ? ' ' + t.onTime : '')].filter(Boolean).map(esc).join(' · ');
