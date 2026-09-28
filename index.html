@@ -78,9 +78,12 @@ body.gate #authGate{display:flex}
 
 /* header */
 .top{display:flex;flex-wrap:wrap;align-items:center;gap:12px 8px;margin-bottom:14px}
-.top .brand{margin-right:12px}   /* khoảng cách ngang giữa các khối trong hàng đầu là 8px như giữa các ô; riêng tiêu đề chừa thêm cho thoáng */
+.top .brand{margin-right:4px}   /* khoảng cách ngang giữa các khối trong hàng đầu là 8px như giữa các ô; riêng tiêu đề chừa thêm cho thoáng */
 .brand h1{margin:0;font-size:20px;font-weight:700;letter-spacing:-.01em}
-.brand p{margin:0;color:var(--muted);font-size:13px}
+.brand{display:grid}
+.brand h1{grid-row:1;grid-column:1}
+.brand p{grid-row:2;grid-column:1;width:0;min-width:100%;margin:0;color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}   /* dòng ngày không tự quyết bề rộng khung; chữ dài (chế độ Lớp) sẽ xuống dòng thay vì làm khung phình ra */
+.brand::after{content:"00/00/0000 - 00/00/0000";grid-row:1;grid-column:1;height:0;overflow:hidden;visibility:hidden;white-space:nowrap;font-size:13px;font-variant-numeric:tabular-nums}   /* "khuôn" ẩn = chuỗi ngày dài nhất (mọi chữ số cùng bề rộng) -> khung tiêu đề luôn vừa khít, cố định qua các tuần, không cắt mất chữ */
 .nav,.tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .tools{flex:1 1 auto}
 .tools button:disabled{opacity:.35;cursor:not-allowed}
@@ -149,7 +152,10 @@ dialog .btn.danger{border-color:var(--danger)}
 .stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
 .top .stats{margin-bottom:0}
 @media (max-width:1659px){.top .stats{order:1;flex:1 0 100%}}   /* màn hình hẹp: không đủ chỗ trên một hàng, các ô thống kê xuống hàng riêng phía dưới */
-.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:0 12px;height:36px;display:flex;align-items:center;gap:6px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:0 12px;height:36px;display:grid;place-items:center}
+/* mỗi ô có 1 bản "khuôn" ẩn chứa số rộng nhất (mọi chữ số cùng bề rộng) chồng lên nội dung thật: ô luôn rộng bằng nhau qua các tuần, nội dung căn giữa, không cắt chữ, không thừa chỗ lệch một bên */
+.st-in{grid-area:1/1;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.st-in.sz{visibility:hidden}
 .stat b{font-size:18px;font-variant-numeric:tabular-nums}
 .stat span{color:var(--muted);font-size:12.5px}
 .stat.warn b{color:var(--warn)}.stat.bad b{color:var(--cancel-bd)}
@@ -793,6 +799,8 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
 @media screen and (max-width:700px){
   .app{padding:8px 10px calc(84px + env(safe-area-inset-bottom,0px))}
   .top{gap:6px;margin-bottom:6px}
+  .brand::after{display:none}
+  .brand p{width:auto;min-width:0}
   .top .brand{margin:0;flex:1 0 100%;display:flex;align-items:baseline;gap:2px 10px;flex-wrap:wrap}
   .brand h1{font-size:17px}
   .brand p{font-size:12px}
@@ -2086,7 +2094,7 @@ function render(){
   if(fx){
     const ser = fixedSeries('school'), oth = fixedSeries('other');
     $('#range').textContent = `${ser.length} lớp · ${ser.reduce((s,x) => s + (+x.cur.tc || 0), 0)} tín chỉ` + (oth.length ? ` · ${oth.length} lịch khác` : '');
-  } else $('#range').textContent = `${dmy(weekStart)} – ${dmy(end)}`;
+  } else $('#range').textContent = `${dmy(weekStart)}\u00a0–\u00a0${dmy(end)}`;
   document.querySelector('.nav').hidden = fx;
   if(document.activeElement !== $('#jump')) $('#jump').value = weekStart;   /* đang gõ ngày bằng bàn phím thì không ghi đè giá trị */
   document.querySelectorAll('#viewSeg button').forEach(b => b.classList.toggle('on', b.dataset.v === state.view));
@@ -2150,11 +2158,12 @@ function renderStats(all){
   const mins = act.reduce((s,o) => s + toMin(o.ev.end) - toMin(o.ev.start), 0);
   const conf = act.filter(o => o.conflict).length;
   const hrs = (mins/60).toFixed(1).replace(/\.0$/,'');
+  const chip = (cls, val, label, sample) => `<div class="stat${cls}"><div class="st-in"><b>${val}</b><span>${label}</span></div><div class="st-in sz" aria-hidden="true"><b>${sample}</b><span>${label}</span></div></div>`;
   $('#stats').innerHTML =
-    `<div class="stat"><b>${act.length}</b><span>buổi</span></div>
-     <div class="stat"><b>${hrs}</b><span>giờ</span></div>
-     <div class="stat bad"><b>${all.filter(o => o.cancelled).length}</b><span>nghỉ</span></div>
-     <div class="stat warn"><b>${conf}</b><span>trùng</span></div>`;
+    chip('', act.length, 'buổi', '00') +
+    chip('', hrs, 'giờ', '00.0') +
+    chip(' bad', all.filter(o => o.cancelled).length, 'nghỉ', '00') +
+    chip(' warn', conf, 'trùng', '00');
 }
 function renderLegend(all){
   const cnt = {}; all.forEach(o => cnt[o.ev.type] = (cnt[o.ev.type]||0)+1);
