@@ -321,8 +321,9 @@ dialog .btn.danger{border-color:var(--danger)}
 .dlrow .dlcell.done:hover{background:color-mix(in srgb,var(--accent) 38%,var(--surface))}   /* trước đây bị luật .dlrow .dlcell:hover (đứng trước, cùng độ ưu tiên) làm mất hiệu ứng ở ô đã hoàn thành */
 .chip.pend{background:var(--cancel-bd);color:#fff;box-shadow:none;font-weight:700}
 /* các chip trạng thái trong ô deadline: cùng 1 dòng nếu đủ rộng; nếu cột quá hẹp thì tự xuống dòng nguyên chip (nowrap từng chip nên không bị cắt chữ hay đè nhau) */
-.dlcell .dlst{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:3px 4px;margin-top:3px}
-.dlcell .dlst .chip{margin:0;white-space:nowrap;font-size:10.5px;padding:1px 6px}
+.dlcell .dlst{container-type:inline-size;margin-top:3px}   /* .dlst đo bề rộng ô; .dlst-in co chữ theo bề rộng đó (cqw) để 2 chip luôn vừa 1 dòng */
+.dlcell .dlst-in{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:3px .35em;font-size:10.5px;font-size:clamp(8px,5.8cqw,10.5px)}   /* dòng font-size đầu là dự phòng cho trình duyệt cũ chưa hỗ trợ cqw; wrap chỉ còn là lưới an toàn khi ô hẹp đến mức chữ đã chạm mức tối thiểu 8px */
+.dlcell .dlst-in .chip{margin:0;white-space:nowrap;font-size:1em;padding:1px .5em}
 .chip.ok,.tag.dl.ok{background:var(--accent);color:var(--accent-ink);font-weight:700;box-shadow:none}
 @media (prefers-reduced-motion:reduce){.tag.next,.tag.live,.ag.live,.cell.live,.ag.next,.cell.next,.tag.live i{animation:none}}
 .cell .lvb{margin-bottom:3px;position:relative;z-index:1}.cell .lvb .tag{margin:0}
@@ -2304,7 +2305,7 @@ function dlTitleAttr(t){
 function dlLinkHTML(t){ return t.body ? '<span class="ind">📝</span>' : ''; }
 function dlCellHTML(t){
   return `<div class="dlcell${t.done?' done':''} ${dlMatch(t)?'':'dim'}" data-todo="${t.id}" tabindex="0" role="button" title="${esc(dlTitleAttr(t))}">
-    <div><b>${esc(t.text)}</b>${dlLinkHTML(t)}</div><div class="dlt">⏰ ${t.dueTime ? esc(t.dueTime) : 'Cả ngày'}</div>${dlChips(t)}<div class="dlst">${t.done ? '<span class="chip ok">Đã hoàn thành</span>' : '<span class="chip pend">Chưa hoàn thành</span>' + dueChip(t)}</div></div>`;
+    <div><b>${esc(t.text)}</b>${dlLinkHTML(t)}</div><div class="dlt">⏰ ${t.dueTime ? esc(t.dueTime) : 'Cả ngày'}</div>${dlChips(t)}<div class="dlst"><div class="dlst-in">${t.done ? '<span class="chip ok">Đã hoàn thành</span>' : '<span class="chip pend">Chưa hoàn thành</span>' + dueChip(t)}</div></div></div>`;
 }
 function dlArticleHTML(t){
   const parts = ['⏰ Hạn chót ' + (t.dueTime || 'cả ngày'), t.on && '🗓 Tạo ' + dmy(t.on) + (t.onTime ? ' ' + t.onTime : '')].filter(Boolean).map(esc).join(' · ');
