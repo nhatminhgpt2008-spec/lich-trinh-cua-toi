@@ -96,7 +96,7 @@ textarea{height:auto;padding:8px 10px;width:100%;resize:vertical}
 .seg-ind{position:absolute;top:0;left:0;height:100%;width:1px;transform-origin:left center;background:var(--accent-soft);z-index:0;transition:transform .22s cubic-bezier(.4,0,.2,1);will-change:transform}
 @keyframes schedSwap{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 .sched-swap{animation:schedSwap .22s ease}
-@media (prefers-reduced-motion:reduce){.seg button{transition:none}.seg-ind{transition:none}.sched-swap{animation:none}}
+@media (prefers-reduced-motion:reduce){.seg button{transition:none}.seg-ind{transition:none}.sched-swap{animation:none}.tabInd,#todoTabs button,#todoStatus button{transition:none}}
 .searchbox{position:relative;display:inline-flex;align-items:center;height:36px;width:36px;border:1px solid var(--line);background:var(--surface);border-radius:18px;overflow:hidden;flex:0 0 auto;transition:width .18s ease,border-color .18s ease}
 .searchbox:focus-within,.searchbox.has-val{width:240px;border-color:var(--accent)}
 .searchbox .q-ic{position:absolute;left:0;top:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:var(--muted);pointer-events:none}
@@ -322,12 +322,17 @@ dialog .btn.danger{border-color:var(--danger)}
 .tabs button{flex:1 1 auto;min-width:0;padding:0 8px;height:30px;border:1px solid var(--line);background:none;border-radius:7px;font-size:12.5px}
 .tabs button.on{background:var(--accent-soft);color:var(--accent);border-color:transparent;font-weight:600}
 #todoStatus button{flex:1 1 auto;white-space:nowrap;padding:0 8px}
+/* ô chọn ở 2 hàng tab của Deadline: nền accent trượt mượt tới nút đang chọn (giống nhóm Bảng/Danh sách/Lớp) */
+#todoTabs,#todoStatus{position:relative}
+#todoTabs button,#todoStatus button{position:relative;z-index:1;transition:color .18s ease,border-color .18s ease}
+#todoTabs button.on,#todoStatus button.on{background:none}
+.tabInd{position:absolute;top:0;left:0;width:0;height:0;border-radius:7px;background:var(--accent-soft);z-index:0;pointer-events:none;transition:transform .22s cubic-bezier(.4,0,.2,1),width .22s cubic-bezier(.4,0,.2,1),height .22s cubic-bezier(.4,0,.2,1)}
 .addtodo{display:grid;grid-template-columns:minmax(0,1fr) max-content auto;gap:6px;margin-bottom:8px}
 .addtodo input{font-size:12.5px}
 .addtodo input[type=text]{padding:0 8px}
 .addtodo input[type=date]{min-width:116px;padding:0 6px}
 .addtodo button{width:36px;padding:0;justify-content:center}
-ul.todos{list-style:none;margin:0;padding:0 4px 0 0;display:grid;gap:2px;max-height:380px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+ul.todos{list-style:none;margin:0;padding:0 4px 0 0;display:grid;gap:2px;height:380px;align-content:start;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
 .todo{display:grid;grid-template-columns:20px 1fr 24px;gap:8px;align-items:start;padding:6px 4px;border-radius:8px}
 .todo:hover{background:var(--line-soft)}
 .todo input{margin-top:3px;accent-color:var(--accent);width:16px;height:16px}
@@ -867,14 +872,14 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
       <div class="card">
         <h2 class="gt">DEADLINE</h2>
         <span class="count" id="todoCount"></span>
-        <div class="tabs" id="todoTabs">
+        <div class="tabs" id="todoTabs"><span class="tabInd" aria-hidden="true"></span>
           <button data-f="all">Tất cả</button><button data-f="week">Trong tuần</button>
         </div>
-        <div class="tabs" id="todoStatus">
+        <div class="tabs" id="todoStatus"><span class="tabInd" aria-hidden="true"></span>
           <button data-s="all">Tất cả</button><button data-s="open">Chưa hoàn thành</button><button data-s="done">Đã hoàn thành</button>
         </div>
         <button type="button" class="btn primary todoadd" id="todoAdd">+ Thêm deadline</button>
-        <div class="listbar" id="todoBar" hidden><span class="hintline" id="todoHint"></span><button type="button" class="mini" id="todoAll">Mở hết</button></div>
+        <div class="listbar" id="todoBar" style="visibility:hidden"><span class="hintline" id="todoHint"></span><button type="button" class="mini" id="todoAll">Mở hết</button></div>
         <ul class="todos" id="todos"></ul>
       </div>
       <div class="card">
@@ -1708,7 +1713,7 @@ const PROFILE_OPEN_KEY = KEY + ':profileOpen';
 function gateShowApp(){
   authUiClear();   // đã vào được trang chính: xóa bản nháp form đăng nhập/đăng ký (kể cả mật khẩu) khỏi sessionStorage
   document.body.classList.add('authed'); document.body.classList.remove('gate');
-  requestAnimationFrame(updateSegIndicator);   // .app vừa hiện ra (trước đó offsetParent null nên bị bỏ qua) — tính lại vị trí thanh trượt ngay khi có kích thước thật
+  requestAnimationFrame(updateSegIndicator); requestAnimationFrame(updateTabInds);   // .app vừa hiện ra (trước đó offsetParent null nên bị bỏ qua) — tính lại vị trí thanh trượt ngay khi có kích thước thật
 }
 function gateShowLogin(){ document.body.classList.add('gate'); document.body.classList.remove('authed'); requestAnimationFrame(updateAuthSegIndicator); }
 function gateNote(text, opts){
@@ -1840,6 +1845,7 @@ authForm.addEventListener('submit', async e => {
     if(pass.length < 6){ errEl.textContent = 'Mật khẩu cần ít nhất 6 ký tự.'; return; }
     if(pass !== f.pass2.value){ errEl.textContent = 'Hai mật khẩu không khớp.'; return; }
   }
+  if(authMode !== 'reset'){ todoFilter = 'all'; todoStatus = 'all'; renderTodos(); }   // vừa đăng nhập/đăng ký: Deadline về mặc định (Tất cả / Tất cả)
   authBusy = true; document.getElementById('authSubmit').disabled = true;
   try{
     if(authMode === 'login'){
@@ -1861,6 +1867,7 @@ authForm.addEventListener('submit', async e => {
 document.getElementById('authGoogle').addEventListener('click', async () => {
   if(!fb.auth){ document.getElementById('authErr').textContent = 'Đang tải dịch vụ tài khoản, vui lòng thử lại sau vài giây.'; return; }
   if(authBusy) return;
+  todoFilter = 'all'; todoStatus = 'all'; renderTodos();
   const prov = new firebase.auth.GoogleAuthProvider();
   try{ await fb.auth.signInWithPopup(prov); /* onAuthStateChanged sẽ chuyển trang */ }
   catch(e){
@@ -1980,7 +1987,7 @@ try{
 }catch(e){}
 let weekStart = mondayOf(todayStr());
 let todoFilter = 'all';
-let todoStatus = 'open';
+let todoStatus = 'all';
 const hiddenTypes = new Set();
 const openTodos = new Set();
 let query = '';
@@ -2119,7 +2126,19 @@ function makeSegIndicator(segId, indId){
 }
 const updateSegIndicator = makeSegIndicator('viewSeg', 'viewSegInd');
 const updateAuthSegIndicator = makeSegIndicator('authSeg', 'authSegInd');
-addEventListener('resize', () => { updateSegIndicator(); updateAuthSegIndicator(); });
+function updateTabInds(){
+  ['todoTabs','todoStatus'].forEach(id => {
+    const box = document.getElementById(id), ind = box && box.querySelector('.tabInd'), btn = box && box.querySelector('button.on');
+    if(!ind || !btn || box.offsetParent === null) return;   // đang bị ẩn (chưa đăng nhập xong): chưa đo được, đợi lần gọi sau
+    const first = !ind.dataset.r;
+    if(first) ind.style.transition = 'none';   // lần đầu: đặt đúng vị trí ngay, không trượt từ góc trái
+    ind.style.width = btn.offsetWidth + 'px'; ind.style.height = btn.offsetHeight + 'px';
+    ind.style.transform = `translate(${btn.offsetLeft}px,${btn.offsetTop}px)`;
+    if(first){ void ind.offsetWidth; ind.style.transition = ''; ind.dataset.r = '1'; }
+  });
+}
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { document.querySelectorAll('.tabInd').forEach(i => { delete i.dataset.r; }); updateTabInds(); });   // font tải xong làm đổi bề rộng nút: đặt lại vị trí không hiệu ứng
+addEventListener('resize', () => { updateSegIndicator(); updateAuthSegIndicator(); updateTabInds(); });
 /* cuộn tới sự kiện đang diễn ra (hoặc sắp diễn ra, hoặc tiêu đề hôm nay) */
 function scrollToNow(smooth = true){
   const box = $('#sched');
@@ -2636,9 +2655,10 @@ function renderTodos(){
       <span class="acts"><button class="ed" title="Sửa" aria-label="Sửa việc">✎</button><button class="x" title="Xóa" aria-label="Xóa việc">×</button></span></li>`).join('')
     : '<li class="empty">Không có deadline nào ở mục này.</li>';
   ul.scrollTop = keep;
+  updateTabInds();
   fitTodoMeta();
   const w = list.filter(hasDetail);
-  $('#todoBar').hidden = !w.length;
+  $('#todoBar').style.visibility = w.length ? '' : 'hidden';   // giữ nguyên chỗ (không ẩn hẳn) để khung Deadline có kích thước cố định
   $('#todoHint').textContent = `${w.length} mục có nội dung chính`;
   $('#todoAll').textContent = w.every(t => openTodos.has(t.id)) ? 'Thu gọn hết' : 'Mở hết';
 }
@@ -3264,8 +3284,9 @@ async function moveOcc(id, from, to, s, e, fs, fe){
 }
 
 /* việc cần làm */
-$('#todoTabs').onclick = e => { const b = e.target.closest('button'); if(b){ todoFilter = b.dataset.f; renderTodos(); } };
-$('#todoStatus').onclick = e => { const b = e.target.closest('button'); if(b){ todoStatus = b.dataset.s; renderTodos(); } };
+const swapTodoList = () => { const u = $('#todos'); u.classList.remove('sched-swap'); void u.offsetWidth; u.classList.add('sched-swap'); };
+$('#todoTabs').onclick = e => { const b = e.target.closest('button'); if(b){ const ch = b.dataset.f !== todoFilter; todoFilter = b.dataset.f; renderTodos(); if(ch) swapTodoList(); } };
+$('#todoStatus').onclick = e => { const b = e.target.closest('button'); if(b){ const ch = b.dataset.s !== todoStatus; todoStatus = b.dataset.s; renderTodos(); if(ch) swapTodoList(); } };
 $('#todoAdd').onclick = () => openTodo(null);
 $('#todoAll').onclick = () => toggleAll(openTodos, visibleTodos(), renderTodos);
 $('#todos').addEventListener('change', e => {
