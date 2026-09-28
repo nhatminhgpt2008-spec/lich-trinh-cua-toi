@@ -840,6 +840,41 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
   .tools #undoBtn,.tools #redoBtn,.tools #themeBtn{width:32px}
   .nav button{padding:0 8px}
 }
+/* ===== Thanh cuộn riêng (luôn hiển thị ở mọi vùng có thể cuộn) ===== */
+.sb-hide{scrollbar-width:none!important;-ms-overflow-style:none}
+.sb-hide::-webkit-scrollbar{width:0!important;height:0!important;display:none!important}
+.sbLayer{position:fixed;inset:0;z-index:990;pointer-events:none}
+.sbar{position:fixed;z-index:990;pointer-events:auto;touch-action:none;-webkit-user-select:none;user-select:none;opacity:0;visibility:hidden;transition:opacity .2s ease,visibility 0s linear .2s}
+.sbar.on.scrolling,.sbar.on.drag,.sbar.on:hover{opacity:1;visibility:visible;transition:opacity .15s ease,visibility 0s}
+dialog>.sbar,#authGate>.sbar{z-index:20}
+.sbar-y{width:14px}
+.sbar-x{height:14px}
+.sbar::before{content:"";position:absolute;border-radius:0;background:color-mix(in srgb,var(--muted) 14%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--line) 75%,transparent);transition:width .15s ease,height .15s ease,margin .15s ease,background .15s ease}
+.sbar-y::before{top:0;bottom:0;left:50%;width:4px;margin-left:-2px}
+.sbar-x::before{left:0;right:0;top:50%;height:4px;margin-top:-2px}
+.sbar:hover::before,.sbar.drag::before{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.sbar-y:hover::before,.sbar-y.drag::before{width:8px;margin-left:-4px}
+.sbar-x:hover::before,.sbar-x.drag::before{height:8px;margin-top:-4px}
+.sbthumb{position:absolute;border-radius:0;opacity:.72;box-shadow:0 1px 3px rgba(0,0,0,.28),inset 0 0 0 1px rgba(255,255,255,.22);transition:width .15s ease,height .15s ease,margin .15s ease,opacity .15s ease;will-change:transform}
+.sbar-y .sbthumb{top:0;left:50%;width:6px;margin-left:-3px;background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 82%,#fff),var(--accent))}
+.sbar-x .sbthumb{left:0;top:50%;height:6px;margin-top:-3px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 82%,#fff),var(--accent))}
+.sbar-y:hover .sbthumb,.sbar-y.drag .sbthumb{width:8px;margin-left:-4px}
+.sbar-x:hover .sbthumb,.sbar-x.drag .sbthumb{height:8px;margin-top:-4px}
+.sbthumb{opacity:1}
+.sbthumb::after{content:"";position:absolute;inset:0;margin:auto;border-radius:0;background:var(--accent-ink);opacity:0;transition:opacity .15s ease}
+.sbar-y .sbthumb::after{width:2px;height:14px}
+.sbar-x .sbthumb::after{height:2px;width:14px}
+.sbar:hover .sbthumb::after,.sbar.drag .sbthumb::after{opacity:.75}
+.sbar.drag .sbthumb{box-shadow:0 2px 8px color-mix(in srgb,var(--accent) 55%,transparent),inset 0 0 0 1px rgba(255,255,255,.28)}
+@media (hover:none){
+  .sbar-y{width:18px}.sbar-x{height:18px}
+  .sbar-y::before{width:5px;margin-left:-2.5px}.sbar-x::before{height:5px;margin-top:-2.5px}
+  .sbar-y .sbthumb{width:7px;margin-left:-3.5px}.sbar-x .sbthumb{height:7px;margin-top:-3.5px}
+}
+/* chừa chỗ để thanh cuộn không đè lên nội dung */
+ul.todos{padding-right:12px}
+.scroller.sb-has-x,.stats.sb-has-x,.legend.sb-has-x{padding-bottom:12px}
+@media print{.sbLayer,.sbar{display:none!important}}
 </style>
 </head>
 <body>
@@ -3954,6 +3989,196 @@ if(firstRun && !(FIREBASE_CONFIG && /^https?:$/.test(location.protocol))){   // 
     .catch(() => {});
 }
 setInterval(() => { if(!document.querySelector('dialog[open]') && !drag && document.activeElement.tagName !== 'TEXTAREA') render(); }, 60000);
+</script>
+<script>
+/* ===== Thanh cuộn riêng: vẽ thanh trượt tùy biến cho trang + mọi vùng cuộn được ===== */
+(() => {
+  'use strict';
+  const SEL = '.scroller, ul.todos, dialog, #profileDlg form, #authGate, #stats, #legend';
+  const WIN = window;
+  const recs = new Map();                       // phần tử -> {el, host, y, x, m}
+  const layer = document.createElement('div');
+  layer.className = 'sbLayer';
+  layer.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(layer);
+  document.documentElement.classList.add('sb-hide');
+  const touch = () => matchMedia('(hover:none)').matches;
+
+  function makeBar(rec, axis){
+    const rail = document.createElement('div');
+    rail.className = 'sbar sbar-' + axis;
+    const thumb = document.createElement('div');
+    thumb.className = 'sbthumb';
+    rail.appendChild(thumb);
+    rec.host.appendChild(rail);
+    const bar = {rail, thumb, axis, on:false, t:0};
+
+    thumb.addEventListener('pointerdown', e => {
+      e.preventDefault(); e.stopPropagation();
+      const m = rec.m[axis]; if(!m) return;
+      const start = axis === 'y' ? e.clientY : e.clientX, from = m.pos;
+      const k = (m.scroll - m.client) / Math.max(1, m.track - m.thumb);
+      rail.classList.add('drag');
+      try{ thumb.setPointerCapture(e.pointerId); }catch(_){}
+      const move = ev => setScroll(rec, axis, from + ((axis === 'y' ? ev.clientY : ev.clientX) - start) * k, false);
+      const up = () => {
+        rail.classList.remove('drag');
+        thumb.removeEventListener('pointermove', move);
+        thumb.removeEventListener('pointerup', up);
+        thumb.removeEventListener('pointercancel', up);
+      };
+      thumb.addEventListener('pointermove', move);
+      thumb.addEventListener('pointerup', up);
+      thumb.addEventListener('pointercancel', up);
+    });
+    rail.addEventListener('pointerdown', e => {          // bấm vào rãnh: cuộn từng trang theo hướng bấm
+      if(e.target !== rail) return;
+      e.preventDefault();
+      const m = rec.m[axis]; if(!m) return;
+      const r = rail.getBoundingClientRect();
+      const p = (axis === 'y' ? e.clientY - r.top : e.clientX - r.left) - 2;
+      setScroll(rec, axis, m.pos + (p < m.off ? -1 : 1) * m.client * .9, true);
+    });
+    return bar;
+  }
+
+  function setScroll(rec, axis, v, smooth){
+    const d = rec.win ? (document.scrollingElement || document.documentElement) : rec.el;
+    const max = axis === 'y' ? d.scrollHeight - (rec.win ? innerHeight : d.clientHeight) : d.scrollWidth - d.clientWidth;
+    v = Math.max(0, Math.min(max, v));
+    const o = smooth ? {behavior:'smooth'} : {behavior:'instant'};
+    if(rec.win) WIN.scrollTo({top:v, left:WIN.scrollX, ...o});
+    else el_scroll(rec.el, axis, v, o);
+  }
+  function el_scroll(el, axis, v, o){
+    if(el.scrollTo) el.scrollTo(axis === 'y' ? {top:v, ...o} : {left:v, ...o});
+    else if(axis === 'y') el.scrollTop = v; else el.scrollLeft = v;
+  }
+
+  function add(el, win){
+    if(recs.has(el)) return;
+    const host = win ? layer : (el.closest('dialog, #authGate') || layer);
+    const rec = {el, win:!!win, host, y:null, x:null, m:{}};
+    if(!win){
+      el.classList.add('sb-hide');
+      if(typeof ResizeObserver !== 'undefined') ro.observe(el);
+    }
+    rec.y = makeBar(rec, 'y');
+    if(!win) rec.x = makeBar(rec, 'x');
+    recs.set(el, rec);
+  }
+  function drop(el){
+    const rec = recs.get(el); if(!rec) return;
+    rec.y && rec.y.rail.remove(); rec.x && rec.x.rail.remove();
+    if(typeof ResizeObserver !== 'undefined') ro.unobserve(el);
+    recs.delete(el);
+  }
+
+  function place(rec){
+    const el = rec.el, doc = document.documentElement;
+    const vw = doc.clientWidth, vh = innerHeight;
+    let sy, sx, sh, sw, ch, cw, rect, canY, canX, animating = false;
+    if(rec.win){
+      const d = document.scrollingElement || doc;
+      sy = d.scrollTop; sh = d.scrollHeight; ch = vh; sx = 0; sw = 0; cw = 0;
+      rect = {left:0, top:0, right:vw, bottom:vh};
+      canY = sh - ch > 1 && getComputedStyle(doc).overflowY !== 'hidden'; canX = false;
+    }else{
+      const cs = getComputedStyle(el);
+      if(cs.display === 'none' || (el.tagName === 'DIALOG' && !el.open)){ canY = canX = false; rect = {left:0,top:0,right:0,bottom:0}; sy=sx=sh=sw=ch=cw=0; }
+      else{
+        rect = el.getBoundingClientRect();
+        sy = el.scrollTop; sx = el.scrollLeft; sh = el.scrollHeight; sw = el.scrollWidth; ch = el.clientHeight; cw = el.clientWidth;
+        canY = /(auto|scroll)/.test(cs.overflowY) && sh - ch > 1;
+        canX = /(auto|scroll)/.test(cs.overflowX) && sw - cw > 1;
+      }
+      if(rec.host !== layer){
+        animating = rec.host.classList.contains('closing') || (rec.host.getAnimations && rec.host.getAnimations().some(a => a.playState === 'running'));
+      }
+    }
+    const L = Math.max(rect.left, 0), T = Math.max(rect.top, 0), R = Math.min(rect.right, vw), B = Math.min(rect.bottom, vh);
+    const visW = R - L, visH = B - T, RW = touch() ? 18 : 14, gap = 8;
+    const showY = !animating && canY && visH >= 56 && visW >= 24;
+    const showX = !animating && canX && visW >= 56 && visH >= 24;
+    if(!rec.win) el.classList.toggle('sb-has-x', !!canX);
+
+    // dọc
+    if(showY){
+      const len = Math.max(20, visH - gap * 2 - (showX ? RW : 0));
+      const range = sh - ch, thumb = Math.max(36, Math.min(len, len * ch / sh));
+      const pos = Math.max(0, Math.min(1, sy / range)) * (len - thumb);
+      const s = rec.y.rail.style;
+      s.left = (R - RW - 1) + 'px'; s.top = (T + gap) + 'px'; s.height = len + 'px';
+      rec.y.thumb.style.height = thumb + 'px'; rec.y.thumb.style.transform = `translateY(${pos}px)`;
+      rec.m.y = {track:len, thumb, pos:sy, off:pos, scroll:sh, client:ch};
+    }else rec.m.y = null;
+    rec.y.rail.classList.toggle('on', showY);
+    // ngang
+    if(rec.x){
+      if(showX){
+        const len = Math.max(20, visW - gap * 2 - (showY ? RW : 0));
+        const range = sw - cw, thumb = Math.max(36, Math.min(len, len * cw / sw));
+        const pos = Math.max(0, Math.min(1, sx / range)) * (len - thumb);
+        const s = rec.x.rail.style;
+        s.left = (L + gap) + 'px'; s.top = (B - RW - 1) + 'px'; s.width = len + 'px';
+        rec.x.thumb.style.width = thumb + 'px'; rec.x.thumb.style.transform = `translateX(${pos}px)`;
+        rec.m.x = {track:len, thumb, pos:sx, off:pos, scroll:sw, client:cw};
+      }else rec.m.x = null;
+      rec.x.rail.classList.toggle('on', showX);
+    }
+  }
+
+  let raf = 0, needScan = false;
+  function frame(){
+    raf = 0;
+    if(needScan){
+      needScan = false;
+      document.querySelectorAll(SEL).forEach(el => add(el, false));
+      recs.forEach((r, el) => { if(!r.win && !el.isConnected) drop(el); });
+    }
+    recs.forEach(place);
+  }
+  function schedule(scan){ if(scan) needScan = true; if(!raf) raf = requestAnimationFrame(frame); }
+
+  const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => schedule(false)) : null;
+  add(document.documentElement, true);
+  if(ro){ ro.observe(document.documentElement); ro.observe(document.body); }
+
+  // sáng thanh trượt lên một lúc khi đang cuộn
+  const timers = new WeakMap();
+  addEventListener('scroll', e => {
+    schedule(false);
+    const t = e.target === document ? document.documentElement : e.target;
+    const rec = recs.get(t); if(!rec) return;
+    [rec.y, rec.x].forEach(b => {
+      if(!b) return;
+      wake(b, 900);
+    });
+  }, {capture:true, passive:true});
+  // rê chuột sát mép vùng cuộn thì thanh hiện lên; rời đi thì tự ẩn
+  const wake = (b, ms) => { b.rail.classList.add('scrolling'); clearTimeout(b.t); b.t = setTimeout(() => b.rail.classList.remove('scrolling'), ms); };
+  addEventListener('pointermove', e => {
+    if(e.pointerType === 'touch') return;
+    recs.forEach(rec => [rec.y, rec.x].forEach(b => {
+      if(!b || !b.rail.classList.contains('on')) return;
+      const r = b.rail.getBoundingClientRect();
+      const near = b.axis === 'y'
+        ? e.clientX >= r.left - 22 && e.clientX <= r.right + 6 && e.clientY >= r.top && e.clientY <= r.bottom
+        : e.clientY >= r.top - 22 && e.clientY <= r.bottom + 6 && e.clientX >= r.left && e.clientX <= r.right;
+      if(near) wake(b, 900);
+    }));
+  }, {passive:true});
+  addEventListener('resize', () => schedule(true));
+  document.addEventListener('animationend', () => schedule(false), true);
+  document.addEventListener('animationcancel', () => schedule(false), true);
+  new MutationObserver(ms => {
+    const own = n => n.nodeType === 1 && (n.classList.contains('sbar') || n.classList.contains('sbLayer'));
+    if(ms.every(m => m.type === 'childList' && [...m.addedNodes, ...m.removedNodes].every(own))) return;
+    schedule(true);
+  }).observe(document.body, {subtree:true, childList:true, attributes:true, attributeFilter:['open','hidden']});
+  setInterval(() => schedule(true), 1500);       // phòng khi nội dung đổi kích thước mà không có sự kiện nào báo
+  schedule(true);
+})();
 </script>
 </body>
 </html>
