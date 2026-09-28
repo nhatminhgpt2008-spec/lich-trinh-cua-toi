@@ -1,5 +1,7 @@
 {
+  "id": "./",
   "name": "Lịch trình của tôi",
+  "orientation": "any",
   "short_name": "Lịch",
   "lang": "vi",
   "start_url": "./",

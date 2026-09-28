@@ -90,9 +90,13 @@ body.gate #authGate{display:flex}
 .danger{color:var(--danger)!important}
 input[type=date],input[type=search],input[type=time],input[type=text],input[type=url],input[type=number],input[type=email],input[type=password],select,textarea,input:not([type]){height:36px;padding:0 10px;border:1px solid var(--line);background:var(--surface);border-radius:8px;min-width:0}
 textarea{height:auto;padding:8px 10px;width:100%;resize:vertical}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
-.seg button{border:0!important;border-radius:0!important;height:34px!important;justify-content:center;background:transparent;color:var(--ink)}
-.seg button.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.seg{display:inline-flex;position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.seg button{border:0!important;border-radius:0!important;height:34px!important;justify-content:center;background:transparent!important;color:var(--ink);position:relative;z-index:1;transition:color .18s ease}
+.seg button.on{color:var(--accent);font-weight:600}
+.seg-ind{position:absolute;top:0;left:0;height:100%;width:1px;transform-origin:left center;background:var(--accent-soft);z-index:0;transition:transform .22s cubic-bezier(.4,0,.2,1);will-change:transform}
+@keyframes schedSwap{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.sched-swap{animation:schedSwap .22s ease}
+@media (prefers-reduced-motion:reduce){.seg button{transition:none}.seg-ind{transition:none}.sched-swap{animation:none}}
 .searchbox{position:relative;display:inline-flex;align-items:center;height:36px;width:36px;border:1px solid var(--line);background:var(--surface);border-radius:18px;overflow:hidden;flex:0 0 auto;transition:width .18s ease,border-color .18s ease}
 .searchbox:focus-within,.searchbox.has-val{width:240px;border-color:var(--accent)}
 .searchbox .q-ic{position:absolute;left:0;top:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:var(--muted);pointer-events:none}
@@ -138,7 +142,7 @@ dialog .btn.danger{border-color:var(--danger)}
 .layout.fx-on .below{display:none}
 [hidden]{display:none!important}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:12px}
-.below{display:grid;gap:16px}
+.below{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;min-width:0}   /* min-width:0: cột phải co được, không đẩy thẻ Deadline tràn khỏi màn hình */
 .below .card{padding:14px 16px}
 .gt{margin:0 0 8px;text-align:center;color:#1e9b57;font-size:14px;font-weight:700}
 
@@ -314,8 +318,8 @@ dialog .btn.danger{border-color:var(--danger)}
 .fx td.note{max-width:240px;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--muted);font-size:12.5px}
 
 /* sidebar */
-.tabs{display:flex;gap:4px;margin-bottom:8px}
-.tabs button{flex:1;height:30px;border:1px solid var(--line);background:none;border-radius:7px;font-size:12.5px}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.tabs button{flex:1 1 auto;min-width:0;padding:0 8px;height:30px;border:1px solid var(--line);background:none;border-radius:7px;font-size:12.5px}
 .tabs button.on{background:var(--accent-soft);color:var(--accent);border-color:transparent;font-weight:600}
 #todoStatus button{flex:1 1 auto;white-space:nowrap;padding:0 8px}
 .addtodo{display:grid;grid-template-columns:minmax(0,1fr) max-content auto;gap:6px;margin-bottom:8px}
@@ -516,7 +520,7 @@ dialog h2{margin:0 0 14px;font-size:17px}
 .fgrid label{display:grid;gap:4px;font-size:12.5px;color:var(--muted)}
 .fgrid input,.fgrid select{width:100%;color:var(--ink)}
 .fgrid input:disabled{opacity:.45;cursor:not-allowed}
-.syncinfo{margin-top:4px;padding:8px 10px 4px;border-top:1px solid var(--line);font-size:11.5px;line-height:1.4;color:var(--muted)}
+.syncinfo{white-space:pre-line;margin-top:4px;padding:8px 10px 4px;border-top:1px solid var(--line);font-size:11.5px;line-height:1.4;color:var(--muted)}
 .fgrid .full{grid-column:1/-1}
 .hint{grid-column:1/-1;font-size:12.5px;color:var(--muted);background:var(--line-soft);padding:6px 10px;border-radius:8px;margin:0}
 .err{color:var(--danger);min-height:18px;margin:8px 0 0;font-size:13px}
@@ -826,7 +830,6 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
 </style>
 </head>
 <body>
-<script>if(window.claude && typeof claude.use === 'function') document.body.classList.add('authed');</script>
 <div id="bootScreen"><div class="bootSpin" aria-hidden="true"></div><p>Đang kiểm tra đăng nhập…</p></div>
 <div class="app">
   <header class="top">
@@ -844,7 +847,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
         <span class="q-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="2"/><line x1="15" y1="15" x2="20" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
         <input type="search" id="q" placeholder="Tìm môn, phòng, giảng viên…" aria-label="Tìm lịch">
       </div>
-      <div class="seg" id="viewSeg"><button data-v="table">Bảng</button><button data-v="agenda">Danh sách</button><button data-v="fixed">Lớp</button></div>
+      <div class="seg" id="viewSeg"><span class="seg-ind" id="viewSegInd" aria-hidden="true"></span><button data-v="table">Bảng</button><button data-v="agenda">Danh sách</button><button data-v="fixed">Lớp</button></div>
       <button class="primary" id="addBtn" title="Thêm lịch (N)">Thêm lịch</button>
       <button id="undoBtn" title="Hoàn tác (Ctrl+Z)" aria-label="Hoàn tác" disabled>↶</button>
       <button id="redoBtn" title="Làm lại (Ctrl+Y)" aria-label="Làm lại" disabled>↷</button>
@@ -1014,7 +1017,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
       <p>Nhập email của bạn, chúng tôi sẽ gửi liên kết đặt lại mật khẩu.</p>
     </div>
     <form id="authForm" autocomplete="off">
-      <div class="seg authSeg" id="authSeg">
+      <div class="seg authSeg" id="authSeg"><span class="seg-ind" id="authSegInd" aria-hidden="true"></span>
         <button type="button" data-m="login" class="on">Đăng nhập</button>
         <button type="button" data-m="register">Đăng ký</button>
       </div>
@@ -1096,16 +1099,9 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
     </div>
 
     <div class="acctSection">
-      <button type="button" class="acctSectionSummary" aria-expanded="false">Sao lưu &amp; khôi phục file (.json)<span class="acctArrow" aria-hidden="true"></span></button>
+      <button type="button" class="acctSectionSummary" aria-expanded="false">Sao lưu<span class="acctArrow" aria-hidden="true"></span></button>
       <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
-        <div class="actions"><button type="button" class="btn" data-a="export-new">Tạo file sao lưu (.json)</button><button type="button" class="btn" data-a="export">Sao lưu (.json)</button><button type="button" class="btn" data-a="import">Khôi phục dữ liệu (.json)</button></div>
-      </div></div></div>
-    </div>
-
-    <div class="acctSection">
-      <button type="button" class="acctSectionSummary" aria-expanded="false">Sao lưu tự động<span class="acctArrow" aria-hidden="true"></span></button>
-      <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
-        <div class="actions"><button type="button" class="btn" data-a="autobackup" id="abBtn">Sao lưu tự động</button><button type="button" class="btn" data-a="autobackup-change" id="abChangeBtn" hidden>Đổi vị trí lưu…</button></div>
+        <div class="actions"><button type="button" class="btn" data-a="ab-download">Tải bản sao lưu (.json)</button><button type="button" class="btn" data-a="import">Khôi phục dữ liệu (.json)</button></div>
         <p class="syncinfo" id="abInfo" hidden></p>
       </div></div></div>
     </div>
@@ -1136,19 +1132,6 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
     </div>
 
     <div class="actions" style="margin-top:14px"><span class="grow"></span><button type="button" class="btn footerLogout" id="profileLogout" aria-label="Đăng xuất"><span class="lbl">Đăng xuất</span></button></div>
-  </form>
-</dialog>
-
-<!-- Xử lý dữ liệu cục bộ khi đăng nhập lần đầu / xung đột -->
-<dialog id="syncChoiceDlg">
-  <form onsubmit="return false">
-    <div class="dlgHead"><h2 id="syncChoiceTitle">Dữ liệu trên thiết bị này</h2><button type="button" class="iconbtn" id="syncChoiceCloseX" aria-label="Đóng">×</button></div>
-    <p id="syncChoiceMsg" class="hint"></p>
-    <div class="actions" style="flex-direction:column;align-items:stretch">
-      <button type="button" class="btn primary" id="syncChoiceUpload" style="justify-content:center">Đồng bộ dữ liệu thiết bị này lên tài khoản</button>
-      <button type="button" class="btn" id="syncChoiceKeepCloud" style="justify-content:center">Giữ dữ liệu trên tài khoản (bỏ dữ liệu thiết bị)</button>
-      <button type="button" class="btn" id="syncChoiceCancel" style="justify-content:center">Hủy (chưa quyết định)</button>
-    </div>
   </form>
 </dialog>
 
@@ -1353,7 +1336,7 @@ const seriesOf = ev => ev.series || ev.id;
 /* ---------- dữ liệu ----------
    Code KHÔNG chứa lịch học nào. Toàn bộ dữ liệu (lớp cố định, sự kiện, deadline, ghi chú)
    nằm trong file lich-trinh-data.json:
-   • Mở “Tài khoản của tôi” → “Sao lưu & khôi phục file (.json)” → “Khôi phục dữ liệu (.json)” để nạp file.
+   • Mở “Tài khoản của tôi” → “Sao lưu” → “Khôi phục dữ liệu (.json)” để nạp file.
    • Nếu trang được mở qua web server (cùng thư mục với file .json), lần chạy đầu tiên sẽ tự nạp. */
 const KEY = 'uit-planner-v2';
 const SCHEMA = 6;
@@ -1410,116 +1393,68 @@ function load(){
   return null;
 }
 
-/* ---------- tự động sao lưu ra file .json của bạn ----------
-   Dùng File System Access API (Chrome/Edge, mở file .html trực tiếp hoặc qua web server): chọn file một lần,
-   sau đó mỗi lần lưu dữ liệu, trang tự ghi đè file đó. Mỗi lần mở lại trình duyệt có thể cần bấm cho phép ghi file một lần. */
-const AB_DB = 'uit-planner-fs', AB_STORE = 'h';
-const abIdb = () => new Promise((res, rej) => { const r = indexedDB.open(AB_DB, 1); r.onupgradeneeded = () => r.result.createObjectStore(AB_STORE); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
-async function abGet(){ try{ const db = await abIdb(); return await new Promise((res, rej) => { const q = db.transaction(AB_STORE).objectStore(AB_STORE).get('file'); q.onsuccess = () => res(q.result || null); q.onerror = () => rej(q.error); }); }catch(e){ return null; } }
-async function abSet(h){ try{ const db = await abIdb(); await new Promise((res, rej) => { const tx = db.transaction(AB_STORE, 'readwrite'); if(h) tx.objectStore(AB_STORE).put(h, 'file'); else tx.objectStore(AB_STORE).delete('file'); tx.oncomplete = res; tx.onerror = () => rej(tx.error); }); }catch(e){} }
-const ab = {handle:null, ok:false, timer:0, busy:false, dirty:false};
-const abSupported = () => typeof window.showSaveFilePicker === 'function';
+/* ---------- sao lưu tự động ----------
+   Mỗi tài khoản có MỘT file sao lưu riêng: du-lieu-sao-luu/<uid>.json.
+   • Luôn ghi vào bộ nhớ riêng của trình duyệt (OPFS) — không cần cấp quyền, nhưng không thấy được trong File Explorer.
+   • "Tải bản sao lưu (.json)" tải đúng file của tài khoản đang đăng nhập về máy. */
+const AB_DIR = 'du-lieu-sao-luu';
+const ab = {timer:0, busy:false, dirty:false};
+const abSupported = () => !!(navigator.storage && typeof navigator.storage.getDirectory === 'function');
+const abFileName = () => String(curUid).replace(/[^\w-]/g, '_') + '.json';   // mỗi tài khoản một file, đặt tên theo uid
+async function abDir(){ const root = await navigator.storage.getDirectory(); return root.getDirectoryHandle(AB_DIR, {create:true}); }
 function abUI(msg){
-  const b = document.getElementById('abBtn'), c = document.getElementById('abChangeBtn'), i = document.getElementById('abInfo');
-  if(b){ b.hidden = !abSupported(); b.textContent = ab.handle ? 'Tắt sao lưu tự động (.json)' : 'Sao lưu tự động (.json)'; }
-  if(c){ c.hidden = !abSupported() || !ab.handle; }   /* chỉ hiện khi đã bật, để đổi sang file/nơi lưu khác */
+  const i = document.getElementById('abInfo');
   if(i){ i.hidden = !msg; i.textContent = msg || ''; }
 }
+const abTimeFull = t => { const d = new Date(t), p = n => String(n).padStart(2,'0'); return p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds()) + ' ' + p(d.getDate()) + '/' + p(d.getMonth()+1) + '/' + d.getFullYear(); };
+async function abRefresh(){
+  if(!abSupported()) return abUI('Trình duyệt này chưa hỗ trợ sao lưu tự động. Hãy dùng Chrome, Edge, Firefox hoặc Safari bản mới.');
+  if(!curUid) return abUI();   // chưa đăng nhập thì chưa có file nào
+  const name = abFileName(); let msg = '';
+  try{
+    const f = await (await (await abDir()).getFileHandle(name)).getFile();
+    msg = 'Sao lưu tự động lần cuối vào ' + abTimeFull(f.lastModified);
+  }catch(e){ msg = 'Sao lưu tự động: chưa có bản sao lưu'; }
+  abUI(msg);
+}
+/* ghi một file sao lưu; overwrite=false (dữ liệu đang trống) thì chỉ TẠO file nếu chưa có, không bao giờ ghi đè bản đã có */
+async function abPut(dir, name, data, overwrite){
+  if(!overwrite){ try{ await dir.getFileHandle(name); return; }catch(e){} }
+  const fh = await dir.getFileHandle(name, {create:true});
+  const w = await fh.createWritable(); await w.write(data); await w.close();
+}
 async function abWrite(){
-  if(!ab.handle || !ab.ok) return;
+  if(!abSupported() || !curUid) return;   // chỉ ghi khi đã đăng nhập
   if(ab.busy){ ab.dirty = true; return; }
   ab.busy = true;
   try{
     do{
       ab.dirty = false;
-      const w = await ab.handle.createWritable();
-      await w.write(JSON.stringify(state, null, 2)); await w.close();
+      const name = abFileName(), data = JSON.stringify(state, null, 2), has = hasData(state);
+      await abPut(await abDir(), name, data, has);
     } while(ab.dirty);
-    abUI('Tự động sao lưu: ' + ab.handle.name + ' · lần cuối ' + new Date().toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'}));
+    abRefresh();
   }catch(e){
-    ab.ok = false;
-    abUI('Tự động sao lưu bị lỗi hoặc mất quyền ghi file. Mở "Tài khoản của tôi" và bấm lại để bật.');
+    abUI('Không ghi được bản sao lưu tự động trên trình duyệt này.');
   }
   ab.busy = false;
 }
-function abSoon(){ if(ab.handle && ab.ok){ clearTimeout(ab.timer); ab.timer = setTimeout(abWrite, 1500); } }
-async function abRegrant(){
-  if(!ab.handle || ab.ok) return;
-  try{ ab.ok = (await ab.handle.requestPermission({mode:'readwrite'})) === 'granted'; }catch(e){}
-  if(ab.ok) abWrite(); else abUI('Tự động sao lưu đang chờ quyền ghi file. Mở "Tài khoản của tôi" và bấm lại để cấp quyền.');
-}
-async function abInit(){
-  abUI();
-  if(!abSupported()) return;
-  const h = await abGet(); if(!h) return;
-  ab.handle = h;
-  try{ ab.ok = (await h.queryPermission({mode:'readwrite'})) === 'granted'; }catch(e){}
-  if(ab.ok){ abUI('Tự động sao lưu: ' + h.name); abWrite(); }
-  else { abUI('Tự động sao lưu đang chờ quyền ghi file (bấm bất kỳ đâu để cho phép).'); document.addEventListener('pointerdown', abRegrant, {once:true, capture:true}); }
-}
-/* chọn file .json đã có để ghi đè; File System Access API dùng hộp thoại Mở của hệ điều hành */
-async function abPickExistingFile(){
-  if(!abSupported()) return alert('Trình duyệt này không hỗ trợ chọn file để tự động ghi. Hãy dùng Chrome hoặc Edge trên trang HTTPS hoặc localhost.');
+function abSoon(){ clearTimeout(ab.timer); ab.timer = setTimeout(abWrite, 1500); }
+async function abInit(){ abRefresh(); abWrite(); }
+/* tải file sao lưu của tài khoản đang đăng nhập về máy */
+async function abDownload(){
+  if(!curUid) return;
   try{
-    const [h] = await window.showOpenFilePicker({multiple:false, types:[{description:'Dữ liệu lịch trình (.json)', accept:{'application/json':['.json']}}]});
-    ab.handle = h; ab.ok = false;
-    try{ ab.ok = (await h.requestPermission({mode:'readwrite'})) === 'granted'; }catch(e){}
-    if(!ab.ok) return abUI('Tự động sao lưu đang chờ quyền ghi file. Mở "Tài khoản của tôi" và bấm lại để cấp quyền.');
-    await abSet(h); await abWrite();
+    const f = await (await (await abDir()).getFileHandle(abFileName())).getFile();
+    download(abFileName(), await f.text(), 'application/json');
   }catch(e){
-    if(!e || e.name !== 'AbortError') alert('Không chọn được file ở đây. Hãy thử lại và chọn một file .json có sẵn.');
-  }
-}
-/* tạo file .json mới */
-async function abPickNewFile(){
-  if(!abSupported()) return alert('Trình duyệt này không hỗ trợ tự động ghi file. Hãy dùng Chrome hoặc Edge trên trang HTTPS hoặc localhost.');
-  try{
-    const h = await window.showSaveFilePicker({suggestedName: DATA_FILE, types:[{description:'Dữ liệu lịch trình (.json)', accept:{'application/json':['.json']}}]});
-    ab.handle = h; ab.ok = true; await abSet(h); await abWrite();
-  }catch(e){
-    if(!e || e.name !== 'AbortError') alert('Không chọn được file ở đây. Hãy thử lại hoặc chọn một thư mục khác.');
-  }
-}
-async function abToggle(){
-  if(ab.handle && !ab.ok){ await abRegrant(); if(ab.ok) return; }
-  if(ab.handle){
-    if(!confirm('Tắt tự động sao lưu? File .json đã lưu vẫn được giữ nguyên.')) return;
-    ab.handle = null; ab.ok = false; await abSet(null); abUI(); return;
-  }
-  await abPickExistingFile();
-}
-/* đổi sang file / nơi lưu khác trong khi tự động sao lưu vẫn đang bật, không cần tắt rồi bật lại */
-async function abChangeLocation(){
-  if(ab.handle && !ab.ok){ await abRegrant(); if(!ab.ok) return; }
-  await abPickExistingFile();
-}
-/* sao lưu thủ công vào file .json đã có */
-async function saveBackupFile(){
-  const data = JSON.stringify(state, null, 2);
-  if(!abSupported()){ return alert('Trình duyệt này không hỗ trợ chọn file để ghi đè. Hãy dùng Chrome hoặc Edge trên trang HTTPS hoặc localhost.'); }
-  try{
-    const [h] = await window.showOpenFilePicker({multiple:false, types:[{description:'Dữ liệu lịch trình (.json)', accept:{'application/json':['.json']}}]});
-    const w = await h.createWritable();
-    await w.write(data); await w.close();
-  }catch(e){
-    if(!e || e.name !== 'AbortError') alert('Không thể ghi file sao lưu ở đây. Hãy thử lại và chọn một file .json có sẵn.');
-  }
-}
-/* sao lưu thủ công: tạo file .json mới */
-async function saveBackupNewFile(){
-  const data = JSON.stringify(state, null, 2);
-  if(!abSupported()){ download(DATA_FILE, data, 'application/json'); return; }
-  try{
-    const h = await window.showSaveFilePicker({suggestedName: DATA_FILE, types:[{description:'Dữ liệu lịch trình (.json)', accept:{'application/json':['.json']}}]});
-    const w = await h.createWritable();
-    await w.write(data); await w.close();
-  }catch(e){
-    if(!e || e.name !== 'AbortError') alert('Không thể tạo file sao lưu ở đây. Hãy thử lại hoặc chọn một thư mục khác.');
+    if(hasData(state)) download(abFileName(), JSON.stringify(state, null, 2), 'application/json');
+    else alert('Chưa có bản sao lưu cho tài khoản này.');
   }
 }
 function persistLocal(){
   try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
-  syncTs = Date.now(); saveTs();
+  syncTs = nowTs(); saveTs();
   abSoon();
   if(sync.ready) pushSoon();
 }
@@ -1534,7 +1469,7 @@ let hist = [];
 let histIndex = -1;
 let histSuppressed = false;
 let histTimer = null;
-function snapshotState(){ return JSON.stringify(state); }
+function snapshotState(){ const {view, theme, ...rest} = state; return JSON.stringify(rest); }   // chế độ xem / sáng-tối không thuộc lịch sử hoàn tác (trước đây đổi giao diện xong, Hoàn tác chỉ lùi lại giao diện chứ không lùi dữ liệu)
 function initHistory(){ hist = [snapshotState()]; histIndex = 0; updateHistBtns(); }
 function commitHistory(){
   if(histSuppressed) return;
@@ -1554,9 +1489,10 @@ function commitHistoryDebounced(){
 function restoreSnapshot(snap){
   histSuppressed = true;
   try{
-    state = JSON.parse(snap);
+    const keep = {view:state.view, theme:state.theme};
+    state = {...JSON.parse(snap), ...keep};   // giữ nguyên chế độ xem và giao diện hiện tại
     try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
-    syncTs = Date.now(); saveTs();
+    syncTs = nowTs(); saveTs();
     abSoon();
     if(sync.ready) pushSoon();
   } finally { histSuppressed = false; }
@@ -1594,8 +1530,27 @@ const TS_KEY = KEY + ':ts';
 const tsKeyFor = uid => TS_KEY + (uid ? (':' + uid) : '');
 let curUid = null;
 let syncTs = 0;
+/* Đồng hồ máy có thể lệch (chỉnh tay, pin yếu…) nên mốc thời gian đồng bộ KHÔNG dùng thẳng Date.now():
+   nowTs() = giờ máy + độ lệch so với máy chủ Firestore. Độ lệch được đo từ chính lần ghi của mình
+   (giờ máy chủ ghi trong updatedAt so với giờ máy lúc gửi/nhận) rồi nhớ trong localStorage. */
+const CLOCK_KEY = KEY + ':clockOffset';
+let clockOffset = 0, pushStartAt = 0;
+try{ clockOffset = +localStorage.getItem(CLOCK_KEY) || 0; }catch(e){}
+const nowTs = () => Date.now() + clockOffset;
+function learnClock(d){   // d = dữ liệu tài liệu vừa được máy chủ xác nhận sau lần ghi của chính mình
+  if(!pushStartAt || !d || !d.updatedAt || typeof d.updatedAt.toMillis !== 'function') return;
+  if((+d.ts || 0) !== syncTs) return;   // không phải bản do chính mình vừa ghi (máy khác ghi, hoặc mình vừa sửa tiếp) thì bỏ qua
+  const t0 = pushStartAt, t1 = Date.now(); pushStartAt = 0;
+  if(t1 - t0 > 15000) return;   // mạng quá chậm, phép đo không đáng tin
+  const off = d.updatedAt.toMillis() - (t0 + t1) / 2;
+  const delta = off - clockOffset;
+  if(Math.abs(delta) < 4000) return;   // sai số mạng, không cần chỉnh
+  clockOffset = off;
+  try{ localStorage.setItem(CLOCK_KEY, String(Math.round(off))); }catch(e){}
+  if(syncTs){ syncTs += delta; saveTs(); pushSoon(); }   // sửa lại mốc của bản đang có cho đúng giờ máy chủ
+}
 try{ syncTs = +localStorage.getItem(tsKeyFor(null)) || 0; }catch(e){}
-const sync = {doc:null, ready:false, timer:0, busy:false, dirty:false, readOnly:false, unsub:null};
+const sync = {doc:null, ready:false, timer:0, busy:false, dirty:false, unsub:null};
 let pendingRemote = null;
 const hasData = st => !!(st.events.length || st.todos.length || Object.keys(st.notes || {}).length);
 const syncInfo = t => { const p = document.getElementById('profileSyncInfo'); if(p) p.textContent = t || ''; };
@@ -1604,13 +1559,13 @@ const saveTs = () => { try{ localStorage.setItem(tsKeyFor(curUid), String(syncTs
    localStorage[KEY] là nơi lưu "đang hoạt động". OWNER_KEY ghi lại state hiện tại đang thuộc về ai: '' (chưa
    từng đăng nhập / dữ liệu khách) hoặc một uid cụ thể. Khi Firebase Auth báo có TÀI KHOẢN mới đăng nhập:
    - Nếu trước đó là dữ liệu khách (prevOwner null/'') → dữ liệu đó chưa từng thuộc về ai, chưa có rủi ro lộ
-     sang người khác, nên GIỮ NGUYÊN `state` để luồng hỏi-trước-khi-đồng-bộ có sẵn trong attach()
-     (askOnFirstSync/askOnConflict) tự lo — không tự ý xóa hay tự ý đẩy lên.
+     sang người khác, nên GIỮ NGUYÊN `state`; attach() tự đồng bộ (bản nào mới hơn thì thắng, bản thiết bị luôn được cất vào KEY:backup trước khi bị thay).
    - Nếu trước đó đã là một TÀI KHOẢN khác (prevOwner là uid khác newUid) → đó là dữ liệu của người khác,
      không được để lọt sang tài khoản mới: cất vào ô nhớ riêng của chủ cũ rồi nạp đúng ô nhớ (hoặc trống)
      của chủ mới trước khi attach() kịp chạy. Áp dụng tương tự khi đăng xuất (newUid = null): dữ liệu của
      tài khoản vừa đăng xuất được cất riêng, không "biến thành" dữ liệu khách của thiết bị. */
 const OWNER_KEY = KEY + ':owner';
+const ADOPT_KEY = KEY + ':adopted';   // đã có tài khoản nhận dữ liệu có sẵn trên máy chưa
 const GUEST_KEY = KEY + ':guest';   // ô nhớ riêng, ổn định cho dữ liệu "khách" (chưa đăng nhập) — KHÔNG dùng chung với KEY,
                                      // vì KEY là "tấm gương" của bất kỳ chủ nào đang hoạt động và bị ghi đè liên tục.
 const localKeyFor = uid => uid ? (KEY + ':u:' + uid) : GUEST_KEY;
@@ -1620,33 +1575,48 @@ function readOwnerLocal(uid){
 }
 function writeOwnerLocal(uid, st){ try{ localStorage.setItem(localKeyFor(uid), JSON.stringify(st)); }catch(e){} }
 function switchLocalOwner(newUid){
-  newUid = newUid || null;
+  if(!newUid) return;   // đăng xuất: trang chính đã bị ẩn, giữ nguyên state; dữ liệu chỉ đổi khi CÓ TÀI KHOẢN KHÁC đăng nhập (không còn dữ liệu "khách")
   let prevOwner = null; try{ prevOwner = localStorage.getItem(OWNER_KEY) || null; }catch(e){}
-  if(prevOwner === newUid) return;   // chủ không đổi (vd. token tự làm mới): giữ nguyên state đang chỉnh dở
+  if(prevOwner === newUid) return;   // cùng tài khoản (mở lại trang, đăng nhập lại, token làm mới): giữ nguyên state
   if(!prevOwner){
-    // Trước đó là dữ liệu khách chưa từng gắn với tài khoản nào: không có gì để "lộ" — giữ nguyên state,
-    // để attach() tự hỏi người dùng có muốn đồng bộ dữ liệu này lên tài khoản mới hay không (mục 13).
-    try{ localStorage.setItem(OWNER_KEY, newUid || ''); }catch(e){}
+    // Thiết bị chưa gắn với tài khoản nào. Nếu tài khoản này đã có bản lưu riêng trên máy thì dùng bản đó.
+    // Nếu không, CHỈ tài khoản đầu tiên (một lần duy nhất) được nhận dữ liệu có sẵn trên máy (dữ liệu từ trước khi có tài khoản);
+    // các tài khoản sau bắt đầu từ dữ liệu của chính nó, không thừa hưởng dữ liệu này.
+    const own = readOwnerLocal(newUid);
+    let adopted = null; try{ adopted = localStorage.getItem(ADOPT_KEY); }catch(e){}
+    if(own || adopted){
+      state = own || emptyState();
+      if(!own){ syncTs = 0; saveTs(); }
+      state.view = innerWidth < 800 ? 'agenda' : 'table';
+      try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+      try{ localStorage.setItem(OWNER_KEY, newUid); }catch(e){}
+      initHistory(); fixView(); render();
+      return;
+    }
+    try{ localStorage.setItem(ADOPT_KEY, newUid); localStorage.setItem(OWNER_KEY, newUid); }catch(e){}
+    try{ const gts = +localStorage.getItem(tsKeyFor(null)) || 0; if(gts > syncTs){ syncTs = gts; saveTs(); } }catch(e){}   // dữ liệu có sẵn trên máy mang theo mốc thời gian của nó, tránh bị bản đám mây cũ hơn ghi đè
     return;
   }
-  // Trước đó là một TÀI KHOẢN cụ thể khác newUid (đổi sang tài khoản khác, hoặc đăng xuất): dữ liệu đang có
-  // là của prevOwner, phải cất riêng, không được để state/localStorage[KEY] lọt sang chủ mới.
-  if(hasData(state)) writeOwnerLocal(prevOwner, state);
+  // Đổi từ tài khoản prevOwner sang tài khoản khác: cất dữ liệu của chủ cũ vào ô riêng, rồi nạp đúng ô riêng của chủ mới (hoặc trống)
+  writeOwnerLocal(prevOwner, state);
   const own = readOwnerLocal(newUid);
   state = own || emptyState();
+  if(!own){ syncTs = 0; saveTs(); }   // chưa có bản trên máy: coi như chưa đồng bộ lần nào để lấy đúng dữ liệu của tài khoản này từ đám mây
   state.view = innerWidth < 800 ? 'agenda' : 'table';
   try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
-  try{ localStorage.setItem(OWNER_KEY, newUid || ''); }catch(e){}
+  try{ localStorage.setItem(OWNER_KEY, newUid); }catch(e){}
   initHistory(); fixView(); render();
 }
 function pushSoon(){ clearTimeout(sync.timer); sync.timer = setTimeout(pushNow, 800); }
 async function pushNow(){
-  if(!sync.doc || sync.readOnly) return;
+  if(!sync.doc) return;
   if(sync.busy){ sync.dirty = true; return; }
   sync.busy = true;
   try{
     do{
       sync.dirty = false;
+      if(!sync.doc) break;   // vừa đăng xuất/đổi tài khoản giữa chừng
+      pushStartAt = Date.now();
       await sync.doc.set({json: JSON.stringify(state), ts: syncTs, updatedAt: firebase.firestore.FieldValue.serverTimestamp()});
     } while(sync.dirty);
     setAcctSync('ok'); syncInfo('Đã đồng bộ');
@@ -1662,17 +1632,17 @@ function applyRemote(){
   if(r.ts <= syncTs) return;
   let st; try{ st = norm(JSON.parse(r.json)); }catch(e){ return; }
   if(!Array.isArray(st.events) || !Array.isArray(st.todos)) return;
-  if(syncTs === 0 && hasData(state)){ try{ localStorage.setItem(KEY + ':backup', JSON.stringify(state)); }catch(e){} }   // giữ bản cũ của thiết bị này, phòng khi bị ghi đè
+  if(hasData(state)){ try{ localStorage.setItem(KEY + ':backup:' + curUid, JSON.stringify(state)); }catch(e){} }   // luôn giữ bản cũ của thiết bị này trước khi bị bản đám mây thay thế, phòng khi cần lấy lại
   st.view = state.view; st.theme = state.theme;   // giao diện/chế độ xem là của riêng từng thiết bị
   state = st; syncTs = r.ts;
   try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
   saveTs(); initHistory(); render(); abSoon();
   setAcctSync('ok'); syncInfo('Vừa cập nhật từ thiết bị/tài khoản khác');
 }
-const inClaude = !!(window.claude && typeof claude.use === 'function');
 function detach(){
   if(sync.unsub){ try{ sync.unsub(); }catch(e){} sync.unsub = null; }
-  sync.doc = null; sync.ready = false; sync.readOnly = false;
+  sync.doc = null; sync.ready = false;
+  pendingRemote = null;   // dữ liệu đám mây đang chờ áp dụng của tài khoản cũ KHÔNG được phép lọt sang tài khoản mới
 }
 function attach(doc, opts){
   opts = opts || {};
@@ -1681,36 +1651,14 @@ function attach(doc, opts){
   setAcctSync('busy'); syncInfo('Đang kết nối…');
   sync.unsub = doc.onSnapshot(async snap => {
     const d = snap.exists ? snap.data() : null, rts = d ? (+d.ts || 0) : 0;
+    if(d && !snap.metadata.hasPendingWrites && !snap.metadata.fromCache) learnClock(d);
     if(!sync.ready && !snap.metadata.fromCache){
       sync.ready = true;
-      if(sync.readOnly){ setAcctSync('ok'); syncInfo('Chế độ chỉ xem (tài khoản này chưa có quyền sửa)'); return; }
       if(!d){
-        if(opts.legacyGet){
-          try{
-            const ld = await opts.legacyGet();
-            if(ld && typeof ld.json === 'string' && (+ld.ts || 0) > syncTs){ pendingRemote = {json:ld.json, ts:+ld.ts}; applyRemote(); return; }
-          }catch(e){}
-        }
-        // chưa có dữ liệu trên tài khoản: nếu thiết bị đang có dữ liệu, hỏi trước khi đẩy lên (mục 13)
-        if(hasData(state) && opts.askOnFirstSync){
-          openSyncChoice({
-            title: 'Bạn đang có dữ liệu trên thiết bị này',
-            msg: 'Tài khoản này chưa có dữ liệu lịch trên đám mây. Bạn muốn đồng bộ dữ liệu hiện có trên thiết bị này lên tài khoản không?',
-            onUpload: () => { if(!syncTs) syncTs = Date.now(); saveTs(); pushNow(); },
-            onKeepCloud: () => { state = emptyState(); save(); render(); if(!syncTs) syncTs = Date.now(); saveTs(); pushNow(); },
-          });
-        } else if(hasData(state)){
-          if(!syncTs){ syncTs = Date.now(); saveTs(); } pushNow();
+        // chưa có dữ liệu trên tài khoản: tự đẩy dữ liệu đang có trên thiết bị lên (không mất gì)
+        if(hasData(state)){
+          if(!syncTs){ syncTs = nowTs(); saveTs(); } pushNow();
         } else { setAcctSync('ok'); syncInfo('Đã đồng bộ'); }
-      } else if(d && typeof d.json === 'string' && rts > syncTs && opts.askOnConflict && syncTs > 0 && hasData(state)){
-        // cả máy và tài khoản đều có dữ liệu khác nhau, chưa rõ bản nào là "đang dùng": hỏi thay vì âm thầm ghi đè (mục 14)
-        openSyncChoice({
-          title: 'Dữ liệu trên thiết bị và trên tài khoản đang khác nhau',
-          msg: 'Thiết bị này có dữ liệu chưa đồng bộ, trong khi tài khoản đã có dữ liệu khác (có thể từ thiết bị khác). Chọn bản bạn muốn giữ:',
-          uploadLabel: 'Giữ dữ liệu trên thiết bị này',
-          onUpload: () => { pendingRemote = null; syncTs = Date.now(); saveTs(); pushNow(); },
-          onKeepCloud: () => { pendingRemote = {json:d.json, ts:rts}; applyRemote(); },
-        });
       } else if(d && typeof d.json === 'string' && rts > syncTs){
         pendingRemote = {json:d.json, ts:rts}; applyRemote();
       } else if(rts < syncTs) pushNow();
@@ -1722,21 +1670,9 @@ function attach(doc, opts){
         ? 'Không có quyền đọc/ghi dữ liệu của tài khoản này.'
         : 'Đồng bộ bị ngắt (' + ((e && e.code) || '?') + '). Tải lại trang để thử lại.'); });
 }
-async function startSync(){
-  if(!inClaude) return startCloud();                                    // trang tự host: dùng Firebase
-  let db = null, user = null, uid = null;
-  try{ [db, user] = await Promise.all([claude.use('db'), claude.use('user')]); if(user) uid = await user.id(); }catch(e){}
-  if(!db){ syncInfo('Chưa bật đồng bộ: dữ liệu chỉ lưu trên thiết bị này.'); return; }
-  try{ if(user && (await user.can('data.write')) === false) sync.readOnly = true; }catch(e){}
-  attach(db.doc('planner/main'), {legacyGet: async () => {
-    if(!uid) return null;
-    const ls = await db.doc('data/users/' + uid + '/planner').get();
-    return ls.exists ? ls.data() : null;
-  }});
-}
 /* ---------- Firebase Auth + Firestore (đăng ký/đăng nhập tài khoản) ---------- */
 const fb = {auth:null, db:null, user:null, ready:false};
-const loadScript = src => new Promise((res, rej) => { const el = document.createElement('script'); el.src = src; el.onload = res; el.onerror = () => rej(new Error(src)); document.head.appendChild(el); });
+const loadScript = src => new Promise((res, rej) => { const el = document.createElement('script'); const t = setTimeout(() => rej(new Error('timeout ' + src)), 15000); el.src = src; el.onload = () => { clearTimeout(t); res(); }; el.onerror = () => { clearTimeout(t); rej(new Error(src)); }; document.head.appendChild(el); });   // quá 15 giây coi như mất mạng, tránh màn hình chờ quay mãi
 function initials(nameOrEmail){
   const s = (nameOrEmail || '').trim(); if(!s) return '?';
   const parts = s.split(/\s+/);
@@ -1751,7 +1687,7 @@ function setAcctSync(state){
 function updateAcctUI(){
   const chip = document.getElementById('acctChip'), av = document.getElementById('acctAv'), nm = document.getElementById('acctNm');
   if(!chip) return;
-  chip.hidden = inClaude || !FIREBASE_CONFIG;
+  chip.hidden = !FIREBASE_CONFIG;
   const u = fb.user;
   if(u){
     av.textContent = initials(u.displayName || u.email);
@@ -1769,8 +1705,12 @@ function updateAcctUI(){
    của đúng tài khoản đó (xem attach() ở onAuthStateChanged bên dưới). */
 const LAST_AUTHED_KEY = KEY + ':lastAuthed';
 const PROFILE_OPEN_KEY = KEY + ':profileOpen';
-function gateShowApp(){ document.body.classList.add('authed'); document.body.classList.remove('gate'); }
-function gateShowLogin(){ document.body.classList.add('gate'); document.body.classList.remove('authed'); }
+function gateShowApp(){
+  authUiClear();   // đã vào được trang chính: xóa bản nháp form đăng nhập/đăng ký (kể cả mật khẩu) khỏi sessionStorage
+  document.body.classList.add('authed'); document.body.classList.remove('gate');
+  requestAnimationFrame(updateSegIndicator);   // .app vừa hiện ra (trước đó offsetParent null nên bị bỏ qua) — tính lại vị trí thanh trượt ngay khi có kích thước thật
+}
+function gateShowLogin(){ document.body.classList.add('gate'); document.body.classList.remove('authed'); requestAnimationFrame(updateAuthSegIndicator); }
 function gateNote(text, opts){
   opts = opts || {};
   const n = document.getElementById('authGateNote'), r = document.getElementById('authGateRetry');
@@ -1781,8 +1721,8 @@ document.getElementById('authGateRetry').addEventListener('click', () => { gateN
 async function startCloud(){
   // Không có cấu hình Firebase hoặc mở file trực tiếp (không qua web server): không thể có hệ thống
   // tài khoản thật, nên không chặn bằng trang đăng nhập — vào thẳng trang chính như trước, chỉ lưu cục bộ.
-  if(!FIREBASE_CONFIG){ gateShowApp(); syncInfo('Chưa thiết lập đồng bộ đám mây: dữ liệu chỉ lưu trên thiết bị này.'); return; }
-  if(location.protocol !== 'http:' && location.protocol !== 'https:'){ gateShowApp(); syncInfo('Đồng bộ đám mây cần mở trang qua địa chỉ web (https://…), không mở file trực tiếp.'); return; }
+  if(!FIREBASE_CONFIG){ notifyOffline = 'local'; notifyOwnerChanged(); gateShowApp(); syncInfo('Chưa thiết lập đồng bộ đám mây: dữ liệu chỉ lưu trên thiết bị này.'); return; }
+  if(location.protocol !== 'http:' && location.protocol !== 'https:'){ notifyOffline = 'local'; notifyOwnerChanged(); gateShowApp(); syncInfo('Đồng bộ đám mây cần mở trang qua địa chỉ web (https://…), không mở file trực tiếp.'); return; }
   gateNote('');
   try{
     const base = 'https://www.gstatic.com/firebasejs/' + FB_VER + '/';
@@ -1798,6 +1738,8 @@ async function startCloud(){
     // đăng nhập kèm nút "Thử lại kết nối" vì chưa thể xác thực ai để tải dữ liệu của đúng tài khoản.
     let lastAuthed = null; try{ lastAuthed = localStorage.getItem(LAST_AUTHED_KEY); }catch(e2){}
     if(lastAuthed === '1'){
+      let ow = ''; try{ ow = localStorage.getItem(OWNER_KEY) || ''; }catch(e2){}
+      notifyOffline = ow || null; notifyOwnerChanged();   // mất mạng: dùng đúng chủ của dữ liệu cục bộ, không thì không thông báo
       gateShowApp();
       syncInfo('Không thể kết nối để xác thực lại (có thể đang mất mạng). Đang dùng dữ liệu đã lưu trên thiết bị; mở lại khi có mạng để đồng bộ.');
     } else {
@@ -1809,15 +1751,18 @@ async function startCloud(){
   fb.ready = true;
   updateAcctUI();
   fb.auth.onAuthStateChanged(u => {
+    if(!u || (fb.user && fb.user.uid !== u.uid)) detach();   // ngắt kết nối đám mây của tài khoản cũ trước khi chuyển
     fb.user = u; curUid = u ? u.uid : null;
+    notifyOffline = null;
     try{ syncTs = +localStorage.getItem(tsKeyFor(curUid)) || 0; }catch(e){ syncTs = 0; }
-    switchLocalOwner(curUid);   // đảm bảo `state` đang có đúng là dữ liệu của curUid, không phải của tài khoản trước đó trên máy này
+    switchLocalOwner(curUid); abRefresh(); abSoon();
+    notifyOwnerChanged();   // đóng thông báo của tài khoản trước, chỉ hiện thông báo của tài khoản đang đăng nhập   // đảm bảo `state` đang có đúng là dữ liệu của curUid, không phải của tài khoản trước đó trên máy này
     updateAcctUI();
     try{ localStorage.setItem(LAST_AUTHED_KEY, u ? '1' : '0'); }catch(e){}
     if(u){
       gateNote('');
       gateShowApp();
-      attach(fb.db.doc('users/' + u.uid + '/planner/main'), {askOnFirstSync:true, askOnConflict:true});
+      attach(fb.db.doc('users/' + u.uid + '/planner/main'), {});
       let wasProfileOpen = false; try{ wasProfileOpen = localStorage.getItem(PROFILE_OPEN_KEY) === '1'; }catch(e){}
       if(wasProfileOpen && !profileDlg.open) openProfile();
     } else {
@@ -1852,6 +1797,7 @@ function setAuthMode(m){
   authMode = m;
   document.getElementById('authSeg').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.m === m));
   document.getElementById('authSeg').hidden = m === 'reset';
+  updateAuthSegIndicator();
   document.getElementById('authBack').hidden = m !== 'reset';
   document.querySelector('#authGate [data-f=name]').hidden = m !== 'register';
   document.querySelector('#authGate [data-f=pass2]').hidden = m !== 'register';
@@ -1870,7 +1816,16 @@ function openAuth(mode){
   // Hàm này chỉ còn tác dụng đặt lại tab (đăng nhập/đăng ký) khi được gọi từ nơi khác trong app.
   authForm.reset(); setAuthMode(mode || 'login');
 }
-document.getElementById('authSeg').addEventListener('click', e => { const b = e.target.closest('button'); if(b) setAuthMode(b.dataset.m); });
+document.getElementById('authSeg').addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if(b && b.dataset.m !== authMode){
+    setAuthMode(b.dataset.m);
+    const grid = document.querySelector('#authGate .fgrid');
+    grid.classList.remove('sched-swap');
+    void grid.offsetWidth;   // reset để chạy lại animation dù chuyển đi chuyển lại nhanh
+    grid.classList.add('sched-swap');
+  }
+});
 document.getElementById('authForgot').addEventListener('click', () => setAuthMode('reset'));
 authForm.addEventListener('submit', async e => {
   e.preventDefault();
@@ -1984,6 +1939,7 @@ document.getElementById('pwSave').addEventListener('click', async () => {
 document.getElementById('profileExport').addEventListener('click', () => download(DATA_FILE, JSON.stringify(state, null, 2), 'application/json'));
 document.getElementById('profileLogout').addEventListener('click', async () => {
   closeDialog(profileDlg);
+  try{ clearTimeout(sync.timer); await pushNow(); }catch(e){}   // đẩy nốt thay đổi vừa sửa (<0,8 giây) lên đám mây trước khi ngắt kết nối
   try{ await fb.auth.signOut(); }catch(e){}
 });
 document.getElementById('profileDelete').addEventListener('click', async () => {
@@ -1999,30 +1955,16 @@ document.getElementById('profileDelete').addEventListener('click', async () => {
     try{ await fb.db.doc('users/' + uid + '/planner/main').delete(); }catch(e){ dataDeleted = false; }
     await fb.user.delete();
     closeDialog(profileDlg);
+    try{ localStorage.removeItem(NOTIFY_KEY + ':' + uid); }catch(e){}
     alert(dataDeleted
       ? 'Đã xóa tài khoản. Dữ liệu trên thiết bị này vẫn được giữ lại.'
       : 'Đã xóa tài khoản, nhưng không thể xóa dữ liệu đám mây liên quan (có thể do mất mạng). Dữ liệu trên thiết bị này vẫn được giữ lại; liên hệ quản trị viên nếu cần xóa hẳn dữ liệu cũ trên máy chủ.');
   }catch(err){
+    if(fb.user){ attach(fb.db.doc('users/' + fb.user.uid + '/planner/main'), {}); }   // tài khoản vẫn còn: nối lại đồng bộ, dữ liệu trên máy sẽ được đẩy lên lại thay vì mất
     if(err && err.code === 'auth/requires-recent-login'){ errEl.textContent = 'Vì lý do bảo mật, hãy đăng xuất, đăng nhập lại rồi thử xóa tài khoản lại ngay sau đó.'; }
     else errEl.textContent = friendlyAuthErr(err);
   }
 });
-/* ---------- hộp thoại xử lý dữ liệu cục bộ (mục 13, 14) ---------- */
-const syncChoiceDlg = document.getElementById('syncChoiceDlg');
-function openSyncChoice(opt){
-  document.getElementById('syncChoiceTitle').textContent = opt.title;
-  document.getElementById('syncChoiceMsg').textContent = opt.msg;
-  const up = document.getElementById('syncChoiceUpload');
-  up.textContent = opt.uploadLabel || 'Đồng bộ dữ liệu thiết bị này lên tài khoản';
-  const onUpload = () => { closeDialog(syncChoiceDlg); opt.onUpload && opt.onUpload(); };
-  const onKeep = () => { closeDialog(syncChoiceDlg); opt.onKeepCloud && opt.onKeepCloud(); };
-  const onCancel = () => { closeDialog(syncChoiceDlg); };
-  up.onclick = onUpload;
-  document.getElementById('syncChoiceKeepCloud').onclick = onKeep;
-  document.getElementById('syncChoiceCancel').onclick = onCancel;
-  document.getElementById('syncChoiceCloseX').onclick = onCancel;
-  syncChoiceDlg.showModal();
-}
 let state = load();
 const firstRun = !state;
 if(!state) state = emptyState();
@@ -2141,6 +2083,7 @@ function render(){
   document.querySelector('.nav').hidden = fx;
   if(document.activeElement !== $('#jump')) $('#jump').value = weekStart;   /* đang gõ ngày bằng bàn phím thì không ghi đè giá trị */
   document.querySelectorAll('#viewSeg button').forEach(b => b.classList.toggle('on', b.dataset.v === state.view));
+  updateSegIndicator();
 
   const all = weekOccs(weekStart);
   const occs = all.filter(o => {
@@ -2159,6 +2102,24 @@ function render(){
   if(document.activeElement !== notes) notes.value = state.notes[weekStart] || '';
   renderNowBar();
 }
+/* trượt "viên nền" bên trong một nhóm nút kiểu .seg (Bảng/Danh sách/Lớp, hay Đăng nhập/Đăng ký)
+   tới đúng nút đang chọn — dùng transform (translateX + scaleX) thay vì đổi width/left để
+   trình duyệt chạy trên compositor, không phải tính lại layout mỗi khung hình -> hết khựng */
+function makeSegIndicator(segId, indId){
+  let ready = false;
+  return function(){
+    const seg = document.getElementById(segId), ind = document.getElementById(indId);
+    const btn = seg?.querySelector('button.on');
+    if(!seg || !ind || !btn) return;
+    if(seg.offsetParent === null) return;   // đang bị ẩn (vd: chưa đăng nhập xong / chưa đăng xuất xong) — chưa đo được kích thước thật, bỏ qua, đợi lần gọi sau khi đã hiện ra
+    if(!ready){ ind.style.transition = 'none'; }   // lần đầu (khi đã hiện ra): đặt đúng vị trí ngay, không trượt từ góc trái
+    ind.style.transform = `translateX(${btn.offsetLeft}px) scaleX(${btn.offsetWidth})`;
+    if(!ready){ void ind.offsetWidth; ind.style.transition = ''; ready = true; }
+  };
+}
+const updateSegIndicator = makeSegIndicator('viewSeg', 'viewSegInd');
+const updateAuthSegIndicator = makeSegIndicator('authSeg', 'authSegInd');
+addEventListener('resize', () => { updateSegIndicator(); updateAuthSegIndicator(); });
 /* cuộn tới sự kiện đang diễn ra (hoặc sắp diễn ra, hoặc tiêu đề hôm nay) */
 function scrollToNow(smooth = true){
   const box = $('#sched');
@@ -2948,7 +2909,21 @@ $('#jump').onchange = e => {
 $('#jump').onblur = () => { $('#jump').value = weekStart; };   /* rời ô thì đồng bộ lại về đầu tuần đang xem */
 $('#addBtn').onclick = () => openModal(null, defDate());
 $('#q').oninput = e => { query = e.target.value.trim().toLowerCase(); $('#qWrap').classList.toggle('has-val', !!e.target.value); render(); };
-$('#viewSeg').onclick = e => { const b = e.target.closest('button'); if(b){ state.view = b.dataset.v; saveUI(); render(); } };
+$('#viewSeg').onclick = e => {
+  const b = e.target.closest('button');
+  if(b && b.dataset.v !== state.view){
+    state.view = b.dataset.v; saveUI();
+    document.querySelectorAll('#viewSeg button').forEach(x => x.classList.toggle('on', x === b));
+    updateSegIndicator();   // trượt tab ngay lập tức, mượt, không chờ dựng lại nội dung
+    requestAnimationFrame(() => {
+      render();
+      const box = $('#sched');
+      box.classList.remove('sched-swap');
+      void box.offsetWidth;   // reset để chạy lại animation dù chuyển đi chuyển lại nhanh
+      box.classList.add('sched-swap');
+    });
+  }
+};
 $('#themeBtn').onclick = () => {
   const cur = document.documentElement.dataset.theme;
   state.theme = cur === 'dark' ? 'light' : 'dark'; saveUI(); render();
@@ -3364,13 +3339,7 @@ dlgTodo.addEventListener('keydown', e => {
 });
 
 /* menu */
-let dlCap = null;                               // trong claude.ai, tải file phải đi qua quyền “downloads”
-if(window.claude && typeof claude.use === 'function') claude.use('downloads').then(d => {
-  dlCap = d;
-  if(d){ const b = document.querySelector('[data-a="ics"]'); if(b) b.hidden = true; }   // claude.ai chưa cho lưu file .ics
-}).catch(() => {});
 function download(name, text, type){
-  if(dlCap){ dlCap.save({filename:name, data:text}).catch(e => { if(!e || e.code !== 'declined') alert('Không lưu được file' + (e && e.message ? ': ' + e.message : '.')); }); return; }
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([text], {type})); a.download = name; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
@@ -3409,11 +3378,8 @@ profileForm.addEventListener('click', e => {
   const b = e.target.closest('button'); if(!b) return;
   const a = b.dataset.a; if(!a) return;
   if(a === 'print') window.print();
-  if(a === 'autobackup') abToggle();
-  if(a === 'autobackup-change') abChangeLocation();
+  if(a === 'ab-download') abDownload();
   if(a === 'notify') enableScheduleNotifications();
-  if(a === 'export') saveBackupFile();
-  if(a === 'export-new') saveBackupNewFile();
   if(a === 'ics') download('lich-trinh.ics', toICS(), 'text/calendar');
   if(a === 'import') $('#file').click();
   if(a === 'reset' && confirm('Xóa toàn bộ dữ liệu hiện tại (lịch, deadline, ghi chú)? Bạn có thể nạp lại từ file .json.')){ state = emptyState(); state.view = innerWidth<800?'agenda':'table'; weekStart = mondayOf(todayStr()); save(); render(); }
@@ -3751,12 +3717,26 @@ function renderNowBar(){
   const leftHTML = leftRows.length ? leftRows.join('') : '<div class="nb none"><span class="k">📭</span><span class="t">Không có lịch sắp diễn ra</span></div>';
   el.innerHTML = `<div class="nbcol">${leftHTML}</div>` + (rightRows.length ? `<div class="nbcol">${rightRows.join('')}</div>` : '');
 }
+/* Thông báo lịch thuộc về TỪNG TÀI KHOẢN: cài đặt bật/tắt lưu theo uid, chưa đăng nhập thì không có
+   thông báo nào, đăng xuất / đổi tài khoản thì thông báo cũ bị đóng ngay và dựng lại theo dữ liệu
+   của tài khoản mới. notifyOffline chỉ dùng cho hai trường hợp không thể xác thực: chưa cấu hình
+   tài khoản (chế độ cục bộ) và mở lại khi mất mạng sau một lần đã đăng nhập. */
 const NOTIFY_KEY = KEY + ':schedule-notify';
 let notifyLastSig = '';
 let notifyCurrent = null;
 let swRegistrationPromise = null;
+let notifyOffline = null;
+const notifyOwnerId = () => curUid || notifyOffline || null;
+const notifyKeyNow = () => { const o = notifyOwnerId(); return o ? NOTIFY_KEY + ':' + o : null; };
 function scheduleNotifyEnabled(){
-  try{ return localStorage.getItem(NOTIFY_KEY) === '1'; }catch(e){ return false; }
+  const k = notifyKeyNow(); if(!k) return false;   // chưa đăng nhập: không có thông báo
+  try{ return localStorage.getItem(k) === '1'; }catch(e){ return false; }
+}
+function notifyOwnerChanged(){   // gọi mỗi khi đăng nhập / đăng xuất / đổi tài khoản
+  notifyLastSig = '';
+  closeScheduleNotification();
+  updateNotifyButton();
+  if(scheduleNotifyEnabled()) updateScheduleNotification(true);
 }
 function updateNotifyButton(){
   const b = $('#notifyBtn'); if(!b) return;
@@ -3772,7 +3752,7 @@ function updateNotifyButton(){
 function getNotifySWRegistration(){
   if(!('serviceWorker' in navigator) || !/^https?:$/.test(location.protocol)) return Promise.resolve(null);
   if(swRegistrationPromise) return swRegistrationPromise;
-  swRegistrationPromise = navigator.serviceWorker.register('sw.js').then(reg => new Promise(resolve => {
+  swRegistrationPromise = navigator.serviceWorker.register('sw.js', {updateViaCache:'none'}).then(reg => new Promise(resolve => {
     if(reg.active) return resolve(reg);
     const sw = reg.installing || reg.waiting;
     if(!sw) return resolve(reg);
@@ -3816,8 +3796,10 @@ async function showScheduleNotification(title, body){
 }
 async function enableScheduleNotifications(){
   if(!('Notification' in window)) return updateNotifyButton();
+  const nk = notifyKeyNow();
+  if(!nk) return;   // chưa đăng nhập thì không bật được thông báo
   if(scheduleNotifyEnabled()){
-    try{ localStorage.removeItem(NOTIFY_KEY); }catch(e){}
+    try{ localStorage.removeItem(nk); }catch(e){}
     notifyLastSig = '';
     await closeScheduleNotification();
     updateNotifyButton();
@@ -3829,7 +3811,7 @@ async function enableScheduleNotifications(){
     try{ p = await Notification.requestPermission(); }catch(e){ p = 'denied'; }
   }
   if(p === 'granted'){
-    try{ localStorage.setItem(NOTIFY_KEY, '1'); }catch(e){}
+    try{ localStorage.setItem(nk, '1'); }catch(e){}
     notifyLastSig = '';
     updateNotifyButton();
     await getNotifySWRegistration();
@@ -3842,7 +3824,7 @@ async function updateScheduleNotification(force = false){
   if(!scheduleNotifyEnabled() || !('Notification' in window) || Notification.permission !== 'granted') return;
   const {live, next, now} = upcoming(2);
   const l = live[0], n = next[0];
-  if(!l && !n) return;
+  if(!l && !n){ if(notifyLastSig){ notifyLastSig = ''; closeScheduleNotification(); } return; }   // hết lịch: gỡ thông báo cũ thay vì để nó treo
   const title = l ? `🔴 Đang diễn ra: ${l.ev.title}` : `⏳ Tiếp theo: ${n.ev.title}`;
   const body = l
     ? `${dm(l.date)} · ${l.ev.start} - ${l.ev.end} · còn ${fmtHMS(occEndMs(l) - now)}`
@@ -3912,9 +3894,31 @@ if(uiSaved){
   const goScroll = () => scrollTo(uiSaved.sx || 0, uiSaved.sy || 0);
   goScroll(); requestAnimationFrame(goScroll); addEventListener('load', goScroll, {once:true});
 }
-startSync();
+/* ---------- giữ nguyên tab + nội dung đã nhập ở trang đăng nhập/đăng ký khi bấm F5 ----------
+   Lưu vào sessionStorage (chỉ tồn tại trong tab này, mất khi đóng tab) và xóa ngay khi đăng nhập xong (gateShowApp). */
+const AUTH_UI_KEY = KEY + ':authUi';
+const authUIS = (() => { try{ return window.sessionStorage; }catch(e){ return null; } })();
+function authUiSnap(){
+  if(!authUIS || !document.body.classList.contains('gate')) return;   // chỉ lưu khi trang đăng nhập đang hiển thị
+  try{
+    const o = {mode:authMode, form:{}};
+    [...authForm.elements].forEach(el => { if(el.name) o.form[el.name] = el.value; });
+    authUIS.setItem(AUTH_UI_KEY, JSON.stringify(o));
+  }catch(e){}
+}
+function authUiClear(){ try{ if(authUIS) authUIS.removeItem(AUTH_UI_KEY); }catch(e){} }
+['input','click'].forEach(t => authGate.addEventListener(t, () => setTimeout(authUiSnap, 0)));
+addEventListener('pagehide', authUiSnap);
+try{
+  const r = authUIS && JSON.parse(authUIS.getItem(AUTH_UI_KEY));
+  if(r && ['login','register','reset'].includes(r.mode)){
+    setAuthMode(r.mode);
+    Object.keys(r.form || {}).forEach(k => { const el = authForm.elements[k]; if(el && typeof r.form[k] === 'string') el.value = r.form[k]; });
+  }
+}catch(e){}
+startCloud();
 /* lần chạy đầu tiên (chưa có dữ liệu lưu): thử tự nạp file dữ liệu nằm cùng thư mục (chỉ chạy khi mở qua web server) */
-if(firstRun){
+if(firstRun && !(FIREBASE_CONFIG && /^https?:$/.test(location.protocol))){   // có hệ thống tài khoản thì mỗi tài khoản tự có dữ liệu riêng, không nạp chung một file cho mọi người
   fetch(DATA_FILE, {cache:'no-store'}).then(r => r.ok ? r.json() : Promise.reject())
     .then(s => { if(s && Array.isArray(s.events) && Array.isArray(s.todos)){ state = norm(s); state.view = 'table'; save(); render(); } })
     .catch(() => {});

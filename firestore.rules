@@ -2,23 +2,21 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Dữ liệu lịch trình của từng tài khoản: chỉ chính chủ tài khoản (uid khớp)
-    // mới được đọc/ghi. request.auth do Firebase Auth cấp ở phía server, người
-    // dùng không thể giả mạo uid từ trình duyệt.
+    // Dữ liệu lịch trình của từng tài khoản: chỉ chính chủ (uid khớp) mới được
+    // đọc/xóa/ghi, và chỉ tài liệu 'main'. Khi ghi, bắt buộc có trường json là
+    // chuỗi (< ~900 KB, giới hạn tài liệu Firestore là 1 MiB) để không ai ghi rác.
     match /users/{uid}/planner/{docId} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+      allow read, delete: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null && request.auth.uid == uid
+                            && docId == 'main'
+                            && request.resource.data.json is string
+                            && request.resource.data.json.size() < 900000;
     }
 
-    // Tài liệu dùng-chung-bằng-khóa trước đây (LEGACY_SYNC_KEY trong index.html).
-    // Giữ lại CHỈ ĐỂ đọc một lần khi di chuyển dữ liệu cũ (migrateLegacyShared());
-    // không cho ghi mới vào đây nữa. Sau khi đã di chuyển xong dữ liệu của bạn,
-    // có thể xóa hẳn khối này.
-    match /planner/{docId} {
-      allow read: if request.auth != null;
-      allow write: if false;
-    }
+    // Đã BỎ khối /planner/{docId} (tài liệu dùng chung cũ): nó cho MỌI tài khoản
+    // đã đăng nhập đọc dữ liệu chung, tức là lộ dữ liệu giữa các tài khoản.
+    // Trang hiện tại không còn dùng đường dẫn này nữa.
 
-    // Mặc định: chặn tất cả những gì không khớp ở trên.
     match /{document=**} {
       allow read, write: if false;
     }
