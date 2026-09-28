@@ -507,6 +507,46 @@ body.fx-grabbing,body.fx-grabbing *{cursor:grabbing!important;user-select:none!i
 .badge.alt{background:color-mix(in srgb,var(--warn) 24%,transparent);color:var(--ink)}
 .fxh{margin:0;padding:12px 12px 0;font-size:13px;font-weight:700;color:var(--muted)}
 .fxblk{overflow:hidden}
+/* bộ lọc theo cột của bảng Lớp */
+.fx-th{display:flex;align-items:center;gap:2px}
+.fx th .fx-th .fx-sort{width:auto;flex:1 1 auto;min-width:0}
+.fx-th .fx-lbl{flex:1 1 auto}
+.fx .w-tc{width:78px}.fx .w-ht{width:92px}.fx .w-sv{width:120px}
+.fx-flt{flex:none;width:22px;height:22px;padding:0;border:0;background:none;color:var(--muted);opacity:.55;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.fx-flt:hover,.fx-flt.on{opacity:1;color:var(--accent);background:var(--accent-soft)}
+.fxblk{position:relative}
+.fxf{position:absolute;top:6px;right:12px;max-width:calc(100% - 215px);z-index:1;display:flex;align-items:center;gap:8px;padding:0;font-size:12.5px;color:var(--muted)}
+.fxf-txt{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fxf-clear{flex:none}
+.fxf[hidden]{display:none}
+.fxf-clear{height:28px;padding:0 10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;font:inherit;font-size:12.5px;cursor:pointer}
+.fxf-clear:hover{border-color:var(--accent);color:var(--accent)}
+/* bang co dinh kich thuoc cot, khong tu co gian khi loc */
+.fx{table-layout:fixed;min-width:0}
+.fx td{overflow-wrap:anywhere}
+.fx[data-fx-kind="school"] th:nth-child(1){width:70px}.fx[data-fx-kind="school"] th:nth-child(2){width:250px}.fx[data-fx-kind="school"] th:nth-child(3){width:72px}.fx[data-fx-kind="school"] th:nth-child(4){width:92px}.fx[data-fx-kind="school"] th:nth-child(5){width:200px}.fx[data-fx-kind="school"] th:nth-child(6){width:100px}.fx[data-fx-kind="school"] th:nth-child(7){width:200px}.fx[data-fx-kind="school"] th:nth-child(8){width:90px}.fx[data-fx-kind="school"] th:nth-child(9){width:170px}.fx[data-fx-kind="school"] th:nth-child(10){width:150px}.fx[data-fx-kind="school"]{width:100%;min-width:1394px}
+.fx[data-fx-kind="other"] th:nth-child(1){width:70px}.fx[data-fx-kind="other"] th:nth-child(2){width:240px}.fx[data-fx-kind="other"] th:nth-child(3){width:110px}.fx[data-fx-kind="other"] th:nth-child(4){width:200px}.fx[data-fx-kind="other"] th:nth-child(5){width:150px}.fx[data-fx-kind="other"] th:nth-child(6){width:170px}.fx[data-fx-kind="other"] th:nth-child(7){width:180px}.fx[data-fx-kind="other"] th:nth-child(8){width:150px}.fx[data-fx-kind="other"]{width:100%;min-width:1270px}
+.fx tbody tr.fx-hide{display:none}
+
+/* du lieu can thang hang voi tieu de (deu can trai) */
+.fx th.c,.fx td.c,.fx th.r,.fx td.r{text-align:left}
+.fx td.n{padding:7px 12px}
+.fx .fx-index{justify-content:start;min-width:0}
+
+.fx.filtered .fx-row .fx-grab{opacity:.3;cursor:not-allowed}
+.fx-pop{position:fixed;z-index:200;width:min(280px,calc(100vw - 16px));display:flex;flex-direction:column;gap:6px;padding:10px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:12px;box-shadow:0 18px 40px -10px color-mix(in srgb,#000 55%,transparent);font-size:13px}
+.fx-pop-q{width:100%}
+.fx-pop-act{display:flex;gap:14px}
+.fx-pop-act button{border:0;background:none;padding:0;color:var(--accent);font:inherit;font-size:12.5px;cursor:pointer}
+.fx-pop-list{overflow-y:auto;min-height:0;max-height:260px;display:flex;flex-direction:column;border-top:1px solid var(--line-soft);padding-top:4px}
+.fx-pop-g{font-size:11.5px;font-weight:700;color:var(--muted);padding:6px 4px 2px}
+.fx-opt{display:flex;align-items:center;gap:8px;padding:5px 4px;border-radius:6px;cursor:pointer}
+.fx-opt:hover{background:var(--line-soft)}
+.fx-opt input{flex:none;margin:0;accent-color:var(--accent)}
+.fx-opt .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fx-opt .t.e{color:var(--muted);font-style:italic}
+.fx-opt .n{flex:none;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.fx-pop-none{padding:10px 4px;color:var(--muted)}
 .layout.fx-on #sched{background:none;border:0;border-radius:0;display:grid;gap:16px}
 /* hướng dẫn đọc thời khoá biểu */
 .guide{border-top:1px solid var(--line);padding:12px 16px 16px;font-size:12.5px}
@@ -1314,8 +1354,14 @@ function closeDialog(d){
 const pad = n => String(n).padStart(2,'0');
 const fmt = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const parse = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y,m-1,d); };
-const addDays = (s,n) => { const d = parse(s); d.setDate(d.getDate()+n); return fmt(d); };
-const mondayOf = s => { const d = parse(s); d.setDate(d.getDate() - ((d.getDay()+6)%7)); return fmt(d); };
+/* addDays/mondayOf được gọi hàng nghìn lần mỗi lần dựng lịch (recurHit): nhớ kết quả theo chuỗi ngày (chuỗi bất biến nên an toàn) */
+const _dateMemo = new Map();
+const memoDate = (k, f) => { let v = _dateMemo.get(k); if(v === undefined){ if(_dateMemo.size > 20000) _dateMemo.clear(); v = f(); _dateMemo.set(k, v); } return v; };
+const addDays = (s,n) => memoDate('a' + n + '|' + s, () => { const d = parse(s); d.setDate(d.getDate()+n); return fmt(d); });
+const mondayOf = s => memoDate('m' + s, () => { const d = parse(s); d.setDate(d.getDate() - ((d.getDay()+6)%7)); return fmt(d); });
+/* nhớ danh sách buổi học của 2 tuần (dùng cho thanh “Tiếp theo” và thông báo, chạy mỗi giây); xóa khi dữ liệu đổi (save/render) */
+const _upcMemo = new Map();
+const dropUpcoming = () => _upcMemo.clear();
 const todayStr = () => fmt(new Date());
 /* thời gian học của một buổi: 135 phút -> "2 giờ 15 phút" */
 function durTxt(ev){
@@ -1326,7 +1372,8 @@ function durTxt(ev){
 const toMin = t => { const [h,m] = t.split(':').map(Number); return h*60+m; };
 const dm  = s => { const [,m,d] = s.split('-'); return `${d}/${m}`; };
 const dmy = s => { const [y,m,d] = s.split('-'); return `${d}/${m}/${y}`; };
-const daysBetween = (a,b) => Math.round((parse(b)-parse(a))/864e5);
+const dayNum = s => { const [y,m,d] = s.split('-').map(Number); return Date.UTC(y, m-1, d) / 864e5; };   // số ngày UTC: không phụ thuộc múi giờ/giờ mùa hè, nhanh hơn dựng Date
+const daysBetween = (a,b) => Math.round(dayNum(b) - dayNum(a));
 const wd = s => (parse(s).getDay()+6)%7;                       // 0 = Thứ Hai
 const isRec = ev => !!ev.repeat && ev.repeat !== 'none';
 const evDays = ev => (ev.days && ev.days.length ? ev.days : [wd(ev.date)]);
@@ -1604,6 +1651,7 @@ async function abDownload(){
   }
 }
 function persistLocal(){
+  dropUpcoming();
   mirror();
   syncTs = nowTs(); saveTs();
   abSoon();
@@ -1725,6 +1773,7 @@ const localKeyFor = uid => uid ? (KEY + ':u:' + uid) : GUEST_KEY;
    dùng chung giữa các tab/cửa sổ và có thể đã bị tab khác đổi sang tài khoản khác). */
 let memOwner = ''; try{ memOwner = localStorage.getItem(OWNER_KEY) || ''; }catch(e){}
 function mirror(){
+  dropUpcoming();   // mọi chỗ đổi/nạp dữ liệu (hoàn tác, đổi tài khoản, đồng bộ đám mây) đều đi qua đây
   try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
   try{ if(memOwner) localStorage.setItem(localKeyFor(memOwner), JSON.stringify(state)); }catch(e){}   // luôn giữ ô nhớ riêng của chủ sở hữu luôn mới nhất
 }
@@ -2206,6 +2255,16 @@ let todoStatus = 'all';
 const hiddenTypes = new Set();
 const openTodos = new Set();
 let query = '';
+/* Bộ lọc theo cột của tab Lớp (bấm biểu tượng phễu ở tiêu đề cột). fxFilter[bảng][cột] = danh sách giá trị BỊ BỎ TICK; chỉ lưu tạm theo phiên, không đồng bộ lên đám mây */
+const fxFilter = {school:{}, other:{}};
+const fxCache = {school:new Map(), other:new Map()};
+const FX_COLS = {school:['name','tc','htgd','when','room','teacher','sv','note','link'], other:['name','tag','when','room','teacher','note','link']};
+const FX_LBL = {
+  school:{name:'Môn học', tc:'TC', htgd:'HTGD', when:'Thời gian', room:'Phòng', teacher:'Giảng viên', sv:'Sĩ số', note:'Ghi chú', link:'Liên kết'},
+  other:{name:'Tên lịch / Nội dung', tag:'Tag', when:'Thời gian', room:'Phòng / địa điểm', teacher:'Người phụ trách', note:'Ghi chú', link:'Liên kết'}
+};
+const FX_SES = [['s','Sáng (00:00 - 11:29)'], ['r','Trưa (11:30 - 12:59)'], ['c','Chiều (13:00 - 17:59)'], ['t','Tối (18:00 - 23:59)'], ['x','Chưa có giờ']];
+let fxPop = null;
 let guideOpen = false;       // “Cách đọc thời khoá biểu”: mặc định đóng
 const VIEWS = ['table','agenda','fixed'];
 const fixView = () => { if(!VIEWS.includes(state.view)) state.view = innerWidth < 800 ? 'agenda' : 'table'; };
@@ -2292,6 +2351,7 @@ const matches = o => {
 
 /* ---------- hiển thị ---------- */
 function render(){
+  dropUpcoming();
   fixView();
   document.documentElement.dataset.theme = state.theme || (matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
   applyStatusColors();
@@ -2318,6 +2378,7 @@ function render(){
   renderLegend(all);
   $('#stats').hidden = fx; $('#legend').hidden = fx;
   $('#sched').innerHTML = fx ? fixedHTML() : state.view === 'agenda' ? agendaHTML(occs) : tableHTML(occs);
+  if(fx){ applyFxFilter('school'); applyFxFilter('other'); fxPopPlace(); } else closeFxPop();
   renderTodos();
   const notes = $('#notes');
   $('#notesWeek').textContent = `Tuần ${dmy(weekStart)}`;
@@ -2385,7 +2446,7 @@ function renderLegend(all){
 }
 function evTitleAttr(ev,date){
   const meta = [tietOf(ev), ev.htgd, has(ev.tc) ? `${ev.tc} TC` : ''].filter(Boolean).join(' · ');
-  return [ev.code, ev.title, `${dm(date)} · ${ev.start}–${ev.end}`, meta, ev.room, ev.teacher, learnerTxt(ev) && `🎓 ${learnerTxt(ev)}`, ev.note].filter(Boolean).join('\n');
+  return [ev.code, ev.title, `${dm(date)} · ${ev.start}–${ev.end}`, meta, ev.room, ev.teacher, svShow(ev), learnerTxt(ev) && `🎓 ${learnerTxt(ev)}`, ev.note].filter(Boolean).join('\n');
 }
 /* trạng thái “đang diễn ra”: đúng ngày hôm nay, giờ hiện tại nằm trong [bắt đầu, kết thúc) */
 const fmtDur = m => { const h = Math.floor(m/60), r = m % 60; return h ? `${h} giờ${r ? ' ' + r + ' phút' : ''}` : `${r} phút`; };
@@ -2441,7 +2502,7 @@ function cellCopyText(ev){
   if(ev.kind === 'free') return ev.title;
   const tiet = tietOf(ev), links = getLinks(ev);
   return [ev.code, ev.title, `🕒 ${ev.start} - ${ev.end}${tiet ? ` ${tiet}` : ''}`,
-    ev.room && `📍 ${ev.room}`, ev.teacher && `👤 ${ev.teacher}`, learnerTxt(ev) && `🎓 ${learnerTxt(ev)}`, ev.contact && `📞 ${ev.contact}`, ev.fee && `💰 ${ev.fee}`, ...links.map(l => `📄 ${l.name ? l.name + ': ' : ''}${l.url}`)].filter(Boolean).join('\n');
+    ev.room && `📍 ${ev.room}`, ev.teacher && `👤 ${ev.teacher}`, [ev.htgd, has(ev.tc) && `${ev.tc} TC`].filter(Boolean).join(' · ') && `📚 ${[ev.htgd, has(ev.tc) && `${ev.tc} TC`].filter(Boolean).join(' · ')}`, svShow(ev), learnerTxt(ev) && `🎓 ${learnerTxt(ev)}`, ev.contact && `📞 ${ev.contact}`, ev.fee && `💰 ${ev.fee}`, ...links.map(l => `📄 ${l.name ? l.name + ': ' : ''}${l.url}`), ev.note && `📝 ${ev.note}`].filter(Boolean).join('\n');
 }
 function copyBtns(ev){
   const btn = (kind, label, ttl, text) => `<button type="button" class="cpy" data-copy="${kind}" data-text="${esc(encodeURIComponent(text))}" title="${esc(ttl)}" aria-label="${esc(ttl)}">${label}</button>`;
@@ -2571,7 +2632,7 @@ function agendaHTML(occs){
       html += `<article style="${tagStyle(tagOf(ev.type))}${liveStyle(o)}" class="ag${liveCls(o)} ${o.cancelled?'cancelled':''} ${o.conflict?'conflict':''} ${matches(o)?'':'dim'}" data-id="${ev.id}" data-date="${date}" data-s="${esc(ev.start)}" data-e="${esc(ev.end)}" tabindex="0" role="button">
         <div class="ag-time">${ev.start}<br><small>${ev.end}</small></div>
         <div><div class="et">${ev.code?`<small>${esc(ev.code)}</small>`:''}${esc(ev.title)}${tagsHTML(o)}</div>
-        <div class="em">${emHTML(o, ['🕒 ' + ev.start + ' - ' + ev.end, ev.room && '📍 ' + ev.room, ev.teacher && '👤 ' + ev.teacher, ev.htgd, has(ev.tc) && ev.tc + ' TC', svShow(ev), learnerTxt(ev) && '🎓 ' + learnerTxt(ev), ev.contact && '📞 ' + ev.contact, ev.fee && '💰 ' + ev.fee, ev.kind !== 'free' && '🔖 ' + tagOf(ev.type).name, isRec(ev) && '🔁 ' + (ev.repeat === 'biweekly' ? 'Cách tuần' : 'Hằng tuần') + (ev.until ? ' đến ' + dmy(ev.until) : ''), ev.status === 'cancelled' && 'Nghỉ / không tham gia', shortNote(ev) && '📝 ' + ev.note].filter(Boolean))}</div>
+        <div class="em">${emHTML(o, ['🕒 ' + ev.start + ' - ' + ev.end, ev.room && '📍 ' + ev.room, ev.teacher && '👤 ' + ev.teacher, learnerTxt(ev) && '🎓 ' + learnerTxt(ev), shortNote(ev) && '📝 ' + ev.note].filter(Boolean))}</div>
         ${hasLinks(ev) ? `<div class="ag-links">${evChips(ev)}</div>` : ''}
         ${ev.note && !shortNote(ev) ? `<div class="ex">📝 ${esc(ev.note)}</div>` : ''}</div></article>`;
     }
@@ -2592,11 +2653,11 @@ function schedText(ev, room = true){
   return [ds.map(dayShort).join(', '), slotTxt(ev.start, ev.end), room && ev.room].filter(Boolean).join(', ');
 }
 function fixedSeries(kind = 'school'){
-  const map = new Map(), today = todayStr();
+  const map = new Map();
   state.events.filter(isRec).forEach(ev => { const k = seriesOf(ev); if(!map.has(k)) map.set(k, []); map.get(k).push(ev); });
   return [...map.values()].map(vs => {
     vs.sort((a,b) => a.date.localeCompare(b.date));
-    let cur = vs[0]; for(const v of vs) if(v.date <= today) cur = v;
+    const cur = vs[vs.length-1];   // luôn lấy phiên bản lịch MỚI NHẤT (khớp với Bảng và Danh sách ở các tuần sau)
     return {cur, vs};
   }).filter(({cur}) => ((cur.type === 'class' && cur.kind !== 'free') === (kind === 'school')));
 }
@@ -2673,7 +2734,7 @@ function fxSortTh(kind, key, label, cls=''){
   const s = state.fixedSort?.[kind] || {key:'manual',dir:1};
   const on = s.key === key;
   const arr = on ? (s.dir > 0 ? '↑' : '↓') : '↕';
-  return `<th class="${cls}"><button type="button" class="fx-sort${on?' on':''}" data-fxsort="${kind}:${key}" title="Sắp xếp theo ${esc(label)}"><span>${esc(label)}</span><span class="arr">${arr}</span></button></th>`;
+  return `<th class="${cls}"><div class="fx-th"><button type="button" class="fx-sort${on?' on':''}" data-fxsort="${kind}:${key}" title="Sắp xếp theo ${esc(label)}"><span>${esc(label)}</span><span class="arr">${arr}</span></button>${fxFltBtn(kind,key,label)}</div></th>`;
 }
 function cycleFixedSort(kind, key){
   state.fixedSort ||= {school:{key:'manual',dir:1}, other:{key:'manual',dir:1}};
@@ -2706,10 +2767,176 @@ function fixedWhen(ev, vs, room = true){
     <div class="sub">${range}</div>${skip.length ? `<div class="sub">Nghỉ ${skip.length} buổi: ${skip.slice(0,6).map(dmy).join(', ')}${skip.length > 6 ? '…' : ''}</div>` : ''}`;
 }
 function fxRowNumber(i){ return `<span class="fx-index"><span class="fx-num">${i+1}</span><button type="button" class="fx-grab" title="Kéo để đổi vị trí" aria-label="Kéo để đổi vị trí">⠿</button></span>`; }
+/* ---------- bộ lọc theo cột cho “Thời khóa biểu của trường” và “Lịch khác” ---------- */
+const fxNorm = t => String(t == null ? '' : t).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase();   // bỏ dấu để gõ “toan” vẫn ra “Toán”
+/* buổi theo GIỜ BẮT ĐẦU: s = sáng (00:00 - 11:29), r = trưa (11:30 - 12:59), c = chiều (13:00 - 17:59), t = tối (18:00 - 23:59), x = chưa có giờ. Nhớ sửa cả nhãn trong FX_SES nếu đổi mốc */
+const fxSes = st => { const m = st ? toMin(st) : NaN; return !Number.isFinite(m) ? 'x' : m < 690 ? 's' : m < 780 ? 'r' : m < 1080 ? 'c' : 't'; };
+/* mỗi cặp “thứ-buổi” là một mục, để lọc Thứ + Buổi cùng lúc khớp đúng một buổi học */
+function fxSlotList(ev){
+  const out = new Set();
+  evDays(ev).forEach(d => {
+    const arr = isRec(ev) && ev.times && ev.times[d] && ev.times[d].length ? ev.times[d].map(x => x.start) : [ev.start];
+    arr.forEach(st => out.add(d + '-' + fxSes(st)));
+  });
+  return [...out];
+}
+function fxColKeys(kind, ev, col){
+  const one = v => [String(v == null ? '' : v).trim()];
+  let a;
+  switch(col){
+    case 'name': a = one(`${ev.code || ''} ${ev.title || ''}`); break;
+    case 'tc': a = one(has(ev.tc) ? ev.tc : ''); break;
+    case 'htgd': a = one(ev.htgd); break;
+    case 'tag': a = one(ev.type); break;
+    case 'when': return fxSlotList(ev);
+    case 'room': a = one(ev.room); break;
+    case 'teacher': a = one(ev.teacher); break;
+    case 'sv': a = one(has(ev.sv) || has(ev.svMax) ? svText(ev) : ''); break;
+    case 'note': a = one(ev.note); break;
+    case 'link': a = getLinks(ev).map(l => String(l.name || hostOf(l.url) || '').trim()); break;
+    default: a = [''];
+  }
+  return a.length ? a : [''];
+}
+function fxBuildCache(kind, list){
+  const m = new Map();
+  list.forEach(({cur:ev}) => { const o = {}; FX_COLS[kind].forEach(c => o[c] = fxColKeys(kind, ev, c)); m.set(String(seriesOf(ev)), o); });
+  return m;
+}
+/* “Thời gian” tách thành 2 nhóm mục: Thứ (khóa d0…d6) và Buổi (khóa ps/pc/pt/px) */
+const fxExpand = (col, k) => { if(col !== 'when') return [k]; const [d, s] = k.split('-'); return ['d' + d, 'p' + s]; };
+function fxLabel(col, k){
+  if(col === 'when') return k[0] === 'd' ? dayShort(+k.slice(1)) : (FX_SES.find(x => x[0] === k.slice(1)) || ['', k])[1];
+  if(col === 'tag') return k === '' ? '(Trống)' : tagOf(k).name;
+  return k === '' ? '(Trống)' : k.replace(/\s+/g, ' ');
+}
+function fxEntries(kind, col){
+  const cnt = new Map();
+  fxCache[kind].forEach(v => {
+    const seen = new Set();
+    (v[col] || []).forEach(k => fxExpand(col, k).forEach(x => seen.add(x)));
+    seen.forEach(x => cnt.set(x, (cnt.get(x) || 0) + 1));
+  });
+  if(col === 'when') ['ps','pr','pc','pt'].forEach(k => { if(!cnt.has(k)) cnt.set(k, 0); });   // luôn liệt kê đủ các buổi để thấy khung giờ, kể cả buổi chưa có lớp nào
+  const ses = k => FX_SES.findIndex(x => x[0] === k.slice(1));
+  return [...cnt].map(([k, n]) => ({k, n, label:fxLabel(col, k), g: col === 'when' ? (k[0] === 'd' ? 'Thứ' : 'Buổi') : ''}))
+    .sort((a, b) => {
+      if(col === 'when'){
+        if(a.k[0] !== b.k[0]) return a.k[0] === 'd' ? -1 : 1;
+        return a.k[0] === 'd' ? +a.k.slice(1) - +b.k.slice(1) : ses(a.k) - ses(b.k);
+      }
+      if(a.k === '') return 1;
+      if(b.k === '') return -1;
+      return a.label.localeCompare(b.label, 'vi', {numeric:true, sensitivity:'base'});
+    });
+}
+function fxRowPass(kind, sid){
+  const fl = fxFilter[kind], vals = fxCache[kind].get(sid);
+  if(!vals) return true;
+  for(const col in fl){
+    if(!fl[col] || !fl[col].length || !vals[col]) continue;
+    const ex = new Set(fl[col]);
+    const ok = col === 'when'
+      ? vals[col].some(t => { const [d, s] = t.split('-'); return !ex.has('d' + d) && !ex.has('p' + s); })
+      : vals[col].some(k => !ex.has(k));
+    if(!ok) return false;
+  }
+  return true;
+}
+const FX_FUNNEL = '<svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M2 3h12l-4.6 5.4V13l-2.8-1.6V8.4z" fill="currentColor"/></svg>';
+function fxFltBtn(kind, key, label){
+  const on = !!(fxFilter[kind][key] && fxFilter[kind][key].length);
+  return `<button type="button" class="fx-flt${on ? ' on' : ''}" data-fxflt="${kind}:${key}" title="Lọc theo ${esc(label)}" aria-label="Lọc theo ${esc(label)}" aria-haspopup="true">${FX_FUNNEL}</button>`;
+}
+function fxLinkTh(kind){ return `<th><div class="fx-th"><span class="fx-lbl">Liên kết</span>${fxFltBtn(kind, 'link', 'Liên kết')}</div></th>`; }
+function fxBar(kind){ return `<div class="fxf" data-fxf-bar="${kind}" hidden><span class="fxf-txt"></span><button type="button" class="fxf-clear" data-fxf-clear="${kind}">Xóa lọc</button></div>`; }
+/* chỉ ẩn/hiện dòng (không render lại) nên thứ tự đã kéo thả không bị ảnh hưởng */
+function applyFxFilter(kind){
+  const table = document.querySelector(`table.fx[data-fx-kind="${kind}"]`); if(!table) return;
+  const fl = fxFilter[kind], cols = Object.keys(fl).filter(c => fl[c] && fl[c].length);
+  const rows = [...table.querySelectorAll('tbody tr.fx-row')];
+  let shown = 0;
+  rows.forEach(r => {
+    const ok = !cols.length || fxRowPass(kind, String(r.dataset.series));
+    r.classList.toggle('fx-hide', !ok);
+    if(ok){ shown++; const n = r.querySelector('.fx-num'); if(n) n.textContent = shown; }
+  });
+  table.classList.toggle('filtered', cols.length > 0);
+  table.querySelectorAll('.fx-flt').forEach(b => b.classList.toggle('on', cols.includes(b.dataset.fxflt.split(':')[1])));
+  const nores = table.querySelector('.fx-nores'); if(nores) nores.hidden = !(cols.length && rows.length && !shown);
+  const bar = table.closest('.fxblk')?.querySelector(`[data-fxf-bar="${kind}"]`);
+  if(bar){
+    bar.hidden = !cols.length;
+    if(cols.length) bar.querySelector('.fxf-txt').textContent = `Đang lọc theo ${cols.map(c => FX_LBL[kind][c]).join(', ')} · Hiện ${shown}/${rows.length}`;
+  }
+}
+function fxSetExcluded(kind, col, keys, excluded){
+  const ex = new Set(fxFilter[kind][col] || []);
+  keys.forEach(k => excluded ? ex.add(k) : ex.delete(k));
+  if(ex.size) fxFilter[kind][col] = [...ex]; else delete fxFilter[kind][col];
+  applyFxFilter(kind);
+}
+function fxPopList(){
+  const p = fxPop; if(!p) return;
+  const ex = new Set(fxFilter[p.kind][p.col] || []), qq = fxNorm(p.q).trim();
+  let last = null, h = '';
+  fxEntries(p.kind, p.col).forEach(e => {
+    if(qq && !fxNorm(e.label).includes(qq)) return;
+    if(e.g && e.g !== last){ h += `<div class="fx-pop-g">${esc(e.g)}</div>`; last = e.g; }
+    h += `<label class="fx-opt" title="${esc(e.label)}"><input type="checkbox" data-fxk="${esc(e.k)}"${ex.has(e.k) ? '' : ' checked'}><span class="t${e.k === '' ? ' e' : ''}">${esc(e.label)}</span><span class="n">${e.n}</span></label>`;
+  });
+  p.el.querySelector('.fx-pop-list').innerHTML = h || '<div class="fx-pop-none">Không có giá trị nào</div>';
+}
+function fxPopPlace(){
+  const p = fxPop; if(!p) return;
+  const b = document.querySelector(`[data-fxflt="${p.kind}:${p.col}"]`);
+  if(!b){ closeFxPop(); return; }
+  const r = b.getBoundingClientRect(), w = p.el.offsetWidth, vw = document.documentElement.clientWidth;
+  const top = r.bottom + 6;
+  p.el.style.left = Math.max(8, Math.min(r.left, vw - w - 8)) + 'px';
+  p.el.style.top = top + 'px';
+  p.el.style.maxHeight = Math.max(180, innerHeight - top - 12) + 'px';
+}
+function closeFxPop(){ if(fxPop){ fxPop.el.remove(); fxPop = null; } }
+function openFxPop(kind, col){
+  if(fxPop && fxPop.kind === kind && fxPop.col === col){ closeFxPop(); return; }
+  closeFxPop();
+  const el = document.createElement('div');
+  el.className = 'fx-pop'; el.setAttribute('role', 'dialog');
+  fxPop = {kind, col, el, q:''};
+  const many = fxEntries(kind, col).length > 7;
+  el.innerHTML = `${many ? '<input type="search" class="fx-pop-q" placeholder="Tìm giá trị…" aria-label="Tìm giá trị">' : ''}<div class="fx-pop-act"><button type="button" data-fxp="all">Chọn tất cả</button><button type="button" data-fxp="none">Bỏ chọn tất cả</button></div><div class="fx-pop-list"></div>`;
+  document.body.appendChild(el);
+  fxPopList(); fxPopPlace();
+  const q = el.querySelector('.fx-pop-q'); if(q && matchMedia('(hover:hover)').matches) q.focus();   // trên điện thoại không tự bật bàn phím
+}
+document.addEventListener('change', e => {
+  const cb = e.target.closest && e.target.closest('.fx-pop input[data-fxk]');
+  if(cb && fxPop) fxSetExcluded(fxPop.kind, fxPop.col, [cb.dataset.fxk], !cb.checked);
+});
+document.addEventListener('input', e => {
+  if(fxPop && e.target.classList && e.target.classList.contains('fx-pop-q')){ fxPop.q = e.target.value; fxPopList(); }
+});
+document.addEventListener('click', e => {
+  const t = e.target; if(!t.closest) return;
+  const act = t.closest('[data-fxp]');
+  if(act && fxPop && fxPop.el.contains(act)){   // chỉ tác động lên các mục đang hiện (đang lọc theo ô tìm thì chỉ những mục khớp)
+    const vis = [...fxPop.el.querySelectorAll('input[data-fxk]')].map(i => i.dataset.fxk);
+    fxSetExcluded(fxPop.kind, fxPop.col, vis, act.dataset.fxp === 'none'); fxPopList(); return;
+  }
+  const f = t.closest('[data-fxflt]');
+  if(f){ const [k, c] = f.dataset.fxflt.split(':'); openFxPop(k, c); return; }
+  const cl = t.closest('[data-fxf-clear]');
+  if(cl){ const k = cl.dataset.fxfClear; fxFilter[k] = {}; applyFxFilter(k); if(fxPop && fxPop.kind === k) fxPopList(); return; }
+  if(fxPop && !fxPop.el.contains(t)) closeFxPop();
+});
+document.addEventListener('keydown', e => { if(e.key === 'Escape' && fxPop) closeFxPop(); });
+addEventListener('resize', () => fxPopPlace());
+addEventListener('scroll', () => fxPopPlace(), true);
 function fixedHTML(){
   const today = todayStr();
-  const kind = 'school', list = fixedList(kind);
-  let h = `<h3 class="fxh">Thời khóa biểu của trường</h3><div class="scroller"><table class="fx" data-fx-kind="${kind}"><thead><tr><th class="n">#</th>${fxSortTh(kind,'name','Môn học')}${fxSortTh(kind,'tc','TC','c w-tc')}${fxSortTh(kind,'htgd','HTGD','w-ht')}${fxSortTh(kind,'when','Thời gian')}${fxSortTh(kind,'room','Phòng')}${fxSortTh(kind,'teacher','Giảng viên')}${fxSortTh(kind,'sv','Sĩ số','r w-sv')}${fxSortTh(kind,'note','Ghi chú')}<th>Liên kết</th></tr></thead><tbody>`;
+  const kind = 'school', list = fixedList(kind); fxCache[kind] = fxBuildCache(kind, list);
+  let h = `<h3 class="fxh">Thời khóa biểu của trường</h3>${fxBar(kind)}<div class="scroller"><table class="fx" data-fx-kind="${kind}"><thead><tr><th class="n">#</th>${fxSortTh(kind,'name','Môn học')}${fxSortTh(kind,'tc','TC','c w-tc')}${fxSortTh(kind,'htgd','HTGD','w-ht')}${fxSortTh(kind,'when','Thời gian')}${fxSortTh(kind,'room','Phòng')}${fxSortTh(kind,'teacher','Giảng viên')}${fxSortTh(kind,'sv','Sĩ số','r w-sv')}${fxSortTh(kind,'note','Ghi chú')}${fxLinkTh(kind)}</tr></thead><tbody>`;
   if(!list.length) h += '<tr><td colspan="10" class="none">Chưa có lớp cố định. Bấm “Thêm lịch”, chọn Tag “Lớp chính thức” và Kiểu lặp Hằng tuần hoặc Cách tuần. Hoặc nạp file dữ liệu ở “Tài khoản của tôi” → “Khôi phục dữ liệu (.json)”.</td></tr>';
   list.forEach(({cur:ev, vs}, i) => {
     const cc = String(ev.code || '').split('.')[0];
@@ -2727,12 +2954,12 @@ function fixedHTML(){
       <td class="note">${esc(ev.note) || '<span class="sub">–</span>'}</td>
       <td>${linkHTML(ev) || '<span class="sub">–</span>'}</td></tr>`;
   });
-  h += `</tbody></table></div>`;
+  h += `<tr class="fx-nores" hidden><td colspan="10" class="none">Không có lớp nào khớp bộ lọc.</td></tr></tbody></table></div>`;
   return `<div class="card fxblk">` + h + guideHTML() + `</div>` + otherFixedHTML();
 }
 function otherFixedHTML(){
-  const today = todayStr(), kind = 'other', list = fixedList(kind);
-  let h = `<div class="card fxblk"><h3 class="fxh">Lịch khác</h3><div class="scroller"><table class="fx" data-fx-kind="${kind}"><thead><tr><th class="n">#</th>${fxSortTh(kind,'name','Tên lịch / Nội dung')}${fxSortTh(kind,'tag','Tag')}${fxSortTh(kind,'when','Thời gian')}${fxSortTh(kind,'room','Phòng / địa điểm','nowrap')}${fxSortTh(kind,'teacher','Người phụ trách')}${fxSortTh(kind,'note','Ghi chú')}<th>Liên kết</th></tr></thead><tbody>`;
+  const today = todayStr(), kind = 'other', list = fixedList(kind); fxCache[kind] = fxBuildCache(kind, list);
+  let h = `<div class="card fxblk"><h3 class="fxh">Lịch khác</h3>${fxBar(kind)}<div class="scroller"><table class="fx" data-fx-kind="${kind}"><thead><tr><th class="n">#</th>${fxSortTh(kind,'name','Tên lịch / Nội dung')}${fxSortTh(kind,'tag','Tag')}${fxSortTh(kind,'when','Thời gian')}${fxSortTh(kind,'room','Phòng / địa điểm','nowrap')}${fxSortTh(kind,'teacher','Người phụ trách')}${fxSortTh(kind,'note','Ghi chú')}${fxLinkTh(kind)}</tr></thead><tbody>`;
   if(!list.length) h += '<tr><td colspan="8" class="none">Chưa có lịch cố định khác. Bấm “Thêm lịch”, chọn Tag khác như gia sư, học thêm hoặc Kiểu ô “Lịch tự do”, rồi chọn Kiểu lặp.</td></tr>';
   list.forEach(({cur:ev, vs}, i) => {
     const tag = tagOf(ev.type), free = ev.kind === 'free';
@@ -2748,7 +2975,7 @@ function otherFixedHTML(){
       <td class="note">${esc(ev.note) || '<span class="sub">–</span>'}</td>
       <td>${linkHTML(ev) || '<span class="sub">–</span>'}</td></tr>`;
   });
-  return h + `</tbody></table></div></div>`;
+  return h + `<tr class="fx-nores" hidden><td colspan="8" class="none">Không có lịch nào khớp bộ lọc.</td></tr></tbody></table></div></div>`;
 }
 
 /* ---------- việc cần làm ---------- */
@@ -3191,6 +3418,7 @@ let drag = null, dropTd = null, fxDrop = null;
 function onSchedClick(target){
   if(performance.now() < fxSuppressClickUntil) return;
   if(target.closest('a')) return;
+  if(target.closest('.fx-flt')) return;
   const fs = target.closest('[data-fxsort]');
   if(fs){ const [kind,key] = fs.dataset.fxsort.split(':'); cycleFixedSort(kind,key); return; }
   if(target.closest('.fx-grab')) return;
@@ -3392,6 +3620,7 @@ function reorderFixedRow(y){
 function startFixedPointerDrag(e){
   const grip = e.target.closest?.('.fx-grab');
   if(!grip || (e.button && e.button !== 0)) return;
+  if(grip.closest('table.fx.filtered')){ e.preventDefault(); toast('Xóa bộ lọc để kéo đổi vị trí'); return; }
   const row = grip.closest?.('tr.fx-row');
   if(!row) return;
 
@@ -3870,7 +4099,7 @@ const formRestore = (form, o) => Object.keys(o || {}).forEach(k => { const el = 
 function uiSnap(){
   if(!UIS) return;
   try{
-    const s = {view:state.view, week:weekStart, tf:todoFilter, ts:todoStatus, hid:[...hiddenTypes], ot:[...openTodos], q:$('#q').value, guide:guideOpen, sx:scrollX, sy:scrollY, dlg:null};
+    const s = {view:state.view, week:weekStart, tf:todoFilter, ts:todoStatus, hid:[...hiddenTypes], ot:[...openTodos], q:$('#q').value, fxf:fxFilter, guide:guideOpen, sx:scrollX, sy:scrollY, dlg:null};
     const ae = document.activeElement, fc = ae && ae.closest && ae.closest('dialog[open]') && ae.name ? {name:ae.name, a:ae.selectionStart, b:ae.selectionEnd} : null;
     if(dlg.open){ readTimes(); s.dlg = {k:'ev', id:editing && editing.id, date:editing && editing.date, form:formSnap(f), days:daysBoxes().map(b => b.checked), times:timesDraft}; }
     else if(dlgTodo.open) s.dlg = {k:'todo', id:todoEditing, form:formSnap(todoEditForm), auto:todoAuto};
@@ -3898,6 +4127,7 @@ if(uiSaved){
   (uiSaved.ot || []).forEach(x => openTodos.add(x));
   if(typeof uiSaved.q === 'string'){ $('#q').value = uiSaved.q; query = uiSaved.q.trim().toLowerCase(); $('#qWrap').classList.toggle('has-val', !!uiSaved.q); }
   guideOpen = !!uiSaved.guide;
+  if(uiSaved.fxf && typeof uiSaved.fxf === 'object') ['school','other'].forEach(k => { const o = uiSaved.fxf[k]; if(!o || typeof o !== 'object') return; Object.keys(o).forEach(c => { if(FX_COLS[k].includes(c) && Array.isArray(o[c])){ const a = o[c].filter(x => typeof x === 'string'); if(a.length) fxFilter[k][c] = a; } }); });
 }
 function uiRestoreDialog(d){
   if(!d) return;
@@ -3934,9 +4164,14 @@ function uiRestoreDialog(d){
 /* ---------- Banner “Đang diễn ra / Tiếp theo” ---------- */
 const occEndMs = o => new Date(`${o.date}T${o.ev.end}:00`).getTime();
 function upcoming(weeks = 2){   // weeks = 1: chỉ tuần này (dùng cho banner); 2: gồm cả tuần sau (dùng cho thông báo)
-  const mon = mondayOf(todayStr()), now = Date.now();
-  const occs = (weeks > 1 ? [...weekOccs(mon), ...weekOccs(addDays(mon, 7))] : weekOccs(mon))
-    .filter(o => !o.cancelled && o.ev.kind !== 'free' && o.ev.start && o.ev.end);
+  const mon = mondayOf(todayStr()), now = Date.now(), key = mon + '|' + weeks, hit = _upcMemo.get(key);
+  let occs;
+  if(hit && now - hit.t < 5000) occs = hit.occs;   // dữ liệu không đổi thì dùng lại, tránh tính lại lịch 2 tuần mỗi giây (hai bộ đếm 1 giây cùng gọi)
+  else {
+    occs = (weeks > 1 ? [...weekOccs(mon), ...weekOccs(addDays(mon, 7))] : weekOccs(mon))
+      .filter(o => !o.cancelled && o.ev.kind !== 'free' && o.ev.start && o.ev.end);
+    _upcMemo.set(key, {t:now, occs});
+  }
   const byStart = (a, b) => occStartMs(a) - occStartMs(b) || toMin(a.ev.end) - toMin(b.ev.end);
   return {
     occs, now,
