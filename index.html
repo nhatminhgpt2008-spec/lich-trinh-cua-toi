@@ -2489,7 +2489,7 @@ function tableHTML(occs){
       <tr class="wk"><th>Tuần</th><th colspan="7">${dmy(weekStart)}</th></tr>
       <tr class="dn"><th></th>${days.map((d,i) => `<th class="${d===today?'today':''}">${DOW[i]}</th>`).join('')}</tr>
       <tr class="dd"><th></th>${days.map(d => `<th class="${d===today?'today':''}">${dm(d)}</th>`).join('')}</tr></thead><tbody>`;
-    if(dls.length){
+    if(!hiddenTypes.has('__dl')){   /* luôn hiện hàng Deadline dù tuần không có deadline, để bố cục các tuần đồng nhất; chỉ ẩn khi tắt chip Deadline */
       h += `<tr class="dlrow"><th class="tl"><div class="tlw"><span class="tlt">DEADLINE</span></div></th>`;
       for(const d of days){
         const ds = dls.filter(t => t.due === d);
@@ -2524,7 +2524,7 @@ function tableHTML(occs){
     <tr class="wk"><th>Tuần</th><th colspan="7">${dmy(weekStart)}</th></tr>
     <tr class="dn"><th></th>${days.map((d,i) => `<th class="${d===today?'today':''}">${DOW[i]}</th>`).join('')}</tr>
     <tr class="dd"><th></th>${days.map(d => `<th class="${d===today?'today':''}">${dm(d)}</th>`).join('')}</tr></thead><tbody>`;
-  if(dls.length){
+  if(!hiddenTypes.has('__dl')){   /* luôn hiện hàng Deadline dù tuần không có deadline */
     h += `<tr class="dlrow"><th class="tl"><div class="tlw"><span class="tlt">DEADLINE</span></div></th>`;
     for(const d of days){
       const ds = dls.filter(t => t.due === d);
