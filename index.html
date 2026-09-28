@@ -910,6 +910,54 @@ dialog>.sbar,#authGate>.sbar{z-index:20}
 ul.todos{padding-right:12px}
 .scroller.sb-has-x,.stats.sb-has-x,.legend.sb-has-x{padding-bottom:12px}
 @media print{.sbLayer,.sbar{display:none!important}}
+
+/* ---------- hiệu ứng đổi tuần: trượt + mờ dần theo hướng chuyển (tuần sau trượt từ phải, tuần trước trượt từ trái) ---------- */
+@keyframes wkInNext{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
+@keyframes wkInPrev{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:none}}
+@keyframes wkLbl{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+#sched.wk-next{animation:wkInNext .3s cubic-bezier(.22,.8,.3,1)}
+#sched.wk-prev{animation:wkInPrev .3s cubic-bezier(.22,.8,.3,1)}
+#range.wk-lbl{animation:wkLbl .25s ease}
+html.wk-anim body{overflow-x:clip}   /* tránh thanh cuộn ngang thoáng qua lúc nội dung đang trượt */
+@media (prefers-reduced-motion:reduce){#sched.wk-next,#sched.wk-prev,#range.wk-lbl{animation:none}}
+
+/* ---------- HIỆU ỨNG RÊ CHUỘT THỐNG NHẤT: ô ở Bảng, thanh Tiếp theo/Đang diễn ra/Deadline, thẻ ở Danh sách ----------
+   Thiết kế KHÔNG đổi hình học (không phóng to, không dịch chuyển, không đổi z-index): nền đậm dần + viền sáng chạy vào bên trong ô.
+   Nhờ vậy vùng chuột nhạy luôn đứng yên nên không còn chớp/giật khi rê qua lại, chữ không bị mờ, và ô kế bên không bị đè lên. */
+@keyframes cellIn{from{opacity:0;transform:translateY(10px) scale(.94)}to{opacity:1;transform:none}}
+.cell,.dlcell,.nowbar .nb,.ag{--ease:cubic-bezier(.22,.8,.3,1);position:relative;transition:background-color .2s var(--ease)}
+.cell{--gc:var(--cc,var(--muted))}
+.cell.live,.ag.live{--gc:var(--live-color)}
+.cell.next,.ag.next{--gc:var(--next-color)}
+.dlcell:not(.done){--gc:var(--cancel-bd)}
+.dlcell.done{--gc:var(--accent)}
+.nowbar .nb{--gc:var(--nbc,var(--accent))}
+.ag{--gc:var(--bd)}
+.ag.live{--gc:var(--live-color)}
+.ag.next{--gc:var(--next-color)}
+/* lớp viền sáng: chỉ đổi độ mờ (opacity), cùng thời lượng và đường cong với việc đổi màu nền → luôn đồng bộ lúc rê vào và rê ra */
+.cell:not(.jump-highlight)::before,.dlcell:not(.jump-highlight)::before,.nowbar .nb:not(.none)::before,.ag:not(.jump-highlight)::before{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;
+  box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--gc) 75%,transparent),inset 0 0 18px -2px color-mix(in srgb,var(--gc) 60%,transparent);
+  transition:opacity .2s var(--ease)}
+@media (hover:hover){
+  .cell:not(.jump-highlight):hover::before,.dlcell:not(.jump-highlight):hover::before,.nowbar .nb:not(.none):hover::before,.ag:not(.jump-highlight):hover::before{opacity:1}
+  .nowbar .nb:not(.none):hover{background:color-mix(in srgb,var(--nbc,var(--accent)) 30%,var(--surface))}
+  .ag:not(.live):not(.next):hover{background:color-mix(in srgb,var(--bd) 30%,var(--surface))}
+}
+@media (prefers-reduced-motion:reduce){.cell,.dlcell,.nowbar .nb,.ag,.cell::before,.dlcell::before,.nowbar .nb::before,.ag::before{transition:none}}
+
+/* đổi tuần: các ô hiện lần lượt theo cột, từ Thứ Hai đến Chủ Nhật */
+.wk-stagger .sheet td:nth-child(n+2) .cell:not(.live):not(.next),
+.wk-stagger .sheet td:nth-child(n+2) .dlcell{animation:cellIn .38s cubic-bezier(.22,.8,.3,1) both}
+.wk-stagger .sheet td:nth-child(2) .cell:not(.live):not(.next),.wk-stagger .sheet td:nth-child(2) .dlcell{animation-delay:0ms}
+.wk-stagger .sheet td:nth-child(3) .cell:not(.live):not(.next),.wk-stagger .sheet td:nth-child(3) .dlcell{animation-delay:45ms}
+.wk-stagger .sheet td:nth-child(4) .cell:not(.live):not(.next),.wk-stagger .sheet td:nth-child(4) .dlcell{animation-delay:90ms}
+.wk-stagger .sheet td:nth-child(5) .cell:not(.live):not(.next),.wk-stagger .sheet td:nth-child(5) .dlcell{animation-delay:135ms}
+.wk-stagger .sheet td:nth-child(6) .cell:not(.live):not(.next),.wk-stagger .sheet td:nth-child(6) .dlcell{animation-delay:180ms}
+.wk-stagger .sheet td:nth-child(7) .cell:not(.live):not(.next),.wk-stagger .sheet td:nth-child(7) .dlcell{animation-delay:225ms}
+.wk-stagger .sheet td:nth-child(8) .cell:not(.live):not(.next),.wk-stagger .sheet td:nth-child(8) .dlcell{animation-delay:270ms}
+@media (prefers-reduced-motion:reduce){.wk-stagger .sheet .cell,.wk-stagger .sheet .dlcell{animation:none!important}}
 </style>
 </head>
 <body>
@@ -1189,7 +1237,7 @@ ul.todos{padding-right:12px}
     <div class="acctSection">
       <button type="button" class="acctSectionSummary" aria-expanded="false">Sao lưu<span class="acctArrow" aria-hidden="true"></span></button>
       <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
-        <div class="actions"><button type="button" class="btn" data-a="ab-download">Tải bản sao lưu (.json)</button><button type="button" class="btn" data-a="import">Khôi phục dữ liệu (.json)</button></div>
+        <div class="actions"><button type="button" class="btn" data-a="ab-download">Tải bản sao lưu (.json)</button><button type="button" class="btn" data-a="import">Khôi phục dữ liệu (.json)</button><button type="button" class="btn" data-a="safety">Khôi phục bản an toàn</button></div>
         <p class="syncinfo" id="abInfo" hidden></p>
       </div></div></div>
     </div>
@@ -1485,6 +1533,8 @@ function norm(s){
   return st;
 }
 function load(){
+  // Ưu tiên ô nhớ RIÊNG của chủ sở hữu hiện tại: KEY là "tấm gương" dùng chung giữa mọi tab nên có thể đang chứa dữ liệu của tài khoản khác
+  try{ const o = localStorage.getItem(OWNER_KEY); if(o){ const so = JSON.parse(localStorage.getItem(localKeyFor(o))); if(so && Array.isArray(so.events) && Array.isArray(so.todos)) return norm(so); } }catch(e){}
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && Array.isArray(s.events) && Array.isArray(s.todos)) return norm(s); }catch(e){}
   return null;
 }
@@ -1549,14 +1599,15 @@ async function abDownload(){
   }
 }
 function persistLocal(){
-  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+  mirror();
   syncTs = nowTs(); saveTs();
   abSoon();
-  if(sync.ready) pushSoon();
+  if(sync.ready && (!curUid || memOwner === curUid)) pushSoon();
 }
 function save(){ persistLocal(); commitHistory(); }
 // giống save() nhưng không ghi vào lịch sử hoàn tác/làm lại — dùng cho các thay đổi không phải dữ liệu (chế độ xem, giao diện sáng/tối)
-function saveUI(){ persistLocal(); }
+function saveUI(){ mirror(); }   /* đổi chế độ xem / sáng-tối / sắp xếp là của RIÊNG từng thiết bị: chỉ lưu tại máy, KHÔNG được tăng mốc thời gian đồng bộ hay đẩy lên đám mây
+                                    (trước đây mỗi lần đổi giao diện trên một máy cũ/offline sẽ tăng mốc thời gian, rồi đè bản cũ của máy đó lên dữ liệu mới hơn trên đám mây) */
 // giống save() nhưng gộp lịch sử theo đợt gõ (tránh mỗi ký tự gõ vào ghi chú lại thành một bước hoàn tác riêng)
 function saveNotes(){ persistLocal(); commitHistoryDebounced(); }
 
@@ -1587,10 +1638,10 @@ function restoreSnapshot(snap){
   try{
     const keep = {view:state.view, theme:state.theme};
     state = {...JSON.parse(snap), ...keep};   // giữ nguyên chế độ xem và giao diện hiện tại
-    try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+    mirror();
     syncTs = nowTs(); saveTs();
     abSoon();
-    if(sync.ready) pushSoon();
+    if(sync.ready && (!curUid || memOwner === curUid)) pushSoon();
   } finally { histSuppressed = false; }
   fixView(); render(); renderTodos(); updateHistBtns();
 }
@@ -1646,9 +1697,9 @@ function learnClock(d){   // d = dữ liệu tài liệu vừa được máy ch�
   if(syncTs){ syncTs += delta; saveTs(); pushSoon(); }   // sửa lại mốc của bản đang có cho đúng giờ máy chủ
 }
 try{ syncTs = +localStorage.getItem(tsKeyFor(null)) || 0; }catch(e){}
-const sync = {doc:null, ready:false, timer:0, busy:false, dirty:false, unsub:null};
+const sync = {doc:null, ready:false, timer:0, busy:false, dirty:false, unsub:null, sawData:false, allowEmpty:false, retry:0};
 let pendingRemote = null;
-const hasData = st => !!(st.events.length || st.todos.length || Object.keys(st.notes || {}).length);
+const hasData = st => !!(st.events.length || st.todos.length || (st.rows && st.rows.length) || Object.keys(st.notes || {}).length);   // tính cả lịch cố định (rows): trước đây chỉ có lịch cố định thì bị coi là "trống"
 const syncInfo = t => { const p = document.getElementById('profileSyncInfo'); if(p) p.textContent = t || ''; };
 const saveTs = () => { try{ localStorage.setItem(tsKeyFor(curUid), String(syncTs)); }catch(e){} };
 /* ---------- dữ liệu cục bộ theo từng "chủ sở hữu" (chống lẫn dữ liệu khi đổi TÀI KHOẢN trên cùng thiết bị) ----------
@@ -1665,6 +1716,13 @@ const ADOPT_KEY = KEY + ':adopted';   // đã có tài khoản nhận dữ liệ
 const GUEST_KEY = KEY + ':guest';   // ô nhớ riêng, ổn định cho dữ liệu "khách" (chưa đăng nhập) — KHÔNG dùng chung với KEY,
                                      // vì KEY là "tấm gương" của bất kỳ chủ nào đang hoạt động và bị ghi đè liên tục.
 const localKeyFor = uid => uid ? (KEY + ':u:' + uid) : GUEST_KEY;
+/* memOwner = chủ sở hữu của `state` ĐANG NẰM TRONG BỘ NHỚ CỦA TAB NÀY (không đọc từ localStorage, vì localStorage
+   dùng chung giữa các tab/cửa sổ và có thể đã bị tab khác đổi sang tài khoản khác). */
+let memOwner = ''; try{ memOwner = localStorage.getItem(OWNER_KEY) || ''; }catch(e){}
+function mirror(){
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+  try{ if(memOwner) localStorage.setItem(localKeyFor(memOwner), JSON.stringify(state)); }catch(e){}   // luôn giữ ô nhớ riêng của chủ sở hữu luôn mới nhất
+}
 function readOwnerLocal(uid){
   try{ const s = JSON.parse(localStorage.getItem(localKeyFor(uid))); if(s && Array.isArray(s.events) && Array.isArray(s.todos)) return norm(s); }catch(e){}
   return null;
@@ -1672,7 +1730,7 @@ function readOwnerLocal(uid){
 function writeOwnerLocal(uid, st){ try{ localStorage.setItem(localKeyFor(uid), JSON.stringify(st)); }catch(e){} }
 function switchLocalOwner(newUid){
   if(!newUid) return;   // đăng xuất: trang chính đã bị ẩn, giữ nguyên state; dữ liệu chỉ đổi khi CÓ TÀI KHOẢN KHÁC đăng nhập (không còn dữ liệu "khách")
-  let prevOwner = null; try{ prevOwner = localStorage.getItem(OWNER_KEY) || null; }catch(e){}
+  const prevOwner = memOwner || null;   // chủ của dữ liệu đang có trong bộ nhớ tab này
   if(prevOwner === newUid) return;   // cùng tài khoản (mở lại trang, đăng nhập lại, token làm mới): giữ nguyên state
   if(!prevOwner){
     // Thiết bị chưa gắn với tài khoản nào. Nếu tài khoản này đã có bản lưu riêng trên máy thì dùng bản đó.
@@ -1684,40 +1742,91 @@ function switchLocalOwner(newUid){
       state = own || emptyState();
       if(!own){ syncTs = 0; saveTs(); }
       state.view = innerWidth < 800 ? 'agenda' : 'table';
-      try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+      memOwner = newUid;
+      mirror();
       try{ localStorage.setItem(OWNER_KEY, newUid); }catch(e){}
       initHistory(); fixView(); render();
       return;
     }
+    memOwner = newUid;
     try{ localStorage.setItem(ADOPT_KEY, newUid); localStorage.setItem(OWNER_KEY, newUid); }catch(e){}
     try{ const gts = +localStorage.getItem(tsKeyFor(null)) || 0; if(gts > syncTs){ syncTs = gts; saveTs(); } }catch(e){}   // dữ liệu có sẵn trên máy mang theo mốc thời gian của nó, tránh bị bản đám mây cũ hơn ghi đè
     return;
   }
   // Đổi từ tài khoản prevOwner sang tài khoản khác: cất dữ liệu của chủ cũ vào ô riêng, rồi nạp đúng ô riêng của chủ mới (hoặc trống)
-  writeOwnerLocal(prevOwner, state);
+  // chỉ cất nếu chủ cũ CHƯA có ô nhớ riêng (ô riêng luôn được mirror() cập nhật; ghi đè bằng state cũ của tab này có thể làm mất dữ liệu mới hơn từ tab khác)
+  try{ if(localStorage.getItem(localKeyFor(prevOwner)) === null) writeOwnerLocal(prevOwner, state); }catch(e){}
   const own = readOwnerLocal(newUid);
   state = own || emptyState();
   if(!own){ syncTs = 0; saveTs(); }   // chưa có bản trên máy: coi như chưa đồng bộ lần nào để lấy đúng dữ liệu của tài khoản này từ đám mây
   state.view = innerWidth < 800 ? 'agenda' : 'table';
-  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+  memOwner = newUid;
+  mirror();
   try{ localStorage.setItem(OWNER_KEY, newUid); }catch(e){}
   initHistory(); fixView(); render();
+}
+/* ---------- bản an toàn (snapshot xoay vòng, tối đa 5 bản/tài khoản) ----------
+   Được chụp TRƯỚC mọi thao tác có thể làm mất dữ liệu: nhận bản từ đám mây thay bản trên máy, ghi đè bản đám mây, xóa toàn bộ, nạp file, xóa tài khoản.
+   Khác bản sao lưu duy nhất trước đây (bị ghi đè ngay ở lần sau), các bản này được giữ lại nhiều bản để còn quay lại được. */
+const SAFE_MAX = 5;
+const safeKey = () => KEY + ':safety:' + (curUid || memOwner || 'guest');
+function safeList(){ try{ const a = JSON.parse(localStorage.getItem(safeKey())); return Array.isArray(a) ? a : []; }catch(e){ return []; } }
+function safeSnap(reason, obj){
+  try{
+    const json = typeof obj === 'string' ? obj : JSON.stringify(obj);
+    let st; try{ st = norm(JSON.parse(json)); }catch(e){ return; }
+    if(!hasData(st)) return;   // bản trống không đáng giữ
+    const list = safeList();
+    if(list.length && list[list.length - 1].json === json) return;
+    list.push({t:Date.now(), reason, json});
+    while(list.length > SAFE_MAX) list.shift();
+    while(list.length > 1 && JSON.stringify(list).length > 2500000) list.shift();   // giữ trong hạn mức localStorage
+    localStorage.setItem(safeKey(), JSON.stringify(list));
+  }catch(e){}
+}
+function safeRestoreUI(){
+  const list = safeList();
+  if(!list.length){ alert('Chưa có bản an toàn nào trên thiết bị này. Bản an toàn được tự tạo trước khi dữ liệu bị thay thế hoặc xóa.'); return; }
+  const rev = list.slice().reverse();
+  const lines = rev.map((x, i) => { let c = '?'; try{ const t = norm(JSON.parse(x.json)); c = t.events.length + ' lịch, ' + t.todos.length + ' deadline, ' + Object.keys(t.notes || {}).length + ' ghi chú'; }catch(e){} return (i + 1) + '. ' + new Date(x.t).toLocaleString('vi-VN') + ' — ' + x.reason + ' (' + c + ')'; });
+  const ans = prompt('Chọn bản cần khôi phục (nhập số):\n\n' + lines.join('\n'), '1');
+  const n = parseInt(ans, 10);
+  if(!ans || !(n >= 1 && n <= rev.length)) return;
+  let st; try{ st = norm(JSON.parse(rev[n - 1].json)); }catch(e){ alert('Bản này bị hỏng, không khôi phục được.'); return; }
+  if(!confirm('Thay dữ liệu hiện tại bằng bản số ' + n + '? (Dữ liệu hiện tại cũng được giữ lại thành một bản an toàn.)')) return;
+  safeSnap('trước khi khôi phục bản an toàn', state);
+  st.view = state.view; st.theme = state.theme;
+  state = st; sync.sawData = true; save(); render();
 }
 function pushSoon(){ clearTimeout(sync.timer); sync.timer = setTimeout(pushNow, 800); }
 async function pushNow(){
   if(!sync.doc) return;
   if(sync.busy){ sync.dirty = true; return; }
+  clearTimeout(sync.retry);
   sync.busy = true;
+  let blocked = false;   // bị chặn có chủ đích: giữ nguyên thông báo, không ghi đè bằng "Đã đồng bộ"
   try{
     do{
       sync.dirty = false;
       if(!sync.doc) break;   // vừa đăng xuất/đổi tài khoản giữa chừng
+      if(curUid && memOwner !== curUid){ blocked = true; break; }   // dữ liệu trong bộ nhớ không phải của tài khoản này: tuyệt đối không ghi lên cloud của nó
+      if(hasData(state)) sync.sawData = true;
+      else if(!sync.sawData && !sync.allowEmpty){ blocked = true; syncInfo('Đã chặn việc ghi dữ liệu trống đè lên dữ liệu trên đám mây.'); break; }   // trống mà chưa từng có dữ liệu trong phiên này và không bấm "Xóa toàn bộ" → gần như chắc chắn là nạp nhầm
+      const json = JSON.stringify(state);
+      const bytes = new TextEncoder().encode(json).length;   // tiếng Việt có dấu chiếm 2-3 byte/ký tự; giới hạn tài liệu Firestore là 1 MiB tính theo byte
+      if(json.length >= 890000 || bytes > 1000000){
+        blocked = true; setAcctSync('bad');
+        syncInfo('Dữ liệu quá lớn (' + Math.round(bytes / 1024) + ' KB) nên chưa đồng bộ lên đám mây được (giới hạn ≈ 900 KB). Hãy xóa bớt lịch/ghi chú cũ hoặc tải bản sao lưu. Dữ liệu vẫn được lưu trên thiết bị này.');
+        break;
+      }
       pushStartAt = Date.now();
-      await sync.doc.set({json: JSON.stringify(state), ts: syncTs, updatedAt: firebase.firestore.FieldValue.serverTimestamp()});
+      await sync.doc.set({json, ts: syncTs, updatedAt: firebase.firestore.FieldValue.serverTimestamp()});
     } while(sync.dirty);
-    setAcctSync('ok'); syncInfo('Đã đồng bộ');
+    if(!blocked){ setAcctSync('ok'); syncInfo('Đã đồng bộ'); }
   }catch(e){
     setAcctSync('bad'); syncInfo('Đồng bộ lỗi (' + ((e && e.code) || '?') + '). Dữ liệu vẫn được lưu trên thiết bị này.');
+    const c = e && e.code;
+    if(!['permission-denied','invalid-argument','failed-precondition','resource-exhausted'].includes(c)) sync.retry = setTimeout(pushNow, 20000);   // lỗi tạm thời (mạng…): tự thử lại, không bắt người dùng phải sửa gì đó mới đồng bộ tiếp
   }
   sync.busy = false;
 }
@@ -1725,25 +1834,26 @@ function applyRemote(){
   if(!pendingRemote) return;
   if(document.querySelector('dialog[open]') || (typeof drag !== 'undefined' && drag)){ setTimeout(applyRemote, 2000); return; }
   const r = pendingRemote; pendingRemote = null;
-  if(r.ts <= syncTs) return;
+  if(r.ts <= syncTs && !r.force) return;
   let st; try{ st = norm(JSON.parse(r.json)); }catch(e){ return; }
   if(!Array.isArray(st.events) || !Array.isArray(st.todos)) return;
-  if(hasData(state)){ try{ localStorage.setItem(KEY + ':backup:' + curUid, JSON.stringify(state)); }catch(e){} }   // luôn giữ bản cũ của thiết bị này trước khi bị bản đám mây thay thế, phòng khi cần lấy lại
+  if(hasData(state)) safeSnap('bản trên máy trước khi nhận bản từ đám mây', state);   // giữ lại bản cũ của thiết bị này trước khi bị bản đám mây thay thế
   st.view = state.view; st.theme = state.theme;   // giao diện/chế độ xem là của riêng từng thiết bị
-  state = st; syncTs = r.ts;
-  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+  state = st; syncTs = r.ts; sync.sawData = hasData(state);
+  mirror();
   saveTs(); initHistory(); render(); abSoon();
   setAcctSync('ok'); syncInfo('Vừa cập nhật từ thiết bị/tài khoản khác');
 }
+const jsonHasData = j => { try{ return hasData(norm(JSON.parse(j))); }catch(e){ return false; } };
 function detach(){
   if(sync.unsub){ try{ sync.unsub(); }catch(e){} sync.unsub = null; }
-  sync.doc = null; sync.ready = false;
+  sync.doc = null; sync.ready = false; clearTimeout(sync.retry);
   pendingRemote = null;   // dữ liệu đám mây đang chờ áp dụng của tài khoản cũ KHÔNG được phép lọt sang tài khoản mới
 }
 function attach(doc, opts){
   opts = opts || {};
   detach();
-  sync.doc = doc; sync.ready = false;
+  sync.doc = doc; sync.ready = false; sync.sawData = false; sync.allowEmpty = false;
   setAcctSync('busy'); syncInfo('Đang kết nối…');
   sync.unsub = doc.onSnapshot(async snap => {
     const d = snap.exists ? snap.data() : null, rts = d ? (+d.ts || 0) : 0;
@@ -1757,7 +1867,13 @@ function attach(doc, opts){
         } else { setAcctSync('ok'); syncInfo('Đã đồng bộ'); }
       } else if(d && typeof d.json === 'string' && rts > syncTs){
         pendingRemote = {json:d.json, ts:rts}; applyRemote();
-      } else if(rts < syncTs) pushNow();
+      } else if(d && typeof d.json === 'string' && !hasData(state) && jsonHasData(d.json)){
+        // máy đang trống nhưng đám mây còn dữ liệu (mốc thời gian có thể bị lệch do nạp nhầm): luôn lấy dữ liệu từ đám mây, KHÔNG đẩy bản trống lên
+        pendingRemote = {json:d.json, ts:rts, force:true}; applyRemote();
+      } else if(rts < syncTs){
+        if(d && typeof d.json === 'string') safeSnap('bản đám mây trước khi bị bản trên máy ghi đè', d.json);
+        pushNow();
+      }
       else { setAcctSync('ok'); syncInfo('Đã đồng bộ'); }
       return;
     }
@@ -2045,9 +2161,12 @@ document.getElementById('profileDelete').addEventListener('click', async () => {
   const errEl = document.getElementById('delErr');
   errEl.textContent = '';
   if(profileForm.elements.delConfirm.value.trim() !== 'XÓA TÀI KHOẢN'){ errEl.textContent = 'Vui lòng nhập đúng "XÓA TÀI KHOẢN" để xác nhận.'; return; }
+  const lastIn = Date.parse((fb.user.metadata && fb.user.metadata.lastSignInTime) || '') || 0;
+  if(Date.now() - lastIn > 4 * 60 * 1000){ errEl.textContent = 'Vì lý do bảo mật, hãy đăng xuất, đăng nhập lại rồi xóa tài khoản ngay sau đó (trong vòng vài phút). Dữ liệu chưa bị xóa.'; return; }   // kiểm tra TRƯỚC: trước đây xóa dữ liệu đám mây xong mới báo "cần đăng nhập lại" nên tài khoản còn mà dữ liệu đã mất
   if(!confirm('Xóa vĩnh viễn tài khoản và toàn bộ dữ liệu đám mây liên quan? Hành động này không thể hoàn tác.')) return;
   try{
     const uid = fb.user.uid;
+    safeSnap('trước khi xóa tài khoản', state);
     detach();
     let dataDeleted = true;
     try{ await fb.db.doc('users/' + uid + '/planner/main').delete(); }catch(e){ dataDeleted = false; }
@@ -3009,14 +3128,31 @@ $('#delBtn').onclick = async () => {
 };
 
 /* ---------- sự kiện giao diện ---------- */
-const go = n => { weekStart = addDays(weekStart, n*7); render(); };
+/* đổi tuần kèm hiệu ứng trượt: dir > 0 = sang tuần sau, dir < 0 = về tuần trước */
+function weekAnim(dir){
+  if(!dir || state.view === 'fixed') return;
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  const box = $('#sched'), lbl = $('#range'), root = document.documentElement;
+  box.classList.remove('wk-next','wk-prev','sched-swap'); lbl.classList.remove('wk-lbl');
+  void box.offsetWidth;   // buộc dựng lại để hiệu ứng chạy lại dù bấm liên tiếp rất nhanh
+  box.classList.add(dir > 0 ? 'wk-next' : 'wk-prev'); lbl.classList.add('wk-lbl');
+  root.classList.add('wk-anim');
+  if(state.view === 'table'){ box.classList.remove('wk-stagger'); void box.offsetWidth; box.classList.add('wk-stagger'); clearTimeout(weekAnim.t2); weekAnim.t2 = setTimeout(() => box.classList.remove('wk-stagger'), 800); }
+  clearTimeout(weekAnim.t);
+  weekAnim.t = setTimeout(() => { box.classList.remove('wk-next','wk-prev'); lbl.classList.remove('wk-lbl'); root.classList.remove('wk-anim'); }, 340);
+}
+function setWeek(ns){
+  const dir = ns > weekStart ? 1 : ns < weekStart ? -1 : 0;   // ngày dạng YYYY-MM-DD nên so sánh chuỗi là đúng thứ tự thời gian
+  weekStart = ns; render(); weekAnim(dir);
+}
+const go = n => setWeek(addDays(weekStart, n*7));
 const defDate = () => todayStr();   // ngày mặc định khi thêm lịch = ngày thực
 $('#prev').onclick = () => go(-1);
 $('#next').onclick = () => go(1);
-$('#todayBtn').onclick = () => { weekStart = mondayOf(todayStr()); render(); scrollToNow(); };
+$('#todayBtn').onclick = () => { setWeek(mondayOf(todayStr())); scrollToNow(); };
 $('#jump').onchange = e => {
   const v = e.target.value, y = +v.slice(0,4);
-  if(v && /^\d{4}-\d{2}-\d{2}$/.test(v) && y >= 1000){ weekStart = mondayOf(v); render(); }   /* bỏ qua giá trị năm đang gõ dở (0002, 0020, 0202…) */
+  if(v && /^\d{4}-\d{2}-\d{2}$/.test(v) && y >= 1000){ setWeek(mondayOf(v)); }   /* bỏ qua giá trị năm đang gõ dở (0002, 0020, 0202…) */
 };
 $('#jump').onblur = () => { $('#jump').value = weekStart; };   /* rời ô thì đồng bộ lại về đầu tuần đang xem */
 $('#addBtn').onclick = () => openModal(null, defDate());
@@ -3495,7 +3631,8 @@ profileForm.addEventListener('click', e => {
   if(a === 'notify') enableScheduleNotifications();
   if(a === 'ics') download('lich-trinh.ics', toICS(), 'text/calendar');
   if(a === 'import') $('#file').click();
-  if(a === 'reset' && confirm('Xóa toàn bộ dữ liệu hiện tại (lịch, deadline, ghi chú)? Bạn có thể nạp lại từ file .json.')){ state = emptyState(); state.view = innerWidth<800?'agenda':'table'; weekStart = mondayOf(todayStr()); save(); render(); }
+  if(a === 'safety') safeRestoreUI();
+  if(a === 'reset' && confirm('Xóa toàn bộ dữ liệu (lịch, deadline, ghi chú)?\n\nĐang đăng nhập thì dữ liệu trên đám mây và trên MỌI thiết bị khác của tài khoản này cũng bị xóa theo.\nMột bản an toàn được giữ lại trên máy này để khôi phục (Tài khoản → Sao lưu → Khôi phục bản an toàn).')){ safeSnap('trước khi xóa toàn bộ', state); sync.allowEmpty = true; state = emptyState(); state.view = innerWidth<800?'agenda':'table'; weekStart = mondayOf(todayStr()); save(); render(); }
 });
 $('#file').onchange = e => {
   const file = e.target.files[0]; if(!file) return;
@@ -3504,7 +3641,7 @@ $('#file').onchange = e => {
     try{
       const s = JSON.parse(r.result);
       if(!Array.isArray(s.events) || !Array.isArray(s.todos)) throw 0;
-      if(confirm('Thay thế dữ liệu hiện tại bằng dữ liệu trong file?')){ state = norm(s); save(); render(); }
+      if(confirm('Thay thế dữ liệu hiện tại bằng dữ liệu trong file?')){ safeSnap('trước khi nạp từ file', state); state = norm(s); sync.sawData = true; save(); render(); }
     }catch(_){ alert('File không hợp lệ. Hãy chọn file .json đã sao lưu từ trang này.'); }
   };
   r.readAsText(file); e.target.value = '';
@@ -3828,7 +3965,20 @@ function renderNowBar(){
   const rightRows = dls.map(dl => `<div class="nb dl" data-todo="${esc(dl.id)}"><span class="k">📌<em> Deadline</em></span><span class="t">${esc(dl.text)}</span><span class="m"><span class="rg">${esc(dm(dl.due))}${dl.dueTime ? ' · ' + esc(dl.dueTime) : ''} · </span><b class="cd${dueLate(dl)?' late':''}">${esc(dueTxt(dl))}</b></span></div>`);
   el.hidden = false;
   const leftHTML = leftRows.length ? leftRows.join('') : '<div class="nb none"><span class="k">📭</span><span class="t">Không có lịch sắp diễn ra</span></div>';
-  el.innerHTML = `<div class="nbcol">${leftHTML}</div>` + (rightRows.length ? `<div class="nbcol">${rightRows.join('')}</div>` : '');
+  const html = `<div class="nbcol">${leftHTML}</div>` + (rightRows.length ? `<div class="nbcol">${rightRows.join('')}</div>` : '');
+  /* Đồng hồ đếm ngược đổi mỗi giây: nếu cấu trúc không đổi thì chỉ cập nhật chữ đếm ngược tại chỗ, không dựng lại cả thanh
+     (dựng lại mỗi giây sẽ làm hiệu ứng rê chuột bị giật/khựng và mất trạng thái hover). */
+  const sig = html.replace(/<b class="cd[^"]*">[^<]*<\/b>/g, '<b class="cd"></b>');
+  if(el._sig === sig && !el.hidden){
+    const tpl = document.createElement('template'); tpl.innerHTML = html;
+    const nw = tpl.content.querySelectorAll('b.cd'), cur = el.querySelectorAll('b.cd');
+    if(nw.length === cur.length){
+      cur.forEach((b, i) => { if(b.textContent !== nw[i].textContent) b.textContent = nw[i].textContent; if(b.className !== nw[i].className) b.className = nw[i].className; });
+      return;
+    }
+  }
+  el._sig = sig;
+  el.innerHTML = html;
 }
 /* Thông báo lịch thuộc về TỪNG TÀI KHOẢN: cài đặt bật/tắt lưu theo uid, chưa đăng nhập thì không có
    thông báo nào, đăng xuất / đổi tài khoản thì thông báo cũ bị đóng ngay và dựng lại theo dữ liệu
@@ -3964,15 +4114,13 @@ document.getElementById('nowBar').addEventListener('click', e => {
   const row = e.target.closest('.nb'); if(!row) return;
   if(row.dataset.todo){
     const t = state.todos.find(x => x.id === row.dataset.todo);
-    if(t && t.due) weekStart = mondayOf(t.due);
-    render();
+    if(t && t.due) setWeek(mondayOf(t.due)); else render();
     const el = $('#sched').querySelector(`[data-todo="${CSS.escape(row.dataset.todo)}"]`);
     if(el){ el.scrollIntoView({block:'center', behavior:'smooth'}); highlightSchedElement(el); }
     return;
   }
   if(row.dataset.id){
-    weekStart = mondayOf(row.dataset.date || todayStr());
-    render();
+    setWeek(mondayOf(row.dataset.date || todayStr()));
     const el = $('#sched').querySelector(`[data-id="${CSS.escape(row.dataset.id)}"][data-date="${CSS.escape(row.dataset.date)}"]`) || $('#sched').querySelector(`[data-id="${CSS.escape(row.dataset.id)}"]`);
     if(el){ el.scrollIntoView({block:'center', behavior:'smooth'}); highlightSchedElement(el); }
     return;

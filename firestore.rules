@@ -3,19 +3,20 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     // Dữ liệu lịch trình của từng tài khoản: chỉ chính chủ (uid khớp) mới được
-    // đọc/xóa/ghi, và chỉ tài liệu 'main'. Khi ghi, bắt buộc có trường json là
-    // chuỗi (< ~900 KB, giới hạn tài liệu Firestore là 1 MiB) để không ai ghi rác.
+    // đọc/xóa/ghi, và chỉ tài liệu 'main'. Khi ghi:
+    //  - chỉ được có đúng 3 trường json / ts / updatedAt (không ai ghi thêm rác)
+    //  - json là chuỗi (< 900.000 ký tự; tiếng Việt có dấu chiếm nhiều byte hơn,
+    //    còn giới hạn tài liệu Firestore là 1 MiB nên trang cũng tự kiểm tra theo byte)
+    //  - ts là số (mốc thời gian đồng bộ)
     match /users/{uid}/planner/{docId} {
       allow read, delete: if request.auth != null && request.auth.uid == uid;
       allow create, update: if request.auth != null && request.auth.uid == uid
                             && docId == 'main'
+                            && request.resource.data.keys().hasOnly(['json', 'ts', 'updatedAt'])
                             && request.resource.data.json is string
-                            && request.resource.data.json.size() < 900000;
+                            && request.resource.data.json.size() < 900000
+                            && request.resource.data.ts is number;
     }
-
-    // Đã BỎ khối /planner/{docId} (tài liệu dùng chung cũ): nó cho MỌI tài khoản
-    // đã đăng nhập đọc dữ liệu chung, tức là lộ dữ liệu giữa các tài khoản.
-    // Trang hiện tại không còn dùng đường dẫn này nữa.
 
     match /{document=**} {
       allow read, write: if false;
