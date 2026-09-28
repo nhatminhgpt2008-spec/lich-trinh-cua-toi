@@ -1557,6 +1557,35 @@ function migrate(st){
 }
 // dọn các ngày "Nghỉ" (skip) mồ côi: còn sót trên sự kiện gốc dù bản sao riêng của buổi đó
 // đã bị xóa từ trước khi có liên kết overrideOf/overrideDate (dữ liệu cũ từ trước bản vá lỗi clone)
+/* Sửa dữ liệu ngoại lệ (buổi “chỉ lưu ngày này” / buổi dời) bị hỏng do lỗi cũ:
+   1) nhiều bản ngoại lệ cho CÙNG một buổi (sửa nhiều lần từ tab Lớp) → chỉ giữ bản mới nhất, hết ô bị nhân bản;
+   2) ngoại lệ còn trỏ vào phiên bản cũ của lớp đã bị tách (splitAt) → trỏ lại đúng phiên bản đang phủ ngày đó;
+   3) buổi gốc bị mất dấu “Nghỉ” (skip / skipSlots) nên vừa hiện ô gốc vừa hiện ô ngoại lệ → đánh dấu lại. */
+function repairOverrides(st){
+  const evs = st.events, seen = new Map();
+  for(let i = evs.length - 1; i >= 0; i--){
+    const o = evs[i]; if(!o.overrideOf || !o.overrideDate) continue;
+    const k = [o.overrideOf, o.overrideDate, o.overrideStart || '', o.overrideEnd || ''].join('|');
+    if(seen.has(k)) evs.splice(i, 1); else seen.set(k, true);
+  }
+  evs.forEach(o => {
+    if(!o.overrideOf || !o.overrideDate) return;
+    let p = evs.find(e => e.id === o.overrideOf); if(!p || !isRec(p)) return;
+    if(!recurHit(p, o.overrideDate)){
+      const q = evs.find(e => isRec(e) && seriesOf(e) === seriesOf(p) && recurHit(e, o.overrideDate));
+      if(!q) return;
+      o.overrideOf = q.id; p = q;
+    }
+    if(o.overrideStart && o.overrideEnd){
+      const key = `${o.overrideDate}|${o.overrideStart}|${o.overrideEnd}`;   // (không gọi slotKey: hàm này chạy lúc nạp trang, trước khi slotKey được khai báo)
+      p.skipSlots = Array.isArray(p.skipSlots) ? p.skipSlots : [];
+      if(!p.skipSlots.includes(key)) p.skipSlots.push(key);
+    } else {
+      p.skip = Array.isArray(p.skip) ? p.skip : [];
+      if(!p.skip.includes(o.overrideDate)) p.skip.push(o.overrideDate);
+    }
+  });
+}
 function repairOrphanSkip(st){
   st.events.forEach(ev => {
     if(!Array.isArray(ev.skip) || !ev.skip.length) return;
@@ -1581,6 +1610,7 @@ function norm(s){
   });
   if(!st.fillV2){ st.tags.forEach(t => t.fill = true); st.fillV2 = true; }
   migrate(st);
+  repairOverrides(st);
   repairOrphanSkip(st);
   return st;
 }
@@ -2277,11 +2307,17 @@ function cancelSlotHas(ev, date, start, end){ return Array.isArray(ev.cancelledS
 function occurrenceCancelled(ev,date,start,end){ return ev.status === 'cancelled' || cancelSlotHas(ev,date,start,end); }
 function splitAt(ev, occDate, changes, mapSkip){
   const from = mondayOf(occDate), m = mapSkip || (x => x);
+  // ngày “Nghỉ” đi theo phiên bản mới thì bản ngoại lệ tương ứng cũng phải đi theo (nếu không, lần tải lại sau đó dấu “Nghỉ” bị xóa và ô gốc hiện lại → nhân bản)
+  const moveOverrides = target => state.events.forEach(o => {
+    if(o.overrideOf !== ev.id || !o.overrideDate || o.overrideDate < from) return;
+    o.overrideDate = m(o.overrideDate); o.overrideOf = target.id;
+  });
   const mapSlots = arr => (arr||[]).map(k => { const z=slotKeyParse(k); return slotKey(m(z.date),z.start,z.end); });
   if(firstDate(ev) >= from){
     Object.assign(ev, changes); ev.skip = (ev.skip||[]).map(m);
     if(ev.skipSlots) ev.skipSlots = mapSlots(ev.skipSlots);
     if(ev.cancelledSlots) ev.cancelledSlots = mapSlots(ev.cancelledSlots);
+    moveOverrides(ev);
     return ev;
   }
   ev.series = seriesOf(ev);
@@ -2294,10 +2330,12 @@ function splitAt(ev, occDate, changes, mapSkip){
   ev.cancelledSlots = (ev.cancelledSlots||[]).filter(k => slotKeyParse(k).date < from);
   ev.until = addDays(from, -1);
   state.events.push(nxt);
+  moveOverrides(nxt);
   return nxt;
 }
 function truncateFrom(ev, occDate){
   const from = mondayOf(occDate);
+  state.events = state.events.filter(o => !(o.overrideOf === ev.id && o.overrideDate >= from));   // buổi ngoại lệ của phần bị xóa cũng phải mất, tránh ô “ma” còn sót
   if(firstDate(ev) >= from) state.events = state.events.filter(e => e !== ev);
   else { ev.until = addDays(from, -1); ev.skip = (ev.skip||[]).filter(x => x < from); ev.skipSlots = (ev.skipSlots||[]).filter(k => slotKeyParse(k).date < from); ev.cancelledSlots = (ev.cancelledSlots||[]).filter(k => slotKeyParse(k).date < from); }
 }
@@ -3134,7 +3172,7 @@ f.elements.htgd.innerHTML = '<option value="">–</option>' + HTGD.map(([k,v]) =
 
 function openModal(id, date, defaults, slot){
   const ev = id ? state.events.find(e => e.id === id) : null;
-  editing = {id, date, slot: slot || null};
+  editing = {id, date, slot: slot || null, fixed: state.view === 'fixed'};
   f.reset(); $('#err').textContent = '';
   f.elements.type.innerHTML = state.tags.map(t => `<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('');
   const v = ev || {title:'',code:'',type:'class',date:date||todayStr(),start:'',end:'',room:'',teacher:'',link:'',note:'',repeat:'none',until:'',status:'normal',kind:'event',tc:'',htgd:'',sv:'',svMax:'',...defaults};
@@ -3295,6 +3333,7 @@ function saveOnlyOcc(ev, d, times, occ, slotOverride){
   } else {
     ev.skip ||= [];
     if(!ev.skip.includes(occ)) ev.skip.push(occ);
+    state.events = state.events.filter(x => !(x !== ev && x.overrideOf === ev.id && x.overrideDate === occ && !x.overrideStart));
   }
   state.events.push({id:uid(), skip:[], skipSlots:[], ...rest, repeat:'none', until:'', days:[], times:null, date:occ, start:slot.start, end:slot.end, overrideOf:ev.id, overrideDate:occ, ...(slotOverride ? {overrideStart:slotOverride.start, overrideEnd:slotOverride.end} : {})});
 }
@@ -3307,6 +3346,17 @@ function releaseOverride(ev){
     const k = slotKey(ev.overrideDate, ev.overrideStart, ev.overrideEnd);
     orig.skipSlots = (orig.skipSlots||[]).filter(x => x !== k);
   } else orig.skip = (orig.skip||[]).filter(x => x !== ev.overrideDate);
+}
+// “Tất cả các tuần”: áp dụng cho MỌI phiên bản của lớp (các phiên bản do “Từ tuần này trở đi” tách ra), nhưng chỉ những trường thật sự bị đổi,
+// và giữ nguyên ngày bắt đầu / kết thúc / ngày nghỉ riêng của từng phiên bản. Trước đây chỉ phiên bản mới nhất được cập nhật nên các tuần khác trên Bảng vẫn hiện dữ liệu cũ.
+function applyToSeries(ev, d){
+  const keys = Object.keys(d).filter(k => !['date','until'].includes(k) && JSON.stringify(ev[k] ?? null) !== JSON.stringify(d[k] ?? null));
+  const sid = seriesOf(ev);
+  state.events.forEach(v => {
+    if(v === ev || !isRec(v) || seriesOf(v) !== sid) return;
+    keys.forEach(k => { v[k] = JSON.parse(JSON.stringify(d[k] ?? null)); if(d[k] === undefined) delete v[k]; });
+  });
+  Object.assign(ev, d);
 }
 f.addEventListener('submit', async e => {
   e.preventDefault();
@@ -3322,14 +3372,14 @@ f.addEventListener('submit', async e => {
     const occ = editing.date || ev.date, from = mondayOf(occ);
     const slotSpecific = !!(editing.slot && ev.times && (ev.times[wd(occ)]||[]).length > 1);
     const c = await askScope({
-      title:'Phạm vi áp dụng thay đổi', one:true, oneLabel:slotSpecific ? `Chỉ lưu khung giờ ${editing.slot.start}–${editing.slot.end} ngày ${dm(occ)}` : `Chỉ lưu ngày ${dm(occ)}`
+      title:'Phạm vi áp dụng thay đổi', one:!editing.fixed, fromLabel:editing.fixed ? `Từ tuần ${weekRange(occ)} trở đi` : 'Từ tuần này trở đi', oneLabel:slotSpecific ? `Chỉ lưu khung giờ ${editing.slot.start}–${editing.slot.end} ngày ${dm(occ)}` : `Chỉ lưu ngày ${dm(occ)}`
     });
     if(!c) return;
     if(c === 'one'){ saveOnlyOcc(ev, d, times, occ, slotSpecific ? editing.slot : null); }
     else if(c === 'from' && firstDate(ev) < from){
       if(d.until && d.until < from) return err('Ngày kết thúc lặp phải từ tuần đang sửa trở đi.');
       splitAt(ev, occ, d);
-    } else Object.assign(ev, d);
+    } else applyToSeries(ev, d);
   } else {
     if(isRec(ev) && !confirm('Chuyển lịch lặp này thành lịch một lần sẽ bỏ các buổi lặp, kể cả những tuần đã qua. Tiếp tục?')) return;
     Object.assign(ev, d);
@@ -3354,7 +3404,10 @@ $('#delBtn').onclick = async () => {
     allLabel:'Xóa toàn bộ lớp'
   });
   if(!c) return;
-  if(c === 'all'){ const k = seriesOf(ev); state.events = state.events.filter(e => !(isRec(e) && seriesOf(e) === k)); }
+  if(c === 'all'){
+    const k = seriesOf(ev), ids = new Set(state.events.filter(e => isRec(e) && seriesOf(e) === k).map(e => e.id));
+    state.events = state.events.filter(e => !(isRec(e) && seriesOf(e) === k) && !(e.overrideOf && ids.has(e.overrideOf)));   // xóa luôn các buổi ngoại lệ của lớp, tránh ô “ma”
+  }
   else truncateFrom(ev, occ);
   save(); closeDialog(dlg); render();
 };
@@ -3738,7 +3791,10 @@ async function moveOcc(id, from, to, s, e, fs, fe){
     const shift = x => (!keepSw && wd(x) === sw) ? addDays(x, tw - sw) : x;
     let tgt;
     if(c === 'from') tgt = splitAt(ev, from, ch, shift);
-    else { tgt = Object.assign(ev, ch); tgt.skip = (tgt.skip||[]).map(shift); }
+    else {
+      tgt = Object.assign(ev, ch); tgt.skip = (tgt.skip||[]).map(shift);
+      state.events.forEach(o => { if(o.overrideOf === ev.id && o.overrideDate) o.overrideDate = shift(o.overrideDate); });
+    }
     if(to < tgt.date) tgt.date = to;
     if(tgt.until && to > tgt.until) tgt.until = to;
   }
