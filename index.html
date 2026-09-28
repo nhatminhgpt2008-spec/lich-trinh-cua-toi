@@ -945,6 +945,11 @@ html.wk-anim body{overflow-x:clip}   /* tránh thanh cuộn ngang thoáng qua l�
   .nowbar .nb:not(.none):hover{background:color-mix(in srgb,var(--nbc,var(--accent)) 30%,var(--surface))}
   .ag:not(.live):not(.next):hover{background:color-mix(in srgb,var(--bd) 30%,var(--surface))}
 }
+/* thanh Tiếp theo/Deadline và thẻ Danh sách có viền TRÁI dày (5px / 4px) bo tròn ở hai đầu: lớp viền sáng phải phủ đúng khung ngoài (border-box) chứ không phải khung trong (padding-box),
+   nếu không đường cong của viền sáng lệch với đường cong của thanh màu bên trái */
+.nowbar .nb:not(.none)::before{inset:-1px -1px -1px -5px}
+.ag:not(.jump-highlight)::before{inset:-1px -1px -1px -4px}
+.ag.live:not(.jump-highlight)::before,.ag.next:not(.jump-highlight)::before{inset:-1px}
 @media (prefers-reduced-motion:reduce){.cell,.dlcell,.nowbar .nb,.ag,.cell::before,.dlcell::before,.nowbar .nb::before,.ag::before{transition:none}}
 
 /* đổi tuần: các ô hiện lần lượt theo cột, từ Thứ Hai đến Chủ Nhật */
