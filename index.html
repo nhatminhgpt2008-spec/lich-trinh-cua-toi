@@ -1042,13 +1042,12 @@ html.wk-anim body{overflow-x:clip}   /* tránh thanh cuộn ngang thoáng qua l�
 .np-sum{display:flex;flex-wrap:wrap;gap:8px}
 .np-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;font-size:12.5px;background:var(--surface);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
 .np-chip b{color:var(--ink);font-variant-numeric:tabular-nums}
-.np-chip.live{border-color:var(--live-color);background:color-mix(in srgb,var(--live-color) 14%,var(--surface))}
-.np-chip.next{border-color:var(--next-color);background:color-mix(in srgb,var(--next-color) 14%,var(--surface))}
-.np-chip.soon{border-color:color-mix(in srgb,var(--next-color) 50%,var(--line));background:color-mix(in srgb,var(--next-color) 8%,var(--surface))}
-.np-chip.done{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,var(--surface))}
-.np-chip.dl{--bl:#4f8cff;border-color:var(--bl);background:color-mix(in srgb,var(--bl) 15%,var(--surface))}
+.np-chip.live{border-color:var(--live-color);background:color-mix(in srgb,var(--live-color) 22%,var(--surface));color:color-mix(in srgb,var(--live-color) 78%,var(--ink))}
+.np-chip.next{border-color:color-mix(in srgb,var(--next-color) 60%,var(--line));background:color-mix(in srgb,var(--next-color) 20%,var(--surface));color:color-mix(in srgb,var(--next-color) 62%,var(--ink))}
+.np-chip.soon{border-color:color-mix(in srgb,var(--soon-color) 55%,var(--line));background:color-mix(in srgb,var(--soon-color) 12%,var(--surface));color:var(--soon-text)}
+.np-chip.done{border-color:color-mix(in srgb,var(--accent) 50%,var(--line));background:color-mix(in srgb,var(--accent) 16%,var(--surface));color:var(--accent)}
 .np-chip.zero{opacity:.6}
-.np-chip.live,.np-chip.next,.np-chip.soon,.np-chip.done,.np-chip.dl,.np-chip.warn,.np-chip.late{color:var(--ink)}
+.np-chip.warn,.np-chip.late{color:var(--ink)}
 .np-chip.warn{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 14%,var(--surface))}
 .np-chip.late{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 14%,var(--surface))}
 .np-acts{display:flex;flex-wrap:wrap;gap:8px}
@@ -1135,9 +1134,22 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 .np-row.cancel .np-st{background:var(--cancel-bg);color:var(--cancel-bd);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cancel-bd) 50%,transparent)}
 .np-row.cancel .np-st::before{content:"✕"}
 .np-tabs{display:flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:12px;background:var(--surface);width:max-content;max-width:100%;position:relative}
-.np-tabs button{position:relative;z-index:1;border:0;background:none;height:32px;padding:0 12px;border-radius:8px;color:var(--muted);font-weight:600;white-space:nowrap;transition:color .18s}
-.np-tabs button b{margin-left:4px;font-variant-numeric:tabular-nums}
+.np-tabs button{position:relative;z-index:1;border:0;background:none;height:36px;padding:0 14px;border-radius:8px;color:var(--muted);font-weight:600;white-space:nowrap;transition:color .18s;display:inline-flex;align-items:center;gap:7px}
+/* count number → pill badge màu riêng theo loại */
+.np-tabs button b{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:20px;padding:0 6px;border-radius:99px;font-size:11.5px;font-weight:800;font-variant-numeric:tabular-nums;margin:0;background:color-mix(in srgb,var(--ink) 10%,transparent);color:var(--ink);transition:background .18s,color .18s}
+.np-tabs button[data-tab="open"] b{background:color-mix(in srgb,var(--cancel-bd) 16%,transparent);color:var(--cancel-bd)}
+.np-tabs button[data-tab="done"] b{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
+/* active: text đậm màu, badge fill đặc */
 .np-tabs button.on{background:none;color:var(--accent)}
+.np-tabs button.on b{background:var(--accent);color:var(--accent-ink)}
+.np-tabs button[data-tab="all"].on{color:var(--ink)}
+.np-tabs button[data-tab="all"].on b{background:var(--ink);color:var(--bg)}
+.np-tabs button[data-tab="open"].on{color:var(--cancel-bd)}
+.np-tabs button[data-tab="open"].on b{background:var(--cancel-bd);color:#fff}
+/* tabInd đổi màu theo tab đang active */
+.np-tabs:has(button[data-tab="all"].on) .tabInd{background:color-mix(in srgb,var(--ink) 9%,transparent)}
+.np-tabs:has(button[data-tab="open"].on) .tabInd{background:color-mix(in srgb,var(--cancel-bd) 14%,transparent)}
+.np-tabs:has(button[data-tab="done"].on) .tabInd{background:var(--accent-soft)}
 .np-list{padding:4px 8px 8px;border:1px solid var(--line);border-radius:16px;background:var(--surface);max-height:max(640px,calc(100vh - 250px));overflow-y:auto;overscroll-behavior:contain}   /* chiều cao theo màn hình (trước: tối đa 640px/70vh → chỉ ~10 ô; nay tận dụng gần hết chiều cao cửa sổ, tối thiểu 640px nên màn nhỏ vẫn giữ như cũ) — cố định chiều cao (không phình ra hết cỡ khi có nhiều deadline), cuộn riêng bên trong thay vì đẩy cả trang dài ra; không ép scrollbar-width:thin để giữ đúng thanh scroll tùy biến đang dùng cho cả trang */
 .np-list .np-empty{border:0}
 .np-dl{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:9px 8px;border-radius:10px;cursor:pointer;transition:background-color .15s}
@@ -4559,7 +4571,6 @@ function renderNowBar(){
     `<span class="np-chip next${todayNext ? '' : ' zero'}">⏳ Tiếp theo <b>${todayNext}</b></span>`,
     `<span class="np-chip soon${soonN ? '' : ' zero'}">🕒 Sắp tới <b>${soonN}</b></span>`,
     `<span class="np-chip done${doneN ? '' : ' zero'}">✅ Buổi đã xong <b>${doneN}</b></span>`,
-    `<span class="np-chip dl${open.length ? '' : ' zero'}">📌 Deadline <b>${open.length}</b></span>`,
     dueToday ? `<span class="np-chip warn">⏰ Hạn hôm nay <b>${dueToday}</b></span>` : '',
     lateN ? `<span class="np-chip late">⚠ Quá hạn <b>${lateN}</b></span>` : ''].join('');
   const html = `<div class="np-top"><div class="np-sum">${chips}</div><div class="np-acts">
