@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
+<meta name="description" content="Lịch trình cá nhân: thời khoá biểu, deadline và thông báo lịch học.">
+<link rel="icon" type="image/png" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0d6b45">
 <meta name="mobile-web-app-capable" content="yes">
@@ -13,7 +15,8 @@
 <title>Lịch trình của tôi</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <style>
 :root{
   --bg:#edf1f0; --surface:#ffffff; --ink:#17201c; --muted:#66736c; --line:#dbe2df; --line-soft:#ecf0ee;
@@ -23,6 +26,7 @@
   --cell-cancel:#e04a42; --cell-cancel-ink:#ffffff; --cell-conflict:#ffe680; --cell-conflict-ink:#2a1d00;
   --live-color:#e5484d; --live-ink:#ffffff; --next-color:#ffb300; --next-ink:#2a1900;
   --dl:#2e9d66; --dl-ink:#ffffff;
+  --soon-color:#2f6fed; --soon-text:#1f55c4;
 }
 [data-theme=dark]{
   --bg:#0f1412; --surface:#171e1b; --ink:#e7ede9; --muted:#93a19a; --line:#28322e; --line-soft:#1f2723;
@@ -32,9 +36,10 @@
   --cell-cancel:#a83a33; --cell-cancel-ink:#ffffff; --cell-conflict:#6b5a10; --cell-conflict-ink:#fff3c0;
   --live-color:#ff6b6a; --live-ink:#280505; --next-color:#ffcc33; --next-ink:#2a1900;
   --dl:#5bc288; --dl-ink:#062314;
+  --soon-color:#6ea8ff; --soon-text:#8dbbff;
 }
 *{box-sizing:border-box}
-html{color-scheme:light dark;scroll-padding-top:env(safe-area-inset-top,0px)}
+html{color-scheme:light dark;scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeSpeed}
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 [data-theme=light]{color-scheme:light}[data-theme=dark]{color-scheme:dark}
 body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 "Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
@@ -96,10 +101,17 @@ textarea{height:auto;padding:8px 10px;width:100%;resize:vertical}
 .seg{display:inline-flex;position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
 .seg button{border:0!important;border-radius:0!important;height:34px!important;justify-content:center;background:transparent!important;color:var(--ink);position:relative;z-index:1;transition:color .18s ease}
 .seg button.on{color:var(--accent);font-weight:600}
-.seg-ind{position:absolute;top:0;left:0;height:100%;width:1px;transform-origin:left center;background:var(--accent-soft);z-index:0;transition:transform .22s cubic-bezier(.4,0,.2,1);will-change:transform}
+.seg-ind{position:absolute;top:0;left:0;height:100%;width:1px;transform-origin:left center;will-change:transform;background:var(--accent-soft);z-index:0;transition:transform .22s cubic-bezier(.4,0,.2,1);will-change:transform}
 @keyframes schedSwap{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 .sched-swap{animation:schedSwap .22s ease}
-@media (prefers-reduced-motion:reduce){.seg button{transition:none}.seg-ind{transition:none}.sched-swap{animation:none}.tabInd,#todoTabs button,#todoStatus button{transition:none}}
+/* hiệu ứng vào cho: trang chính sau khi đăng nhập, trang đăng nhập, bảng lọc cột ở trang Lớp (chỉ đổi độ mờ/dịch nhẹ, không tạo khung chứa mới) */
+@keyframes pageFade{from{opacity:0}to{opacity:1}}
+@keyframes popIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+body.authed .app{animation:pageFade .25s ease}
+body.gate #authGate{animation:pageFade .25s ease}
+.fx-pop{animation:popIn .14s ease}
+@media (prefers-reduced-motion:reduce){body.authed .app,body.gate #authGate,.fx-pop{animation:none}}
+@media (prefers-reduced-motion:reduce){.seg button{transition:none}.seg-ind{transition:none}.sched-swap{animation:none}.tabInd,#todoTabs button,#todoStatus button,.np-tabs button{transition:none}}
 .searchbox{position:relative;display:inline-flex;align-items:center;height:36px;width:36px;border:1px solid var(--line);background:var(--surface);border-radius:18px;overflow:hidden;flex:0 0 auto;transition:width .18s ease,border-color .18s ease}
 .searchbox:focus-within,.searchbox.has-val{width:240px;border-color:var(--accent)}
 .searchbox .q-ic{position:absolute;left:0;top:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:var(--muted);pointer-events:none}
@@ -137,6 +149,7 @@ dialog .btn.danger{border-color:var(--danger)}
 .nowbar .nb .t{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nowbar .nb .m{font-size:12.5px;color:var(--muted)}
 @media (min-width:900px){.nowbar{grid-template-columns:repeat(2,minmax(320px,1fr))}}
+
 /* layout */
 .layout{display:grid;grid-template-columns:minmax(0,1fr) clamp(280px,20vw,340px);column-gap:16px;row-gap:0;align-items:start}
 .layout main{display:contents}
@@ -195,13 +208,12 @@ dialog .btn.danger{border-color:var(--danger)}
 
 /* Live — hiệu ứng giống "Sắp diễn ra" nhưng dùng màu đỏ */
 .ag.live,.cell.live{
+  transform:translateZ(0);
   border-radius:10px;
   border-color:color-mix(in srgb,var(--live-color) 70%,transparent);
   background:color-mix(in srgb,var(--live-color) 26%,var(--surface));
   --pulse-color:var(--live-color);
   box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pulse-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--pulse-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--pulse-color) 55%,transparent);
-  animation:schedulePulse 1.6s ease-in-out infinite;
-  will-change:box-shadow;
 }
 /* viền đều 1px khi đang diễn ra: bỏ phần viền trái dày 4px của Danh sách để khớp với vòng glow tròn đều, mượt như ở Bảng */
 .ag.live{border-left-width:1px}
@@ -230,38 +242,33 @@ dialog .btn.danger{border-color:var(--danger)}
   border-radius:999px;
   font-weight:800;
   box-shadow:0 0 4px color-mix(in srgb,var(--live-color) 60%,transparent);
-  animation:live-tag-pulse 1.6s ease-in-out infinite;
-  will-change:box-shadow;
+  position:relative;
+  contain:layout style;
 }
 
 /* Nhịp highlight dùng chung: "Đang diễn ra" và "Sắp diễn ra" chuyển động hoàn toàn đồng bộ */
-@keyframes schedulePulse{
-  0%,100%{
-    box-shadow:
-      inset 0 0 0 1px color-mix(in srgb,var(--pulse-color) 70%,transparent),
-      0 0 0 4px color-mix(in srgb,var(--pulse-color) 18%,transparent),
-      0 0 22px 4px color-mix(in srgb,var(--pulse-color) 55%,transparent);
-  }
-  50%{
-    box-shadow:
-      inset 0 0 0 1px color-mix(in srgb,var(--pulse-color) 70%,transparent),
-      0 0 0 7px color-mix(in srgb,var(--pulse-color) 32%,transparent),
-      0 0 30px 8px color-mix(in srgb,var(--pulse-color) 70%,transparent);
-  }
-}
+/* tối ưu: ease-in-out thay bằng cubic-bezier mềm hơn, cảm giác thở tự nhiên */
+/* Nhịp thở mượt: glow đỉnh nằm ở ::before (tĩnh), chỉ đổi opacity → chạy trên GPU, không phải vẽ lại shadow mỗi khung hình */
+.cell.live:not(.jump-highlight)::before,.cell.next:not(.jump-highlight)::before,.ag.live:not(.jump-highlight)::before,.ag.next:not(.jump-highlight)::before{
+  opacity:0;transition:none;
+  box-shadow:0 0 0 7px color-mix(in srgb,var(--pulse-color) 20%,transparent),0 0 30px 8px color-mix(in srgb,var(--pulse-color) 42%,transparent);
+  animation:scheduleGlow 1.6s cubic-bezier(.45,.05,.55,.95) infinite;
+  will-change:opacity}
+@keyframes scheduleGlow{0%,100%{opacity:0}50%{opacity:1}}
 
-@keyframes live-tag-pulse{
-  0%,100%{box-shadow:0 1px 4px color-mix(in srgb,var(--live-color) 60%,transparent)}
-  50%{box-shadow:0 0 0 4px color-mix(in srgb,var(--live-color) 55%,transparent)}
-}
-.tag.live i{width:6px;height:6px;border-radius:50%;background:currentColor;animation:livedot 1.6s ease-in-out infinite;will-change:opacity}
-.ag.next{border-radius:10px;border-left-width:1px;border-color:color-mix(in srgb,var(--next-color) 70%,transparent);background:color-mix(in srgb,var(--next-color) 26%,var(--surface));--pulse-color:var(--next-color);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pulse-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--pulse-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--pulse-color) 55%,transparent);animation:schedulePulse 1.6s ease-in-out infinite}
+/* vòng sáng quanh nhãn: ::after tĩnh, chỉ đổi opacity (mượt, không vẽ lại) */
+.tag.live::after,.tag.next::after{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;opacity:0;animation:tagRing 1.6s cubic-bezier(.45,.05,.55,.95) infinite;will-change:opacity}
+.tag.live::after{box-shadow:0 0 0 4px color-mix(in srgb,var(--live-color) 55%,transparent)}
+.tag.next::after{box-shadow:0 0 0 4px color-mix(in srgb,var(--next-color) 55%,transparent)}
+.np-k .tag.live::after,.np-k .tag.next::after{display:none}
+@keyframes tagRing{0%,100%{opacity:0}50%{opacity:1}}
+.tag.live i{width:6px;height:6px;border-radius:50%;background:currentColor;animation:livedot 1.6s ease-in-out infinite;will-change:opacity;contain:layout style}
+.ag.next{border-radius:10px;border-left-width:1px;border-color:color-mix(in srgb,var(--next-color) 70%,transparent);background:color-mix(in srgb,var(--next-color) 26%,var(--surface));--pulse-color:var(--next-color);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pulse-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--pulse-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--pulse-color) 55%,transparent);}
 .ag.next::after,.cell.next::after{content:"";position:absolute;inset:0;border-radius:inherit;background:color-mix(in srgb,var(--next-color) 26%,transparent);pointer-events:none}
-.cell.next{--pulse-color:var(--next-color);border-radius:10px;background:color-mix(in srgb,var(--next-color) 26%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pulse-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--pulse-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--pulse-color) 55%,transparent);animation:schedulePulse 1.6s ease-in-out infinite}
+.cell.next{--pulse-color:var(--next-color);border-radius:10px;background:color-mix(in srgb,var(--next-color) 26%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pulse-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--pulse-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--pulse-color) 55%,transparent);}
 .cell.next:hover,.ag.next:hover{background:color-mix(in srgb,var(--next-color) 34%,var(--surface))}
-.tag.next{background:var(--next-color);color:var(--next-ink);padding:0 7px 0 5px;border:1px solid var(--next-color);font-weight:800;display:inline-flex;align-items:center;gap:4px;box-shadow:0 1px 4px color-mix(in srgb,var(--next-color) 60%,transparent);animation:nextpulse 1.6s ease-in-out infinite}
+.tag.next{background:var(--next-color);color:var(--next-ink);padding:0 7px 0 5px;border:1px solid var(--next-color);font-weight:800;display:inline-flex;align-items:center;gap:4px;box-shadow:0 0 4px color-mix(in srgb,var(--next-color) 60%,transparent);position:relative}
 .tag.next::before{content:"⏳";font-size:9.5px;line-height:1}
-@keyframes nextpulse{50%{box-shadow:0 0 0 4px color-mix(in srgb,var(--next-color) 55%,transparent)}}
 /* nội dung rõ hơn trong ô sắp/đang diễn ra */
 .cell.next>*,.cell.live>*{position:relative;z-index:1}
 .cell.next>.cpyw,.cell.live>.cpyw{z-index:5}   /* nút copy luôn nằm trên nhãn trạng thái */
@@ -325,9 +332,17 @@ dialog .btn.danger{border-color:var(--danger)}
 .dlcell .dlst-in{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:3px .35em;font-size:10.5px;font-size:clamp(8px,5.8cqw,10.5px)}   /* dòng font-size đầu là dự phòng cho trình duyệt cũ chưa hỗ trợ cqw; wrap chỉ còn là lưới an toàn khi ô hẹp đến mức chữ đã chạm mức tối thiểu 8px */
 .dlcell .dlst-in .chip{margin:0;white-space:nowrap;font-size:1em;padding:1px .5em}
 .chip.ok,.tag.dl.ok{background:var(--accent);color:var(--accent-ink);font-weight:700;box-shadow:none}
-@media (prefers-reduced-motion:reduce){.tag.next,.tag.live,.ag.live,.cell.live,.ag.next,.cell.next,.tag.live i{animation:none}}
+@media (prefers-reduced-motion:reduce){.tag.live::after,.tag.next::after,.tag.live i,.cell.live::before,.cell.next::before,.ag.live::before,.ag.next::before{animation:none!important}}
 .cell .lvb{margin-bottom:3px;position:relative;z-index:1}.cell .lvb .tag{margin:0}
 @keyframes livedot{0%,100%{opacity:.25}50%{opacity:1}}
+/* chấm của nhãn "Đang diễn ra"/"Kết thúc sau…": dùng đúng chấm đỏ 🔴 như nút Thông báo (thay chấm đen cũ), giữ nguyên nhịp chớp */
+.tag.live i{width:auto;height:auto;border-radius:0;background:none;display:inline-flex;align-items:center;font-style:normal;line-height:1}
+.tag.live i::before{content:"🔴";font-size:10px}
+/* nút đỏ "Đang diễn ra" ở Thông báo: chớp chớp khi có buổi đang diễn ra */
+.np-chip.live:not(.zero) .np-ld{display:inline-block;animation:livedot 1.6s ease-in-out infinite}
+@keyframes npLiveBlink{0%,100%{background:color-mix(in srgb,var(--live-color) 14%,var(--surface));box-shadow:0 0 0 0 transparent}50%{background:color-mix(in srgb,var(--live-color) 42%,var(--surface));box-shadow:0 0 0 4px color-mix(in srgb,var(--live-color) 35%,transparent)}}
+@keyframes npLiveDot{0%,100%{opacity:1}50%{opacity:.2}}
+@media (prefers-reduced-motion:reduce){.np-chip.live .np-ld{animation:none}}
 
 .ag .em{white-space:normal}
 .ag .ex{margin-top:2px;font-size:12px;color:var(--muted);white-space:pre-line;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
@@ -355,7 +370,7 @@ dialog .btn.danger{border-color:var(--danger)}
 #todoTabs,#todoStatus{position:relative}
 #todoTabs button,#todoStatus button{position:relative;z-index:1;transition:color .18s ease,border-color .18s ease}
 #todoTabs button.on,#todoStatus button.on{background:none}
-.tabInd{position:absolute;top:0;left:0;width:0;height:0;border-radius:7px;background:var(--accent-soft);z-index:0;pointer-events:none;transition:transform .22s cubic-bezier(.4,0,.2,1),width .22s cubic-bezier(.4,0,.2,1),height .22s cubic-bezier(.4,0,.2,1)}
+.tabInd{position:absolute;top:0;left:0;width:0;height:0;border-radius:7px;background:var(--accent-soft);z-index:0;pointer-events:none;will-change:transform;transition:transform .22s cubic-bezier(.4,0,.2,1),width .22s cubic-bezier(.4,0,.2,1),height .22s cubic-bezier(.4,0,.2,1)}
 .addtodo{display:grid;grid-template-columns:minmax(0,1fr) max-content auto;gap:6px;margin-bottom:8px}
 .addtodo input{font-size:12.5px}
 .addtodo input[type=text]{padding:0 8px}
@@ -480,7 +495,7 @@ ul.todos{list-style:none;margin:0;padding:0 4px 0 0;display:grid;gap:2px;height:
 .fx th .fx-sort .arr{font-size:10px;opacity:.35;flex:none}
 .fx th .fx-sort.on .arr{opacity:1;color:var(--accent);font-weight:700}
 .fx .lg.static{white-space:nowrap;display:inline-flex;align-items:center}
-.fx .fx-row{cursor:pointer;position:relative;transform-origin:0 50%;transition:transform .15s,box-shadow .2s,filter .2s,opacity .15s}
+.fx .fx-row{cursor:pointer;position:relative;transform-origin:0 50%;transition:transform .15s cubic-bezier(.22,.8,.3,1),box-shadow .2s,opacity .15s;will-change:transform,opacity}
 .fx td.n{padding:7px 8px}
 .fx .fx-index{display:grid;grid-template-columns:18px 22px;align-items:center;justify-content:center;gap:5px;min-width:45px}
 .fx .fx-num{display:inline-block;min-width:18px;text-align:center;font-variant-numeric:tabular-nums}
@@ -771,7 +786,7 @@ ul.todos{container-type:inline-size;margin-right:-8px}
 .todo{grid-template-columns:20px minmax(0,1fr);position:relative;padding-right:0}
 .todo .acts{position:absolute;top:2px;right:0;display:flex;gap:2px;border-radius:6px}
 .todo:hover .acts,.todo:focus-within .acts{background:var(--line-soft)}
-.todo .ttl{padding-right:48px}
+.todo .ttl{padding-right:72px}   /* chừa chỗ cho 3 nút: ghim · sửa · xóa */
 .todo .ed{border:0;background:none;color:var(--muted);font-size:14px;line-height:1;height:24px;padding:0 4px;visibility:hidden}
 .todo .ed:hover{color:var(--ink)}
 .todo:hover .ed,.todo:focus-within .ed{visibility:visible}
@@ -946,6 +961,23 @@ dialog>.sbar,#authGate>.sbar{z-index:20}
   .sbar-y::before{width:5px;margin-left:-2.5px}.sbar-x::before{height:5px;margin-top:-2.5px}
   .sbar-y .sbthumb{width:7px;margin-left:-3.5px}.sbar-x .sbthumb{height:7px;margin-top:-3.5px}
 }
+/* ===== Ghim deadline (Bảng, Danh sách, khung Deadline) ===== */
+.todo .pn{border:0;background:none;font-size:13px;line-height:1;height:24px;padding:0 4px;visibility:hidden;filter:grayscale(1);opacity:.75;cursor:pointer}
+.todo:hover .pn,.todo:focus-within .pn{visibility:visible}
+.todo .pn:hover{filter:none;opacity:1}
+.todo.pinned .pn{visibility:visible;filter:none;opacity:1}
+.todo.pinned{background:color-mix(in srgb,var(--warn) 9%,transparent)}
+.todo.pinned:hover{background:color-mix(in srgb,var(--warn) 15%,transparent)}
+@media (hover:none){.todo .pn{visibility:visible}}
+.dlpin{position:absolute;top:2px;right:3px;z-index:3;width:20px;height:20px;padding:0;border:0;border-radius:6px;background:none;font-size:11px;line-height:1;cursor:pointer;opacity:0;filter:grayscale(1);transition:opacity .15s,filter .15s,background-color .15s}
+.dlcell:hover .dlpin,.ag.dl:hover .dlpin,.dlpin:focus-visible{opacity:.8}
+.dlpin:hover{opacity:1!important;background:color-mix(in srgb,var(--warn) 25%,transparent)}
+.dlpin.on{opacity:1;filter:none}
+@media (hover:none){.dlpin{opacity:.6}.dlpin.on{opacity:1}}
+.dlcell.pinned>div:first-of-type{padding:0 13px}   /* tiêu đề không đè lên nút ghim */
+.ag.dl .dlpin{top:6px;right:8px;width:24px;height:24px;font-size:13px}
+.ag.dl .et{padding-right:28px}
+@media print{.dlpin,.todo .pn{display:none!important}}
 /* chừa chỗ để thanh cuộn không đè lên nội dung */
 ul.todos{padding-right:12px}
 .scroller.sb-has-x,.stats.sb-has-x,.legend.sb-has-x{padding-bottom:12px}
@@ -965,7 +997,7 @@ html.wk-anim body{overflow-x:clip}   /* tránh thanh cuộn ngang thoáng qua l�
    Thiết kế KHÔNG đổi hình học (không phóng to, không dịch chuyển, không đổi z-index): nền đậm dần + viền sáng chạy vào bên trong ô.
    Nhờ vậy vùng chuột nhạy luôn đứng yên nên không còn chớp/giật khi rê qua lại, chữ không bị mờ, và ô kế bên không bị đè lên. */
 @keyframes cellIn{from{opacity:0;transform:translateY(10px) scale(.94)}to{opacity:1;transform:none}}
-.cell,.dlcell,.nowbar .nb,.ag{--ease:cubic-bezier(.22,.8,.3,1);position:relative;transition:background-color .2s var(--ease)}
+.cell,.dlcell,.nowbar .nb,.ag{--ease:cubic-bezier(.22,.8,.3,1);position:relative;transition:background-color .18s var(--ease);contain:layout style}
 .cell{--gc:var(--cc,var(--muted))}
 .cell.live,.ag.live{--gc:var(--live-color)}
 .cell.next,.ag.next{--gc:var(--next-color)}
@@ -1003,8 +1035,136 @@ html.wk-anim body{overflow-x:clip}   /* tránh thanh cuộn ngang thoáng qua l�
 .wk-stagger .sheet td:nth-child(7) .cell:not(.live):not(.next),.wk-stagger .sheet td:nth-child(7) .dlcell{animation-delay:225ms}
 .wk-stagger .sheet td:nth-child(8) .cell:not(.live):not(.next),.wk-stagger .sheet td:nth-child(8) .dlcell{animation-delay:270ms}
 @media (prefers-reduced-motion:reduce){.wk-stagger .sheet .cell,.wk-stagger .sheet .dlcell{animation:none!important}}
+
+/* ===== trang "Thông báo" ===== */
+#nowBar.page{display:block;margin:0;padding:4px 0 24px;background:none;box-shadow:none;content-visibility:auto;contain-intrinsic-size:auto 600px}
+.np-top{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;margin:2px 0 16px}
+.np-sum{display:flex;flex-wrap:wrap;gap:8px}
+.np-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;font-size:12.5px;background:var(--surface);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.np-chip b{color:var(--ink);font-variant-numeric:tabular-nums}
+.np-chip.live{border-color:var(--live-color);background:color-mix(in srgb,var(--live-color) 14%,var(--surface))}
+.np-chip.next{border-color:var(--next-color);background:color-mix(in srgb,var(--next-color) 14%,var(--surface))}
+.np-chip.soon{border-color:color-mix(in srgb,var(--next-color) 50%,var(--line));background:color-mix(in srgb,var(--next-color) 8%,var(--surface))}
+.np-chip.done{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,var(--surface))}
+.np-chip.dl{--bl:#4f8cff;border-color:var(--bl);background:color-mix(in srgb,var(--bl) 15%,var(--surface))}
+.np-chip.zero{opacity:.6}
+.np-chip.live,.np-chip.next,.np-chip.soon,.np-chip.done,.np-chip.dl,.np-chip.warn,.np-chip.late{color:var(--ink)}
+.np-chip.warn{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 14%,var(--surface))}
+.np-chip.late{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 14%,var(--surface))}
+.np-acts{display:flex;flex-wrap:wrap;gap:8px}
+.np-acts .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+.np-bell.on{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.np-bell:disabled{opacity:.55;cursor:not-allowed}
+.np-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start}
+@media (min-width:900px){.np-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr)}}
+.np-col{display:grid;gap:12px;min-width:0;align-content:start}
+.np-h{margin:0;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.np-card{--nbc:var(--live-color);position:relative;padding:14px 16px 14px 17px;border-radius:12px;border:1px solid var(--line);border-left:4px solid var(--nbc);background:color-mix(in srgb,var(--nbc) 12%,var(--surface));cursor:pointer;transition:background-color .2s,transform .2s,box-shadow .2s}
+/* thanh màu bên trái là chính viền trái của thẻ → luôn khớp đường bo góc */
+.np-card.next{--nbc:var(--next-color)}
+.np-card:hover{background:color-mix(in srgb,var(--nbc) 20%,var(--surface))}
+.np-k .tag{margin-left:0;font-size:12px;padding-top:1px;padding-bottom:1px;vertical-align:baseline}
+.np-k .tag.next::before{font-size:11px}
+.np-k .tag.live,.np-k .tag.next{animation:none;box-shadow:none}   /* nhãn ở tiêu đề thẻ: bỏ vòng sáng nhấp nháy */
+.np-k .tag.live{background:color-mix(in srgb,var(--live-color) 14%,var(--surface));color:var(--ink);border:1px solid var(--live-color);border-radius:99px;padding:5px 12px;gap:6px;font-size:12.5px;font-weight:600;animation:none;box-shadow:none}   /* nút đỏ ở thẻ Lịch học: cùng kiểu với nút "Đang diễn ra" ở đầu trang + chớp chớp (chỉ riêng nút, không phải cả thẻ) */
+.np-k .tag.live i{animation:livedot 1.6s ease-in-out infinite}
+.np-k .tag.live i::before{font-size:12px;filter:none}
+.np-k .tag.next{background:color-mix(in srgb,var(--next-color) 14%,var(--surface));color:var(--ink);border:1px solid var(--next-color);border-radius:99px;padding:5px 12px;gap:6px;font-size:12.5px;font-weight:600;animation:none;box-shadow:none}   /* cùng kiểu với nút đỏ "Đang diễn ra", chỉ khác màu vàng */
+.np-k .tag.next::before{font-size:12px}
+/* Danh sách: nhãn "Kết thúc sau…" / "Diễn ra sau…" nằm cùng dòng với tên môn -> căn giữa theo dòng chữ (không bị nhô lên), cùng chiều cao; "Diễn ra sau" bo tròn như "Kết thúc sau" */
+.ag .et .tag.live,.ag .et .tag.next{vertical-align:middle;box-sizing:border-box;height:20px;line-height:18px;padding-top:0;padding-bottom:0;padding-left:8px;padding-right:9px;gap:5px;border-radius:999px;font-size:11px;font-weight:800;align-items:center}
+.ag .et .tag.live i::before,.ag .et .tag.next::before{font-size:10px;line-height:1;display:block}
+/* Bảng + Danh sách: bỏ vòng sáng/viền nhấp nháy quanh nhãn trạng thái (Kết thúc sau… / Diễn ra sau…); cả hai nhãn bo tròn hết cỡ như nhau */
+.tag.live,.tag.next{box-shadow:none;border-radius:999px}
+.tag.live::after,.tag.next::after{display:none;animation:none}
+/* "Cách đọc thời khoá biểu": mở/đóng trượt mượt (trình duyệt cũ không hỗ trợ thì vẫn mở/đóng tức thì như trước) */
+:root{interpolate-size:allow-keywords}
+.guide::details-content{block-size:0;overflow:hidden;transition:block-size .24s cubic-bezier(.4,0,.2,1),content-visibility .24s allow-discrete}
+.guide[open]::details-content{block-size:auto}
+@media (prefers-reduced-motion:reduce){.guide::details-content{transition:none}}
+@media (prefers-reduced-motion:reduce){.np-k .tag.live,.np-k .tag.live i{animation:none}}
+.np-k{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.np-t{font-size:17px;font-weight:700;line-height:1.35;overflow-wrap:anywhere}
+.np-m{display:flex;flex-wrap:wrap;gap:2px 0;margin-top:4px;font-size:12.5px;color:var(--muted)}
+.np-m .sep{margin:0 8px;opacity:.6}
+.np-prog{display:flex;align-items:center;gap:12px;margin-top:10px}
+.np-bar{flex:1 1 0;min-width:0;height:7px;border-radius:99px;background:color-mix(in srgb,var(--ink) 14%,transparent);overflow:hidden}
+.np-bar i{display:block;height:100%;border-radius:99px;background:var(--nbc);transition:width 1s linear}
+.np-card .cd{font-variant-numeric:tabular-nums;font-weight:700;font-size:15px;white-space:nowrap}
+.np-card .cd{flex:0 0 auto;text-align:left}   /* canh trái: mọi ô chữ đã được đo chung một bề rộng (npFixCd) nên mép trái luôn khớp giữa các thẻ; canh trái còn giúp chữ "còn" đứng yên, không bị đẩy qua lại mỗi khi số giờ/phút rút ngắn */
+/* thẻ Tiếp theo giờ có thanh tiến độ (khoảng chờ) giống thẻ Đang diễn ra nên dùng chung layout mặc định của .np-prog, "còn …" tự nằm sát phải sau thanh */
+.np-empty{padding:22px 16px;border:1px dashed var(--line);border-radius:14px;text-align:center;color:var(--muted)}
+.np-empty.sm{padding:12px;font-size:13px}
+.np-sec{padding:12px 8px 8px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+.np-sh{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:0 8px 6px;font-weight:700}
+.np-sh small,.np-gl small{font-weight:500;color:var(--muted);font-size:12px}
+.np-gl{display:flex;align-items:baseline;justify-content:space-between;padding:10px 8px 4px;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.np-gl.late{color:var(--danger)}
+.np-collapseall{border:0;background:none;padding:0;color:var(--accent);font-weight:600;font-size:12px;cursor:pointer;text-transform:none;letter-spacing:0}
+.np-collapseall:hover{text-decoration:underline}
+button.np-gl{width:100%;border:0;background:none;font-family:inherit;cursor:pointer;text-align:left;border-radius:8px;transition:background-color .15s}
+button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.np-gl-l{display:flex;align-items:center;gap:6px;min-width:0}
+.np-gl-arrow{display:inline-block;flex:0 0 auto;font-size:10px;transition:transform .15s}
+.np-day:not(.collapsed) .np-gl-arrow,.np-fold:not(.collapsed) .np-gl-arrow{transform:rotate(90deg)}
+.np-day-body{display:grid;grid-template-rows:1fr;transition:grid-template-rows .22s cubic-bezier(.4,0,.2,1)}   /* kỹ thuật grid-rows 0fr/1fr: co giãn chiều cao mượt mà không cần đo bằng JS */
+.np-day-body>.np-day-in{overflow:hidden;min-height:0}
+.np-day.collapsed .np-day-body,.np-fold.collapsed .np-day-body{grid-template-rows:0fr}
+@media (prefers-reduced-motion:reduce){.np-day-body{transition:none}}
+.np-row{display:grid;grid-template-columns:48px 10px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px;border-radius:10px;cursor:pointer;transition:background-color .15s}
+.np-row:hover,.np-dl:hover{background:color-mix(in srgb,var(--ink) 7%,transparent)}
+.np-time{font-variant-numeric:tabular-nums;font-weight:700;font-size:13px;line-height:1.2}
+.np-time small{display:block;font-weight:500;color:var(--muted);font-size:11.5px}
+.np-dot{width:10px;height:10px;border-radius:50%;background:var(--cc,var(--accent))}
+.np-main{display:grid;min-width:0}
+.np-main b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.np-main small{color:var(--muted);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.np-st{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:96px;height:24px;padding:0 11px;border-radius:99px;font-size:11.5px;font-weight:700;letter-spacing:.01em;white-space:nowrap;background:color-mix(in srgb,var(--ink) 9%,transparent);color:var(--muted);box-shadow:inset 0 0 0 1px color-mix(in srgb,currentColor 35%,transparent)}   /* 4 nhãn trạng thái cùng một khuôn (cùng kích thước, chấm/biểu tượng đầu nhãn, viền mảnh); chỉ khác màu: Đang diễn ra = đỏ đặc + chấm nhấp nháy, Tiếp theo = vàng đặc, Sắp tới = xanh dương nhạt, Đã xong = xanh lá nhạt + dấu ✓ */
+.np-st::before{content:"";flex:0 0 auto;font-size:11px;line-height:1}   /* icon đồng bộ với các tag tổng quan ở đầu trang */
+.np-row.live .np-st{background:color-mix(in srgb,var(--live-color) 22%,var(--surface));color:color-mix(in srgb,var(--live-color) 78%,var(--ink));box-shadow:inset 0 0 0 1px var(--live-color)}   /* nền nhạt để icon 🔴 nhìn rõ; nhịp nhấp nháy dùng chung với nhãn "Kết thúc sau…" ở Bảng/Danh sách */
+.np-row.live .np-st::before{content:"🔴";animation:livedot 1.6s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.np-row.live .np-st::before{animation:none}}
+.np-row.next .np-st{background:color-mix(in srgb,var(--next-color) 20%,transparent);color:color-mix(in srgb,var(--next-color) 62%,var(--ink));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--next-color) 60%,transparent)}   /* cùng kiểu nền nhạt + viền mảnh như 3 nhãn còn lại, không đổ bóng */
+.np-row.next .np-st::before{content:"⏳"}
+.np-row.soon .np-st{background:color-mix(in srgb,var(--soon-color) 18%,transparent);color:var(--soon-text);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--soon-color) 55%,transparent)}
+.np-row.soon .np-st::before{content:"🕒"}
+.np-row.done .np-time,.np-row.done .np-dot,.np-row.done .np-main{opacity:.55}   /* chỉ làm mờ giờ/chấm/tiêu đề; nhãn trạng thái giữ rõ màu riêng bên dưới (opacity ở .np-row cũ sẽ làm mờ luôn cả nhãn, khó phân biệt với "Sắp tới") */
+.np-row.done .np-st{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 50%,transparent)}
+.np-row.done .np-st::before{content:"✅"}   /* nhãn "Đã xong" tách màu riêng (xanh lá, cùng tông "Đã hoàn thành"), không còn xám như các trạng thái khác */
+.np-row.cancel .np-main b{text-decoration:line-through}
+.np-row.cancel .np-st{background:var(--cancel-bg);color:var(--cancel-bd);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cancel-bd) 50%,transparent)}
+.np-row.cancel .np-st::before{content:"✕"}
+.np-tabs{display:flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:12px;background:var(--surface);width:max-content;max-width:100%;position:relative}
+.np-tabs button{position:relative;z-index:1;border:0;background:none;height:32px;padding:0 12px;border-radius:8px;color:var(--muted);font-weight:600;white-space:nowrap;transition:color .18s}
+.np-tabs button b{margin-left:4px;font-variant-numeric:tabular-nums}
+.np-tabs button.on{background:none;color:var(--accent)}
+.np-list{padding:4px 8px 8px;border:1px solid var(--line);border-radius:16px;background:var(--surface);max-height:max(640px,calc(100vh - 250px));overflow-y:auto;overscroll-behavior:contain}   /* chiều cao theo màn hình (trước: tối đa 640px/70vh → chỉ ~10 ô; nay tận dụng gần hết chiều cao cửa sổ, tối thiểu 640px nên màn nhỏ vẫn giữ như cũ) — cố định chiều cao (không phình ra hết cỡ khi có nhiều deadline), cuộn riêng bên trong thay vì đẩy cả trang dài ra; không ép scrollbar-width:thin để giữ đúng thanh scroll tùy biến đang dùng cho cả trang */
+.np-list .np-empty{border:0}
+.np-dl{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:9px 8px;border-radius:10px;cursor:pointer;transition:background-color .15s}
+.np-dl.late .np-main b{color:var(--danger)}
+.np-dl.done .np-main b{text-decoration:line-through;color:var(--muted)}
+.np-dl .np-main b{white-space:normal;overflow-wrap:anywhere}
+.np-dl .cd{font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink)}
+.np-dl .cd.late{color:var(--danger)}
+.np-chk{width:24px;height:24px;padding:0;border-radius:50%;border:2px solid var(--cancel-bd);background:none;color:var(--accent-ink);font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;transition:background-color .15s,border-color .15s}
+.np-chk:hover{background:color-mix(in srgb,var(--accent) 25%,transparent);border-color:var(--accent)}
+.np-dl.done .np-chk{background:var(--accent);border-color:var(--accent)}
+.np-tools{display:flex;align-items:center;gap:2px}
+.np-pin{border:0;background:none;width:30px;height:30px;padding:0;border-radius:8px;font-size:14px;line-height:1;cursor:pointer;opacity:0;filter:grayscale(1);transition:opacity .15s,filter .15s,background-color .15s}   /* chưa ghim: chỉ hiện khi rê chuột vào hàng (xám); đã ghim: luôn hiện đủ màu */
+.np-dl:hover .np-pin,.np-pin:focus-visible{opacity:.75}
+.np-pin:hover{opacity:1!important;background:color-mix(in srgb,var(--warn) 22%,transparent)}
+.np-pin.on{opacity:1;filter:none}
+@media (hover:none){.np-pin{opacity:.55}.np-pin.on{opacity:1}}
+.np-dl.pinned{background:color-mix(in srgb,var(--warn) 9%,transparent)}
+.np-dl.pinned:hover{background:color-mix(in srgb,var(--warn) 15%,transparent)}
+.np-ed{border:0;background:none;color:var(--muted);width:30px;height:30px;border-radius:8px;opacity:0;transition:opacity .15s}
+.np-dl:hover .np-ed,.np-ed:focus-visible{opacity:1}
+@media (hover:none){.np-ed{opacity:1}}
+.np-ed:hover{background:color-mix(in srgb,var(--ink) 10%,transparent);color:var(--ink)}
+@media (max-width:899px){.np-list{max-height:min(720px,75vh)}.np-row{grid-template-columns:44px 10px minmax(0,1fr)}.np-row .np-st{display:none}.np-t{font-size:16px}}
+@media (prefers-reduced-motion:reduce){.np-card,.np-bar i,.np-row,.np-dl{transition:none}}
 </style>
-</head>
+<meta http-equiv="x-dns-prefetch-control" content="on"></head>
 <body>
 <div id="bootScreen"><div class="bootSpin" aria-hidden="true"></div><p>Đang kiểm tra đăng nhập…</p></div>
 <div class="app">
@@ -1023,7 +1183,7 @@ html.wk-anim body{overflow-x:clip}   /* tránh thanh cuộn ngang thoáng qua l�
         <span class="q-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="2"/><line x1="15" y1="15" x2="20" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
         <input type="search" id="q" placeholder="Tìm môn, phòng, giảng viên…" aria-label="Tìm lịch">
       </div>
-      <div class="seg" id="viewSeg"><span class="seg-ind" id="viewSegInd" aria-hidden="true"></span><button data-v="table">Bảng</button><button data-v="agenda">Danh sách</button><button data-v="fixed">Lớp</button></div>
+      <div class="seg" id="viewSeg"><span class="seg-ind" id="viewSegInd" aria-hidden="true"></span><button data-v="table">Bảng</button><button data-v="agenda">Danh sách</button><button data-v="now">Thông báo</button><button data-v="fixed">Lớp</button></div>
       <button class="primary" id="addBtn" title="Thêm lịch (N)">Thêm lịch</button>
       <button id="undoBtn" title="Hoàn tác (Ctrl+Z)" aria-label="Hoàn tác" disabled>↶</button>
       <button id="redoBtn" title="Làm lại (Ctrl+Y)" aria-label="Làm lại" disabled>↷</button>
@@ -1165,6 +1325,7 @@ html.wk-anim body{overflow-x:clip}   /* tránh thanh cuộn ngang thoáng qua l�
       <label>Hạn chót<input type="date" name="due"></label>
       <label>Giờ hạn chót<input type="text" name="dueTime" class="t24" inputmode="numeric" maxlength="5" placeholder="HH:MM" autocomplete="off"></label>
       <label class="cust"><input type="checkbox" name="noDue"> Không thời hạn</label>
+      <label class="cust"><input type="checkbox" name="pin"> Ghim</label>
       <label class="cust"><input type="checkbox" name="done"> Đã hoàn thành</label>
     </div>
     <p class="err" id="todoErr" role="alert"></p>
@@ -2004,7 +2165,7 @@ const PROFILE_OPEN_KEY = KEY + ':profileOpen';
 function gateShowApp(){
   authUiClear();   // đã vào được trang chính: xóa bản nháp form đăng nhập/đăng ký (kể cả mật khẩu) khỏi sessionStorage
   document.body.classList.add('authed'); document.body.classList.remove('gate');
-  requestAnimationFrame(updateSegIndicator); requestAnimationFrame(updateTabInds);   // .app vừa hiện ra (trước đó offsetParent null nên bị bỏ qua) — tính lại vị trí thanh trượt ngay khi có kích thước thật
+  requestAnimationFrame(updateSegIndicator); requestAnimationFrame(updateTabInds); requestAnimationFrame(() => positionNpTabInd(null));   // .app vừa hiện ra (trước đó offsetParent null nên bị bỏ qua) — tính lại vị trí thanh trượt ngay khi có kích thước thật
 }
 function gateShowLogin(){ document.body.classList.add('gate'); document.body.classList.remove('authed'); requestAnimationFrame(updateAuthSegIndicator); }
 function gateNote(text, opts){
@@ -2106,7 +2267,8 @@ function setAuthMode(m){
   document.getElementById('authBrandRow').hidden = m === 'reset';
   document.getElementById('authResetHead').hidden = m !== 'reset';
 }
-document.getElementById('authBack').addEventListener('click', () => setAuthMode('login'));
+function authSwap(){ ['#authGate .fgrid', '#authBrandRow', '#authResetHead'].forEach(q => { const e = document.querySelector(q); if(!e) return; e.classList.remove('sched-swap'); void e.offsetWidth; e.classList.add('sched-swap'); }); }   // hiệu ứng đổi giữa Đăng nhập / Đăng ký / Quên mật khẩu
+document.getElementById('authBack').addEventListener('click', () => { setAuthMode('login'); authSwap(); });
 function openAuth(mode){
   // Không còn hộp thoại để mở: trang đăng nhập toàn màn hình luôn hiển thị sẵn khi chưa đăng nhập.
   // Hàm này chỉ còn tác dụng đặt lại tab (đăng nhập/đăng ký) khi được gọi từ nơi khác trong app.
@@ -2122,7 +2284,7 @@ document.getElementById('authSeg').addEventListener('click', e => {
     grid.classList.add('sched-swap');
   }
 });
-document.getElementById('authForgot').addEventListener('click', () => setAuthMode('reset'));
+document.getElementById('authForgot').addEventListener('click', () => { setAuthMode('reset'); authSwap(); });
 authForm.addEventListener('submit', async e => {
   e.preventDefault();
   if(authBusy) return;
@@ -2296,7 +2458,7 @@ const FX_LBL = {
 const FX_SES = [['s','Sáng (00:00 - 11:29)'], ['r','Trưa (11:30 - 12:59)'], ['c','Chiều (13:00 - 17:59)'], ['t','Tối (18:00 - 23:59)'], ['x','Chưa có giờ']];
 let fxPop = null;
 let guideOpen = false;       // “Cách đọc thời khoá biểu”: mặc định đóng
-const VIEWS = ['table','agenda','fixed'];
+const VIEWS = ['table','agenda','fixed','now'];
 const fixView = () => { if(!VIEWS.includes(state.view)) state.view = innerWidth < 800 ? 'agenda' : 'table'; };
 
 /* ---------- sửa / dời / xóa lịch lặp theo “phiên bản” ---------- */
@@ -2377,7 +2539,7 @@ function weekOccs(ws){
 function weekDeadlines(){
   const end = addDays(weekStart,6);
   return state.todos.filter(t => t.due && t.due >= weekStart && t.due <= end)   /* gồm cả deadline đã hoàn thành */
-    .sort((a,b) => (a.dueTime||'99:99').localeCompare(b.dueTime||'99:99') || String(a.text).localeCompare(String(b.text)));
+    .sort((a,b) => (b.pin ? 1 : 0) - (a.pin ? 1 : 0) || (a.dueTime||'99:99').localeCompare(b.dueTime||'99:99') || String(a.text).localeCompare(String(b.text)));   // deadline ghim lên đầu trong ngày
 }
 const shownDeadlines = () => hiddenTypes.has('__dl') ? [] : weekDeadlines();
 const dlMatch = t => !query || [t.text,t.body,...getLinks(t).flatMap(l => [l.url,l.name])].join(' ').toLowerCase().includes(query);
@@ -2394,13 +2556,15 @@ function render(){
   document.documentElement.dataset.theme = state.theme || (matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
   applyStatusColors();
   const end = addDays(weekStart,6);
-  const fx = state.view === 'fixed';
+  const fx = state.view === 'fixed', nw = state.view === 'now';   // nw: trang riêng "Thông báo" (Đang diễn ra / Tiếp theo / Deadline)
   document.querySelector('.layout').classList.toggle('fx-on', fx);
-  if(fx){
+  document.querySelector('.layout').hidden = nw;
+  if(nw) $('#range').textContent = 'Thông báo';
+  else if(fx){
     const ser = fixedSeries('school'), oth = fixedSeries('other');
     $('#range').textContent = `${ser.length} lớp · ${ser.reduce((s,x) => s + (+x.cur.tc || 0), 0)} tín chỉ` + (oth.length ? ` · ${oth.length} lịch khác` : '');
   } else $('#range').textContent = `${dmy(weekStart)}\u00a0–\u00a0${dmy(end)}`;
-  document.querySelector('.nav').hidden = fx;
+  document.querySelector('.nav').hidden = fx || nw;
   if(document.activeElement !== $('#jump')) $('#jump').value = weekStart;   /* đang gõ ngày bằng bàn phím thì không ghi đè giá trị */
   document.querySelectorAll('#viewSeg button').forEach(b => b.classList.toggle('on', b.dataset.v === state.view));
   updateSegIndicator();
@@ -2414,8 +2578,8 @@ function render(){
   });
   renderStats(all);
   renderLegend(all);
-  $('#stats').hidden = fx; $('#legend').hidden = fx;
-  $('#sched').innerHTML = fx ? fixedHTML() : state.view === 'agenda' ? agendaHTML(occs) : tableHTML(occs);
+  $('#stats').hidden = fx || nw; $('#legend').hidden = fx || nw;
+  $('#sched').innerHTML = nw ? '' : fx ? fixedHTML() : state.view === 'agenda' ? agendaHTML(occs) : tableHTML(occs);
   if(fx){ applyFxFilter('school'); applyFxFilter('other'); fxPopPlace(); } else closeFxPop();
   renderTodos();
   const notes = $('#notes');
@@ -2451,8 +2615,8 @@ function updateTabInds(){
     if(first){ void ind.offsetWidth; ind.style.transition = ''; ind.dataset.r = '1'; }
   });
 }
-if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { document.querySelectorAll('.tabInd').forEach(i => { delete i.dataset.r; }); updateTabInds(); });   // font tải xong làm đổi bề rộng nút: đặt lại vị trí không hiệu ứng
-addEventListener('resize', () => { updateSegIndicator(); updateAuthSegIndicator(); updateTabInds(); });
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { document.querySelectorAll('.tabInd').forEach(i => { delete i.dataset.r; }); updateTabInds(); positionNpTabInd(null); });   // font tải xong làm đổi bề rộng nút: đặt lại vị trí không hiệu ứng
+addEventListener('resize', () => { updateSegIndicator(); updateAuthSegIndicator(); updateTabInds(); positionNpTabInd(null); });
 /* cuộn tới sự kiện đang diễn ra (hoặc sắp diễn ra, hoặc tiêu đề hôm nay) */
 function scrollToNow(smooth = true){
   const box = $('#sched');
@@ -2552,12 +2716,12 @@ function dlTitleAttr(t){
 /* 📝 (có nội dung chính) và 🔗 bấm được để mở liên kết ở tab mới */
 function dlLinkHTML(t){ return t.body ? '<span class="ind">📝</span>' : ''; }
 function dlCellHTML(t){
-  return `<div class="dlcell${t.done?' done':''} ${dlMatch(t)?'':'dim'}" data-todo="${t.id}" tabindex="0" role="button" title="${esc(dlTitleAttr(t))}">
+  return `<div class="dlcell${t.done?' done':''}${t.pin?' pinned':''} ${dlMatch(t)?'':'dim'}" data-todo="${t.id}" tabindex="0" role="button" title="${esc(dlTitleAttr(t))}"><button type="button" class="dlpin${t.pin ? ' on' : ''}" data-pin="${t.id}" aria-pressed="${t.pin ? 'true' : 'false'}" aria-label="${t.pin ? 'Bỏ ghim' : 'Ghim deadline quan trọng'}" title="${t.pin ? 'Bỏ ghim' : 'Ghim lên đầu'}">📌</button>
     <div><b>${esc(t.text)}</b>${dlLinkHTML(t)}</div><div class="dlt">⏰ ${t.dueTime ? esc(t.dueTime) : 'Cả ngày'}</div>${dlChips(t)}<div class="dlst"><div class="dlst-in">${t.done ? '<span class="chip ok">Đã hoàn thành</span>' : '<span class="chip pend">Chưa hoàn thành</span>' + dueChip(t)}</div></div></div>`;
 }
 function dlArticleHTML(t){
   const parts = ['⏰ Hạn chót ' + (t.dueTime || 'cả ngày'), t.on && '🗓 Tạo ' + dmy(t.on) + (t.onTime ? ' ' + t.onTime : '')].filter(Boolean).map(esc).join(' · ');
-  return `<article class="ag dl${t.done?' done':''} ${dlMatch(t)?'':'dim'}" data-todo="${t.id}" tabindex="0" role="button">
+  return `<article class="ag dl${t.done?' done':''}${t.pin?' pinned':''} ${dlMatch(t)?'':'dim'}" data-todo="${t.id}" tabindex="0" role="button"><button type="button" class="dlpin${t.pin ? ' on' : ''}" data-pin="${t.id}" aria-pressed="${t.pin ? 'true' : 'false'}" aria-label="${t.pin ? 'Bỏ ghim' : 'Ghim deadline quan trọng'}" title="${t.pin ? 'Bỏ ghim' : 'Ghim lên đầu'}">📌</button>
         <div class="ag-time${t.dueTime ? '' : ' all'}">${t.dueTime ? esc(t.dueTime) : 'Cả ngày'}<br><small>hạn chót</small></div>
         <div><div class="et"><small>Deadline</small>${esc(t.text)}<span class="tag dl${t.done?' ok':''}">${t.done?'Đã hoàn thành':'Chưa hoàn thành'}</span>${dueChipAgenda(t)}</div>
         <div class="em">${parts}</div>
@@ -2663,7 +2827,7 @@ function agendaHTML(occs){
     html += `<div class="ad"><h3>${DOW[i]}, ${dm(date)}${date===today?'<span class="tdy">Hôm nay</span>':''}</h3>`;
     const dls = shownDeadlines().filter(t => t.due === date);
     if(!list.length && !dls.length) html += '<div class="none">Không có lịch. Bấm “Thêm lịch” để tạo.</div>';
-    const items = [...list.map(o => ({o, m:toMin(o.ev.start)})), ...dls.map(t => ({t, m:t.dueTime ? toMin(t.dueTime) : 1440}))].sort((a,b) => a.m - b.m);   // trùng giờ thì sự kiện đứng trước deadline
+    const items = [...list.map(o => ({o, m:toMin(o.ev.start)})), ...dls.map(t => ({t, m:t.pin ? -1 : t.dueTime ? toMin(t.dueTime) : 1440}))].sort((a,b) => a.m - b.m);   // deadline ghim lên đầu ngày;   // trùng giờ thì sự kiện đứng trước deadline
     for(const it of items){
       if(it.t){ html += dlArticleHTML(it.t); continue; }
       const o = it.o, ev = o.ev;
@@ -2969,8 +3133,8 @@ document.addEventListener('click', e => {
   if(fxPop && !fxPop.el.contains(t)) closeFxPop();
 });
 document.addEventListener('keydown', e => { if(e.key === 'Escape' && fxPop) closeFxPop(); });
-addEventListener('resize', () => fxPopPlace());
-addEventListener('scroll', () => fxPopPlace(), true);
+addEventListener('resize', () => { if(fxPop) fxPopPlace(); }, {passive:true});
+addEventListener('scroll', () => { if(fxPop) fxPopPlace(); }, {capture:true, passive:true});
 function fixedHTML(){
   const today = todayStr();
   const kind = 'school', list = fixedList(kind); fxCache[kind] = fxBuildCache(kind, list);
@@ -3121,7 +3285,7 @@ function visibleTodos(){
   const now = Date.now();
   const dueGap = t => { const ms = t.due ? new Date(t.due + 'T' + (t.dueTime || '23:59')).getTime() : NaN; return isNaN(ms) ? Infinity : Math.abs(ms - now); };
   const byOn = (a,b) => ((a.on||'') + ' ' + (a.onTime||'')).localeCompare((b.on||'') + ' ' + (b.onTime||''));
-  list.sort((a,b) => (a.done ? 1 : 0) - (b.done ? 1 : 0) ||
+  list.sort((a,b) => (b.pin ? 1 : 0) - (a.pin ? 1 : 0) || (a.done ? 1 : 0) - (b.done ? 1 : 0) ||
     (a.done && b.done ? (dueGap(a) === dueGap(b) ? 0 : dueGap(a) < dueGap(b) ? -1 : 1) : dueKey(a).localeCompare(dueKey(b))) || byOn(a,b));
   return list;
 }
@@ -3130,10 +3294,10 @@ function renderTodos(){
   document.querySelectorAll('#todoStatus button').forEach(b => b.classList.toggle('on', b.dataset.s === todoStatus));
   $('#todoCount').textContent = `${state.todos.filter(t => !t.done).length} deadline chưa hoàn thành`;
   const list = visibleTodos(), ul = $('#todos'), keep = ul.scrollTop;
-  ul.innerHTML = list.length ? list.map(t => `<li class="todo ${t.done?'done':''} ${hasDetail(t) && openTodos.has(t.id) ? 'open' : ''}" data-id="${t.id}">
+  ul.innerHTML = list.length ? list.map(t => `<li class="todo ${t.done?'done':''}${t.pin?' pinned':''} ${hasDetail(t) && openTodos.has(t.id) ? 'open' : ''}" data-id="${t.id}">
       <input type="checkbox" ${t.done?'checked':''} aria-label="Đã hoàn thành">
       ${todoBody(t)}
-      <span class="acts"><button class="ed" title="Sửa" aria-label="Sửa việc">✎</button><button class="x" title="Xóa" aria-label="Xóa việc">×</button></span></li>`).join('')
+      <span class="acts"><button class="pn" title="${t.pin ? 'Bỏ ghim' : 'Ghim lên đầu'}" aria-label="${t.pin ? 'Bỏ ghim' : 'Ghim deadline quan trọng'}" aria-pressed="${t.pin ? 'true' : 'false'}">📌</button><button class="ed" title="Sửa" aria-label="Sửa việc">✎</button><button class="x" title="Xóa" aria-label="Xóa việc">×</button></span></li>`).join('')
     : '<li class="empty">Không có deadline nào ở mục này.</li>';
   ul.scrollTop = keep;
   updateTabInds();
@@ -3415,7 +3579,7 @@ $('#delBtn').onclick = async () => {
 /* ---------- sự kiện giao diện ---------- */
 /* đổi tuần kèm hiệu ứng trượt: dir > 0 = sang tuần sau, dir < 0 = về tuần trước */
 function weekAnim(dir){
-  if(!dir || state.view === 'fixed') return;
+  if(!dir || state.view === 'fixed' || state.view === 'now') return;
   if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
   const box = $('#sched'), lbl = $('#range'), root = document.documentElement;
   box.classList.remove('wk-next','wk-prev','sched-swap'); lbl.classList.remove('wk-lbl');
@@ -3442,18 +3606,27 @@ $('#jump').onchange = e => {
 $('#jump').onblur = () => { $('#jump').value = weekStart; };   /* rời ô thì đồng bộ lại về đầu tuần đang xem */
 $('#addBtn').onclick = () => openModal(null, defDate());
 $('#q').oninput = e => { query = e.target.value.trim().toLowerCase(); $('#qWrap').classList.toggle('has-val', !!e.target.value); render(); };
+/* hiệu ứng chuyển trang: vùng nào đổi thì vùng đó chạy hiệu ứng.
+   - sang/đi khỏi "Thông báo": cả trang Thông báo hoặc cả khung chính (trước đây chỉ #sched đang trống nên không thấy gì)
+   - sang/đi khỏi "Lớp": cả khung chính, vì cột bên cạnh cũng đổi bố cục
+   - Bảng <-> Danh sách: chỉ phần lịch (cột việc cần làm/ghi chú đứng yên) */
+function pageSwap(prev){
+  const flat = v => v === 'table' || v === 'agenda';
+  const el = state.view === 'now' ? $('#nowBar') : (flat(prev) && flat(state.view)) ? $('#sched') : document.querySelector('.layout');
+  if(!el) return;
+  el.classList.remove('sched-swap'); void el.offsetWidth;   // reset để chạy lại dù chuyển đi chuyển lại nhanh
+  el.classList.add('sched-swap');
+}
 $('#viewSeg').onclick = e => {
   const b = e.target.closest('button');
   if(b && b.dataset.v !== state.view){
+    const prevView = state.view;
     state.view = b.dataset.v; saveUI();
     document.querySelectorAll('#viewSeg button').forEach(x => x.classList.toggle('on', x === b));
     updateSegIndicator();   // trượt tab ngay lập tức, mượt, không chờ dựng lại nội dung
     requestAnimationFrame(() => {
       render();
-      const box = $('#sched');
-      box.classList.remove('sched-swap');
-      void box.offsetWidth;   // reset để chạy lại animation dù chuyển đi chuyển lại nhanh
-      box.classList.add('sched-swap');
+      pageSwap(prevView);
     });
   }
 };
@@ -3495,6 +3668,8 @@ function onSchedClick(target){
 $('#sched').addEventListener('click', e => {
   const cp = e.target.closest('[data-copy]');
   if(cp){ clearTimeout(clickTimer); doCopy(cp); return; }
+  const pn = e.target.closest('[data-pin]');
+  if(pn){ clearTimeout(clickTimer); togglePin(pn.dataset.pin); return; }
   const t = e.target;
   clearTimeout(clickTimer);
   clickTimer = setTimeout(() => onSchedClick(t), 230);
@@ -3809,11 +3984,12 @@ $('#todoAdd').onclick = () => openTodo(null);
 $('#todoAll').onclick = () => toggleAll(openTodos, visibleTodos(), renderTodos);
 $('#todos').addEventListener('change', e => {
   const li = e.target.closest('.todo'); if(!li) return;
-  state.todos.find(t => t.id === li.dataset.id).done = e.target.checked; save(); render();
+  setTodoDone(state.todos.find(t => t.id === li.dataset.id), e.target.checked); save(); render();
 });
 $('#todos').addEventListener('click', e => {
   const li = e.target.closest('.todo'); if(!li) return;
   if(e.target.closest('.tg')){ const id = li.dataset.id; openTodos.has(id) ? openTodos.delete(id) : openTodos.add(id); return renderTodos(); }
+  if(e.target.closest('.pn')) return togglePin(li.dataset.id);
   if(e.target.closest('.ed')) return openTodo(li.dataset.id);
   if(!e.target.closest('.x')) return;
   state.todos = state.todos.filter(t => t.id !== li.dataset.id); save(); render();
@@ -3829,6 +4005,8 @@ new ResizeObserver(() => requestAnimationFrame(() => {
 })).observe($('#todos'));
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitTodoMeta);
 
+/* ghim / bỏ ghim một deadline (dùng chung cho Bảng, Danh sách, khung Deadline và trang Thông báo) */
+function togglePin(id){ const t = state.todos.find(x => x.id === id); if(!t) return; t.pin = !t.pin; save(); render(); }
 /* hộp thoại sửa deadline */
 const dlgTodo = $('#dlgTodo'), todoEditForm = $('#todoEditForm');
 const todoLinks = linkEditor($('#todoLinks'), $('#todoLinkAdd'));
@@ -3843,9 +4021,9 @@ function openTodo(id){
   const t = id ? state.todos.find(x => x.id === id) : null;
   if(id && !t) return;
   todoEditing = id || null; $('#todoErr').textContent = '';
-  const el = todoEditForm.elements, v = t || {text:'', body:'', link:'', on:todayStr(), onTime:nowHM(), dueTime:'', due:'', done:false};
+  const el = todoEditForm.elements, v = t || {text:'', body:'', link:'', on:todayStr(), onTime:nowHM(), dueTime:'', due:'', done:false, pin:false};
   el.text.value = v.text; el.body.value = v.body || ''; todoLinks.set(getLinks(v));
-  el.on.value = v.on || ''; el.onTime.value = v.onTime || ''; el.due.value = v.due || ''; el.dueTime.value = v.dueTime || ''; el.done.checked = !!v.done;
+  el.on.value = v.on || ''; el.onTime.value = v.onTime || ''; el.due.value = v.due || ''; el.dueTime.value = v.dueTime || ''; el.done.checked = !!v.done; el.pin.checked = !!v.pin;
   el.noDue.checked = !!t && !t.due; syncNoDue();
   $('#todoDlgTitle').textContent = t ? 'Sửa deadline' : 'Thêm deadline';
   clearInterval(todoClock); todoAuto = !t;
@@ -3862,9 +4040,9 @@ todoEditForm.addEventListener('submit', e => {
   const tm = k => { const v = el[k].value.trim(); return v ? normTime(v) : ''; };
   const onTime = tm('onTime'), dueTime = tm('dueTime');
   if(onTime === null || dueTime === null) return err('Nhập giờ theo dạng 24 giờ, ví dụ 08:30.');
-  const d = {text, body:el.body.value.trim(), links, link:links[0] ? links[0].url : '', linkName:links[0] ? links[0].name : '', on:el.on.value, onTime:el.on.value ? onTime : '', due:el.noDue.checked ? '' : el.due.value, dueTime:!el.noDue.checked && el.due.value ? dueTime : '', done:el.done.checked};
-  if(todoEditing){ const t = state.todos.find(x => x.id === todoEditing); if(t) Object.assign(t, d); }
-  else state.todos.push({id:uid(), ...d});
+  const d = {text, body:el.body.value.trim(), links, link:links[0] ? links[0].url : '', linkName:links[0] ? links[0].name : '', on:el.on.value, onTime:el.on.value ? onTime : '', due:el.noDue.checked ? '' : el.due.value, dueTime:!el.noDue.checked && el.due.value ? dueTime : '', done:el.done.checked, pin:el.pin.checked};
+  if(todoEditing){ const t = state.todos.find(x => x.id === todoEditing); if(t){ const was = !!t.done; Object.assign(t, d); if(was !== !!t.done) setTodoDone(t, !!t.done); } }
+  else { const nt = {id:uid(), ...d}; if(nt.done) nt.doneAt = Date.now(); state.todos.push(nt); }
   save(); closeDialog(dlgTodo); render();
 });
 $('#todoClose').onclick = () => closeDialog(dlgTodo);
@@ -4152,10 +4330,14 @@ const UI_KEY = KEY + ':ui';
 const UIS = (() => { try{ return window.sessionStorage; }catch(e){ return null; } })();
 const formSnap = form => { const o = {}; [...form.elements].forEach(el => { if(el.name) o[el.name] = el.type === 'checkbox' ? el.checked : el.value; }); return o; };
 const formRestore = (form, o) => Object.keys(o || {}).forEach(k => { const el = form.elements[k]; if(!el || !el.tagName) return; if(el.type === 'checkbox') el.checked = !!o[k]; else el.value = o[k]; });
+function innerScrollSnap(){
+  const a = document.querySelector('ul.todos'), b = document.querySelector('.np-list');
+  return {todos:a ? a.scrollTop : 0, np:b ? b.scrollTop : 0};
+}
 function uiSnap(){
   if(!UIS) return;
   try{
-    const s = {view:state.view, week:weekStart, tf:todoFilter, ts:todoStatus, hid:[...hiddenTypes], ot:[...openTodos], q:$('#q').value, fxf:fxFilter, guide:guideOpen, sx:scrollX, sy:scrollY, dlg:null};
+    const s = {view:state.view, week:weekStart, tf:todoFilter, ts:todoStatus, hid:[...hiddenTypes], ot:[...openTodos], q:$('#q').value, fxf:fxFilter, guide:guideOpen, sx:scrollX, sy:scrollY, npt:npTab, npc:npTodayCollapsed, npd:[...npExpandedDays], isc:innerScrollSnap(), dlg:null};
     const ae = document.activeElement, fc = ae && ae.closest && ae.closest('dialog[open]') && ae.name ? {name:ae.name, a:ae.selectionStart, b:ae.selectionEnd} : null;
     if(dlg.open){ readTimes(); s.dlg = {k:'ev', id:editing && editing.id, date:editing && editing.date, form:formSnap(f), days:daysBoxes().map(b => b.checked), times:timesDraft}; }
     else if(dlgTodo.open) s.dlg = {k:'todo', id:todoEditing, form:formSnap(todoEditForm), auto:todoAuto};
@@ -4167,7 +4349,7 @@ function uiSnap(){
 }
 let uiT = 0;
 const uiSoon = () => { clearTimeout(uiT); uiT = setTimeout(uiSnap, 250); };
-['input','change','click','keyup','toggle','scroll','close'].forEach(t => document.addEventListener(t, uiSoon, true));
+['input','change','click','keyup','toggle','scroll','close'].forEach(t => document.addEventListener(t, uiSoon, {capture:true, passive:true}));
 addEventListener('scroll', uiSoon, {passive:true});
 addEventListener('pagehide', uiSnap); addEventListener('beforeunload', uiSnap);
 document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'hidden') uiSnap(); });
@@ -4247,34 +4429,185 @@ const fmtHMS = ms => {
   if(d) return `${d} ngày ${pad(h)}:${pad(m)}:${pad(sec)}`;
   return (h ? h + ':' + pad(m) : m) + ':' + pad(sec);
 };
+/* ---------- Trang "Thông báo": tổng quan lịch đang/sắp diễn ra + deadline, bật thông báo, đánh dấu xong ---------- */
+let npTab = 'open';   // tab Deadline: open = chưa hoàn thành, done = đã hoàn thành, all = tất cả
+let npTodayCollapsed = false;   // mục "Hôm nay": true = đã thu gọn danh sách buổi (mặc định mở, chỉ trong phiên này)
+let npExpandedDays = new Set();   // các ngày (yyyy-mm-dd) đang MỞ RỘNG trong mục "7 ngày tới"; mặc định mọi ngày thu gọn (chỉ trong phiên này, không lưu)
+if(uiSaved){   /* F5: giữ tab Deadline, mục "Hôm nay" thu gọn/mở và các ngày đang mở rộng */
+  if(['open','done','all'].includes(uiSaved.npt)) npTab = uiSaved.npt;
+  npTodayCollapsed = !!uiSaved.npc;
+  (uiSaved.npd || []).forEach(d => { if(/^\d{4}-\d{2}-\d{2}$/.test(d)) npExpandedDays.add(d); });
+}
+const npRel = d => { const n = daysBetween(todayStr(), d); return `${n === 0 ? 'Hôm nay' : n === 1 ? 'Ngày mai' : n === -1 ? 'Hôm qua' : DOW[wd(d)]} · ${dm(d)}`; };   // luôn kèm ngày/tháng
+const npDayHead = d => `${DOW[wd(d)]} · ${dm(d)}`;   // tiêu đề nhóm ngày: luôn hiện Thứ + ngày/tháng, không dùng "Hôm nay"/"Ngày mai"/"Hôm qua"
+function npTodayList(now){
+  const today = todayStr(), key = 'np|' + today, hit = _upcMemo.get(key);
+  if(hit && now - hit.t < 5000) return hit.occs;
+  const occs = weekOccs(mondayOf(today)).filter(o => o.date === today && o.ev.kind !== 'free' && o.ev.start && o.ev.end)
+    .sort((a, b) => occStartMs(a) - occStartMs(b) || toMin(a.ev.end) - toMin(b.ev.end));
+  _upcMemo.set(key, {t:now, occs});
+  return occs;
+}
+/* giá trị đại diện (không đổi trong cùng một dạng hiển thị) để đo bề rộng chữ "còn …" dài nhất của thẻ Tiếp theo */
+const npRep = ms => { const t = Math.max(0, Math.floor(ms / 1000)); return (t >= 86400 ? Math.floor(t / 86400) * 86400 + 86399 : t >= 3600 ? Math.floor(t / 3600) * 3600 + 3599 : 3599) * 1000; };
+function npNotifyState(){
+  if(!('Notification' in window)) return {txt:'Thông báo không hỗ trợ', dis:true, on:false};
+  if(Notification.permission === 'denied') return {txt:'Thông báo bị chặn', dis:true, on:false};
+  const on = scheduleNotifyEnabled();
+  return {txt: on ? 'Thông báo lịch: Đang bật' : 'Bật thông báo lịch', dis:false, on};
+}
+function npSyncCollapseAllLabel(){   // cập nhật chữ nút "Mở rộng tất cả/Thu gọn tất cả" sau khi đổi trực tiếp class trên DOM (không dựng lại cả trang)
+  const btn = document.querySelector('#nowBar [data-act="collapseall"]'); if(!btn) return;
+  const dayEls = [...document.querySelectorAll('#nowBar .np-day')];
+  const allExpanded = dayEls.length > 0 && dayEls.every(x => !x.classList.contains('collapsed'));
+  btn.textContent = allExpanded ? 'Thu gọn tất cả' : 'Mở rộng tất cả';
+}
+function positionNpTabInd(prevRect){   // thanh trượt nền của 3 tab Deadline (Tất cả/Chưa/Đã hoàn thành); prevRect: vị trí nút cũ (FLIP) để trượt mượt dù nút vừa bị dựng lại, null = đặt thẳng không hiệu ứng
+  const box = document.querySelector('#nowBar .np-tabs'); if(!box) return;
+  const ind = box.querySelector('.tabInd'), btn = box.querySelector('button.on');
+  if(!ind || !btn || box.offsetParent === null) return;   // đang bị ẩn (vd. trang đăng nhập còn che #app) — chưa đo được kích thước thật, bỏ qua, đợi lần gọi sau khi đã hiện ra
+  if(prevRect){
+    ind.style.transition = 'none';
+    ind.style.width = prevRect.w + 'px'; ind.style.height = prevRect.h + 'px';
+    ind.style.transform = `translate(${prevRect.l}px,${prevRect.t}px)`;
+    void ind.offsetWidth;
+    ind.style.transition = '';
+  } else ind.style.transition = 'none';
+  ind.style.width = btn.offsetWidth + 'px'; ind.style.height = btn.offsetHeight + 'px';
+  ind.style.transform = `translate(${btn.offsetLeft}px,${btn.offsetTop}px)`;
+  if(!prevRect){ void ind.offsetWidth; ind.style.transition = ''; }
+}
+/* ghi lại thời điểm hoàn thành để sắp xếp các deadline đã xong theo thứ tự hoàn thành (bỏ đánh dấu thì xóa mốc) */
+function setTodoDone(t, v){ if(!t) return; t.done = !!v; if(t.done) t.doneAt = Date.now(); else delete t.doneAt; }
+const doneNewest = (a, b) => ((b.doneAt || 0) - (a.doneAt || 0));   // đã có mốc: mới hoàn thành nhất lên đầu; bản cũ chưa có mốc nằm sau
 function renderNowBar(){
   const el = document.getElementById('nowBar'); if(!el) return;
-  if(state.view === 'fixed'){ el.hidden = true; return; }   // mục "Lớp": không hiện banner Tiếp theo/Đang diễn ra/Deadline
-  const {live, next, now} = upcoming(2);
-  const meta = (o, extra, pre) => `<span class="rg">${esc([pre, `${o.ev.start} - ${o.ev.end}`].filter(Boolean).join(' · '))} · </span><b class="cd">${esc(extra)}</b>`;
-  const leftRows = [];
-  live.slice(0, 2).forEach(o => leftRows.push(
-    `<div class="nb live" data-id="${esc(o.ev.id)}" data-date="${esc(o.date)}"><span class="k">🔴<em> Đang diễn ra</em></span><span class="t">${esc(o.ev.title)}</span><span class="m">${meta(o, 'còn ' + fmtHMS(occEndMs(o) - now), dm(o.date))}</span></div>`));
-  next.slice(0, 1).forEach(o => leftRows.push(
-    `<div class="nb next" data-id="${esc(o.ev.id)}" data-date="${esc(o.date)}"><span class="k">⏳<em> Tiếp theo</em></span><span class="t">${esc(o.ev.title)}</span><span class="m">${meta(o, 'còn ' + fmtHMS(occStartMs(o) - now), dm(o.date))}</span></div>`));
-  const dls = state.todos.filter(t => !t.done && t.due).sort((a, b) => (a.due + (a.dueTime || '23:59')).localeCompare(b.due + (b.dueTime || '23:59')));
-  const rightRows = dls.map(dl => `<div class="nb dl" data-todo="${esc(dl.id)}"><span class="k">📌<em> Deadline</em></span><span class="t">${esc(dl.text)}</span><span class="m"><span class="rg">${esc(dm(dl.due))}${dl.dueTime ? ' · ' + esc(dl.dueTime) : ''} · </span><b class="cd${dueLate(dl)?' late':''}">${esc(dueTxt(dl))}</b></span></div>`);
+  el.classList.toggle('page', state.view === 'now');
+  if(state.view !== 'now'){ el.hidden = true; return; }   // chỉ hiện ở trang riêng "Thông báo"
+  const {live, next, occs, now} = upcoming(2);
+  const today = todayStr();
+  const metaLine = ev => [`🕒 ${ev.start} - ${ev.end}`, ev.room ? `📍 ${esc(ev.room)}` : '', ev.teacher ? `👤 ${esc(ev.teacher)}` : ''].filter(Boolean).join('<span class="sep">·</span>');
+  const dataOf = o => `data-id="${esc(o.ev.id)}" data-date="${esc(o.date)}" style="--cc:${esc(tagOf(o.ev.type).color)}"`;
+
+  /* ----- cột trái: lịch ----- */
+  const liveCards = live.map(o => {
+    const s = occStartMs(o), e = occEndMs(o), p = Math.min(100, Math.max(0, (now - s) / (e - s) * 100));
+    return `<div class="np-card live" ${dataOf(o)}><div class="np-k"><span class="tag live"><i></i>Đang diễn ra</span></div><div class="np-t">${esc(o.ev.title)}</div><div class="np-m">${metaLine(o.ev)}</div>
+      <div class="np-prog"><div class="np-bar"><i style="width:${p.toFixed(1)}%" data-ps="${s}" data-pe="${e}"></i></div><b class="cd" data-k="e" data-v="${e}" data-max="${e - s}">còn ${fmtHMS(e - now)}</b></div></div>`;
+  });
+  const nx = next[0];
+  let nextCard = '';
+  if(nx){
+    const ns = occStartMs(nx);
+    /* thanh tiến độ của thẻ Tiếp theo: đứng yên ở 0% khi còn hơn 1 tiếng, chỉ bắt đầu chạy trong 60 phút cuối trước giờ bắt đầu */
+    const gs = ns - 3600 * 1000;
+    const p = Math.min(100, Math.max(0, (now - gs) / (ns - gs) * 100));
+    nextCard = `<div class="np-card next" ${dataOf(nx)}><div class="np-k"><span class="tag next">Tiếp theo · ${esc(npRel(nx.date))}</span></div><div class="np-t">${esc(nx.ev.title)}</div><div class="np-m">${metaLine(nx.ev)}</div>
+      <div class="np-prog"><div class="np-bar"><i style="width:${p.toFixed(1)}%" data-ps="${gs}" data-pe="${ns}"></i></div><b class="cd" data-k="s" data-v="${ns}" data-max="${npRep(ns - now)}">còn ${fmtHMS(ns - now)}</b></div></div>`;
+  }
+  const emptyCard = !liveCards.length && !nx ? '<div class="np-empty">📭 Không có lịch sắp diễn ra</div>' : '';
+
+  const todayOccs = npTodayList(now);
+  const isNx = o => nx && o.date === nx.date && o.ev.id === nx.ev.id;
+  const rowState = o => o.cancelled ? ['cancel', 'Nghỉ'] : occEndMs(o) <= now ? ['done', 'Đã xong'] : occStartMs(o) <= now ? ['live', 'Đang diễn ra'] : isNx(o) ? ['next', 'Tiếp theo'] : ['soon', 'Sắp tới'];
+  const row = (o, showState) => { const [c, l] = rowState(o);
+    return `<div class="np-row ${showState ? c : ''}" ${dataOf(o)}><span class="np-time">${o.ev.start}<small>${o.ev.end}</small></span><span class="np-dot"></span><span class="np-main"><b>${esc(o.ev.title)}</b><small>${[o.ev.room ? '📍 ' + esc(o.ev.room) : '', o.ev.teacher ? '👤 ' + esc(o.ev.teacher) : ''].filter(Boolean).join(' · ')}</small></span>${showState ? `<span class="np-st">${l}</span>` : ''}</div>`; };
+  const doneN = todayOccs.filter(o => !o.cancelled && occEndMs(o) <= now).length, actN = todayOccs.filter(o => !o.cancelled).length;
+  const todayHTML = todayOccs.length ? todayOccs.map(o => row(o, true)).join('') : '<div class="np-empty sm">Hôm nay không có lịch</div>';
+  const byDay = {};
+  occs.filter(o => o.date > today && daysBetween(today, o.date) <= 7).sort((a, b) => occStartMs(a) - occStartMs(b)).forEach(o => (byDay[o.date] ||= []).push(o));
+  const days = Object.keys(byDay).sort();
+  const weekHTML = days.length ? days.map(d => { const c = !npExpandedDays.has(d);
+    return `<div class="np-day${c ? ' collapsed' : ''}" data-day="${esc(d)}"><button type="button" class="np-gl" data-act="daytoggle" data-day="${esc(d)}" aria-expanded="${c ? 'false' : 'true'}"><span class="np-gl-l"><i class="np-gl-arrow" aria-hidden="true">▸</i>${esc(npDayHead(d))}</span><small>${byDay[d].length} buổi</small></button><div class="np-day-body"><div class="np-day-in">${byDay[d].map(o => row(o, false)).join('')}</div></div></div>`; }).join('') : '<div class="np-empty sm">7 ngày tới không có lịch</div>';
+  const weekAllExpanded = days.length > 0 && days.every(d => npExpandedDays.has(d));
+  const weekToggleAll = days.length ? `<button type="button" class="np-collapseall" data-act="collapseall">${weekAllExpanded ? 'Thu gọn tất cả' : 'Mở rộng tất cả'}</button>` : '';
+
+  /* ----- cột phải: deadline ----- */
+  const all = state.todos, open = all.filter(t => !t.done), done = all.filter(t => t.done);
+  const key = t => t.due ? t.due + (t.dueTime || '23:59') : '9999';
+  const lateN = open.filter(t => t.due && dueLate(t)).length;
+  const dlRow = t => {
+    const rel = t.due ? npRel(t.due) : '', when = t.due ? `${esc(rel)}${t.dueTime ? ' · ' + esc(t.dueTime) : ''}` : 'Không có hạn';
+    const cd = !t.done && t.due ? `<b class="cd${dueLate(t) ? ' late' : ''}" data-k="d" data-v="${esc(t.id)}">${esc(dueTxt(t))}</b>` : '';
+    return `<div class="np-dl${t.done ? ' done' : ''}${t.pin ? ' pinned' : ''}${!t.done && t.due && dueLate(t) ? ' late' : ''}" data-todo="${esc(t.id)}"><button type="button" class="np-chk" data-act="toggle" aria-label="${t.done ? 'Bỏ đánh dấu hoàn thành' : 'Đánh dấu hoàn thành'}" title="${t.done ? 'Bỏ đánh dấu hoàn thành' : 'Đánh dấu hoàn thành'}">${t.done ? '✓' : ''}</button>
+      <span class="np-main"><b>${esc(t.text)}</b><small>${when}${cd ? ' · ' + cd : ''}</small></span><span class="np-tools"><button type="button" class="np-pin${t.pin ? ' on' : ''}" data-act="pin" aria-pressed="${t.pin ? 'true' : 'false'}" aria-label="${t.pin ? 'Bỏ ghim' : 'Ghim deadline quan trọng'}" title="${t.pin ? 'Bỏ ghim' : 'Ghim lên đầu'}">📌</button><button type="button" class="np-ed" data-act="edit" aria-label="Sửa deadline" title="Sửa">✎</button></span></div>`; };
+  /* deadline đã ghim luôn nằm trên cùng (giữ nguyên thứ tự sắp xếp bên trong mỗi nhóm); có thêm tiêu đề nhóm khi có ghim */
+  const withPins = list => {
+    const pins = list.filter(t => t.pin), rest = list.filter(t => !t.pin);
+    if(!pins.length) return rest.map(dlRow).join('');
+    const head = (txt, n) => `<div class="np-gl">${txt}<small>${n}</small></div>`;
+    return head('📌 Đã ghim', pins.length) + pins.map(dlRow).join('') + (rest.length ? head('Còn lại', rest.length) + rest.map(dlRow).join('') : '');
+  };
+  let dlHTML = '';
+  if(npTab === 'open'){
+    const sorted = [...open].sort((a, b) => key(a).localeCompare(key(b)));
+    dlHTML = withPins(sorted);   // theo hạn chót (quá hạn tự nằm trên cùng, chữ đỏ); deadline ghim lên đầu
+    if(!dlHTML) dlHTML = '<div class="np-empty">🎉 Không còn deadline nào chưa hoàn thành</div>';
+  } else if(npTab === 'done'){
+    dlHTML = done.length ? withPins([...done].sort((a, b) => doneNewest(a, b) || key(b).localeCompare(key(a)))) : '<div class="np-empty">Chưa có deadline nào hoàn thành</div>';
+  } else {   /* npTab === 'all': mọi deadline, chưa hoàn thành lên đầu (theo hạn chót), rồi tới đã hoàn thành */
+    dlHTML = all.length ? withPins([...all].sort((a, b) => (a.done - b.done) || (a.done ? (doneNewest(a, b) || key(b).localeCompare(key(a))) : key(a).localeCompare(key(b))))) : '<div class="np-empty">Chưa có deadline nào</div>';
+  }
+
+  /* ----- đầu trang ----- */
+  const ns = npNotifyState();
+  const todayNext = nx && nx.date === today ? 1 : 0;   // chip "Tiếp theo" chỉ đếm đúng 1 buổi được gắn nhãn "Tiếp theo" (nếu rơi vào hôm nay), không gộp các buổi "Sắp tới" khác
+  const soonN = todayOccs.filter(o => !o.cancelled && occStartMs(o) > now && !isNx(o)).length;   // số buổi "Sắp tới" hôm nay (chưa tới, không tính buổi đang là "Tiếp theo")
+  const dueToday = open.filter(t => t.due === today).length;
+  const chips = [
+    `<span class="np-chip live${live.length ? '' : ' zero'}"><span class="np-ld">🔴</span> Đang diễn ra <b>${live.length}</b></span>`,
+    `<span class="np-chip next${todayNext ? '' : ' zero'}">⏳ Tiếp theo <b>${todayNext}</b></span>`,
+    `<span class="np-chip soon${soonN ? '' : ' zero'}">🕒 Sắp tới <b>${soonN}</b></span>`,
+    `<span class="np-chip done${doneN ? '' : ' zero'}">✅ Buổi đã xong <b>${doneN}</b></span>`,
+    `<span class="np-chip dl${open.length ? '' : ' zero'}">📌 Deadline <b>${open.length}</b></span>`,
+    dueToday ? `<span class="np-chip warn">⏰ Hạn hôm nay <b>${dueToday}</b></span>` : '',
+    lateN ? `<span class="np-chip late">⚠ Quá hạn <b>${lateN}</b></span>` : ''].join('');
+  const html = `<div class="np-top"><div class="np-sum">${chips}</div><div class="np-acts">
+      <button type="button" class="btn np-bell${ns.on ? ' on' : ''}" data-act="notify"${ns.dis ? ' disabled' : ''}>${ns.on ? '🔔' : '🔕'} ${ns.txt}</button>
+      <button type="button" class="btn" data-act="addlich">+ Thêm lịch</button>
+      <button type="button" class="btn primary" data-act="addtodo">+ Thêm deadline</button></div></div>
+    <div class="np-grid">
+      <section class="np-col"><h2 class="np-h">Lịch học</h2>${liveCards.join('')}${nextCard}${emptyCard}
+        <div class="np-sec"><div class="np-sh">Hôm nay<small>${doneN}/${actN} buổi đã xong</small></div>${todayOccs.length ? `<div class="np-fold${npTodayCollapsed ? ' collapsed' : ''}"><button type="button" class="np-gl" data-act="todaytoggle" aria-expanded="${npTodayCollapsed ? 'false' : 'true'}"><span class="np-gl-l"><i class="np-gl-arrow" aria-hidden="true">▸</i>${esc(npDayHead(today))}</span><small>${todayOccs.length} buổi</small></button><div class="np-day-body"><div class="np-day-in">${todayHTML}</div></div></div>` : todayHTML}</div>
+        <div class="np-sec"><div class="np-sh">7 ngày tới${weekToggleAll}</div>${weekHTML}</div></section>
+      <section class="np-col"><h2 class="np-h">Deadline</h2>
+        <div class="np-tabs"><span class="tabInd" aria-hidden="true"></span><button type="button" data-act="tab" data-tab="all" class="${npTab === 'all' ? 'on' : ''}">Tất cả <b>${all.length}</b></button><button type="button" data-act="tab" data-tab="open" class="${npTab === 'open' ? 'on' : ''}">Chưa hoàn thành <b>${open.length}</b></button><button type="button" data-act="tab" data-tab="done" class="${npTab === 'done' ? 'on' : ''}">Đã hoàn thành <b>${done.length}</b></button></div>
+        <div class="np-list">${dlHTML}</div></section>
+    </div>`;
   el.hidden = false;
-  const leftHTML = leftRows.length ? leftRows.join('') : '<div class="nb none"><span class="k">📭</span><span class="t">Không có lịch sắp diễn ra</span></div>';
-  const html = `<div class="nbcol">${leftHTML}</div>` + (rightRows.length ? `<div class="nbcol">${rightRows.join('')}</div>` : '');
-  /* Đồng hồ đếm ngược đổi mỗi giây: nếu cấu trúc không đổi thì chỉ cập nhật chữ đếm ngược tại chỗ, không dựng lại cả thanh
-     (dựng lại mỗi giây sẽ làm hiệu ứng rê chuột bị giật/khựng và mất trạng thái hover). */
-  const sig = html.replace(/<b class="cd[^"]*">[^<]*<\/b>/g, '<b class="cd"></b>');
-  if(el._sig === sig && !el.hidden){
-    const tpl = document.createElement('template'); tpl.innerHTML = html;
-    const nw = tpl.content.querySelectorAll('b.cd'), cur = el.querySelectorAll('b.cd');
-    if(nw.length === cur.length){
-      cur.forEach((b, i) => { if(b.textContent !== nw[i].textContent) b.textContent = nw[i].textContent; if(b.className !== nw[i].className) b.className = nw[i].className; });
-      return;
-    }
+  /* Đồng hồ đếm ngược/thanh tiến độ đổi mỗi giây: nếu cấu trúc không đổi thì chỉ cập nhật chữ + độ rộng tại chỗ, không dựng lại cả trang (tránh mất hover/khựng). */
+  const sig = html.replace(/<b class="cd[^"]*"( data-[^>]*)>[^<]*<\/b>/g, '<b$1></b>').replace(/(<i) style="width:[\d.]+%"/g, '$1');
+  if(el._sig === sig && el.firstChild){
+    el.querySelectorAll('b.cd').forEach(b => {
+      const k = b.dataset.k, v = b.dataset.v; let txt, late = false;
+      if(k === 'd'){ const t = state.todos.find(x => x.id === v); if(!t) return; txt = dueTxt(t); late = dueLate(t); }
+      else txt = 'còn ' + fmtHMS(+v - now);
+      if(b.textContent !== txt) b.textContent = txt;
+      b.classList.toggle('late', late);
+      if(b.dataset.max && b.scrollWidth > b.clientWidth + 1){ npFixCd(el); }   // chữ rộng hơn ô đã đo (vd. font web tải xong sau) → đo lại
+    });
+    el.querySelectorAll('i[data-ps]').forEach(i => { const s = +i.dataset.ps, e = +i.dataset.pe; i.style.width = Math.min(100, Math.max(0, (now - s) / (e - s) * 100)).toFixed(1) + '%'; });
+    return;
   }
   el._sig = sig;
   el.innerHTML = html;
+  npFixCd(el);
+  positionNpTabInd(null);
+}
+/* đo bề rộng chữ "còn …" dài nhất của từng buổi (tổng thời lượng) rồi cố định width (chữ canh phải, mép phải luôn khớp mép thẻ) → thanh tiến độ không co giãn, các thẻ luôn thẳng hàng */
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { const e = document.getElementById('nowBar'); if(e && !e.hidden) npFixCd(e); });
+function npFixCd(el){
+  /* đo rộng từng ô rồi lấy ô rộng nhất áp dụng chung cho TẤT CẢ các thẻ → mọi thanh tiến độ (phần flex còn lại)
+     có cùng độ dài, hai thẻ "Đang diễn ra"/"Tiếp theo" luôn thẳng hàng và bằng nhau, không lệch theo data-max riêng từng thẻ */
+  const bs = [...el.querySelectorAll('.np-card b.cd[data-max]')]; if(!bs.length) return;
+  let max = 0;
+  bs.forEach(b => {
+    const cur = b.textContent;
+    b.textContent = 'còn ' + fmtHMS(+b.dataset.max); b.style.width = 'auto';
+    max = Math.max(max, Math.ceil(b.getBoundingClientRect().width) + 1);
+    b.textContent = cur;
+  });
+  bs.forEach(b => { b.style.width = max + 'px'; });
 }
 /* Thông báo lịch thuộc về TỪNG TÀI KHOẢN: cài đặt bật/tắt lưu theo uid, chưa đăng nhập thì không có
    thông báo nào, đăng xuất / đổi tài khoản thì thông báo cũ bị đóng ngay và dựng lại theo dữ liệu
@@ -4298,6 +4631,7 @@ function notifyOwnerChanged(){   // gọi mỗi khi đăng nhập / đăng xuấ
   if(scheduleNotifyEnabled()) updateScheduleNotification(true);
 }
 function updateNotifyButton(){
+  try{ renderNowBar(); }catch(e){}   // nút bật/tắt thông báo ở trang "Thông báo" đổi theo
   const b = $('#notifyBtn'); if(!b) return;
   if(!('Notification' in window)){
     b.textContent = 'Thông báo không hỗ trợ'; b.disabled = true; return;
@@ -4384,10 +4718,20 @@ async function updateScheduleNotification(force = false){
   const {live, next, now} = upcoming(2);
   const l = live[0], n = next[0];
   if(!l && !n){ if(notifyLastSig){ notifyLastSig = ''; closeScheduleNotification(); } return; }   // hết lịch: gỡ thông báo cũ thay vì để nó treo
-  const title = l ? `🔴 Đang diễn ra: ${l.ev.title}` : `⏳ Tiếp theo: ${n.ev.title}`;
-  const body = l
-    ? `${dm(l.date)} · ${l.ev.start} - ${l.ev.end} · còn ${fmtHMS(occEndMs(l) - now)}`
-    : `${dm(n.date)} · ${n.ev.start} - ${n.ev.end} · còn ${fmtHMS(occStartMs(n) - now)}`;
+  /* Nội dung thông báo: mã môn + tên, giờ học + thời gian còn lại, phòng + giảng viên,
+     buổi kế tiếp (khi đang học) và deadline gần nhất chưa xong (trong 3 ngày tới) */
+  const nm = o => (o.ev.code ? o.ev.code + ' ' : '') + o.ev.title;
+  const where = o => [o.ev.room ? '📍 ' + o.ev.room : '', o.ev.teacher ? '👤 ' + o.ev.teacher : ''].filter(Boolean).join(' · ');
+  const cur = l || n;
+  const title = l ? `🔴 Đang diễn ra: ${nm(l)}` : `⏳ Tiếp theo: ${nm(n)}`;
+  const lines = [l
+    ? `${l.ev.start} - ${l.ev.end} · còn ${fmtHMS(occEndMs(l) - now)}`
+    : `${npRel(n.date)} · ${n.ev.start} - ${n.ev.end} · còn ${fmtHMS(occStartMs(n) - now)}`];
+  const w = where(cur); if(w) lines.push(w);
+  if(l && n) lines.push(`⏭ Tiếp theo: ${n.ev.start} ${nm(n)}${n.date !== l.date ? ' (' + npRel(n.date) + ')' : ''} · sau ${fmtHMS(occStartMs(n) - now)}`);
+  const dl = state.todos.filter(t => !t.done && t.due && !dueLate(t) && dueEndMs(t) - now <= 3*864e5).sort((a, b) => dueEndMs(a) - dueEndMs(b))[0];
+  if(dl) lines.push(`⏰ Deadline: ${dl.text} · ${dueTxt(dl)}`);
+  const body = lines.join('\n');
   /* Giữ một thông báo duy nhất trên mobile và cập nhật lại theo từng giây.
      Dùng chính nội dung có đếm ngược làm chữ ký để khi người dùng xóa
      thông báo, lần cập nhật tiếp theo vẫn tạo lại thông báo; đồng thời
@@ -4406,25 +4750,69 @@ function highlightSchedElement(el){
   highlightSchedElement.timer = setTimeout(() => el.classList.remove('jump-highlight'), 2500);
 }
 
+function leaveNowPage(){   // rời trang "Thông báo" về Bảng (điện thoại: Danh sách) để nhảy tới một mục
+  state.view = innerWidth < 800 ? 'agenda' : 'table'; saveUI();
+  document.querySelectorAll('#viewSeg button').forEach(x => x.classList.toggle('on', x.dataset.v === state.view));
+  updateSegIndicator();
+  pageSwap('now');
+}
+const swapNpList = () => { const l = document.querySelector('#nowBar .np-list'); if(l){ l.scrollTop = 0; l.classList.remove('sched-swap'); void l.offsetWidth; l.classList.add('sched-swap'); } };
 document.getElementById('nowBar').addEventListener('click', e => {
-  const row = e.target.closest('.nb'); if(!row) return;
+  const act = e.target.closest('[data-act]');
+  if(act){
+    const a = act.dataset.act;
+    if(a === 'notify'){ Promise.resolve(enableScheduleNotifications()).finally(renderNowBar); }
+    else if(a === 'addlich') openModal(null, defDate());
+    else if(a === 'addtodo') openTodo(null);
+    else if(a === 'tab'){ if(npTab !== act.dataset.tab){
+      const old = document.querySelector('#nowBar .np-tabs button.on');
+      const prevRect = old ? {l:old.offsetLeft, t:old.offsetTop, w:old.offsetWidth, h:old.offsetHeight} : null;
+      npTab = act.dataset.tab; renderNowBar(); swapNpList(); positionNpTabInd(prevRect);
+    } }
+    else if(a === 'daytoggle'){   // chỉ đổi class trên đúng ô vừa bấm (không gọi lại renderNowBar) để CSS transition của .np-day-body chạy mượt; renderNowBar gọi lại ở tick sau sẽ tự khớp vì npExpandedDays đã cập nhật
+      const d = act.dataset.day, dayEl = act.closest('.np-day'), willOpen = !npExpandedDays.has(d);
+      if(willOpen) npExpandedDays.add(d); else npExpandedDays.delete(d);
+      if(dayEl){ dayEl.classList.toggle('collapsed', !willOpen); act.setAttribute('aria-expanded', willOpen ? 'true' : 'false'); }
+      npSyncCollapseAllLabel();
+    }
+    else if(a === 'todaytoggle'){   // như daytoggle: chỉ đổi class tại chỗ để transition chạy mượt
+      npTodayCollapsed = !npTodayCollapsed;
+      act.closest('.np-fold')?.classList.toggle('collapsed', npTodayCollapsed);
+      act.setAttribute('aria-expanded', npTodayCollapsed ? 'false' : 'true');
+    }
+    else if(a === 'collapseall'){
+      const dayEls = [...document.getElementById('nowBar').querySelectorAll('.np-day')];
+      const allExpanded = dayEls.length > 0 && dayEls.every(x => !x.classList.contains('collapsed'));
+      dayEls.forEach(x => { x.classList.toggle('collapsed', allExpanded); x.querySelector('.np-gl')?.setAttribute('aria-expanded', allExpanded ? 'false' : 'true');
+        if(allExpanded) npExpandedDays.delete(x.dataset.day); else npExpandedDays.add(x.dataset.day); });
+      npSyncCollapseAllLabel();
+    }
+    else {
+      const id = act.closest('[data-todo]')?.dataset.todo, t = state.todos.find(x => x.id === id); if(!t) return;
+      if(a === 'toggle'){ setTodoDone(t, !t.done); save(); render(); }
+      else if(a === 'pin') togglePin(id);
+      else if(a === 'edit') openTodo(id);
+    }
+    return;
+  }
+  const row = e.target.closest('[data-todo],[data-id]'); if(!row) return;
   if(row.dataset.todo){
     const t = state.todos.find(x => x.id === row.dataset.todo);
-    if(t && t.due) setWeek(mondayOf(t.due)); else render();
+    if(!t) return;
+    if(!t.due) return openTodo(t.id);
+    leaveNowPage(); setWeek(mondayOf(t.due));
     const el = $('#sched').querySelector(`[data-todo="${CSS.escape(row.dataset.todo)}"]`);
     if(el){ el.scrollIntoView({block:'center', behavior:'smooth'}); highlightSchedElement(el); }
     return;
   }
-  if(row.dataset.id){
-    setWeek(mondayOf(row.dataset.date || todayStr()));
-    const el = $('#sched').querySelector(`[data-id="${CSS.escape(row.dataset.id)}"][data-date="${CSS.escape(row.dataset.date)}"]`) || $('#sched').querySelector(`[data-id="${CSS.escape(row.dataset.id)}"]`);
-    if(el){ el.scrollIntoView({block:'center', behavior:'smooth'}); highlightSchedElement(el); }
-    return;
-  }
-  $('#todayBtn').click();
+  leaveNowPage(); setWeek(mondayOf(row.dataset.date || todayStr()));
+  const el = $('#sched').querySelector(`[data-id="${CSS.escape(row.dataset.id)}"][data-date="${CSS.escape(row.dataset.date)}"]`) || $('#sched').querySelector(`[data-id="${CSS.escape(row.dataset.id)}"]`);
+  if(el){ el.scrollIntoView({block:'center', behavior:'smooth'}); highlightSchedElement(el); }
 });
 
-setInterval(renderNowBar, 1000);
+/* chỉ chạy bộ đếm khi tab đang hiện: tab ẩn thì khỏi tốn CPU/pin, quay lại sẽ cập nhật ngay */
+const visInterval = (fn, ms) => setInterval(() => { if(document.visibilityState === 'visible') fn(); }, ms);
+visInterval(renderNowBar, 1000);
 /* cập nhật chữ đếm ngược "còn ..." trong các thẻ Deadline ở mục Danh sách mỗi giây, không render lại cả danh sách */
 function tickAgendaCountdowns(){
   document.querySelectorAll('.ag.dl .chip:not(.late)').forEach(el => {
@@ -4436,9 +4824,9 @@ function tickAgendaCountdowns(){
     el.classList.add('sz-' + hmsScale(dueEndMs(t) - Date.now()));
   });
 }
-setInterval(tickAgendaCountdowns, 1000);
+visInterval(tickAgendaCountdowns, 1000);
 setInterval(updateScheduleNotification, 1000);
-document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible'){ renderNowBar(); updateScheduleNotification(); } });
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible'){ renderNowBar(); tickAgendaCountdowns(); updateScheduleNotification(); } });
 
 initHistory();
 render();
@@ -4489,6 +4877,8 @@ if(uiSaved){
   uiRestoreDialog(uiSaved.dlg);
   const goScroll = () => scrollTo(uiSaved.sx || 0, uiSaved.sy || 0);
   goScroll(); requestAnimationFrame(goScroll); addEventListener('load', goScroll, {once:true});
+  const goInner = () => { const m = uiSaved.isc || {}, a = document.querySelector('ul.todos'), b = document.querySelector('.np-list'); if(a && m.todos) a.scrollTop = m.todos; if(b && m.np) b.scrollTop = m.np; };
+  goInner(); requestAnimationFrame(goInner); setTimeout(goInner, 300); addEventListener('load', goInner, {once:true});
 }
 /* ---------- giữ nguyên tab + nội dung đã nhập ở trang đăng nhập/đăng ký khi bấm F5 ----------
    Lưu vào sessionStorage (chỉ tồn tại trong tab này, mất khi đóng tab) và xóa ngay khi đăng nhập xong (gateShowApp). */
@@ -4519,13 +4909,13 @@ if(firstRun && !(FIREBASE_CONFIG && /^https?:$/.test(location.protocol))){   // 
     .then(s => { if(s && Array.isArray(s.events) && Array.isArray(s.todos)){ state = norm(s); state.view = 'table'; save(); render(); } })
     .catch(() => {});
 }
-setInterval(() => { if(!document.querySelector('dialog[open]') && !drag && document.activeElement.tagName !== 'TEXTAREA') render(); }, 60000);
+setInterval(() => { if(document.visibilityState === 'visible' && !document.querySelector('dialog[open]') && !drag && document.activeElement.tagName !== 'TEXTAREA') render(); }, 60000);
 </script>
 <script>
 /* ===== Thanh cuộn riêng: vẽ thanh trượt tùy biến cho trang + mọi vùng cuộn được ===== */
 (() => {
   'use strict';
-  const SEL = '.scroller, ul.todos, dialog, #profileDlg form, #authGate, #stats, #legend';
+  const SEL = '.scroller, ul.todos, dialog, #profileDlg form, #authGate, #stats, #legend, .np-list, .fx-pop-list';
   const WIN = window;
   const recs = new Map();                       // phần tử -> {el, host, y, x, m}
   const layer = document.createElement('div');
@@ -4659,12 +5049,25 @@ setInterval(() => { if(!document.querySelector('dialog[open]') && !drag && docum
     }
   }
 
+  /* tự phát hiện MỌI vùng cuộn được (kể cả vùng mới thêm sau này) để toàn trang dùng chung một kiểu thanh cuộn;
+     giới hạn tối đa 1 lần quét/400ms để không tốn CPU khi đồng hồ đếm ngược đổi chữ mỗi giây */
+  let lastDisc = 0;
+  function discover(){
+    const now = performance.now(); if(now - lastDisc < 400) return; lastDisc = now;
+    document.body.querySelectorAll('*').forEach(el => {
+      if(recs.has(el) || el.closest('.sbLayer')) return;
+      if(el.scrollHeight <= el.clientHeight + 1 && el.scrollWidth <= el.clientWidth + 1) return;   // đọc layout rẻ trước, getComputedStyle sau
+      const cs = getComputedStyle(el);
+      if(/(auto|scroll)/.test(cs.overflowY) || /(auto|scroll)/.test(cs.overflowX)) add(el, false);
+    });
+  }
   let raf = 0, needScan = false;
   function frame(){
     raf = 0;
     if(needScan){
       needScan = false;
       document.querySelectorAll(SEL).forEach(el => add(el, false));
+      discover();
       recs.forEach((r, el) => { if(!r.win && !el.isConnected) drop(el); });
     }
     recs.forEach(place);
@@ -4707,7 +5110,7 @@ setInterval(() => { if(!document.querySelector('dialog[open]') && !drag && docum
     if(ms.every(m => m.type === 'childList' && [...m.addedNodes, ...m.removedNodes].every(own))) return;
     schedule(true);
   }).observe(document.body, {subtree:true, childList:true, attributes:true, attributeFilter:['open','hidden']});
-  setInterval(() => schedule(true), 1500);       // phòng khi nội dung đổi kích thước mà không có sự kiện nào báo
+  setInterval(() => { if(document.visibilityState === 'visible') schedule(true); }, 3000);       // phòng khi nội dung đổi kích thước mà không có sự kiện nào báo
   schedule(true);
 })();
 </script>
