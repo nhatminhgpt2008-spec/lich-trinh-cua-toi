@@ -19,10 +19,10 @@
 <noscript><link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <style>
 :root{
-  --bg:#edf1f0; --surface:#ffffff; --ink:#17201c; --muted:#66736c; --line:#dbe2df; --line-soft:#ecf0ee;
-  --accent:#0d6b45; --accent-ink:#fff; --accent-soft:#d9efe3;
-  --cancel-bg:#fad9d5; --cancel-bd:#cf4137;
-  --warn:#e39b00; --danger:#c73a30;
+  --bg:#f3f6f4; --surface:#ffffff; --ink:#0c1612; --muted:#4b5d54; --line:#d3dcd7; --line-soft:#e7eeea;
+  --accent:#0d6b45; --accent-ink:#fff; --accent-soft:#e0f2e8;
+  --cancel-bg:#fde4e1; --cancel-bd:#cf4137;
+  --warn:#b97300; --danger:#c0352b;
   --cell-cancel:#e04a42; --cell-cancel-ink:#ffffff; --cell-conflict:#ffe680; --cell-conflict-ink:#2a1d00;
   --live-color:#e5484d; --live-ink:#ffffff; --next-color:#ffb300; --next-ink:#2a1900;
   --dl:#2e9d66; --dl-ink:#ffffff;
@@ -42,6 +42,14 @@
 html{color-scheme:light dark;scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeSpeed}
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 [data-theme=light]{color-scheme:light}[data-theme=dark]{color-scheme:dark}
+/* chữ tối trên nền sáng nhìn mảnh hơn chữ sáng trên nền tối: giao diện sáng dùng nét chữ dày hơn một bậc + bỏ làm mịn chữ (antialiased) để nét đậm ngang giao diện tối */
+:root:not([data-theme=dark]) body{font-weight:500;-webkit-font-smoothing:auto;-moz-osx-font-smoothing:auto}
+:root:not([data-theme=dark]) .np-st,:root:not([data-theme=dark]) .sheet .dd th{font-weight:500}
+/* tinh chỉnh riêng giao diện sáng: thẻ nổi nhẹ trên nền, tiêu đề tuần đậm hơn cho chữ trắng dễ đọc, nút hover rõ hơn */
+:root:not([data-theme=dark]) .card{box-shadow:0 1px 2px rgba(16,40,28,.05),0 6px 16px -8px rgba(16,40,28,.14)}
+:root:not([data-theme=dark]) .sheet .wk th{background:#17814f}
+:root:not([data-theme=dark]) .btn:hover,:root:not([data-theme=dark]) .nav button:hover,:root:not([data-theme=dark]) .tools button:hover{background:var(--accent-soft)}
+:root:not([data-theme=dark]) .todo .st.no,:root:not([data-theme=dark]) .todo .dl.late{color:#c0352b}
 body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 "Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
@@ -262,7 +270,7 @@ dialog .btn.danger{border-color:var(--danger)}
 .tag.next::after{box-shadow:0 0 0 4px color-mix(in srgb,var(--next-color) 55%,transparent)}
 .np-k .tag.live::after,.np-k .tag.next::after{display:none}
 @keyframes tagRing{0%,100%{opacity:0}50%{opacity:1}}
-.tag.live i{width:6px;height:6px;border-radius:50%;background:currentColor;animation:livedot 1.6s ease-in-out infinite;will-change:opacity;contain:layout style}
+.tag.live i{width:6px;height:6px;border-radius:50%;background:currentColor;contain:layout style}
 .ag.next{border-radius:10px;border-left-width:1px;border-color:color-mix(in srgb,var(--next-color) 70%,transparent);background:color-mix(in srgb,var(--next-color) 26%,var(--surface));--pulse-color:var(--next-color);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pulse-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--pulse-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--pulse-color) 55%,transparent);}
 .ag.next::after,.cell.next::after{content:"";position:absolute;inset:0;border-radius:inherit;background:color-mix(in srgb,var(--next-color) 26%,transparent);pointer-events:none}
 .cell.next{--pulse-color:var(--next-color);border-radius:10px;background:color-mix(in srgb,var(--next-color) 26%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pulse-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--pulse-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--pulse-color) 55%,transparent);}
@@ -333,13 +341,13 @@ dialog .btn.danger{border-color:var(--danger)}
 .dlcell .dlst-in .chip{margin:0;white-space:nowrap;font-size:1em;padding:1px .5em}
 .chip.ok,.tag.dl.ok{background:var(--accent);color:var(--accent-ink);font-weight:700;box-shadow:none}
 @media (prefers-reduced-motion:reduce){.tag.live::after,.tag.next::after,.tag.live i,.cell.live::before,.cell.next::before,.ag.live::before,.ag.next::before{animation:none!important}}
-.cell .lvb{margin-bottom:3px;position:relative;z-index:1}.cell .lvb .tag{margin:0}
+.cell .lvb{margin-bottom:3px;position:relative;z-index:1;display:flex;flex-wrap:wrap;justify-content:center;gap:3px}.cell .lvb .tag{margin:0}   /* flex thay vì inline: chấm 🔴 của nhãn “Kết thúc sau…” làm lệch đường cơ sở chữ, khiến dòng chứa cao thừa ~5px so với nhãn “Diễn ra sau…” */
 @keyframes livedot{0%,100%{opacity:.25}50%{opacity:1}}
 /* chấm của nhãn "Đang diễn ra"/"Kết thúc sau…": dùng đúng chấm đỏ 🔴 như nút Thông báo (thay chấm đen cũ), giữ nguyên nhịp chớp */
 .tag.live i{width:auto;height:auto;border-radius:0;background:none;display:inline-flex;align-items:center;font-style:normal;line-height:1}
 .tag.live i::before{content:"🔴";font-size:10px}
 /* nút đỏ "Đang diễn ra" ở Thông báo: chớp chớp khi có buổi đang diễn ra */
-.np-chip.live:not(.zero) .np-ld{display:inline-block;animation:livedot 1.6s ease-in-out infinite}
+.np-chip.live:not(.zero) .np-ld{display:inline-block}
 @keyframes npLiveBlink{0%,100%{background:color-mix(in srgb,var(--live-color) 14%,var(--surface));box-shadow:0 0 0 0 transparent}50%{background:color-mix(in srgb,var(--live-color) 42%,var(--surface));box-shadow:0 0 0 4px color-mix(in srgb,var(--live-color) 35%,transparent)}}
 @keyframes npLiveDot{0%,100%{opacity:1}50%{opacity:.2}}
 @media (prefers-reduced-motion:reduce){.np-chip.live .np-ld{animation:none}}
@@ -904,7 +912,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
   .tools #qWrap:focus-within,.tools #qWrap.has-val{flex:1 1 auto;width:100%}
   .tools #viewSeg{flex:1 1 auto;min-width:0}
   .tools #viewSeg button{flex:1 1 auto;padding:0 8px!important;white-space:nowrap;justify-content:center}
-  .tools #undoBtn,.tools #redoBtn,.tools #themeBtn{width:36px;padding:0!important;justify-content:center;flex:0 0 auto}
+  .tools #undoBtn,.tools #redoBtn,.tools #themeBtn,.tools #notifyTop{width:36px;padding:0!important;justify-content:center;flex:0 0 auto}
   .tools #addBtn{position:fixed!important;left:14px;right:auto;top:auto;bottom:calc(14px + env(safe-area-inset-bottom,0px))!important;margin:0;z-index:999;width:54px;height:54px;padding:0!important;border-radius:50%;display:grid!important;place-items:center;font-size:0;box-shadow:0 6px 18px rgba(0,0,0,.4);transform:translateZ(0);-webkit-transform:translateZ(0)}
   .tools #addBtn::before{content:"+";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:30px;line-height:1;font-weight:400}
   .top .stats{flex:1 0 100%;flex-wrap:nowrap;overflow-x:auto;gap:6px;margin:0 -10px;padding:0 10px;scrollbar-width:none}
@@ -927,7 +935,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
 @media screen and (max-width:400px){
   .tools{gap:5px}
   .tools #viewSeg button{padding:0 6px!important;font-size:13px}
-  .tools #undoBtn,.tools #redoBtn,.tools #themeBtn{width:32px}
+  .tools #undoBtn,.tools #redoBtn,.tools #themeBtn,.tools #notifyTop{width:32px}
   .nav button{padding:0 8px}
 }
 /* ===== Thanh cuộn riêng (luôn hiển thị ở mọi vùng có thể cuộn) ===== */
@@ -1046,14 +1054,12 @@ html.wk-anim body{overflow-x:clip}   /* tránh thanh cuộn ngang thoáng qua l�
 .np-chip.next{border-color:color-mix(in srgb,var(--next-color) 60%,var(--line));background:color-mix(in srgb,var(--next-color) 20%,var(--surface));color:color-mix(in srgb,var(--next-color) 62%,var(--ink))}
 .np-chip.soon{border-color:color-mix(in srgb,var(--soon-color) 55%,var(--line));background:color-mix(in srgb,var(--soon-color) 12%,var(--surface));color:var(--soon-text)}
 .np-chip.done{border-color:color-mix(in srgb,var(--accent) 50%,var(--line));background:color-mix(in srgb,var(--accent) 16%,var(--surface));color:var(--accent)}
-.np-chip.zero{opacity:.6}
 .np-chip.warn,.np-chip.late{color:var(--ink)}
 .np-chip.warn{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 14%,var(--surface))}
 .np-chip.late{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 14%,var(--surface))}
-.np-acts{display:flex;flex-wrap:wrap;gap:8px}
-.np-acts .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
-.np-bell.on{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
-.np-bell:disabled{opacity:.55;cursor:not-allowed}
+.tools #notifyTop{width:36px;padding:0;justify-content:center}
+.tools #notifyTop.on{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.tools #notifyTop:disabled{opacity:.55;cursor:not-allowed}
 .np-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start}
 @media (min-width:900px){.np-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr)}}
 .np-col{display:grid;gap:12px;min-width:0;align-content:start}
@@ -1066,7 +1072,7 @@ html.wk-anim body{overflow-x:clip}   /* tránh thanh cuộn ngang thoáng qua l�
 .np-k .tag.next::before{font-size:11px}
 .np-k .tag.live,.np-k .tag.next{animation:none;box-shadow:none}   /* nhãn ở tiêu đề thẻ: bỏ vòng sáng nhấp nháy */
 .np-k .tag.live{background:color-mix(in srgb,var(--live-color) 14%,var(--surface));color:var(--ink);border:1px solid var(--live-color);border-radius:99px;padding:5px 12px;gap:6px;font-size:12.5px;font-weight:600;animation:none;box-shadow:none}   /* nút đỏ ở thẻ Lịch học: cùng kiểu với nút "Đang diễn ra" ở đầu trang + chớp chớp (chỉ riêng nút, không phải cả thẻ) */
-.np-k .tag.live i{animation:livedot 1.6s ease-in-out infinite}
+.np-k .tag.live i{animation:none}
 .np-k .tag.live i::before{font-size:12px;filter:none}
 .np-k .tag.next{background:color-mix(in srgb,var(--next-color) 14%,var(--surface));color:var(--ink);border:1px solid var(--next-color);border-radius:99px;padding:5px 12px;gap:6px;font-size:12.5px;font-weight:600;animation:none;box-shadow:none}   /* cùng kiểu với nút đỏ "Đang diễn ra", chỉ khác màu vàng */
 .np-k .tag.next::before{font-size:12px}
@@ -1076,6 +1082,9 @@ html.wk-anim body{overflow-x:clip}   /* tránh thanh cuộn ngang thoáng qua l�
 /* Bảng + Danh sách: bỏ vòng sáng/viền nhấp nháy quanh nhãn trạng thái (Kết thúc sau… / Diễn ra sau…); cả hai nhãn bo tròn hết cỡ như nhau */
 .tag.live,.tag.next{box-shadow:none;border-radius:999px}
 .tag.live::after,.tag.next::after{display:none;animation:none}
+/* lớp xếp chồng: hiệu ứng của ô ĐANG diễn ra (đỏ) nằm trên hiệu ứng của ô SẮP diễn ra (vàng), không thêm lớp hiệu ứng mới */
+.ag.live,.cell.live{z-index:4}
+.sheet td.slot:has(.cell.live){z-index:4}
 /* "Cách đọc thời khoá biểu": mở/đóng trượt mượt (trình duyệt cũ không hỗ trợ thì vẫn mở/đóng tức thì như trước) */
 :root{interpolate-size:allow-keywords}
 .guide::details-content{block-size:0;overflow:hidden;transition:block-size .24s cubic-bezier(.4,0,.2,1),content-visibility .24s allow-discrete}
@@ -1118,10 +1127,10 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 .np-main{display:grid;min-width:0}
 .np-main b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .np-main small{color:var(--muted);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.np-st{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:96px;height:24px;padding:0 11px;border-radius:99px;font-size:11.5px;font-weight:700;letter-spacing:.01em;white-space:nowrap;background:color-mix(in srgb,var(--ink) 9%,transparent);color:var(--muted);box-shadow:inset 0 0 0 1px color-mix(in srgb,currentColor 35%,transparent)}   /* 4 nhãn trạng thái cùng một khuôn (cùng kích thước, chấm/biểu tượng đầu nhãn, viền mảnh); chỉ khác màu: Đang diễn ra = đỏ đặc + chấm nhấp nháy, Tiếp theo = vàng đặc, Sắp tới = xanh dương nhạt, Đã xong = xanh lá nhạt + dấu ✓ */
+.np-st{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:96px;height:24px;padding:0 11px;border-radius:99px;font-size:11.5px;font-weight:400;letter-spacing:.01em;white-space:nowrap;background:color-mix(in srgb,var(--ink) 9%,transparent);color:var(--muted);box-shadow:inset 0 0 0 1px color-mix(in srgb,currentColor 35%,transparent)}   /* 4 nhãn trạng thái cùng một khuôn (cùng kích thước, chấm/biểu tượng đầu nhãn, viền mảnh); chỉ khác màu: Đang diễn ra = đỏ đặc + chấm nhấp nháy, Tiếp theo = vàng đặc, Sắp tới = xanh dương nhạt, Đã xong = xanh lá nhạt + dấu ✓ */
 .np-st::before{content:"";flex:0 0 auto;font-size:11px;line-height:1}   /* icon đồng bộ với các tag tổng quan ở đầu trang */
 .np-row.live .np-st{background:color-mix(in srgb,var(--live-color) 22%,var(--surface));color:color-mix(in srgb,var(--live-color) 78%,var(--ink));box-shadow:inset 0 0 0 1px var(--live-color)}   /* nền nhạt để icon 🔴 nhìn rõ; nhịp nhấp nháy dùng chung với nhãn "Kết thúc sau…" ở Bảng/Danh sách */
-.np-row.live .np-st::before{content:"🔴";animation:livedot 1.6s ease-in-out infinite}
+.np-row.live .np-st::before{content:"🔴"}
 @media (prefers-reduced-motion:reduce){.np-row.live .np-st::before{animation:none}}
 .np-row.next .np-st{background:color-mix(in srgb,var(--next-color) 20%,transparent);color:color-mix(in srgb,var(--next-color) 62%,var(--ink));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--next-color) 60%,transparent)}   /* cùng kiểu nền nhạt + viền mảnh như 3 nhãn còn lại, không đổ bóng */
 .np-row.next .np-st::before{content:"⏳"}
@@ -1195,8 +1204,10 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
         <span class="q-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="2"/><line x1="15" y1="15" x2="20" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
         <input type="search" id="q" placeholder="Tìm môn, phòng, giảng viên…" aria-label="Tìm lịch">
       </div>
-      <div class="seg" id="viewSeg"><span class="seg-ind" id="viewSegInd" aria-hidden="true"></span><button data-v="table">Bảng</button><button data-v="agenda">Danh sách</button><button data-v="now">Thông báo</button><button data-v="fixed">Lớp</button></div>
+      <div class="seg" id="viewSeg"><span class="seg-ind" id="viewSegInd" aria-hidden="true"></span><button data-v="table">Bảng</button><button data-v="agenda">Danh sách</button><button data-v="now">Công việc</button><button data-v="fixed">Lớp</button></div>
       <button class="primary" id="addBtn" title="Thêm lịch (N)">Thêm lịch</button>
+      <button type="button" class="primary" id="addTodoTop" title="Thêm deadline">Thêm deadline</button>
+      <button type="button" id="notifyTop" title="Bật thông báo lịch" aria-label="Bật thông báo lịch">🔕</button>
       <button id="undoBtn" title="Hoàn tác (Ctrl+Z)" aria-label="Hoàn tác" disabled>↶</button>
       <button id="redoBtn" title="Làm lại (Ctrl+Y)" aria-label="Làm lại" disabled>↷</button>
       <button id="themeBtn" title="Đổi giao diện sáng/tối" aria-label="Đổi giao diện">◐</button>
@@ -1221,7 +1232,7 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
         <div class="tabs" id="todoStatus"><span class="tabInd" aria-hidden="true"></span>
           <button data-s="all">Tất cả</button><button data-s="open">Chưa hoàn thành</button><button data-s="done">Đã hoàn thành</button>
         </div>
-        <button type="button" class="btn primary todoadd" id="todoAdd">+ Thêm deadline</button>
+        <button type="button" class="btn primary todoadd" id="todoAdd">Thêm deadline</button>
         <div class="listbar" id="todoBar" style="visibility:hidden"><span class="hintline" id="todoHint"></span><button type="button" class="mini" id="todoAll">Mở hết</button></div>
         <ul class="todos" id="todos"></ul>
       </div>
@@ -1317,7 +1328,6 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
   <form id="rowForm" autocomplete="off">
     <div class="dlgHead"><h2 id="rowTitle">Thêm dòng</h2><button type="button" class="iconbtn" id="rowCloseX" aria-label="Đóng">×</button></div>
     <div class="fgrid">
-      <label class="full">Tên dòng - không bắt buộc<input name="label" maxlength="40" placeholder="Ví dụ: Nghỉ trưa"></label>
       <label>Bắt đầu<input type="text" class="t24" name="start" inputmode="numeric" maxlength="5" placeholder="HH:MM" autocomplete="off" required></label>
       <label>Kết thúc<input type="text" class="t24" name="end" inputmode="numeric" maxlength="5" placeholder="HH:MM" autocomplete="off" required></label>
     </div>
@@ -2571,7 +2581,7 @@ function render(){
   const fx = state.view === 'fixed', nw = state.view === 'now';   // nw: trang riêng "Thông báo" (Đang diễn ra / Tiếp theo / Deadline)
   document.querySelector('.layout').classList.toggle('fx-on', fx);
   document.querySelector('.layout').hidden = nw;
-  if(nw) $('#range').textContent = 'Thông báo';
+  if(nw) $('#range').textContent = 'Công việc';
   else if(fx){
     const ser = fixedSeries('school'), oth = fixedSeries('other');
     $('#range').textContent = `${ser.length} lớp · ${ser.reduce((s,x) => s + (+x.cur.tc || 0), 0)} tín chỉ` + (oth.length ? ` · ${oth.length} lịch khác` : '');
@@ -2785,7 +2795,7 @@ function tableHTML(occs){
       }
       h += `<td class="day-stack slot" data-date="${d}" data-s="" data-e=""><div class="stk">${body}</div></td>`;
     }
-    h += `</tr></tbody></table></div><div class="sheetbar"><button type="button" class="btn" id="stackToggle" aria-pressed="true">↕ Theo khung giờ</button><button type="button" class="btn" id="addRow">+ Thêm dòng</button></div>`;
+    h += `</tr></tbody></table></div><div class="sheetbar"><button type="button" class="btn" id="stackToggle" aria-pressed="true">Theo khung giờ</button><button type="button" class="btn" id="addRow">Thêm dòng</button></div>`;
     return h;
   }
 
@@ -2807,11 +2817,11 @@ function tableHTML(occs){
     }
     h += '</tr>';
   }
-  if(!slots.length) h += '<tr><td colspan="8" class="none">Tuần này chưa có lịch. Bấm vào ô trống hoặc “Thêm dòng” để bắt đầu.</td></tr>';
+  if(!slots.length) h += '<tr><td colspan="8" class="none">Tuần này chưa có lịch</td></tr>';
   for(const sl of slots){
     const {s,e,row} = sl;
     const rng = `${s}<span class="tle"><span class="dash"> - </span>${e}</span>`;
-    const lab = row && row.label ? `${esc(row.label)}<small>${rng}</small>` : rng;
+    const lab = rng;
     const ctl = row ? `<span class="rowctl"><button type="button" data-rowedit="${row.id}" title="Sửa dòng" aria-label="Sửa dòng">✎</button><button type="button" data-rowdel="${row.id}" title="Xóa dòng" aria-label="Xóa dòng">×</button></span>` : '';
     h += `<tr><th class="tl"><div class="tlw"><span class="tlt">${lab}</span>${ctl}</div></th>`;
     for(const d of days){
@@ -2821,7 +2831,7 @@ function tableHTML(occs){
     }
     h += '</tr>';
   }
-  return h + `</tbody></table></div><div class="sheetbar"><button type="button" class="btn" id="stackToggle" aria-pressed="false">↕ Thu gọn lịch</button><button type="button" class="btn" id="addRow">+ Thêm dòng</button><span>Bấm đúp vào ô để gõ chữ trực tiếp. Bấm một lần để mở form chi tiết.</span></div>`;
+  return h + `</tbody></table></div><div class="sheetbar"><button type="button" class="btn" id="stackToggle" aria-pressed="false">Thu gọn lịch</button><button type="button" class="btn" id="addRow">Thêm dòng</button></div>`;
 }
 /* dòng thông tin của thẻ Danh sách: ô nghỉ thì bọc từng phần để gạch riêng, dấu “·” không bị gạch */
 function emHTML(o, parts){
@@ -2838,7 +2848,7 @@ function agendaHTML(occs){
     const list = occs.filter(o => o.date === date).sort((a,b) => toMin(a.ev.start)-toMin(b.ev.start));
     html += `<div class="ad"><h3>${DOW[i]}, ${dm(date)}${date===today?'<span class="tdy">Hôm nay</span>':''}</h3>`;
     const dls = shownDeadlines().filter(t => t.due === date);
-    if(!list.length && !dls.length) html += '<div class="none">Không có lịch. Bấm “Thêm lịch” để tạo.</div>';
+    if(!list.length && !dls.length) html += '<div class="none">Không có lịch</div>';
     const items = [...list.map(o => ({o, m:toMin(o.ev.start)})), ...dls.map(t => ({t, m:t.pin ? -1 : t.dueTime ? toMin(t.dueTime) : 1440}))].sort((a,b) => a.m - b.m);   // deadline ghim lên đầu ngày;   // trùng giờ thì sự kiện đứng trước deadline
     for(const it of items){
       if(it.t){ html += dlArticleHTML(it.t); continue; }
@@ -3151,7 +3161,7 @@ function fixedHTML(){
   const today = todayStr();
   const kind = 'school', list = fixedList(kind); fxCache[kind] = fxBuildCache(kind, list);
   let h = `<h3 class="fxh">Thời khóa biểu của trường</h3>${fxBar(kind)}<div class="scroller"><table class="fx" data-fx-kind="${kind}"><thead><tr><th class="n">#</th>${fxSortTh(kind,'name','Môn học')}${fxSortTh(kind,'tc','TC','c w-tc')}${fxSortTh(kind,'htgd','HTGD','w-ht')}${fxSortTh(kind,'when','Thời gian')}${fxSortTh(kind,'room','Phòng')}${fxSortTh(kind,'teacher','Giảng viên')}${fxSortTh(kind,'sv','Sĩ số','r w-sv')}${fxSortTh(kind,'note','Ghi chú')}${fxLinkTh(kind)}</tr></thead><tbody>`;
-  if(!list.length) h += '<tr><td colspan="10" class="none">Chưa có lớp cố định. Bấm “Thêm lịch”, chọn Tag “Lớp chính thức” và Kiểu lặp Hằng tuần hoặc Cách tuần. Hoặc nạp file dữ liệu ở “Tài khoản của tôi” → “Khôi phục dữ liệu (.json)”.</td></tr>';
+  if(!list.length) h += '<tr><td colspan="10" class="none">Chưa có lịch</td></tr>';
   list.forEach(({cur:ev, vs}, i) => {
     const cc = String(ev.code || '').split('.')[0];
     const occ = nextHit(ev, mondayOf(today)) || firstDate(ev);
@@ -3174,7 +3184,7 @@ function fixedHTML(){
 function otherFixedHTML(){
   const today = todayStr(), kind = 'other', list = fixedList(kind); fxCache[kind] = fxBuildCache(kind, list);
   let h = `<div class="card fxblk"><h3 class="fxh">Lịch khác</h3>${fxBar(kind)}<div class="scroller"><table class="fx" data-fx-kind="${kind}"><thead><tr><th class="n">#</th>${fxSortTh(kind,'name','Tên lịch / Nội dung')}${fxSortTh(kind,'tag','Tag')}${fxSortTh(kind,'when','Thời gian')}${fxSortTh(kind,'room','Phòng / địa điểm','nowrap')}${fxSortTh(kind,'teacher','Người phụ trách')}${fxSortTh(kind,'note','Ghi chú')}${fxLinkTh(kind)}</tr></thead><tbody>`;
-  if(!list.length) h += '<tr><td colspan="8" class="none">Chưa có lịch cố định khác. Bấm “Thêm lịch”, chọn Tag khác như gia sư, học thêm hoặc Kiểu ô “Lịch tự do”, rồi chọn Kiểu lặp.</td></tr>';
+  if(!list.length) h += '<tr><td colspan="8" class="none">Chưa có lịch</td></tr>';
   list.forEach(({cur:ev, vs}, i) => {
     const tag = tagOf(ev.type), free = ev.kind === 'free';
     const occ = nextHit(ev, mondayOf(today)) || firstDate(ev);
@@ -3617,6 +3627,8 @@ $('#jump').onchange = e => {
 };
 $('#jump').onblur = () => { $('#jump').value = weekStart; };   /* rời ô thì đồng bộ lại về đầu tuần đang xem */
 $('#addBtn').onclick = () => openModal(null, defDate());
+$('#addTodoTop').onclick = () => openTodo(null);
+$('#notifyTop').onclick = () => enableScheduleNotifications();
 $('#q').oninput = e => { query = e.target.value.trim().toLowerCase(); $('#qWrap').classList.toggle('has-val', !!e.target.value); render(); };
 /* hiệu ứng chuyển trang: vùng nào đổi thì vùng đó chạy hiệu ứng.
    - sang/đi khỏi "Thông báo": cả trang Thông báo hoặc cả khung chính (trước đây chỉ #sched đang trống nên không thấy gì)
@@ -4209,19 +4221,18 @@ function openRow(id){
   const r = id ? state.rows.find(x => x.id === id) : null;
   rowEditing = id || null; rowForm.reset(); $('#rowErr').textContent = '';
   $('#rowTitle').textContent = r ? 'Sửa dòng' : 'Thêm dòng';
-  rowForm.elements.label.value = r ? (r.label||'') : '';
   rowForm.elements.start.value = r ? r.start : '12:00';
   rowForm.elements.end.value = r ? r.end : '13:00';
-  dlgRow.showModal(); rowForm.elements.label.focus();
+  dlgRow.showModal(); rowForm.elements.start.focus();
 }
 rowForm.addEventListener('submit', e => {
   e.preventDefault();
-  const d = Object.fromEntries(new FormData(rowForm)); d.label = d.label.trim();
+  const d = Object.fromEntries(new FormData(rowForm));
   const ts = normTime(d.start), te = normTime(d.end);
   if(!ts || !te){ $('#rowErr').textContent = 'Nhập giờ theo dạng 24 giờ, ví dụ 12:00.'; return; }
   d.start = ts; d.end = te;
   if(toMin(d.end) <= toMin(d.start)) { $('#rowErr').textContent = 'Giờ kết thúc phải sau giờ bắt đầu.'; return; }
-  if(rowEditing) Object.assign(state.rows.find(x => x.id === rowEditing), d); else state.rows.push({id:uid(), ...d});
+  if(rowEditing){ const rr = state.rows.find(x => x.id === rowEditing); Object.assign(rr, d); delete rr.label; } else state.rows.push({id:uid(), ...d});
   save(); closeDialog(dlgRow); render();
 });
 $('#rowClose').onclick = () => closeDialog(dlgRow);
@@ -4570,13 +4581,10 @@ function renderNowBar(){
     `<span class="np-chip live${live.length ? '' : ' zero'}"><span class="np-ld">🔴</span> Đang diễn ra <b>${live.length}</b></span>`,
     `<span class="np-chip next${todayNext ? '' : ' zero'}">⏳ Tiếp theo <b>${todayNext}</b></span>`,
     `<span class="np-chip soon${soonN ? '' : ' zero'}">🕒 Sắp tới <b>${soonN}</b></span>`,
-    `<span class="np-chip done${doneN ? '' : ' zero'}">✅ Buổi đã xong <b>${doneN}</b></span>`,
+    `<span class="np-chip done${doneN ? '' : ' zero'}">✅ Đã xong <b>${doneN}</b></span>`,
     dueToday ? `<span class="np-chip warn">⏰ Hạn hôm nay <b>${dueToday}</b></span>` : '',
     lateN ? `<span class="np-chip late">⚠ Quá hạn <b>${lateN}</b></span>` : ''].join('');
-  const html = `<div class="np-top"><div class="np-sum">${chips}</div><div class="np-acts">
-      <button type="button" class="btn np-bell${ns.on ? ' on' : ''}" data-act="notify"${ns.dis ? ' disabled' : ''}>${ns.on ? '🔔' : '🔕'} ${ns.txt}</button>
-      <button type="button" class="btn" data-act="addlich">+ Thêm lịch</button>
-      <button type="button" class="btn primary" data-act="addtodo">+ Thêm deadline</button></div></div>
+  const html = `<div class="np-top"><div class="np-sum">${chips}</div></div>
     <div class="np-grid">
       <section class="np-col"><h2 class="np-h">Lịch học</h2>${liveCards.join('')}${nextCard}${emptyCard}
         <div class="np-sec"><div class="np-sh">Hôm nay<small>${doneN}/${actN} buổi đã xong</small></div>${todayOccs.length ? `<div class="np-fold${npTodayCollapsed ? ' collapsed' : ''}"><button type="button" class="np-gl" data-act="todaytoggle" aria-expanded="${npTodayCollapsed ? 'false' : 'true'}"><span class="np-gl-l"><i class="np-gl-arrow" aria-hidden="true">▸</i>${esc(npDayHead(today))}</span><small>${todayOccs.length} buổi</small></button><div class="np-day-body"><div class="np-day-in">${todayHTML}</div></div></div>` : todayHTML}</div>
@@ -4642,7 +4650,9 @@ function notifyOwnerChanged(){   // gọi mỗi khi đăng nhập / đăng xuấ
   if(scheduleNotifyEnabled()) updateScheduleNotification(true);
 }
 function updateNotifyButton(){
-  try{ renderNowBar(); }catch(e){}   // nút bật/tắt thông báo ở trang "Thông báo" đổi theo
+  try{ renderNowBar(); }catch(e){}
+  const tb = $('#notifyTop');   // nút chuông trên thanh công cụ: đổi icon/nhãn theo trạng thái
+  if(tb){ const ns = npNotifyState(); tb.disabled = ns.dis; tb.classList.toggle('on', ns.on); tb.textContent = ns.on ? '🔔' : '🔕'; const t = ns.on ? 'Tắt thông báo lịch' : ns.txt; tb.title = t; tb.setAttribute('aria-label', t); }
   const b = $('#notifyBtn'); if(!b) return;
   if(!('Notification' in window)){
     b.textContent = 'Thông báo không hỗ trợ'; b.disabled = true; return;
@@ -4772,10 +4782,7 @@ document.getElementById('nowBar').addEventListener('click', e => {
   const act = e.target.closest('[data-act]');
   if(act){
     const a = act.dataset.act;
-    if(a === 'notify'){ Promise.resolve(enableScheduleNotifications()).finally(renderNowBar); }
-    else if(a === 'addlich') openModal(null, defDate());
-    else if(a === 'addtodo') openTodo(null);
-    else if(a === 'tab'){ if(npTab !== act.dataset.tab){
+    if(a === 'tab'){ if(npTab !== act.dataset.tab){
       const old = document.querySelector('#nowBar .np-tabs button.on');
       const prevRect = old ? {l:old.offsetLeft, t:old.offsetTop, w:old.offsetWidth, h:old.offsetHeight} : null;
       npTab = act.dataset.tab; renderNowBar(); swapNpList(); positionNpTabInd(prevRect);
