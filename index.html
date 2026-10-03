@@ -1351,7 +1351,7 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
       <label class="cust"><input type="checkbox" name="done"> Đã hoàn thành</label>
     </div>
     <p class="err" id="todoErr" role="alert"></p>
-    <div class="actions"><span class="grow"></span><button type="button" class="btn" id="todoClose">Đóng</button><button type="submit" class="btn primary">Lưu</button></div>
+    <div class="actions"><button type="button" class="btn danger" id="todoDel" hidden>Xóa</button><span class="grow"></span><button type="button" class="btn" id="todoClose">Đóng</button><button type="submit" class="btn primary">Lưu</button></div>
   </form>
 </dialog>
 <dialog id="dlgScope">
@@ -4050,6 +4050,7 @@ function openTodo(id){
   el.on.value = v.on || ''; el.onTime.value = v.onTime || ''; el.due.value = v.due || ''; el.dueTime.value = v.dueTime || ''; el.done.checked = !!v.done; el.pin.checked = !!v.pin;
   el.noDue.checked = !!t && !t.due; syncNoDue();
   $('#todoDlgTitle').textContent = t ? 'Sửa deadline' : 'Thêm deadline';
+  $('#todoDel').hidden = !t;
   clearInterval(todoClock); todoAuto = !t;
   if(todoAuto) todoClock = setInterval(() => { if(!todoAuto) return; el.on.value = todayStr(); el.onTime.value = nowHM(); }, 1000);
   dlgTodo.showModal(); el.text.focus();
@@ -4069,6 +4070,13 @@ todoEditForm.addEventListener('submit', e => {
   else { const nt = {id:uid(), ...d}; if(nt.done) nt.doneAt = Date.now(); state.todos.push(nt); }
   save(); closeDialog(dlgTodo); render();
 });
+$('#todoDel').onclick = () => {
+  if(!todoEditing) return;
+  const t = state.todos.find(x => x.id === todoEditing); if(!t) return;
+  if(!confirm(`Xóa deadline "${t.text}"?`)) return;
+  state.todos = state.todos.filter(x => x.id !== todoEditing);
+  save(); closeDialog(dlgTodo); render();
+};
 $('#todoClose').onclick = () => closeDialog(dlgTodo);
 $('#todoCloseX').onclick = () => closeDialog(dlgTodo);
 dlgTodo.addEventListener('click', e => { if(e.target === dlgTodo) closeDialog(dlgTodo); });
