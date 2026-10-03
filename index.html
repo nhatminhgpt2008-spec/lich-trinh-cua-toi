@@ -4739,20 +4739,10 @@ async function updateScheduleNotification(force = false){
   const {live, next, now} = upcoming(2);
   const l = live[0], n = next[0];
   if(!l && !n){ if(notifyLastSig){ notifyLastSig = ''; closeScheduleNotification(); } return; }   // hết lịch: gỡ thông báo cũ thay vì để nó treo
-  /* Nội dung thông báo: mã môn + tên, giờ học + thời gian còn lại, phòng + giảng viên,
-     buổi kế tiếp (khi đang học) và deadline gần nhất chưa xong (trong 3 ngày tới) */
+  /* Nội dung thông báo gọn: chỉ tiêu đề (mã môn + tên) và một dòng thời gian — đang học: “Còn …” tới lúc kết thúc; chưa học: “Diễn ra sau …” */
   const nm = o => (o.ev.code ? o.ev.code + ' ' : '') + o.ev.title;
-  const where = o => [o.ev.room ? '📍 ' + o.ev.room : '', o.ev.teacher ? '👤 ' + o.ev.teacher : ''].filter(Boolean).join(' · ');
-  const cur = l || n;
   const title = l ? `🔴 Đang diễn ra: ${nm(l)}` : `⏳ Tiếp theo: ${nm(n)}`;
-  const lines = [l
-    ? `${l.ev.start} - ${l.ev.end} · còn ${fmtHMS(occEndMs(l) - now)}`
-    : `${npRel(n.date)} · ${n.ev.start} - ${n.ev.end} · còn ${fmtHMS(occStartMs(n) - now)}`];
-  const w = where(cur); if(w) lines.push(w);
-  if(l && n) lines.push(`⏭ Tiếp theo: ${n.ev.start} ${nm(n)}${n.date !== l.date ? ' (' + npRel(n.date) + ')' : ''} · sau ${fmtHMS(occStartMs(n) - now)}`);
-  const dl = state.todos.filter(t => !t.done && t.due && !dueLate(t) && dueEndMs(t) - now <= 3*864e5).sort((a, b) => dueEndMs(a) - dueEndMs(b))[0];
-  if(dl) lines.push(`⏰ Deadline: ${dl.text} · ${dueTxt(dl)}`);
-  const body = lines.join('\n');
+  const body = l ? `Còn ${fmtHMS(occEndMs(l) - now)}` : `Diễn ra sau ${fmtHMS(occStartMs(n) - now)}`;
   /* Giữ một thông báo duy nhất trên mobile và cập nhật lại theo từng giây.
      Dùng chính nội dung có đếm ngược làm chữ ký để khi người dùng xóa
      thông báo, lần cập nhật tiếp theo vẫn tạo lại thông báo; đồng thời
