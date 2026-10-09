@@ -214,7 +214,11 @@ dialog .btn.danger{border-color:var(--danger)}
 .cancelled .et,.cancelled .ex,.cancelled .ag-time,.cancelled .em .sg{text-decoration:line-through}   /* gạch từng phần; .em chỉ gạch trong .sg, dấu “·” (.sp) không bị gạch */
 .cancelled .em .sg a{text-decoration:line-through}
 .conflict{outline:2px solid var(--warn);outline-offset:-2px}
+/* tắt khung sáng mặc định của trình duyệt di động khi chạm vào nút/ô (hiện chớp một khung xanh nhạt) */
+*{-webkit-tap-highlight-color:transparent}
+button,[role=button],a,summary,label,select{touch-action:manipulation}
 .dim{opacity:.2}
+.searching .fx-grab{display:none!important}
 .et{font-weight:600;overflow:hidden}
 .et small{font-weight:500;color:var(--muted);margin-right:4px}
 .em{color:var(--muted);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1587,6 +1591,7 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 #nowBar.page .np-tile:hover{background:var(--line-soft)}
 #nowBar.page .np-tile.on{background:var(--accent-soft);border-color:var(--accent);box-shadow:none}
 #nowBar.page .np-tile.on .np-tn{color:var(--accent)}
+#nowBar.page .np-tile.open .np-tn,#nowBar.page .np-tile.late.on .np-tn,#nowBar.page .np-tile.open.on .np-tn{color:var(--danger)}   /* số ở ô "Chưa hoàn thành" màu đỏ (hết việc = 0 thì vẫn xám) */
 
 /* thêm nhanh */
 #nowBar.page .np-quick{gap:8px}
@@ -1631,6 +1636,10 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 #nowBar.page .np-ab{background:var(--surface);height:28px;font-size:12px}
 
 #nowBar.page .np-tiles{grid-template-columns:repeat(5,minmax(0,1fr))}
+#nowBar.page .np-dlcol .np-filters{justify-content:flex-start}   /* hai nhóm tab đứng cạnh nhau bên trái */
+/* các ô lọc nay nằm trong mục Deadline (cột hẹp hơn): tự chia cột theo bề rộng, không ép 5 ô trên một hàng */
+#nowBar.page .np-dlcol .np-tiles{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin:0}
+#nowBar.page .np-dlcol .np-tile,#nowBar.page .np-dlcol .np-tile.zero:not(.on){padding:9px 12px}
 @media (max-width:1100px){#nowBar.page .np-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:560px){#nowBar.page .np-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
@@ -1744,6 +1753,108 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 #nowBar .np-dl .np-ed{display:none!important}
 #nowBar .np-car{display:none!important}
 #nowBar .np-dl .np-car{display:none!important}
+
+/* ===================================================================
+   MOBILE FIX v5
+   1) hàng đầu: điều hướng tuần + chuông + giao diện + avatar luôn nằm CÙNG MỘT hàng
+   2) trang Công việc: Lịch học → (ô lọc Deadline) → Deadline
+   3) hết tràn/đè chữ: danh sách Deadline, nhãn "Diễn ra sau…", ghim trong ô bảng…
+   =================================================================== */
+/* nhãn "Diễn ra sau…/Kết thúc sau…" trong ô bảng: được phép xuống dòng, không bao giờ rộng hơn ô */
+#sched .cell .lvb{min-width:0;max-width:100%}
+#sched .cell .lvb .tag{max-width:100%;min-width:0;white-space:normal;text-align:center;overflow-wrap:anywhere;line-height:1.3}
+@media screen and (max-width:700px){
+  /* --- 1) hàng đầu một hàng: cụm điều hướng chiếm phần còn lại (flex-basis 0 nên không bao giờ bị đẩy xuống hàng), nút "Hôm nay" co lại khi chật --- */
+  .top{flex-wrap:wrap}
+  .nav{flex:1 1 0;min-width:0}
+  .nav #todayBtn{flex:1 1 0;min-width:48px;padding:0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tools #notifyTop,.tools #themeBtn,.tools #acctChip{flex:0 0 auto}
+  .tools #acctChip{max-width:72px;overflow:hidden}
+  .tools #acctChip .av{flex:none}
+
+  /* --- 3) danh sách Deadline: trên điện thoại cao theo nội dung, không còn khung cao cố định 560px làm chữ tràn đè lên mục Lịch học --- */
+  #nowBar.page .np-list{max-height:none;overflow:visible}
+  /* nút ghim luôn hiện trên cảm ứng: chừa riêng một dải phía trên để không đè lên tiêu đề deadline */
+  .dlcell:has(.dlpin){padding-top:20px}
+  .np-main,.np-t,.np-dl .np-main>*{min-width:0;overflow-wrap:anywhere}
+}
+@media screen and (max-width:359px){
+  .nav,.tools{gap:4px}
+  .top{gap:6px 4px}
+  .nav button,.nav .dpw,.nav .dpw>.dpb,.tools #notifyTop,.tools #themeBtn{min-width:32px}
+  #prev,#next,.tools #notifyTop,.tools #themeBtn,.nav .dpw,.nav .dpw>.dpb{width:32px;height:32px}
+  .nav button{height:32px}
+  .tools #acctChip{height:32px;padding:0 5px;max-width:56px}
+}
+
+/* --- 2) trang Công việc (một cột: điện thoại/máy tính bảng): Lịch học trước, rồi Deadline (các ô lọc nằm trong mục Deadline) --- */
+@media (max-width:899px){
+  #nowBar.page:not([hidden]){display:flex;flex-direction:column}
+  #nowBar.page .np-grid{display:contents}
+  #nowBar.page .np-grid>.np-col:not(.np-dlcol){order:1;margin-bottom:26px}
+  #nowBar.page .np-grid>.np-dlcol{order:3}
+}
+
+/* --- hàng buổi học trong trang Công việc (lưới 2 cột): ẩn nhãn trạng thái (đã có màu nền/viền báo trạng thái), tiêu đề được xuống dòng để nhãn "Trùng" không bị đẩy mất --- */
+@media (max-width:899px){
+  #nowBar.page .np-row .np-st{display:none}
+  #nowBar.page .np-row.live .np-st,#nowBar.page .np-row.next .np-st{display:inline-flex;grid-column:2;justify-self:start;margin-top:2px;max-width:100%}   /* chỉ hàng Đang diễn ra / Tiếp theo giữ nhãn, đặt dưới tên môn (cột nội dung) chứ không rớt xuống dưới cột giờ */
+  #nowBar.page .np-row .np-main b{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere}
+  #nowBar.page .np-row .np-main small{white-space:normal;overflow-wrap:anywhere}
+  #nowBar.page .np-row .np-cf{margin-left:6px;margin-top:2px}
+}
+
+/* hộp thoại Thêm lịch: hàng chọn thứ (T2…CN) gồm 7 ô có bề rộng tối thiểu ~374px nên tràn khỏi màn hình hẹp → ô co đều (minmax(0,1fr)), ô tick đặt trên chữ */
+@media (max-width:560px){
+  .fgrid .days div{grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+  .fgrid .days label{flex-direction:column;gap:2px;padding:5px 0;border-radius:12px;min-width:0}
+}
+
+/* ===== MOBILE FIX v6 ===== */
+/* nhãn "Diễn ra sau… / Kết thúc sau…" trong ô Bảng: chiều cao theo nội dung (trước đây cố định 20px nên khi xuống dòng chữ bị cắt mất) */
+#sched .cell .lvb .tag{height:auto;min-height:20px;padding:3px 9px;border-radius:12px;line-height:1.25;justify-content:center}
+@media (max-width:899px){
+  /* Trang Công việc: thẻ "Đang diễn ra / Tiếp theo" ở trên đã nêu rõ buổi này, nên dòng tương ứng trong danh sách chỉ là dòng thường (không tô vàng, không nhãn lặp) → không còn 2 khối giống nhau cạnh nhau */
+  #nowBar.page .np-row.live,#nowBar.page .np-row.next{background:none;border-color:transparent;box-shadow:none;padding-left:10px}
+  #nowBar.page .np-row.live:hover,#nowBar.page .np-row.next:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
+  #nowBar.page .np-row.live::before,#nowBar.page .np-row.next::before,#nowBar.page .np-row.live::after,#nowBar.page .np-row.next::after{display:none}
+  #nowBar.page .np-row.live .np-st,#nowBar.page .np-row.next .np-st{display:none}
+  #nowBar.page .np-row.live .np-time{color:var(--accent)}
+  #nowBar.page .np-row.next .np-time{color:color-mix(in srgb,var(--next-color) 55%,var(--ink))}
+  /* thẻ lớn: bỏ dấu "·" lửng lơ cuối dòng khi thông tin xuống dòng; mỗi mục (giờ / phòng / giảng viên) tự cách nhau */
+  #nowBar.page .np-m{gap:4px 7px}
+  #nowBar.page .np-m .sep{display:block;width:0;margin:0;overflow:hidden;font-size:0}   /* dấu · thành khe trống: mỗi mục tách riêng, xuống dòng không còn dấu lửng ở cuối */
+}
+
+/* ===== MOBILE FIX v7: ô đang/sắp diễn ra trong Bảng — nhãn không còn sát/đè lên vạch màu bên trái và hai mép ô ===== */
+#sched .cell.live,#sched .cell.next{padding-left:9px;padding-right:3px}
+#sched .cell .lvb{padding:0 1px;margin-bottom:4px}
+#sched .cell .lvb .tag{font-size:10.5px;padding:3px 8px;text-wrap:balance;text-align:center}
+#sched .cell .lvb .tag.live i{flex:none}
+
+/* ===== MOBILE FIX v8: hàng Deadline ở trang Công việc gọn hơn ===== */
+@media (max-width:899px){
+  #nowBar.page .np-dl{padding:8px 4px;gap:8px}
+  #nowBar.page .np-dl .np-chk{width:22px;height:22px;margin-top:1px}
+  #nowBar.page .np-dl .np-main>b{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;font-size:14px;line-height:1.35}
+  #nowBar.page .np-dl.open .np-main>b{display:block;-webkit-line-clamp:unset;overflow:visible}   /* mở chi tiết thì hiện đủ tiêu đề */
+  #nowBar.page .np-dl .np-meta{font-size:11.5px;gap:0 6px;margin-top:2px;line-height:1.35}
+  #nowBar.page .np-dl .np-meta .cd{font-size:11.5px;font-weight:700;margin-left:0}
+  #nowBar.page .np-dl .np-car{display:none}
+  #nowBar.page .np-dl .np-meta .ind{display:none}   /* biểu tượng liên kết ẩn ở danh sách (mở chi tiết vẫn thấy) để dòng hạn + "còn …" nằm gọn một dòng */
+  #nowBar.page .np-dl .np-meta .ind{font-size:11px;margin-left:0}
+  #nowBar.page .np-dl .np-pin{width:28px;height:28px;margin-top:-3px}
+}
+
+/* ===== MOBILE FIX v9: hàng Deadline gọn hơn nữa ===== */
+@media (max-width:899px){
+  #nowBar.page .np-dl{padding:6px 4px}
+  #nowBar.page .np-dl .np-chk{width:20px;height:20px;border-width:2px}
+  #nowBar.page .np-dl .np-main>b{font-size:13.5px;line-height:1.3}
+  #nowBar.page .np-dl .np-meta{margin-top:1px}
+  #nowBar.page .np-dl .np-pin{width:26px;height:26px;margin-top:-2px}
+  #nowBar.page .np-list{padding:0 2px}
+}
 </style>
 <meta http-equiv="x-dns-prefetch-control" content="on"></head>
 <body>
@@ -3051,7 +3162,7 @@ try{
 let weekStart = mondayOf(todayStr());
 let todoFilter = 'all';
 let todoStatus = 'all';
-const hiddenTypes = new Set();
+const hiddenTypes = new Set(['__cancel']);   // mặc định ẩn các buổi Nghỉ ở Bảng + Danh sách (bấm tag "Nghỉ" để hiện lại)
 const openTodos = new Set();
 let query = '';
 /* Chuẩn hóa để tìm kiếm tiếng Việt: bỏ dấu, đ→d, không phân biệt hoa/thường. Nhờ vậy chữ gõ bằng Telex/VNI (tổ hợp dấu khác nhau) vẫn khớp với dữ liệu đã lưu, và gõ "giai tich" cũng tìm được "Giải tích". */
@@ -3151,13 +3262,31 @@ function weekDeadlines(){
   return state.todos.filter(t => t.due && t.due >= weekStart && t.due <= end)   /* gồm cả deadline đã hoàn thành */
     .sort((a,b) => (b.pin ? 1 : 0) - (a.pin ? 1 : 0) || (a.dueTime||'99:99').localeCompare(b.dueTime||'99:99') || String(a.text).localeCompare(String(b.text)));   // deadline ghim lên đầu trong ngày
 }
-const shownDeadlines = () => hiddenTypes.has('__dl') ? [] : weekDeadlines();
-const dlMatch = t => !query || fold([t.text,t.body,...getLinks(t).flatMap(l => [l.url,l.name])].join(' ')).includes(query);
-const matches = o => {
-  if(!query) return true;
-  const e = o.ev;
-  return fold([e.title,e.code,e.room,e.teacher,e.note,e.htgd,e.learner,e.grade,e.contact].join(' ')).includes(query);
+const shownDeadlines = () => {
+  if(hiddenTypes.has('__dl')) return [];
+  const l = weekDeadlines();
+  return query ? l.filter(dlMatch).sort((a,b) => dlScore(b) - dlScore(a)) : l;   // đang tìm: ẩn deadline không khớp, khớp nhất lên đầu
 };
+/* Tìm kiếm: mọi từ (cách nhau bằng dấu cách) đều phải có mặt. Điểm càng cao càng liên quan
+   (khớp tên > mã/phòng/giảng viên > phần còn lại); điểm 0 = không khớp → ô bị ẩn, ô điểm cao được đẩy lên đầu. */
+const qToks = () => query.split(/\s+/).filter(Boolean);
+function scoreText(main, sub, rest){
+  const toks = qToks(), all = main + ' ' + sub + ' ' + rest;
+  if(!toks.every(t => all.includes(t))) return 0;
+  let sc = 1;
+  if(main.startsWith(query)) sc += 100;
+  else if(main.includes(query)) sc += 80;
+  else if(toks.every(t => main.includes(t))) sc += 60;
+  else if(toks.some(t => main.includes(t))) sc += 30;
+  if(sub.includes(query)) sc += 20;
+  else if(toks.some(t => sub.includes(t))) sc += 10;
+  return sc;
+}
+const dlScore = t => !query ? 1 : scoreText(fold(t.text), '', fold([t.body,...getLinks(t).flatMap(l => [l.url,l.name])].join(' ')));
+const evScore = e => !query ? 1 : scoreText(fold(e.title), fold([e.code,e.room,e.teacher].join(' ')), fold([e.note,e.htgd,e.learner,e.grade,e.contact].join(' ')));
+const dlMatch = t => dlScore(t) > 0;
+const matches = o => evScore(o.ev) > 0;
+const rawQuery = () => ($('#q').value || '').trim();
 
 /* ---------- hiển thị ---------- */
 function render(){
@@ -3175,18 +3304,20 @@ function render(){
     $('#range').textContent = `${ser.length} lớp · ${ser.reduce((s,x) => s + (+x.cur.tc || 0), 0)} tín chỉ` + (oth.length ? ` · ${oth.length} lịch khác` : '');
   } else $('#range').textContent = `${dmy(weekStart)}\u00a0–\u00a0${dmy(end)}`;
   document.querySelector('.nav').hidden = fx || nw;
-  document.body.dataset.view = state.view;   // để CSS biết đang ở mục nào (mobile ẩn chuông/giao diện/tài khoản ở mục Công việc, Lớp)
+  document.body.dataset.view = state.view;
+  document.body.classList.toggle('searching', !!query);   // đang tìm: tắt kéo-thả đổi vị trí ở tab Lớp (thứ tự hiển thị lúc này là theo độ liên quan, không được lưu)   // để CSS biết đang ở mục nào (mobile ẩn chuông/giao diện/tài khoản ở mục Công việc, Lớp)
   if(document.activeElement !== $('#jump')) $('#jump').value = weekStart;   /* đang gõ ngày bằng bàn phím thì không ghi đè giá trị */
   document.querySelectorAll('#viewSeg button').forEach(b => b.classList.toggle('on', b.dataset.v === state.view));
   updateSegIndicator();
 
   const all = weekOccs(weekStart);
-  const occs = all.filter(o => {
+  const occs0 = all.filter(o => {
     if(hiddenTypes.has(o.ev.type)) return false;
     if(o.cancelled && hiddenTypes.has('__cancel')) return false;
     if(o.conflict && hiddenTypes.has('__conflict')) return false;
     return true;
   });
+  const occs = query ? occs0.filter(matches) : occs0;   // đang tìm kiếm: ẩn hẳn ô không khớp
   renderStats(all);
   renderLegend(all);
   $('#stats').hidden = fx || nw; $('#legend').hidden = fx || nw;
@@ -3307,7 +3438,8 @@ const liveCls = o => liveInfo(o) ? ' live' : nextInfo(o) ? ' next' : '';
 const liveStyle = o => { const l = liveInfo(o); return l ? `;--p:${l.pct}%` : ''; };
 function stateTag(o){
   const l = liveInfo(o), nx = nextInfo(o);
-  return l ? `<span class="tag live"><i></i>Kết thúc sau ${l.left}</span>` : nx ? `<span class="tag next">Diễn ra sau ${nx.in}</span>` : '';
+  const nb = t => String(t).replace(/(\d+) (ngày|giờ|phút|giây)/g, '$1\u00a0$2');   // dính số với đơn vị để xuống dòng không tách "2 / giờ"
+  return l ? `<span class="tag live"><i></i>Kết thúc sau ${nb(l.left)}</span>` : nx ? `<span class="tag next">Diễn ra sau ${nb(nx.in)}</span>` : '';
 }
 function tagsHTML(o){
   return stateTag(o) + (o.cancelled ? '<span class="tag x">Nghỉ</span>' : '') + (o.conflict ? '<span class="tag w">⚠ Trùng</span>' : '');
@@ -3385,12 +3517,12 @@ function tableHTML(occs){
     for(const d of days){
       const events = occs.filter(o => o.date === d).sort((a,b) => toMin(a.ev.start)-toMin(b.ev.start) || toMin(a.ev.end)-toMin(b.ev.end) || String(a.ev.title||'').localeCompare(String(b.ev.title||'')));
       const items = events.map(o => ({kind:'event', time:toMin(o.ev.start), o}));
-      items.sort((a,b) => a.time-b.time || toMin(a.o.ev.end)-toMin(b.o.ev.end) || String(a.o.ev.title||'').localeCompare(String(b.o.ev.title||'')));
+      items.sort((a,b) => evScore(b.o.ev)-evScore(a.o.ev) || a.time-b.time || toMin(a.o.ev.end)-toMin(b.o.ev.end) || String(a.o.ev.title||'').localeCompare(String(b.o.ev.title||'')));
       let body = '';
       if(items.length){
         body = items.map(x => eventCellHTML(x.o,d)).join('');
       } else {
-        body = '<div class="stack-empty">Chưa có lịch</div>';
+        body = `<div class="stack-empty">${query ? 'Không khớp' : 'Chưa có lịch'}</div>`;
       }
       h += `<td class="day-stack slot" data-date="${d}" data-s="" data-e=""><div class="stk">${body}</div></td>`;
     }
@@ -3399,11 +3531,13 @@ function tableHTML(occs){
   }
 
   const map = new Map();
-  state.rows.forEach(r => map.set(r.start+'|'+r.end, {s:r.start, e:r.end, row:r}));
+  if(!query) state.rows.forEach(r => map.set(r.start+'|'+r.end, {s:r.start, e:r.end, row:r}));   // đang tìm: không hiện các dòng giờ trống
   occs.forEach(o => { const k = o.ev.start+'|'+o.ev.end; if(!map.has(k)) map.set(k, {s:o.ev.start, e:o.ev.end, row:null}); });
   /* Tất cả deadline được gom vào một hàng riêng ngay dưới tiêu đề ngày.
      Deadline có giờ vẫn giữ giờ hạn chót ngay trong ô, không tạo thêm dòng giờ. */
-  const slots = [...map.values()].sort((a,b) => toMin(a.s)-toMin(b.s) || toMin(a.e)-toMin(b.e));
+  const slotBest = new Map();
+  if(query) occs.forEach(o => { const k = o.ev.start+'|'+o.ev.end; slotBest.set(k, Math.max(slotBest.get(k) || 0, evScore(o.ev))); });
+  const slots = [...map.values()].sort((a,b) => (query ? (slotBest.get(b.s+'|'+b.e) || 0) - (slotBest.get(a.s+'|'+a.e) || 0) : 0) || toMin(a.s)-toMin(b.s) || toMin(a.e)-toMin(b.e));   // đang tìm: dòng giờ chứa ô khớp nhất lên đầu
   let h = `<div class="scroller"><table class="sheet"><colgroup><col class="c0"><col><col><col><col><col><col><col></colgroup><thead>
     <tr class="wk"><th>Tuần</th><th colspan="7">${dmy(weekStart)}</th></tr>
     <tr class="dn"><th></th>${days.map((d,i) => `<th class="${d===today?'today':''}">${DOW[i]}</th>`).join('')}</tr>
@@ -3416,7 +3550,7 @@ function tableHTML(occs){
     }
     h += '</tr>';
   }
-  if(!slots.length) h += '<tr><td colspan="8" class="none">Tuần này chưa có lịch</td></tr>';
+  if(!slots.length) h += `<tr><td colspan="8" class="none">${query ? 'Không có kết quả cho “' + esc(rawQuery()) + '” trong tuần này' : 'Tuần này chưa có lịch'}</td></tr>`;
   for(const sl of slots){
     const {s,e,row} = sl;
     const rng = `${s}<span class="tle"><span class="dash"> - </span>${e}</span>`;
@@ -3424,7 +3558,7 @@ function tableHTML(occs){
     const ctl = row ? `<span class="rowctl"><button type="button" data-rowedit="${row.id}" title="Sửa dòng" aria-label="Sửa dòng">✎</button><button type="button" data-rowdel="${row.id}" title="Xóa dòng" aria-label="Xóa dòng">×</button></span>` : '';
     h += `<tr><th class="tl"><div class="tlw"><span class="tlt">${lab}</span>${ctl}</div></th>`;
     for(const d of days){
-      const list = occs.filter(o => o.date === d && o.ev.start === s && o.ev.end === e);
+      const list = occs.filter(o => o.date === d && o.ev.start === s && o.ev.end === e).sort((a,b) => evScore(b.ev) - evScore(a.ev));
       if(!list.length){ h += `<td class="empty-c slot" data-date="${d}" data-s="${s}" data-e="${e}"></td>`; continue; }
       h += `<td class="slot" data-date="${d}" data-s="${s}" data-e="${e}"><div class="stk">${list.map(o => eventCellHTML(o,d)).join('')}</div></td>`;
     }
@@ -3441,14 +3575,16 @@ function emHTML(o, parts){
 function agendaHTML(occs){
   const today = todayStr();
   calcNext();
-  let html = '<div class="agenda">';
+  let html = '<div class="agenda">', shownDays = 0;
   for(let i=0;i<7;i++){
     const date = addDays(weekStart,i);
     const list = occs.filter(o => o.date === date).sort((a,b) => toMin(a.ev.start)-toMin(b.ev.start));
+    if(query && !list.length && !shownDeadlines().some(t => t.due === date)) continue;   // đang tìm: bỏ hẳn ngày không có kết quả
+    shownDays++;
     html += `<div class="ad"><h3>${DOW[i]}, ${dm(date)}${date===today?'<span class="tdy">Hôm nay</span>':''}</h3>`;
     const dls = shownDeadlines().filter(t => t.due === date);
     if(!list.length && !dls.length) html += '<div class="none">Không có lịch</div>';
-    const items = [...list.map(o => ({o, m:toMin(o.ev.start)})), ...dls.map(t => ({t, m:t.pin ? -1 : t.dueTime ? toMin(t.dueTime) : 1440}))].sort((a,b) => a.m - b.m);   // deadline ghim lên đầu ngày;   // trùng giờ thì sự kiện đứng trước deadline
+    const items = [...list.map(o => ({o, m:toMin(o.ev.start)})), ...dls.map(t => ({t, m:t.pin ? -1 : t.dueTime ? toMin(t.dueTime) : 1440}))].sort((a,b) => (query ? (b.t ? dlScore(b.t) : evScore(b.o.ev)) - (a.t ? dlScore(a.t) : evScore(a.o.ev)) : 0) || a.m - b.m);   // đang tìm: khớp nhất lên đầu ngày; deadline ghim lên đầu ngày;   // trùng giờ thì sự kiện đứng trước deadline
     for(const it of items){
       if(it.t){ html += dlArticleHTML(it.t); continue; }
       const o = it.o, ev = o.ev;
@@ -3461,6 +3597,7 @@ function agendaHTML(occs){
     }
     html += '</div>';
   }
+  if(query && !shownDays) html += `<div class="none">Không có kết quả cho “${esc(rawQuery())}” trong tuần này</div>`;
   return html + '</div>';
 }
 
@@ -3756,12 +3893,15 @@ document.addEventListener('click', e => {
 document.addEventListener('keydown', e => { if(e.key === 'Escape' && fxPop) closeFxPop(); });
 addEventListener('resize', () => { if(fxPop) fxPopPlace(); }, {passive:true});
 addEventListener('scroll', () => { if(fxPop) fxPopPlace(); }, {capture:true, passive:true});
+/* đang tìm: chỉ hiện lớp khớp, khớp nhất lên đầu (chỉ để hiển thị, không đổi thứ tự đã lưu) */
+const fxShow = list => query ? list.filter(x => evScore(x.cur) > 0).sort((a,b) => evScore(b.cur) - evScore(a.cur)) : list;
 function fixedHTML(){
   const today = todayStr();
   const kind = 'school', list = fixedList(kind); fxCache[kind] = fxBuildCache(kind, list);
   let h = `<h3 class="fxh">Thời khóa biểu của trường</h3>${fxBar(kind)}<div class="scroller"><table class="fx" data-fx-kind="${kind}"><thead><tr><th class="n">#</th>${fxSortTh(kind,'name','Môn học')}${fxSortTh(kind,'tc','TC','c w-tc')}${fxSortTh(kind,'htgd','HTGD','w-ht')}${fxSortTh(kind,'when','Thời gian')}${fxSortTh(kind,'room','Phòng')}${fxSortTh(kind,'teacher','Giảng viên')}${fxSortTh(kind,'sv','Sĩ số','r w-sv')}${fxSortTh(kind,'note','Ghi chú')}${fxLinkTh(kind)}</tr></thead><tbody>`;
   if(!list.length) h += '<tr><td colspan="10" class="none">Chưa có lịch</td></tr>';
-  list.forEach(({cur:ev, vs}, i) => {
+  else if(query && !fxShow(list).length) h += '<tr><td colspan="10" class="none">Không có lớp nào khớp tìm kiếm</td></tr>';
+  fxShow(list).forEach(({cur:ev, vs}, i) => {
     const cc = String(ev.code || '').split('.')[0];
     const occ = nextHit(ev, mondayOf(today)) || firstDate(ev);
     const sid = seriesOf(ev);
@@ -3784,7 +3924,8 @@ function otherFixedHTML(){
   const today = todayStr(), kind = 'other', list = fixedList(kind); fxCache[kind] = fxBuildCache(kind, list);
   let h = `<div class="card fxblk"><h3 class="fxh">Lịch khác</h3>${fxBar(kind)}<div class="scroller"><table class="fx" data-fx-kind="${kind}"><thead><tr><th class="n">#</th>${fxSortTh(kind,'name','Tên lịch / Nội dung')}${fxSortTh(kind,'tag','Tag')}${fxSortTh(kind,'when','Thời gian')}${fxSortTh(kind,'room','Phòng / địa điểm','nowrap')}${fxSortTh(kind,'teacher','Người phụ trách')}${fxSortTh(kind,'note','Ghi chú')}${fxLinkTh(kind)}</tr></thead><tbody>`;
   if(!list.length) h += '<tr><td colspan="8" class="none">Chưa có lịch</td></tr>';
-  list.forEach(({cur:ev, vs}, i) => {
+  else if(query && !fxShow(list).length) h += '<tr><td colspan="8" class="none">Không có lịch nào khớp tìm kiếm</td></tr>';
+  fxShow(list).forEach(({cur:ev, vs}, i) => {
     const tag = tagOf(ev.type), free = ev.kind === 'free';
     const occ = nextHit(ev, mondayOf(today)) || firstDate(ev);
     const sid = seriesOf(ev);
@@ -5074,7 +5215,7 @@ function innerScrollSnap(){
 function uiSnap(){
   if(!UIS) return;
   try{
-    const s = {view:state.view, week:weekStart, tf:todoFilter, ts:todoStatus, hid:[...hiddenTypes], ot:[...openTodos], q:$('#q').value, fxf:fxFilter, guide:guideOpen, tgc:tagsCollapsed, sx:scrollX, sy:scrollY, npt:npTab, npf:npScope, npc:npTodayCollapsed, npd:[...npExpandedDays], isc:innerScrollSnap(), dlg:null};
+    const s = {hv:2, view:state.view, week:weekStart, tf:todoFilter, ts:todoStatus, hid:[...hiddenTypes], ot:[...openTodos], q:$('#q').value, fxf:fxFilter, guide:guideOpen, tgc:tagsCollapsed, sx:scrollX, sy:scrollY, npt:npTab, npf:npScope, npc:npTodayCollapsed, npd:[...npExpandedDays], isc:innerScrollSnap(), dlg:null};
     const ae = document.activeElement, fc = ae && ae.closest && ae.closest('dialog[open]') && ae.name ? {name:ae.name, a:ae.selectionStart, b:ae.selectionEnd} : null;
     if(dlg.open){ readTimes(); s.dlg = {k:'ev', id:editing && editing.id, date:editing && editing.date, form:formSnap(f), days:daysBoxes().map(b => b.checked), times:timesDraft}; }
     else if(dlgTodo.open) s.dlg = {k:'todo', id:todoEditing, form:formSnap(todoEditForm), auto:todoAuto};
@@ -5098,7 +5239,7 @@ if(uiSaved){
   if(/^\d{4}-\d{2}-\d{2}$/.test(uiSaved.week)) weekStart = mondayOf(uiSaved.week);
   if(['week','all'].includes(uiSaved.tf)) todoFilter = uiSaved.tf;
   if(['all','open','done'].includes(uiSaved.ts)) todoStatus = uiSaved.ts;
-  (uiSaved.hid || []).forEach(x => hiddenTypes.add(x));
+  if(uiSaved.hv === 2 && Array.isArray(uiSaved.hid)){ hiddenTypes.clear(); uiSaved.hid.forEach(x => hiddenTypes.add(x)); }   // đã có trạng thái lưu: theo đúng lựa chọn lần trước (kể cả đã bật hiện Nghỉ)
   (uiSaved.ot || []).forEach(x => openTodos.add(x));
   if(typeof uiSaved.q === 'string'){ $('#q').value = uiSaved.q; query = fold(uiSaved.q.trim()); $('#qWrap').classList.toggle('has-val', !!uiSaved.q); }
   guideOpen = !!uiSaved.guide;
@@ -5359,14 +5500,14 @@ function renderNowBar(){
   const nToday = cntBk('today'), nWeek = cntBk('week'), doneG = scoped.length - openG.length;
   const tile = (k, ic, lb, txt, on, zero) => `<button type="button" class="np-tile ${k}${on ? ' on' : ''}${zero ? ' zero' : ''}" data-act="bk" data-bk="${k}" aria-pressed="${on ? 'true' : 'false'}"><span class="np-ti" aria-hidden="true">${ic}</span><span class="np-tn">${txt}</span><span class="np-tl">${lb}</span></button>`;
   const tiles = `<div class="np-tiles">${tile('late', '⚠️', 'Quá hạn', lateN, npBk === 'late', !lateN)}${tile('today', '⏰', 'Hạn hôm nay', nToday, npBk === 'today', !nToday)}${tile('week', '📅', '7 ngày tới', nWeek, npBk === 'week', !nWeek)}${tile('open', '📋', 'Chưa hoàn thành', openG.length, npTab === 'open' && npBk === 'all', !openG.length)}${tile('done', '✅', 'Đã hoàn thành', doneG, npTab === 'done' && npBk === 'all', !doneG)}</div>`;
-  const html = `${tiles}
-    <div class="np-grid">
+  const html = `<div class="np-grid">
       <section class="np-col"><h2 class="np-h">Lịch học</h2>${liveCards.join('')}${liveCards.length ? '' : nextCard}${emptyCard}
         <div class="np-sec"><div class="np-sh"><span>Hôm nay <span class="np-sub">${esc(npDayHead(today))}</span></span><small>${doneN}/${actN} buổi đã xong</small></div>${todayBar}${todayHTML}</div>
         <div class="np-sec"><div class="np-sh"><span class="np-wknav"><button type="button" class="np-wkb" data-act="wknav" data-d="-1" aria-label="Tuần trước">‹</button><button type="button" class="np-wkb" data-act="wknav" data-d="1" aria-label="Tuần sau">›</button><span>${wkTitle} <span class="np-sub">${wkRange}</span></span></span><span class="np-sh-r"><small>${npWk > 0 ? `${wkSel.act} buổi` : `${wkSel.dn}/${wkSel.act} buổi đã xong`}</small>${npWk !== 0 ? '<button type="button" class="np-collapseall" data-act="wknav" data-d="0">Tuần này</button>' : ''}${selToggle}</span></div><div class="np-wkbody">${wkStats(wkSel, npWk <= 0)}${selHTML}</div></div></section>
       <section class="np-col np-dlcol"><h2 class="np-h">Deadline</h2>
+        ${tiles}
         <div class="np-filters"><div class="np-tabs np-scope"><span class="tabInd" aria-hidden="true"></span><button type="button" data-act="scope" data-scope="all" class="${npScope === 'all' ? 'on' : ''}">Tất cả</button><button type="button" data-act="scope" data-scope="week" class="${npScope === 'week' ? 'on' : ''}" title="Theo tuần đang xem ở mục Lịch học: ${wkRange}">Trong tuần</button></div>
-        <div class="np-tabs np-status"><span class="tabInd" aria-hidden="true"></span><button type="button" data-act="tab" data-tab="all" class="${npTab === 'all' ? 'on' : ''}">Tất cả <b>${all.length}</b></button><button type="button" data-act="tab" data-tab="open" class="${npTab === 'open' ? 'on' : ''}"><span class="l-f">Chưa hoàn thành</span><span class="l-s">Chưa xong</span> <b>${open.length}</b></button><button type="button" data-act="tab" data-tab="done" class="${npTab === 'done' ? 'on' : ''}"><span class="l-f">Đã hoàn thành</span><span class="l-s">Đã xong</span> <b>${done.length}</b></button></div></div>
+        <div class="np-tabs np-status"><span class="tabInd" aria-hidden="true"></span><button type="button" data-act="tab" data-tab="all" class="${npTab === 'all' ? 'on' : ''}">Tất cả</button><button type="button" data-act="tab" data-tab="open" class="${npTab === 'open' ? 'on' : ''}"><span class="l-f">Chưa hoàn thành</span><span class="l-s">Chưa xong</span></button><button type="button" data-act="tab" data-tab="done" class="${npTab === 'done' ? 'on' : ''}"><span class="l-f">Đã hoàn thành</span><span class="l-s">Đã xong</span></button></div></div>
         ${listBar ? `<div class="np-listbar">${listBar}</div>` : ''}
         <div class="np-list">${dlHTML}</div></section>
     </div>`;
@@ -5617,8 +5758,8 @@ document.getElementById('nowBar').addEventListener('click', e => {
     else if(a === 'bk'){   // ô tổng quan: bấm để lọc danh sách Deadline theo nhóm hạn chót, bấm lại để bỏ lọc ("Đã hoàn thành" thì chuyển sang tab đã xong)
       const b = act.dataset.bk;
       if(b === 'open'){ npTab = npTab === 'open' && npBk === 'all' ? 'all' : 'open'; npBk = 'all'; }
-      else if(b === 'done'){ npTab = npTab === 'done' && npBk === 'all' ? 'open' : 'done'; npBk = 'all'; }
-      else if(npBk === b) npBk = 'all';
+      else if(b === 'done'){ npTab = npTab === 'done' && npBk === 'all' ? 'all' : 'done'; npBk = 'all'; }   // tắt thì về "không lọc" (Tất cả), không tự bật lại Chưa hoàn thành
+      else if(npBk === b){ npBk = 'all'; npTab = 'all'; }
       else { npBk = b; npTab = 'open'; }
       renderNowBar(); swapNpList(); positionNpTabInd(null);
     }
