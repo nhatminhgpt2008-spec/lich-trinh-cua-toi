@@ -1870,6 +1870,34 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 :root:not([data-theme=dark]) .ag.dl:not(.done){--bgt:color-mix(in srgb,var(--cancel-bd) 22%,var(--surface))}
 :root:not([data-theme=dark]) .ag.dl.done{--bgt:color-mix(in srgb,var(--accent) 24%,var(--surface))}
 :root:not([data-theme=dark]) .sheet .wk th{background:#0f6b43}
+
+/* ===== ĐỒNG BỘ MÀU Ô: Danh sách (.ag) dùng đúng công thức màu của Bảng (.cell / .dlcell) =====
+   Bảng là chuẩn: nền = màu tag 22% (tối) / 34% (sáng); viền vòng = 60% (tối) / 95% (sáng); hover = 30% / 44%.
+   Danh sách vẫn giữ thanh màu dày bên trái; chỉ nền, viền 3 cạnh còn lại, hover, ô Nghỉ, ô Deadline và ô "không tô nền" được chỉnh cho khớp. */
+.ag:not(.live):not(.next){--fp:22%;--rp:60%;--hp:30%;background:color-mix(in srgb,var(--bd) var(--fp),var(--surface));border-top-color:color-mix(in srgb,var(--bd) var(--rp),transparent);border-right-color:color-mix(in srgb,var(--bd) var(--rp),transparent);border-bottom-color:color-mix(in srgb,var(--bd) var(--rp),transparent)}
+.ag.cancelled{--bd:var(--cell-cancel)!important}   /* Nghỉ: cùng màu đỏ --cell-cancel như ô c-cancel ở Bảng (trước đây Danh sách dùng --cancel-bd nhạt 9%) */
+.ag.cancelled:not(.live):not(.next){--bgt:color-mix(in srgb,var(--cell-cancel) var(--fp),var(--surface))!important}
+.ag.nofill:not(.live):not(.next){--fp:0%;background:var(--surface)}   /* loại lịch tắt "tô nền": chỉ viền màu, giống .cell.nofill */
+.ag.dl:not(.done):not(.live):not(.next){--fp:20%}
+.ag.dl.done:not(.live):not(.next){--fp:30%}
+@media (hover:hover){
+  .ag:not(.live):not(.next):hover{background:color-mix(in srgb,var(--bd) var(--hp),var(--surface))}
+  .ag.nofill:not(.live):not(.next):hover{background:color-mix(in srgb,var(--bd) 12%,var(--surface))}
+  .ag.dl:not(.done):not(.live):not(.next):hover{background:color-mix(in srgb,var(--bd) 28%,var(--surface))}
+  .ag.dl.done:not(.live):not(.next):hover{background:color-mix(in srgb,var(--accent) 38%,var(--surface))}
+}
+:root:not([data-theme=dark]) .ag:not(.live):not(.next){--fp:34%;--rp:95%;--hp:44%}
+:root:not([data-theme=dark]) .ag.nofill:not(.live):not(.next){--fp:0%}
+:root:not([data-theme=dark]) .ag.dl:not(.done):not(.live):not(.next){--fp:34%;--hp:44%}
+:root:not([data-theme=dark]) .ag.dl.done:not(.live):not(.next){--fp:36%}
+:root:not([data-theme=dark]) .ag:not(.live):not(.next){background:color-mix(in srgb,var(--bd) var(--fp),var(--surface))}
+:root:not([data-theme=dark]) .ag.nofill:not(.live):not(.next){background:var(--surface)}
+@media (hover:hover){
+  :root:not([data-theme=dark]) .ag:not(.live):not(.next):hover{background:color-mix(in srgb,var(--bd) var(--hp),var(--surface))}
+  :root:not([data-theme=dark]) .ag.nofill:not(.live):not(.next):hover{background:color-mix(in srgb,var(--bd) 12%,var(--surface))}
+  :root:not([data-theme=dark]) .ag.dl:not(.done):not(.live):not(.next):hover{background:color-mix(in srgb,var(--bd) 44%,var(--surface))}
+  :root:not([data-theme=dark]) .ag.dl.done:not(.live):not(.next):hover{background:color-mix(in srgb,var(--accent) 44%,var(--surface))}
+}
 </style>
 <meta http-equiv="x-dns-prefetch-control" content="on"></head>
 <body>
@@ -3603,7 +3631,7 @@ function agendaHTML(occs){
     for(const it of items){
       if(it.t){ html += dlArticleHTML(it.t); continue; }
       const o = it.o, ev = o.ev;
-      html += `<article style="${tagStyle(tagOf(ev.type))}${liveStyle(o)}" class="ag${liveCls(o)} ${o.cancelled?'cancelled':''} ${o.conflict?'conflict':''} ${matches(o)?'':'dim'}" data-id="${ev.id}" data-date="${date}" data-s="${esc(ev.start)}" data-e="${esc(ev.end)}" tabindex="0" role="button">
+      html += `<article style="${tagStyle(tagOf(ev.type))}${liveStyle(o)}" class="ag${liveCls(o)}${!o.cancelled && !tagOf(ev.type).fill ? ' nofill' : ''} ${o.cancelled?'cancelled':''} ${o.conflict?'conflict':''} ${matches(o)?'':'dim'}" data-id="${ev.id}" data-date="${date}" data-s="${esc(ev.start)}" data-e="${esc(ev.end)}" tabindex="0" role="button">
         <div class="ag-time">${ev.start}<br><small>${ev.end}</small></div>
         <div><div class="et">${ev.code?`<small>${esc(ev.code)}</small>`:''}${esc(ev.title)}${tagsHTML(o)}</div>
         <div class="em">${emHTML(o, [ev.room &&'📍 ' + ev.room, ev.teacher && '👤 ' + ev.teacher, learnerTxt(ev) && '🎓 ' + learnerTxt(ev), shortNote(ev) && '📝 ' + ev.note].filter(Boolean))}</div>
