@@ -1638,8 +1638,9 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 #nowBar.page .np-tiles{grid-template-columns:repeat(5,minmax(0,1fr))}
 #nowBar.page .np-dlcol .np-filters{justify-content:flex-start}   /* hai nhóm tab đứng cạnh nhau bên trái */
 /* các ô lọc nay nằm trong mục Deadline (cột hẹp hơn): tự chia cột theo bề rộng, không ép 5 ô trên một hàng */
-#nowBar.page .np-dlcol .np-tiles{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin:0}
-#nowBar.page .np-dlcol .np-tile,#nowBar.page .np-dlcol .np-tile.zero:not(.on){padding:9px 12px}
+#nowBar.page .np-dlcol .np-tiles{grid-template-columns:repeat(auto-fit,minmax(104px,1fr));margin:0}
+#nowBar.page .np-dlcol .np-tile,#nowBar.page .np-dlcol .np-tile.zero:not(.on){flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 6px;text-align:center}
+#nowBar.page .np-dlcol .np-tile .np-tl{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11.5px}
 @media (max-width:1100px){#nowBar.page .np-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:560px){#nowBar.page .np-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
@@ -1855,6 +1856,20 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
   #nowBar.page .np-dl .np-pin{width:26px;height:26px;margin-top:-2px}
   #nowBar.page .np-list{padding:0 2px}
 }
+
+/* ===== giao diện sáng: CHỈ chỉnh màu (không đổi bố cục/vị trí/hiệu ứng) — màu rõ và đậm hơn, chữ tương phản cao ===== */
+:root:not([data-theme=dark]){--ink:#040906;--muted:#33443b;--line:#b3c0b9;--line-soft:#d3ded8;--bg:#eaf0ec}
+:root:not([data-theme=dark]) .cell .cc{opacity:1;color:var(--ink)}
+:root:not([data-theme=dark]) .cell:not(.live):not(.next):not(.nofill){background:color-mix(in srgb,var(--cc) 34%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cc) 95%,#000 0%)}
+:root:not([data-theme=dark]) .cell:not(.live):not(.next):not(.nofill):hover{background:color-mix(in srgb,var(--cc) 44%,var(--surface))}
+:root:not([data-theme=dark]) .cell.nofill:not(.live):not(.next){box-shadow:inset 0 0 0 1.5px var(--cc)}
+:root:not([data-theme=dark]) .cell .lkchip{background:var(--surface);color:var(--ink);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink) 35%,transparent)}
+:root:not([data-theme=dark]) .dlrow .dlcell:not(.done){background:color-mix(in srgb,var(--pc) 34%,var(--surface));box-shadow:inset 0 0 0 2px var(--pc)}
+:root:not([data-theme=dark]) .dlrow .dlcell.done{background:color-mix(in srgb,var(--accent) 36%,var(--surface))}
+:root:not([data-theme=dark]) .ag:not(.live):not(.next){background:color-mix(in srgb,var(--bd) 22%,var(--surface))}
+:root:not([data-theme=dark]) .ag.dl:not(.done){--bgt:color-mix(in srgb,var(--cancel-bd) 22%,var(--surface))}
+:root:not([data-theme=dark]) .ag.dl.done{--bgt:color-mix(in srgb,var(--accent) 24%,var(--surface))}
+:root:not([data-theme=dark]) .sheet .wk th{background:#0f6b43}
 </style>
 <meta http-equiv="x-dns-prefetch-control" content="on"></head>
 <body>
