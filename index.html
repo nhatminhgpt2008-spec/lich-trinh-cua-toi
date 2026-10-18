@@ -1899,6 +1899,103 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
   :root:not([data-theme=dark]) .ag.dl:not(.done):not(.live):not(.next):hover{background:color-mix(in srgb,var(--bd) 54%,var(--surface))}
   :root:not([data-theme=dark]) .ag.dl.done:not(.live):not(.next):hover{background:color-mix(in srgb,var(--accent) 56%,var(--surface))}
 }
+
+/* ===== Nhãn tag trên ô: Bảng / Danh sách / Công việc / Lớp =====
+   Nhãn là phần tử position:absolute (ra khỏi luồng bố cục) nên không làm đổi kích thước, khoảng cách hay cách trình bày của ô.
+   pointer-events:none → bấm, kéo-thả, sao chép ô vẫn y như cũ. Màu nền lấy từ màu tag, chữ tự chọn trắng/đen cho dễ đọc. */
+.ctag{position:absolute;z-index:1;pointer-events:none;box-sizing:border-box;max-width:calc(100% - 16px);height:12px;padding:0 6px;border-radius:99px;background:var(--tg,var(--muted));color:var(--tgi,#fff);font-size:9px;line-height:12px;font-weight:700;font-style:normal;letter-spacing:.01em;text-transform:none;text-decoration:none;text-shadow:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 0 0 1.5px var(--surface)}
+/* Bảng: nhãn nằm vắt ngang viền trên của ô, canh giữa (nửa trên rơi vào khoảng đệm trống giữa các ô) */
+#sched .cell>.ctag{position:absolute;top:-6px;left:50%;transform:translateX(-50%)}
+/* Danh sách: vắt ngang viền trên, góc phải (khe 6px giữa các thẻ vừa đủ chứa nửa trên) */
+#sched .ag>.ctag{position:absolute;top:-6px;right:10px}
+/* Công việc: nằm gọn trong vùng đệm phía trên của dòng/thẻ (vùng này bị cắt tràn nên không vắt ra ngoài) */
+#nowBar .np-row{position:relative}
+#nowBar .np-row>.ctag{top:0;right:10px;max-width:calc(100% - 70px)}
+#nowBar .np-card>.ctag{top:2px;right:14px}
+/* Lớp: góc phải phía trên ô "Môn học" (dòng mã môn bên trái nên không bị đè) */
+.fx td.ctd{position:relative}
+.fx td.ctd>.ctag{top:0;right:12px}
+@media print{.ctag{box-shadow:none}}
+
+/* ===================================================================
+   ĐANG DIỄN RA / SẮP DIỄN RA — MỘT KIỂU DUY NHẤT cho Bảng, Danh sách và Công việc
+   Đặt cuối stylesheet để thay thế mọi lớp hiệu ứng cũ ở trên (glow, lớp phủ ::after, vòng ::before cũ,
+   bóng đổ ngoài, viền đôi, z-index nâng ô…) vốn chồng lên nhau.
+   Mỗi ô chỉ còn 4 thành phần, cùng một màu --st (đỏ = đang diễn ra, vàng = sắp diễn ra):
+     1) nền pha màu nhẹ   2) vạch trái 4px   3) viền mảnh 1px   4) vòng 2px "thở" (chỉ đổi opacity)
+   Không có bóng đổ ra ngoài nên không lấn sang ô bên cạnh; mọi ô thở cùng pha theo --ph (syncPulses).
+   =================================================================== */
+@keyframes stPulse{0%,100%{opacity:0}50%{opacity:.9}}
+
+#sched .cell.live,#sched .ag.live,#nowBar.page .np-card.live{--st:var(--live-color);--st-ink:var(--live-ink);--nbc:var(--live-color);--gc:var(--live-color);--pulse-color:var(--live-color);--st-line:color-mix(in srgb,var(--live-color) 80%,var(--surface))}
+#sched .cell.next,#sched .ag.next,#nowBar.page .np-card.next{--st:var(--next-color);--st-ink:var(--next-ink);--nbc:var(--next-color);--gc:var(--next-color);--pulse-color:var(--next-color);--st-line:color-mix(in srgb,var(--next-color) 80%,var(--surface))}
+#sched .cell.live,#sched .cell.next,#sched .ag.live,#sched .ag.next,#nowBar.page .np-card.live,#nowBar.page .np-card.next{position:relative;z-index:auto;background:color-mix(in srgb,var(--st) 22%,var(--surface));text-shadow:none}
+#sched .cell.live:hover,#sched .cell.next:hover,#sched .ag.live:hover,#sched .ag.next:hover,#nowBar.page .np-card.live:hover,#nowBar.page .np-card.next:hover{background:color-mix(in srgb,var(--st) 30%,var(--surface))}
+.sheet td.slot:has(.cell.live),.sheet td.slot:has(.cell.next){z-index:auto}   /* không nâng cả cột lên nữa: không còn bóng đổ ngoài nên không cần, và nhãn .ctag của ô kế bên không bị che */
+#sched .cell.live,#sched .cell.next{border-radius:10px;box-shadow:inset 4px 0 0 var(--st),inset 0 0 0 1px var(--st-line);padding-left:10px;padding-right:6px}
+#sched .ag.live,#sched .ag.next{border-radius:10px;border:1px solid var(--st-line);border-left:4px solid var(--st);box-shadow:none}   /* Danh sách: vạch trái chính là viền trái 4px (bo góc luôn khớp), không thêm bóng trong → hết viền đôi */
+#nowBar.page .np-card.live,#nowBar.page .np-card.next{border-radius:12px;border:1px solid var(--st-line);box-shadow:inset 4px 0 0 var(--st)}
+#sched .cell.live::after,#sched .cell.next::after,#sched .ag.live::after,#sched .ag.next::after,#nowBar.page .np-card.live::after,#nowBar.page .np-card.next::after{content:none;display:none;background:none}
+#sched .cell.live:not(.jump-highlight)::before,#sched .cell.next:not(.jump-highlight)::before,#sched .ag.live:not(.jump-highlight)::before,#sched .ag.next:not(.jump-highlight)::before,#nowBar.page .np-card.live:not(.jump-highlight)::before,#nowBar.page .np-card.next:not(.jump-highlight)::before{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;
+  background:none;opacity:0;box-shadow:inset 0 0 0 2px var(--st);
+  animation:stPulse 2.8s ease-in-out infinite;animation-delay:calc(var(--ph,0) * -1s);
+  transition:none;will-change:opacity}
+#sched .ag.live:not(.jump-highlight)::before,#sched .ag.next:not(.jump-highlight)::before{inset:-1px -1px -1px -4px}   /* phủ đúng khung ngoài (kể cả viền trái 4px) */
+#nowBar.page .np-card.live:not(.jump-highlight)::before,#nowBar.page .np-card.next:not(.jump-highlight)::before{inset:-1px}
+@media (hover:hover){
+  #sched .cell.live:not(.jump-highlight):hover::before,#sched .cell.next:not(.jump-highlight):hover::before,#sched .ag.live:not(.jump-highlight):hover::before,#sched .ag.next:not(.jump-highlight):hover::before,#nowBar.page .np-card.live:not(.jump-highlight):hover::before,#nowBar.page .np-card.next:not(.jump-highlight):hover::before{animation:none;opacity:1}   /* rê chuột: vòng sáng đứng yên, giống mọi ô khác */
+}
+#sched .cell .lvb .tag.live,#sched .cell .lvb .tag.next,#sched .ag .et .tag.live,#sched .ag .et .tag.next,#nowBar.page .np-k .tag.live,#nowBar.page .np-k .tag.next{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;height:auto;min-height:20px;margin:0;padding:2px 9px;border:0;border-radius:999px;font-size:11px;font-weight:700;line-height:1.25;letter-spacing:0;text-align:center;box-shadow:none;text-shadow:none;animation:none;vertical-align:middle}
+#sched .cell .lvb .tag.live,#sched .ag .et .tag.live,#nowBar.page .np-k .tag.live{background:var(--live-color);color:var(--live-ink)}
+#sched .cell .lvb .tag.next,#sched .ag .et .tag.next,#nowBar.page .np-k .tag.next{background:var(--next-color);color:var(--next-ink)}
+#sched .cell .lvb .tag.live,#sched .cell .lvb .tag.next{white-space:normal;max-width:100%;min-width:0;text-wrap:balance;overflow-wrap:anywhere}
+#sched .ag .et .tag.live,#sched .ag .et .tag.next{height:20px;min-height:0;padding:0 9px;margin-left:6px;white-space:nowrap}
+#nowBar.page .np-k .tag.live,#nowBar.page .np-k .tag.next{min-height:22px;padding:2px 11px;font-size:12px;white-space:nowrap}
+#sched .cell .lvb .tag.live::before,#sched .cell .lvb .tag.next::before,#sched .ag .et .tag.live::before,#sched .ag .et .tag.next::before,#nowBar.page .np-k .tag.live::before,#nowBar.page .np-k .tag.next::before,#sched .cell .lvb .tag.live::after,#sched .cell .lvb .tag.next::after,#sched .ag .et .tag.live::after,#sched .ag .et .tag.next::after,#nowBar.page .np-k .tag.live::after,#nowBar.page .np-k .tag.next::after,#sched .cell .lvb .tag.live i,#sched .ag .et .tag.live i,#nowBar.page .np-k .tag.live i{content:none!important;display:none!important}
+@media (min-width:900px){
+  #nowBar.page .np-row.live{--st:var(--live-color);--st-ink:var(--live-ink)}
+  #nowBar.page .np-row.next{--st:var(--next-color);--st-ink:var(--next-ink)}
+  #nowBar.page .np-row.live,#nowBar.page .np-row.next{--gc:var(--st);--st-line:color-mix(in srgb,var(--st) 80%,var(--surface));position:relative;border-radius:8px;padding-left:16px;background:color-mix(in srgb,var(--st) 22%,var(--surface));box-shadow:inset 4px 0 0 var(--st),inset 0 0 0 1px var(--st-line)}
+  #nowBar.page .np-row.live:hover,#nowBar.page .np-row.next:hover{background:color-mix(in srgb,var(--st) 30%,var(--surface))}
+  #nowBar.page .np-row.live::after,#nowBar.page .np-row.next::after{content:none;display:none}
+  #nowBar.page .np-row.live::before,#nowBar.page .np-row.next::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:none;opacity:0;box-shadow:inset 0 0 0 2px var(--st);animation:stPulse 2.8s ease-in-out infinite;animation-delay:calc(var(--ph,0) * -1s);will-change:opacity}
+  #nowBar.page .np-row.live:hover::before,#nowBar.page .np-row.next:hover::before{animation:none;opacity:1}
+  #nowBar.page .np-row.live .np-st,#nowBar.page .np-row.next .np-st{display:inline-flex;align-items:center;justify-content:center;height:20px;min-width:0;padding:0 10px;border:0;border-radius:999px;font-size:11px;font-weight:700;line-height:1;white-space:nowrap;box-shadow:none}
+  #nowBar.page .np-row.live .np-st{background:var(--live-color);color:var(--live-ink)}
+  #nowBar.page .np-row.next .np-st{background:var(--next-color);color:var(--next-ink)}
+  #nowBar.page .np-row.live .np-st::before,#nowBar.page .np-row.next .np-st::before{content:none!important;display:none!important}
+}
+@media (max-width:700px){
+  #sched .cell.live,#sched .cell.next{padding-left:9px;padding-right:5px}
+}
+@media (prefers-reduced-motion:reduce){
+  #sched .cell.live::before,#sched .cell.next::before,#sched .ag.live::before,#sched .ag.next::before,#nowBar.page .np-card.live::before,#nowBar.page .np-card.next::before,#nowBar.page .np-row.live::before,#nowBar.page .np-row.next::before{animation:none!important;opacity:.75!important}
+}
+
+
+/* ===================================================================
+   NHÃN TAG (.ctag): GIỮ NGUYÊN vị trí cũ — vắt ngang chính giữa viền trên của ô (Bảng, Danh sách) / trong ô (Công việc).
+   Nhãn nhô lên 6px phía trên ô, nên mỗi ô có nhãn được chừa sẵn khoảng trống phía trên để nửa nhãn đó
+   không chạm hay đè lên ô nằm ngay trên nó.
+   =================================================================== */
+/* Bảng: khoảng cách giữa hai ô xếp chồng (3px) + lề trên 6px = 9px > phần nhãn nhô ra (6px + viền nhãn 1.5px) */
+#sched .cell:has(>.ctag){margin-top:6px}
+/* Danh sách: lề trên 9px gộp với lề dưới 6px của thẻ trước (lấy giá trị lớn hơn) → khe 9px */
+#sched .ag:has(>.ctag){margin-top:9px}
+
+/* ===================================================================
+   LỌC THEO TAG — chú giải ở Bảng / Danh sách và thanh tag ở Công việc dùng chung một kiểu
+   =================================================================== */
+.lg[data-type],.np-tagf .lg{cursor:pointer;transition:background-color .15s,border-color .15s,opacity .15s,box-shadow .15s}
+.lg[data-type]:hover,.np-tagf .lg:hover{border-color:var(--bd,var(--accent))}
+.lg.sel{background:color-mix(in srgb,var(--bd) 24%,var(--surface));border-color:var(--bd);box-shadow:inset 0 0 0 1px var(--bd);font-weight:700}
+.lg.nsel{opacity:.5}
+.lg.nsel:hover{opacity:.9}
+.lg.clr{border-style:dashed;border-color:var(--danger);color:var(--danger);font-weight:600;cursor:pointer}
+.lg.clr:hover{background:color-mix(in srgb,var(--danger) 10%,var(--surface))}
+.np-tagf{display:flex;flex-wrap:wrap;gap:6px}
+.lg:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 </style>
 <meta http-equiv="x-dns-prefetch-control" content="on"></head>
 <body>
@@ -2303,6 +2400,11 @@ function nextHit(ev, from){
   return null;
 }
 function tagOf(id){ return state.tags.find(t => t.id === id) || state.tags[state.tags.length-1]; }
+/* nhãn tag nhỏ hiện trên ô (Bảng / Danh sách / Công việc / Lớp). Luôn là phần tử position:absolute nên KHÔNG chiếm chỗ trong ô → bố cục/kích thước ô giữ nguyên */
+function ctagHTML(ev){
+  const t = ev && tagOf(ev.type); if(!t || !t.name) return '';
+  return `<span class="ctag" style="--tg:${esc(t.color)};--tgi:${inkOn(t.color || '#888888')}">${esc(t.name)}</span>`;
+}
 const learnerTxt = ev => ev.learner ? (ev.grade ? `${ev.learner} (${ev.grade})` : ev.learner) : (ev.grade || '');
 function tagStyle(t){ return `--bd:${esc(t.color)};--bgt:color-mix(in srgb,${esc(t.color)} 22%,var(--surface))`; }
 const DOW = ['Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy','Chủ Nhật'];
@@ -3206,7 +3308,21 @@ try{
 let weekStart = mondayOf(todayStr());
 let todoFilter = 'all';
 let todoStatus = 'all';
-const hiddenTypes = new Set(['__cancel']);   // mặc định ẩn các buổi Nghỉ ở Bảng + Danh sách (bấm tag "Nghỉ" để hiện lại)
+const hiddenTypes = new Set(['__cancel']);
+/* LỌC THEO TAG — dùng chung cho Bảng, Danh sách và Công việc.
+   tagSel rỗng = hiện tất cả; có phần tử = CHỈ hiện các tag đã chọn (bấm một tag = xem riêng tag đó, bấm thêm để xem nhiều tag). */
+const tagSel = new Set();
+const tagSelActive = () => tagSel.size > 0 && state.tags.some(t => tagSel.has(t.id));   // id tag đã bị xóa thì không còn tính là đang lọc
+const tagOk = o => !tagSelActive() || tagSel.has(o.ev.type);
+function tagSelToggle(id){ tagSel.has(id) ? tagSel.delete(id) : tagSel.add(id); saveUI(); }
+function tagSelClear(){ tagSel.clear(); saveUI(); }
+/* bản cũ lưu việc ẨN từng tag trong hiddenTypes: đổi sang kiểu chọn tag mới (giữ đúng những tag đang hiện) để không bị ẩn mà không có chỗ bật lại */
+function tagSelMigrate(){
+  const real = [...hiddenTypes].filter(k => state.tags.some(t => t.id === k));
+  if(!real.length) return;
+  real.forEach(k => hiddenTypes.delete(k));
+  if(!tagSel.size) state.tags.filter(t => !real.includes(t.id)).forEach(t => tagSel.add(t.id));
+}   // mặc định ẩn các buổi Nghỉ ở Bảng + Danh sách (bấm tag "Nghỉ" để hiện lại)
 const openTodos = new Set();
 let query = '';
 /* Chuẩn hóa để tìm kiếm tiếng Việt: bỏ dấu, đ→d, không phân biệt hoa/thường. Nhờ vậy chữ gõ bằng Telex/VNI (tổ hợp dấu khác nhau) vẫn khớp với dữ liệu đã lưu, và gõ "giai tich" cũng tìm được "Giải tích". */
@@ -3355,9 +3471,10 @@ function render(){
   document.querySelectorAll('#viewSeg button').forEach(b => b.classList.toggle('on', b.dataset.v === state.view));
   updateSegIndicator();
 
+  tagSelMigrate();
   const all = weekOccs(weekStart);
   const occs0 = all.filter(o => {
-    if(hiddenTypes.has(o.ev.type)) return false;
+    if(!tagOk(o)) return false;
     if(o.cancelled && hiddenTypes.has('__cancel')) return false;
     if(o.conflict && hiddenTypes.has('__conflict')) return false;
     return true;
@@ -3438,8 +3555,9 @@ function renderLegend(all){
   const cnt = {}; all.forEach(o => cnt[o.ev.type] = (cnt[o.ev.type]||0)+1);
   const cancelCnt = all.filter(o => o.cancelled).length;
   const conflictCnt = all.filter(o => o.conflict).length;
-  $('#lgroup').innerHTML = state.tags.map(t =>
-    `<button class="lg ${hiddenTypes.has(t.id)?'off':''}" data-type="${esc(t.id)}" style="--bd:${esc(t.color)}" title="Bấm để ẩn/hiện"><i></i>${esc(t.name)}${cnt[t.id]?` (${cnt[t.id]})`:''}</button>`).join('') +
+  const tsel = tagSelActive();
+  $('#lgroup').innerHTML = (tsel ? `<button type="button" class="lg clr" id="tagClear" title="Hiện lại tất cả tag">✕ Bỏ lọc tag</button>` : '') + state.tags.map(t =>
+    `<button type="button" class="lg ${tsel ? (tagSel.has(t.id) ? 'sel' : 'nsel') : ''}" data-type="${esc(t.id)}" aria-pressed="${tsel && tagSel.has(t.id) ? 'true' : 'false'}" style="--bd:${esc(t.color)}" title="${tagSel.has(t.id) ? 'Bấm để bỏ tag này khỏi bộ lọc' : 'Bấm để chỉ xem tag này · bấm thêm tag khác để xem nhiều tag cùng lúc'}"><i></i>${esc(t.name)}${cnt[t.id]?` (${cnt[t.id]})`:''}</button>`).join('') +
     `<button class="lg ${hiddenTypes.has('__dl')?'off':''}" data-type="__dl" style="--bd:var(--dl)" title="Bấm để ẩn/hiện deadline"><i></i>Deadline${weekDeadlines().length ? ` (${weekDeadlines().length})` : ''}</button>` +
     `<button class="lg ${hiddenTypes.has('__cancel')?'off':''}" data-type="__cancel" style="--bd:var(--cell-cancel)" title="Bấm để ẩn/hiện các lịch nghỉ"><i></i>Nghỉ${cancelCnt ? ` (${cancelCnt})` : ''}</button>` +
     `<button class="lg ${hiddenTypes.has('__conflict')?'off':''}" data-type="__conflict" style="--bd:var(--cell-conflict)" title="Bấm để ẩn/hiện các lịch trùng"><i></i>Trùng lịch${conflictCnt ? ` (${conflictCnt})` : ''}</button>` +
@@ -3470,7 +3588,7 @@ function calcNext(){
   const mon = mondayOf(todayStr());
   const pool = [...weekOccs(mon), ...weekOccs(addDays(mon, 7))];
   const now = Date.now();
-  const c = pool.filter(o => !o.cancelled && o.ev.kind !== 'free' && Number.isFinite(occStartMs(o)) && occStartMs(o) > now);
+  const c = pool.filter(o => tagOk(o) && !o.cancelled && o.ev.kind !== 'free' && Number.isFinite(occStartMs(o)) && occStartMs(o) > now);   // đang lọc tag: buổi "sắp diễn ra" là buổi gần nhất TRONG các tag đã chọn
   const first = c.length ? Math.min(...c.map(occStartMs)) : null;
   nextKeys = new Set(first === null ? [] : c.filter(o => occStartMs(o) === first).map(occKey));
 }
@@ -3542,7 +3660,7 @@ function tableHTML(occs){
     const inner = free ? `<span class="ev-title">${esc(ev.title)}</span>` : `${codeLine}<div><b class="ev-title">${esc(ev.title)}</b></div>
       <div class="ctime">🕒 ${ev.start} - ${ev.end}</div>${ev.room ? `<div>📍 ${esc(ev.room)}</div>` : ''}${ev.teacher ? `<div>👤 ${esc(ev.teacher)}</div>` : ''}${learnerTxt(ev) ? `<div>🎓 ${esc(learnerTxt(ev))}</div>` : ''}${evChips(ev)}`;
     const badges = stateTag(o) + (o.conflict ? '<span class="tag w">⚠ Trùng</span>' : '');
-    return `<div class="cell${liveCls(o)}${nof} ${cls} ${o.conflict ? 'conflict' : ''} ${free?'free':''} ${matches(o)?'':'dim'}" ${sty} draggable="true" data-id="${ev.id}" data-date="${d}" data-s="${ev.start}" data-e="${ev.end}" tabindex="0" role="button" title="${esc(evTitleAttr(ev,d))}${o.cancelled?'\nNghỉ':''}">${copyBtns(ev,d)}${badges ? `<div class="lvb">${badges}</div>` : ''}${inner}</div>`;
+    return `<div class="cell${liveCls(o)}${nof} ${cls} ${o.conflict ? 'conflict' : ''} ${free?'free':''} ${matches(o)?'':'dim'}" ${sty} draggable="true" data-id="${ev.id}" data-date="${d}" data-s="${ev.start}" data-e="${ev.end}" tabindex="0" role="button" title="${esc(evTitleAttr(ev,d))}${o.cancelled?'\nNghỉ':''}">${copyBtns(ev,d)}${ctagHTML(ev)}${badges ? `<div class="lvb">${badges}</div>` : ''}${inner}</div>`;
   };
 
   if(stacked){
@@ -3633,7 +3751,7 @@ function agendaHTML(occs){
     for(const it of items){
       if(it.t){ html += dlArticleHTML(it.t); continue; }
       const o = it.o, ev = o.ev;
-      html += `<article style="${tagStyle(tagOf(ev.type))}${liveStyle(o)}" class="ag${liveCls(o)}${!o.cancelled && !tagOf(ev.type).fill ? ' nofill' : ''} ${o.cancelled?'cancelled':''} ${o.conflict?'conflict':''} ${matches(o)?'':'dim'}" data-id="${ev.id}" data-date="${date}" data-s="${esc(ev.start)}" data-e="${esc(ev.end)}" tabindex="0" role="button">
+      html += `<article style="${tagStyle(tagOf(ev.type))}${liveStyle(o)}" class="ag${liveCls(o)}${!o.cancelled && !tagOf(ev.type).fill ? ' nofill' : ''} ${o.cancelled?'cancelled':''} ${o.conflict?'conflict':''} ${matches(o)?'':'dim'}" data-id="${ev.id}" data-date="${date}" data-s="${esc(ev.start)}" data-e="${esc(ev.end)}" tabindex="0" role="button">${ctagHTML(ev)}
         <div class="ag-time">${ev.start}<br><small>${ev.end}</small></div>
         <div><div class="et">${ev.code?`<small>${esc(ev.code)}</small>`:''}${esc(ev.title)}${tagsHTML(o)}</div>
         <div class="em">${emHTML(o, [ev.room &&'📍 ' + ev.room, ev.teacher && '👤 ' + ev.teacher, learnerTxt(ev) && '🎓 ' + learnerTxt(ev), shortNote(ev) && '📝 ' + ev.note].filter(Boolean))}</div>
@@ -3952,7 +4070,7 @@ function fixedHTML(){
     const sid = seriesOf(ev);
     h += `<tr class="fx-row ${matches({ev}) ? '' : 'dim'}" data-id="${ev.id}" data-series="${esc(sid)}" data-fx-kind="${kind}" data-date="${occ}" tabindex="0" role="button" title="Bấm để sửa hoặc kéo tay nắm để đổi vị trí">
       <td class="n">${fxRowNumber(i)}</td>
-      <td><div class="code">${esc(ev.code || '–')}</div><div>${cc && cc !== ev.code ? `<span class="cc2">${esc(cc)}</span>` : ''}${esc(ev.title)}${ev.status === 'cancelled' ? '<span class="tag x">Nghỉ</span>' : ''}</div></td>
+      <td class="ctd">${ctagHTML(ev)}<div class="code">${esc(ev.code || '–')}</div><div>${cc && cc !== ev.code ? `<span class="cc2">${esc(cc)}</span>` : ''}${esc(ev.title)}${ev.status === 'cancelled' ? '<span class="tag x">Nghỉ</span>' : ''}</div></td>
       <td class="c tcv">${has(ev.tc) ? esc(ev.tc) : '<span class="sub">–</span>'}</td>
       <td class="ht">${esc(ev.htgd) || '<span class="sub">–</span>'}</td>
       <td>${fixedWhen(ev, vs, false)}</td>
@@ -4532,8 +4650,12 @@ $('#tagToggle').onclick = () => {   // chỉ đổi lớp + nhãn nút, KHÔNG g
 };
 $('#legend').onclick = e => {
   if(e.target.closest('#tagMgr')) return openTags();
+  if(e.target.closest('#tagClear')){ tagSelClear(); render(); return; }
   const b = e.target.closest('[data-type]'); if(!b) return;
-  hiddenTypes.has(b.dataset.type) ? hiddenTypes.delete(b.dataset.type) : hiddenTypes.add(b.dataset.type); render();
+  const k = b.dataset.type;
+  if(k.startsWith('__')) hiddenTypes.has(k) ? hiddenTypes.delete(k) : hiddenTypes.add(k);   // Deadline / Nghỉ / Trùng lịch: vẫn là công tắc ẩn/hiện
+  else tagSelToggle(k);   // tag thường: chọn để lọc
+  render();
 };
 let clickTimer = null;
 let drag = null, dropTd = null, fxDrop = null;
@@ -5176,6 +5298,7 @@ tagForm.addEventListener('submit', e => {
   state.events.forEach(ev => { if(!ids.has(ev.type)) ev.type = state.tags[0].id; });
   const SYS_HIDDEN = new Set(['__dl','__cancel','__conflict']);
   [...hiddenTypes].forEach(k => { if(!SYS_HIDDEN.has(k) && !ids.has(k)) hiddenTypes.delete(k); });
+  [...tagSel].forEach(k => { if(!ids.has(k)) tagSel.delete(k); });
   state.status = {};
   for(const [k,id] of [['dl','#stDl'],['cancel','#stCancel'],['conflict','#stConflict']]){ const v = $(id).value.toLowerCase(); state.status[k] = v === STATUS_DEF[themeNow()][k] ? null : v; }
   save(); closeDialog(dlgTags); render();
@@ -5325,7 +5448,7 @@ function innerScrollSnap(){
 function uiSnap(){
   if(!UIS) return;
   try{
-    const s = {hv:2, view:state.view, week:weekStart, tf:todoFilter, ts:todoStatus, hid:[...hiddenTypes], ot:[...openTodos], q:$('#q').value, fxf:fxFilter, guide:guideOpen, tgc:tagsCollapsed, sx:scrollX, sy:scrollY, npt:npTab, npf:npScope, npc:npTodayCollapsed, npd:[...npExpandedDays], isc:innerScrollSnap(), dlg:null};
+    const s = {hv:2, view:state.view, week:weekStart, tf:todoFilter, ts:todoStatus, hid:[...hiddenTypes], tsel:[...tagSel], ot:[...openTodos], q:$('#q').value, fxf:fxFilter, guide:guideOpen, tgc:tagsCollapsed, sx:scrollX, sy:scrollY, npt:npTab, npf:npScope, npc:npTodayCollapsed, npd:[...npExpandedDays], isc:innerScrollSnap(), dlg:null};
     const ae = document.activeElement, fc = ae && ae.closest && ae.closest('dialog[open]') && ae.name ? {name:ae.name, a:ae.selectionStart, b:ae.selectionEnd} : null;
     if(dlg.open){ readTimes(); s.dlg = {k:'ev', id:editing && editing.id, date:editing && editing.date, form:formSnap(f), days:daysBoxes().map(b => b.checked), times:timesDraft}; }
     else if(dlgTodo.open) s.dlg = {k:'todo', id:todoEditing, form:formSnap(todoEditForm), auto:todoAuto};
@@ -5350,6 +5473,7 @@ if(uiSaved){
   if(['week','all'].includes(uiSaved.tf)) todoFilter = uiSaved.tf;
   if(['all','open','done'].includes(uiSaved.ts)) todoStatus = uiSaved.ts;
   if(uiSaved.hv === 2 && Array.isArray(uiSaved.hid)){ hiddenTypes.clear(); uiSaved.hid.forEach(x => hiddenTypes.add(x)); }   // đã có trạng thái lưu: theo đúng lựa chọn lần trước (kể cả đã bật hiện Nghỉ)
+  if(Array.isArray(uiSaved.tsel)) uiSaved.tsel.forEach(x => { if(typeof x === 'string') tagSel.add(x); });
   (uiSaved.ot || []).forEach(x => openTodos.add(x));
   if(typeof uiSaved.q === 'string'){ $('#q').value = uiSaved.q; query = fold(uiSaved.q.trim()); $('#qWrap').classList.toggle('has-val', !!uiSaved.q); }
   guideOpen = !!uiSaved.guide;
@@ -5493,7 +5617,8 @@ function renderNowBar(){
   const el = document.getElementById('nowBar'); if(!el) return;
   el.classList.toggle('page', state.view === 'now');
   if(state.view !== 'now'){ el.hidden = true; return; }   // chỉ hiện ở trang riêng "Thông báo"
-  const {live, next, occs, now} = upcoming(2);
+  const {live: live0, next: next0, occs, now} = upcoming(2);
+  const live = live0.filter(tagOk), next = next0.filter(tagOk);   // lọc theo tag (dùng chung với Bảng / Danh sách); thông báo vẫn dùng dữ liệu đầy đủ
   const today = todayStr();
   const metaLine = ev => [`🕒 ${ev.start} - ${ev.end}`, ev.room ? `📍 ${esc(ev.room)}` : '', ev.teacher ? `👤 ${esc(ev.teacher)}` : ''].filter(Boolean).join('<span class="sep">·</span>');
   const dataOf = o => `data-id="${esc(o.ev.id)}" data-date="${esc(o.date)}" style="--cc:${esc(tagOf(o.ev.type).color)}"`;
@@ -5503,7 +5628,7 @@ function renderNowBar(){
   const cfChip = o => o.conflict ? '<span class="np-cf">Trùng</span>' : '';
   const liveCards = live.map(o => {
     const s = occStartMs(o), e = occEndMs(o), p = Math.min(100, Math.max(0, (now - s) / (e - s) * 100));
-    return `<div class="np-card live${o_cf(o)}${matches(o) ? '' : ' dim'}" ${dataOf(o)}><div class="np-trow"><div class="np-t">${esc(o.ev.title)}</div><div class="np-k"><span class="tag live"><i></i>Đang diễn ra</span>${cfChip(o)}</div></div><div class="np-m">${metaLine(o.ev)}</div>
+    return `<div class="np-card live${o_cf(o)}${matches(o) ? '' : ' dim'}" ${dataOf(o)}>${ctagHTML(o.ev)}<div class="np-trow"><div class="np-t">${esc(o.ev.title)}</div><div class="np-k"><span class="tag live"><i></i>Đang diễn ra</span>${cfChip(o)}</div></div><div class="np-m">${metaLine(o.ev)}</div>
       <div class="np-prog"><div class="np-bar"><i style="width:${p.toFixed(1)}%" data-ps="${s}" data-pe="${e}"></i></div><b class="cd" data-k="e" data-v="${e}" data-max="${e - s}">còn ${fmtHMS(e - now)}</b></div></div>`;
   });
   const nxs = next.length ? next.filter(o => occStartMs(o) === occStartMs(next[0])) : [];   // mọi buổi cùng giờ bắt đầu gần nhất
@@ -5514,16 +5639,16 @@ function renderNowBar(){
     /* thanh tiến độ của thẻ Tiếp theo: đứng yên ở 0% khi còn hơn 1 tiếng, chỉ bắt đầu chạy trong 60 phút cuối trước giờ bắt đầu */
     const gs = ns - 3600 * 1000;
     const p = Math.min(100, Math.max(0, (now - gs) / (ns - gs) * 100));
-    nextCard += `<div class="np-card next${o_cf(nx)}${matches(nx) ? '' : ' dim'}" ${dataOf(nx)}><div class="np-trow"><div class="np-t">${esc(nx.ev.title)}</div><div class="np-k"><span class="tag next">Tiếp theo · ${esc(npRel(nx.date))}</span>${cfChip(nx)}</div></div><div class="np-m">${metaLine(nx.ev)}</div>
+    nextCard += `<div class="np-card next${o_cf(nx)}${matches(nx) ? '' : ' dim'}" ${dataOf(nx)}>${ctagHTML(nx.ev)}<div class="np-trow"><div class="np-t">${esc(nx.ev.title)}</div><div class="np-k"><span class="tag next">Tiếp theo · ${esc(npRel(nx.date))}</span>${cfChip(nx)}</div></div><div class="np-m">${metaLine(nx.ev)}</div>
       <div class="np-prog"><div class="np-bar"><i style="width:${p.toFixed(1)}%" data-ps="${gs}" data-pe="${ns}"></i></div><b class="cd" data-k="s" data-v="${ns}" data-max="${npRep(ns - now)}">còn ${fmtHMS(ns - now)}</b></div></div>`;
   }
   const emptyCard = !liveCards.length && !nx ? '<div class="np-empty">Không có lịch sắp diễn ra</div>' : '';
 
-  const todayOccs = npTodayList(now);
+  const todayOccs = npTodayList(now).filter(tagOk);
   const isNx = o => nxs.some(n => n.date === o.date && n.ev.id === o.ev.id && n.ev.start === o.ev.start);
   const rowState = o => o.cancelled ? ['cancel', 'Nghỉ'] : occEndMs(o) <= now ? ['done', 'Đã xong'] : occStartMs(o) <= now ? ['live', 'Đang diễn ra'] : isNx(o) ? ['next', 'Tiếp theo'] : ['soon', 'Sắp tới'];
   const row = (o, showState) => { const [c, l] = rowState(o);
-    return `<div class="np-row ${showState ? c : ''}${o_cf(o)}${matches(o) ? '' : ' dim'}" ${dataOf(o)}><span class="np-time">${o.ev.start}<small>${o.ev.end}</small></span><span class="np-dot"></span><span class="np-main"><b>${esc(o.ev.title)}${cfChip(o)}</b><small>${[o.ev.room ? '📍 ' + esc(o.ev.room) : '', o.ev.teacher ? '👤 ' + esc(o.ev.teacher) : ''].filter(Boolean).join(' · ')}</small></span>${showState ? `<span class="np-st">${l}</span>` : ''}</div>`; };
+    return `<div class="np-row ${showState ? c : ''}${o_cf(o)}${matches(o) ? '' : ' dim'}" ${dataOf(o)}>${ctagHTML(o.ev)}<span class="np-time">${o.ev.start}<small>${o.ev.end}</small></span><span class="np-dot"></span><span class="np-main"><b>${esc(o.ev.title)}${cfChip(o)}</b><small>${[o.ev.room ? '📍 ' + esc(o.ev.room) : '', o.ev.teacher ? '👤 ' + esc(o.ev.teacher) : ''].filter(Boolean).join(' · ')}</small></span>${showState ? `<span class="np-st">${l}</span>` : ''}</div>`; };
   const doneN = todayOccs.filter(o => !o.cancelled && occEndMs(o) <= now).length, actN = todayOccs.filter(o => !o.cancelled).length;
   const todayPct = actN ? Math.round(doneN / actN * 100) : 0;
   const todayBar = actN ? `<div class="np-stats"><div class="np-wkbar" title="${todayPct}%"><div style="width:${todayPct}%"></div></div></div>` : '';   // thanh tiến độ trong ngày, cùng kiểu với thanh của mục Tuần này
@@ -5532,7 +5657,7 @@ function renderNowBar(){
   const monThis = mondayOf(today), monNext = addDays(monThis, 7);
   const isActive = o => !o.cancelled;
   const isDone = o => !o.cancelled && occEndMs(o) <= now;
-  const wkList = ws => npWeekList(ws, now);
+  const wkList = ws => npWeekList(ws, now).filter(tagOk);
   const wkToggle = ds => ds.some(d => d.n) ? `<button type="button" class="np-collapseall" data-act="collapseall">${ds.filter(d => d.n).every(d => npExpandedDays.has(d.d)) ? 'Thu gọn tất cả' : 'Mở rộng tất cả'}</button>` : '';
   const dayBlock = (d, list, stat, showState) => {
     if(!list.length) return `<div class="np-gl np-gl-empty${d === today ? ' today' : ''}"><span class="np-gl-l">${esc(npDayHead(d))}</span><small>Không có lịch</small></div>`;
@@ -5610,8 +5735,10 @@ function renderNowBar(){
   const nToday = cntBk('today'), nWeek = cntBk('week'), doneG = scoped.length - openG.length;
   const tile = (k, ic, lb, txt, on, zero) => `<button type="button" class="np-tile ${k}${on ? ' on' : ''}${zero ? ' zero' : ''}" data-act="bk" data-bk="${k}" aria-pressed="${on ? 'true' : 'false'}"><span class="np-ti" aria-hidden="true">${ic}</span><span class="np-tn">${txt}</span><span class="np-tl">${lb}</span></button>`;
   const tiles = `<div class="np-tiles">${tile('late', '⚠️', 'Quá hạn', lateN, npBk === 'late', !lateN)}${tile('today', '⏰', 'Hạn hôm nay', nToday, npBk === 'today', !nToday)}${tile('week', '📅', '7 ngày tới', nWeek, npBk === 'week', !nWeek)}${tile('open', '📋', 'Chưa hoàn thành', openG.length, npTab === 'open' && npBk === 'all', !openG.length)}${tile('done', '✅', 'Đã hoàn thành', doneG, npTab === 'done' && npBk === 'all', !doneG)}</div>`;
+  const tsel = tagSelActive();
+  const tagBar = state.tags.length > 1 ? `<div class="np-tagf" role="group" aria-label="Lọc theo tag">${tsel ? '<button type="button" class="lg clr" id="npTagClr" data-act="tagclr" title="Hiện lại tất cả tag">✕ Bỏ lọc tag</button>' : ''}${state.tags.map(t => `<button type="button" class="lg ${tsel ? (tagSel.has(t.id) ? 'sel' : 'nsel') : ''}" id="npTag_${esc(t.id)}" data-act="tagsel" data-tag="${esc(t.id)}" aria-pressed="${tsel && tagSel.has(t.id) ? 'true' : 'false'}" style="--bd:${esc(t.color)}" title="${tagSel.has(t.id) ? 'Bấm để bỏ tag này khỏi bộ lọc' : 'Bấm để chỉ xem tag này · bấm thêm tag khác để xem nhiều tag cùng lúc'}"><i></i>${esc(t.name)}</button>`).join('')}</div>` : '';
   const html = `<div class="np-grid">
-      <section class="np-col"><h2 class="np-h">Lịch học</h2>${liveCards.join('')}${liveCards.length ? '' : nextCard}${emptyCard}
+      <section class="np-col"><h2 class="np-h">Lịch học</h2>${tagBar}${liveCards.join('')}${liveCards.length ? '' : nextCard}${emptyCard}
         <div class="np-sec"><div class="np-sh"><span>Hôm nay <span class="np-sub">${esc(npDayHead(today))}</span></span><small>${doneN}/${actN} buổi đã xong</small></div>${todayBar}${todayHTML}</div>
         <div class="np-sec"><div class="np-sh"><span class="np-wknav"><button type="button" class="np-wkb" data-act="wknav" data-d="-1" aria-label="Tuần trước">‹</button><button type="button" class="np-wkb" data-act="wknav" data-d="1" aria-label="Tuần sau">›</button><span>${wkTitle} <span class="np-sub">${wkRange}</span></span></span><span class="np-sh-r"><small>${npWk > 0 ? `${wkSel.act} buổi` : `${wkSel.dn}/${wkSel.act} buổi đã xong`}</small>${npWk !== 0 ? '<button type="button" class="np-collapseall" data-act="wknav" data-d="0">Tuần này</button>' : ''}${selToggle}</span></div><div class="np-wkbody">${wkStats(wkSel, npWk <= 0)}${selHTML}</div></div></section>
       <section class="np-col np-dlcol"><h2 class="np-h">Deadline</h2>
@@ -5832,7 +5959,9 @@ document.getElementById('nowBar').addEventListener('click', e => {
   const act = e.target.closest('[data-act]');
   if(act){
     const a = act.dataset.act;
-    if(a === 'tab'){ if(npTab !== act.dataset.tab){
+    if(a === 'tagsel'){ tagSelToggle(act.dataset.tag); renderNowBar(); }
+    else if(a === 'tagclr'){ tagSelClear(); renderNowBar(); }
+    else if(a === 'tab'){ if(npTab !== act.dataset.tab){
       const old = document.querySelector('#nowBar .np-status button.on');
       const prevRect = old ? {l:old.offsetLeft, t:old.offsetTop, w:old.offsetWidth, h:old.offsetHeight} : null;
       npTab = act.dataset.tab; npBk = 'all'; renderNowBar(); swapNpList(); positionNpTabInd(prevRect);
