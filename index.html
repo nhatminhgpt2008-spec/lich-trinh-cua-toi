@@ -1906,6 +1906,15 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 .ctag{position:absolute;z-index:1;pointer-events:none;box-sizing:border-box;max-width:calc(100% - 16px);height:12px;padding:0 6px;border-radius:99px;background:var(--tg,var(--muted));color:var(--tgi,#fff);font-size:9px;line-height:12px;font-weight:700;font-style:normal;letter-spacing:.01em;text-transform:none;text-decoration:none;text-shadow:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 0 0 1.5px var(--surface)}
 /* Bảng: nhãn nằm vắt ngang viền trên của ô, canh giữa (nửa trên rơi vào khoảng đệm trống giữa các ô) */
 #sched .cell>.ctag{position:absolute;top:-6px;left:50%;transform:translateX(-50%)}
+/* Bảng: nhãn trạng thái ("Còn 2h10" / "Sau 8h49") đứng cùng hàng với nhãn tag, vắt ngang viền trên của ô.
+   Cả hàng là position:absolute nên KHÔNG chiếm chỗ trong ô; nó nhô lên đúng 6px — khoảng mà nhãn tag vốn đã được chừa sẵn (margin-top bên dưới).
+   Nhãn tag co lại (dấu …) khi hết chỗ, nhãn trạng thái luôn giữ nguyên. */
+#sched .cell>.cbar{position:absolute;top:-6px;left:50%;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;gap:3px;box-sizing:border-box;max-width:calc(100% - 8px);height:12px;pointer-events:none;white-space:nowrap;z-index:2}
+#sched .cell>.cbar>.ctag{position:static;transform:none;flex:0 1 auto;min-width:0;max-width:none}
+.cstate{flex:none;box-sizing:border-box;height:12px;padding:0 6px;border-radius:99px;font-size:10px;line-height:12px;font-weight:800;font-style:normal;letter-spacing:0;text-shadow:none;white-space:nowrap;box-shadow:0 0 0 1.5px var(--surface)}
+.cstate.live{background:var(--live-color);color:var(--live-ink)}
+.cstate.next{background:var(--next-color);color:var(--next-ink)}
+@media print{.cstate{box-shadow:none}}
 /* Danh sách: vắt ngang viền trên, góc phải (khe 6px giữa các thẻ vừa đủ chứa nửa trên) */
 #sched .ag>.ctag{position:absolute;top:-6px;right:10px}
 /* Công việc: nằm gọn trong vùng đệm phía trên của dòng/thẻ (vùng này bị cắt tràn nên không vắt ra ngoài) */
@@ -1980,9 +1989,14 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
    không chạm hay đè lên ô nằm ngay trên nó.
    =================================================================== */
 /* Bảng: khoảng cách giữa hai ô xếp chồng (3px) + lề trên 6px = 9px > phần nhãn nhô ra (6px + viền nhãn 1.5px) */
-#sched .cell:has(>.ctag){margin-top:6px}
+#sched .cell:has(>.ctag,>.cbar){margin-top:6px}
 /* Danh sách: lề trên 9px gộp với lề dưới 6px của thẻ trước (lấy giá trị lớn hơn) → khe 9px */
 #sched .ag:has(>.ctag){margin-top:9px}
+/* Bảng: nửa dưới của nhãn tag (6px + viền 1.5px) rơi vào trong ô, nên MỌI ô có nhãn tag (kể cả ô thường lẫn ô đang/sắp diễn ra) dùng chung đệm trên 8px (mặc định là 5px)
+   để nhãn không chạm hay đè lên dòng chữ đầu tiên và mọi ô có cùng một khoảng trống phía trên chữ */
+#sched .cell:has(>.ctag,>.cbar){padding-top:8px}
+#sched .ag.live:has(>.ctag),#sched .ag.next:has(>.ctag){padding-top:11px}
+#nowBar.page .np-card.live:has(>.ctag),#nowBar.page .np-card.next:has(>.ctag){padding-top:18px}
 
 /* ===================================================================
    LỌC THEO TAG — chú giải ở Bảng / Danh sách và thanh tag ở Công việc dùng chung một kiểu
@@ -3576,7 +3590,7 @@ function liveInfo(o){
   const n = new Date(), now = n.getHours()*60 + n.getMinutes(), s = toMin(o.ev.start), e = toMin(o.ev.end);
   if(now < s || now >= e) return null;
   const left = e - now;
-  return {pct: Math.round((now - s) / (e - s) * 100), left: fmtDur(left)};
+  return {pct: Math.round((now - s) / (e - s) * 100), left: fmtDur(left), leftMin: left};
 }
 /* sự kiện sắp diễn ra: LUÔN chọn lịch gần nhất trên toàn bộ lịch trình (tuần này + tuần sau),
    không phụ thuộc vào tuần đang xem trên màn hình — tránh việc mỗi tuần lại tự nhận buổi đầu tiên
@@ -3595,7 +3609,7 @@ function calcNext(){
 function nextInfo(o){
   if(!nextKeys.has(occKey(o))) return null;
   const d = Math.max(0, Math.round((occStartMs(o) - Date.now()) / 60000));
-  return {in: fmtDur(d)};
+  return {in: fmtDur(d), inMin: d};
 }
 const liveCls = o => liveInfo(o) ? ' live' : nextInfo(o) ? ' next' : '';
 const liveStyle = o => { const l = liveInfo(o); return l ? `;--p:${l.pct}%` : ''; };
@@ -3603,6 +3617,25 @@ function stateTag(o){
   const l = liveInfo(o), nx = nextInfo(o);
   const nb = t => String(t).replace(/(\d+) (ngày|giờ|phút|giây)/g, '$1\u00a0$2');   // dính số với đơn vị để xuống dòng không tách "2 / giờ"
   return l ? `<span class="tag live"><i></i>Kết thúc sau ${nb(l.left)}</span>` : nx ? `<span class="tag next">Diễn ra sau ${nb(nx.in)}</span>` : '';
+}
+/* Nhãn trạng thái của ô trong BẢNG: không nằm trong ô nữa mà vắt ngang viền trên, cạnh nhãn tag (position:absolute → không đổi kích thước/bố cục ô).
+   Chữ gọn để vừa cột hẹp: "Còn 2h10" (đang diễn ra) / "Sau 8h49" (sắp diễn ra); câu đầy đủ ("Kết thúc sau…" / "Diễn ra sau…") nằm ở tooltip của ô.
+   Danh sách vẫn dùng stateTag() như cũ. */
+const fmtShort = m => {
+  m = Math.max(0, Math.round(m));
+  if(m >= 1440){ const d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60); return `${d} ngày${h ? ' ' + h + 'h' : ''}`; }
+  const h = Math.floor(m / 60), r = m % 60;
+  return h ? (r ? `${h}h${String(r).padStart(2, '0')}` : `${h}h`) : `${r}p`;
+};
+function cellState(o){
+  const l = liveInfo(o), nx = nextInfo(o);
+  if(l) return {cls:'live', short:'Còn ' + fmtShort(l.leftMin), full:'Kết thúc sau ' + l.left};
+  if(nx) return {cls:'next', short:'Sau ' + fmtShort(nx.inMin), full:'Diễn ra sau ' + nx.in};
+  return null;
+}
+function cellTopBar(ev, st){   // nhãn tag + (nếu có) nhãn trạng thái, cùng một hàng trên viền trên của ô
+  const tg = ctagHTML(ev);
+  return st ? `<span class="cbar">${tg}<span class="cstate ${st.cls}">${esc(st.short)}</span></span>` : tg;
 }
 function tagsHTML(o){
   return stateTag(o) + (o.cancelled ? '<span class="tag x">Nghỉ</span>' : '') + (o.conflict ? '<span class="tag w">⚠ Trùng</span>' : '');
@@ -3659,8 +3692,8 @@ function tableHTML(occs){
     const codeLine = ev.code ? `<div class="cc">${esc(ev.code)}</div>` : '';
     const inner = free ? `<span class="ev-title">${esc(ev.title)}</span>` : `${codeLine}<div><b class="ev-title">${esc(ev.title)}</b></div>
       <div class="ctime">🕒 ${ev.start} - ${ev.end}</div>${ev.room ? `<div>📍 ${esc(ev.room)}</div>` : ''}${ev.teacher ? `<div>👤 ${esc(ev.teacher)}</div>` : ''}${learnerTxt(ev) ? `<div>🎓 ${esc(learnerTxt(ev))}</div>` : ''}${evChips(ev)}`;
-    const badges = stateTag(o) + (o.conflict ? '<span class="tag w">⚠ Trùng</span>' : '');
-    return `<div class="cell${liveCls(o)}${nof} ${cls} ${o.conflict ? 'conflict' : ''} ${free?'free':''} ${matches(o)?'':'dim'}" ${sty} draggable="true" data-id="${ev.id}" data-date="${d}" data-s="${ev.start}" data-e="${ev.end}" tabindex="0" role="button" title="${esc(evTitleAttr(ev,d))}${o.cancelled?'\nNghỉ':''}">${copyBtns(ev,d)}${ctagHTML(ev)}${badges ? `<div class="lvb">${badges}</div>` : ''}${inner}</div>`;
+    const st = cellState(o), badges = o.conflict ? '<span class="tag w">⚠ Trùng</span>' : '';
+    return `<div class="cell${liveCls(o)}${nof} ${cls} ${o.conflict ? 'conflict' : ''} ${free?'free':''} ${matches(o)?'':'dim'}" ${sty} draggable="true" data-id="${ev.id}" data-date="${d}" data-s="${ev.start}" data-e="${ev.end}" tabindex="0" role="button" title="${esc(evTitleAttr(ev,d))}${o.cancelled?'\nNghỉ':''}${st?'\n'+st.full:''}">${copyBtns(ev,d)}${cellTopBar(ev, st)}${badges ? `<div class="lvb">${badges}</div>` : ''}${inner}</div>`;
   };
 
   if(stacked){
