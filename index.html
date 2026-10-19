@@ -39,7 +39,7 @@
   --soon-color:#6ea8ff; --soon-text:#8dbbff;
 }
 *{box-sizing:border-box}
-html{color-scheme:light dark;scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeSpeed}
+html{color-scheme:light dark;scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:auto}
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 [data-theme=light]{color-scheme:light}[data-theme=dark]{color-scheme:dark}
 /* chữ tối trên nền sáng nhìn mảnh hơn chữ sáng trên nền tối: giao diện sáng dùng nét chữ dày hơn một bậc + bỏ làm mịn chữ (antialiased) để nét đậm ngang giao diện tối */
@@ -119,14 +119,14 @@ textarea{height:auto;padding:8px 10px;width:100%;resize:vertical}
 .seg{display:inline-flex;position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
 .seg button{border:0!important;border-radius:0!important;height:34px!important;justify-content:center;background:transparent!important;color:var(--ink);position:relative;z-index:1;transition:color .18s ease}
 .seg button.on{color:var(--accent);font-weight:600}
-.seg-ind{position:absolute;top:0;left:0;height:100%;width:1px;transform-origin:left center;will-change:transform;background:var(--accent-soft);z-index:0;transition:transform .22s cubic-bezier(.4,0,.2,1);will-change:transform}
+.seg-ind{position:absolute;top:0;left:0;height:100%;width:1px;transform-origin:left center;will-change:transform;background:var(--accent-soft);z-index:0;transition:transform .1s cubic-bezier(.4,0,.2,1);will-change:transform}
 @keyframes schedSwap{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-.sched-swap{animation:schedSwap .22s ease}
+.sched-swap{animation:schedSwap .1s ease}
 /* hiệu ứng vào cho: trang chính sau khi đăng nhập, trang đăng nhập, bảng lọc cột ở trang Lớp (chỉ đổi độ mờ/dịch nhẹ, không tạo khung chứa mới) */
 @keyframes pageFade{from{opacity:0}to{opacity:1}}
 @keyframes popIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-body.authed .app{animation:pageFade .25s ease}
-body.gate #authGate{animation:pageFade .25s ease}
+body.authed .app{animation:pageFade .11s ease}
+body.gate #authGate{animation:pageFade .11s ease}
 .fx-pop{animation:popIn .14s ease}
 @media (prefers-reduced-motion:reduce){body.authed .app,body.gate #authGate,.fx-pop{animation:none}}
 @media (prefers-reduced-motion:reduce){.seg button{transition:none}.seg-ind{transition:none}.sched-swap{animation:none}.tabInd,#todoTabs button,#todoStatus button,.np-tabs button{transition:none}}
@@ -295,14 +295,6 @@ button,[role=button],a,summary,label,select{touch-action:manipulation}
 @keyframes scheduleGlowLive{0%,100%{opacity:0}50%{opacity:1}}
 @keyframes scheduleGlowNext{0%,100%{opacity:0}50%{opacity:1}}
 
-/* vòng sáng quanh nhãn: ::after tĩnh, chỉ đổi opacity (mượt, không vẽ lại) */
-.tag.live::after,.tag.next::after{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;opacity:0;animation:tagRingLive 1.9s cubic-bezier(.45,.05,.55,.95) infinite;animation-delay:calc(var(--ph,0) * -1s);will-change:opacity}
-.tag.next::after{animation-name:tagRingNext;animation-duration:2.7s}
-.tag.live::after{box-shadow:0 0 0 4px color-mix(in srgb,var(--live-color) 55%,transparent)}
-.tag.next::after{box-shadow:0 0 0 4px color-mix(in srgb,var(--next-color) 55%,transparent)}
-.np-k .tag.live::after,.np-k .tag.next::after{display:none}
-@keyframes tagRingLive{0%,100%{opacity:0}50%{opacity:1}}
-@keyframes tagRingNext{0%,100%{opacity:0}50%{opacity:1}}
 .tag.live i{width:6px;height:6px;border-radius:50%;background:currentColor;contain:layout style}
 .ag.next{border-radius:10px;border-left-width:1px;border-color:color-mix(in srgb,var(--next-color) 70%,transparent);background:color-mix(in srgb,var(--next-color) 26%,var(--surface));--pulse-color:var(--next-color);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pulse-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--pulse-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--pulse-color) 55%,transparent);}
 .ag.next::after,.cell.next::after{content:"";position:absolute;inset:0;border-radius:inherit;background:color-mix(in srgb,var(--next-color) 26%,transparent);pointer-events:none}
@@ -412,7 +404,7 @@ button,[role=button],a,summary,label,select{touch-action:manipulation}
 #todoTabs,#todoStatus{position:relative}
 #todoTabs button,#todoStatus button{position:relative;z-index:1;transition:color .18s ease,border-color .18s ease}
 #todoTabs button.on,#todoStatus button.on{background:none}
-.tabInd{position:absolute;top:0;left:0;width:0;height:0;border-radius:7px;background:var(--accent-soft);z-index:0;pointer-events:none;will-change:transform;transition:transform .22s cubic-bezier(.4,0,.2,1),width .22s cubic-bezier(.4,0,.2,1),height .22s cubic-bezier(.4,0,.2,1)}
+.tabInd{position:absolute;top:0;left:0;width:0;height:0;border-radius:7px;background:var(--accent-soft);z-index:0;pointer-events:none;will-change:transform;transition:transform .1s cubic-bezier(.4,0,.2,1),width .1s cubic-bezier(.4,0,.2,1),height .1s cubic-bezier(.4,0,.2,1)}
 .addtodo{display:grid;grid-template-columns:minmax(0,1fr) max-content auto;gap:6px;margin-bottom:8px}
 .addtodo input{font-size:12.5px}
 .addtodo input[type=text]{padding:0 8px}
@@ -535,7 +527,7 @@ ul.todos{list-style:none;margin:0;padding:0 4px 0 0;display:grid;gap:2px;height:
 .fx th .fx-sort .arr{font-size:10px;opacity:.35;flex:none}
 .fx th .fx-sort.on .arr{opacity:1;color:var(--accent);font-weight:700}
 .fx .lg.static{white-space:nowrap;display:inline-flex;align-items:center}
-.fx .fx-row{cursor:pointer;position:relative;transform-origin:0 50%;transition:transform .15s cubic-bezier(.22,.8,.3,1),box-shadow .2s,opacity .15s;will-change:transform,opacity}
+.fx .fx-row{cursor:pointer;position:relative;transform-origin:0 50%;transition:transform .15s cubic-bezier(.22,.8,.3,1),box-shadow .2s,opacity .15s}
 .fx td.n{padding:7px 8px}
 .fx .fx-index{display:grid;grid-template-columns:18px 22px;align-items:center;justify-content:center;gap:5px;min-width:45px}
 .fx .fx-num{display:inline-block;min-width:18px;text-align:center;font-variant-numeric:tabular-nums}
@@ -637,11 +629,11 @@ fieldset.rep .fgrid{grid-template-columns:1fr 1fr}
 .rtrow .gr:hover,.rtrow .gr:focus-visible{color:var(--accent);background:var(--accent-soft)}
 .rtrow.dragging{background:var(--surface);scale:1.015;box-shadow:0 10px 24px -8px color-mix(in srgb,#000 35%,transparent),0 0 0 1.5px var(--accent);z-index:50;cursor:grabbing}
 .rtrow.dragging .gr{cursor:grabbing;color:var(--accent)}
-.rtrow.new{animation:fIn .26s cubic-bezier(.22,.8,.3,1) both}
+.rtrow.new{animation:fIn .2s cubic-bezier(.22,.8,.3,1) both}
 /* hiệu ứng form Thêm lịch: các khối hiện lần lượt từ dưới lên khi mở; khối ẩn/hiện (thời hạn, thứ, giờ…) trượt nhẹ vào; nút/ô nhập đổi màu mượt */
 @keyframes fIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-#dlg.fx-in form>.fgrid>*,#dlg.fx-in form>.actions{animation:fIn .34s cubic-bezier(.22,.8,.3,1) both;animation-delay:calc(var(--i,0)*30ms)}
-#untilBox:not([hidden]),#untilWrap:not([hidden]),#learnerBox:not([hidden]),#daysWrap:not([hidden]),#noneTimes:not([hidden]),#timesWrap:not([hidden]){animation:fIn .26s cubic-bezier(.22,.8,.3,1) both}
+#dlg.fx-in form>.fgrid>*,#dlg.fx-in form>.actions{animation:fIn .22s cubic-bezier(.22,.8,.3,1) both;animation-delay:calc(var(--i,0)*26ms)}
+#untilBox:not([hidden]),#untilWrap:not([hidden]),#learnerBox:not([hidden]),#daysWrap:not([hidden]),#noneTimes:not([hidden]),#timesWrap:not([hidden]){animation:fIn .2s cubic-bezier(.22,.8,.3,1) both}
 #dlg input,#dlg select,#dlg textarea{transition:border-color .18s,box-shadow .18s,background-color .18s}
 #dlg input:focus-visible,#dlg select:focus-visible,#dlg textarea:focus-visible{box-shadow:0 0 0 3px var(--accent-soft)}
 #dlg .btn{transition:scale .12s,background-color .18s,border-color .18s,color .18s}
@@ -718,7 +710,7 @@ dialog h2{margin:0 0 14px;font-size:17px}
 .todoCreatedHint{grid-column:1/-1;color:var(--muted);font-size:11.5px;line-height:1.35}
 
 /* hiệu ứng mở/đóng nội dung từng mục: co giãn chiều cao mượt bằng grid-template-rows */
-.acctSectionCollapse{display:grid;grid-template-rows:0fr;transition:grid-template-rows .22s ease}
+.acctSectionCollapse{display:grid;grid-template-rows:0fr;transition:grid-template-rows .1s ease}
 .acctSectionCollapse>.acctSectionBody{overflow:hidden;min-height:0;padding:0}
 .acctSection.open .acctSectionCollapse{grid-template-rows:1fr}
 .acctSectionPad{padding:2px 12px 14px}
@@ -828,7 +820,7 @@ fieldset.rep.tm .fgrid{gap:14px 12px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);max-width:90vw;background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .15s;z-index:200}
 .toast.on{opacity:1}
 /* thanh đề xuất cài web thành ứng dụng (PWA) */
-.pwaBar{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:150;width:calc(100% - 24px);max-width:460px;display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.28);animation:pwaIn .25s ease-out}
+.pwaBar{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:150;width:calc(100% - 24px);max-width:460px;display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.28);animation:pwaIn .11s ease-out}
 .pwaBar[hidden]{display:none}
 body:not(.authed):not(.gate) .pwaBar{display:none}
 .pwaBar img{width:40px;height:40px;border-radius:10px;flex:none}
@@ -1117,16 +1109,15 @@ ul.todos{padding-right:12px}
 @keyframes wkInNext{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
 @keyframes wkInPrev{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:none}}
 @keyframes wkLbl{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
-#sched.wk-next{animation:wkInNext .3s cubic-bezier(.22,.8,.3,1)}
-#sched.wk-prev{animation:wkInPrev .3s cubic-bezier(.22,.8,.3,1)}
-#range.wk-lbl{animation:wkLbl .25s ease}
+#sched.wk-next{animation:wkInNext .14s cubic-bezier(.22,.8,.3,1)}
+#sched.wk-prev{animation:wkInPrev .14s cubic-bezier(.22,.8,.3,1)}
+#range.wk-lbl{animation:wkLbl .11s ease}
 html.wk-anim body{overflow-x:clip}   /* tránh thanh cuộn ngang thoáng qua lúc nội dung đang trượt */
 @media (prefers-reduced-motion:reduce){#sched.wk-next,#sched.wk-prev,#range.wk-lbl{animation:none}}
 
 /* ---------- HIỆU ỨNG RÊ CHUỘT THỐNG NHẤT: ô ở Bảng, thanh Tiếp theo/Đang diễn ra/Deadline, thẻ ở Danh sách ----------
    Thiết kế KHÔNG đổi hình học (không phóng to, không dịch chuyển, không đổi z-index): nền đậm dần + viền sáng chạy vào bên trong ô.
    Nhờ vậy vùng chuột nhạy luôn đứng yên nên không còn chớp/giật khi rê qua lại, chữ không bị mờ, và ô kế bên không bị đè lên. */
-@keyframes cellIn{from{opacity:0;transform:translateY(10px) scale(.94)}to{opacity:1;transform:none}}
 .cell,.dlcell,.nowbar .nb,.ag{--ease:cubic-bezier(.22,.8,.3,1);position:relative;transition:background-color .18s var(--ease);contain:layout style}
 .cell{--gc:var(--cc,var(--muted))}
 .cell.live,.ag.live{--gc:var(--live-color)}
@@ -1154,17 +1145,6 @@ html.wk-anim body{overflow-x:clip}   /* tránh thanh cuộn ngang thoáng qua l�
 .ag.live:not(.jump-highlight)::before,.ag.next:not(.jump-highlight)::before{inset:-1px}
 @media (prefers-reduced-motion:reduce){.cell,.dlcell,.nowbar .nb,.ag,.cell::before,.dlcell::before,.nowbar .nb::before,.ag::before{transition:none}}
 
-/* đổi tuần: các ô hiện lần lượt theo cột, từ Thứ Hai đến Chủ Nhật */
-.wk-stagger .sheet td:nth-child(n+2) .cell:not(.live):not(.next),
-.wk-stagger .sheet td:nth-child(n+2) .dlcell{animation:cellIn .38s cubic-bezier(.22,.8,.3,1) both}
-.wk-stagger .sheet td:nth-child(2) .cell:not(.live):not(.next),.wk-stagger .sheet td:nth-child(2) .dlcell{animation-delay:0ms}
-.wk-stagger .sheet td:nth-child(3) .cell:not(.live):not(.next),.wk-stagger .sheet td:nth-child(3) .dlcell{animation-delay:45ms}
-.wk-stagger .sheet td:nth-child(4) .cell:not(.live):not(.next),.wk-stagger .sheet td:nth-child(4) .dlcell{animation-delay:90ms}
-.wk-stagger .sheet td:nth-child(5) .cell:not(.live):not(.next),.wk-stagger .sheet td:nth-child(5) .dlcell{animation-delay:135ms}
-.wk-stagger .sheet td:nth-child(6) .cell:not(.live):not(.next),.wk-stagger .sheet td:nth-child(6) .dlcell{animation-delay:180ms}
-.wk-stagger .sheet td:nth-child(7) .cell:not(.live):not(.next),.wk-stagger .sheet td:nth-child(7) .dlcell{animation-delay:225ms}
-.wk-stagger .sheet td:nth-child(8) .cell:not(.live):not(.next),.wk-stagger .sheet td:nth-child(8) .dlcell{animation-delay:270ms}
-@media (prefers-reduced-motion:reduce){.wk-stagger .sheet .cell,.wk-stagger .sheet .dlcell{animation:none!important}}
 
 /* ===== trang "Thông báo" ===== */
 #nowBar.page{display:block;margin:0;padding:4px 0 24px;background:none;box-shadow:none;content-visibility:auto;contain-intrinsic-size:auto 600px}
@@ -1203,13 +1183,12 @@ html.wk-anim body{overflow-x:clip}   /* tránh thanh cuộn ngang thoáng qua l�
 .ag .et .tag.live i::before,.ag .et .tag.next::before{font-size:10px;line-height:1;display:block}
 /* Bảng + Danh sách: bỏ vòng sáng/viền nhấp nháy quanh nhãn trạng thái (Kết thúc sau… / Diễn ra sau…); cả hai nhãn bo tròn hết cỡ như nhau */
 .tag.live,.tag.next{box-shadow:none;border-radius:999px}
-.tag.live::after,.tag.next::after{display:none;animation:none}
 /* lớp xếp chồng: hiệu ứng của ô ĐANG diễn ra (đỏ) nằm trên hiệu ứng của ô SẮP diễn ra (vàng), không thêm lớp hiệu ứng mới */
 .ag.live,.cell.live{z-index:4}
 .sheet td.slot:has(.cell.live){z-index:4}
 /* "Cách đọc thời khoá biểu": mở/đóng trượt mượt (trình duyệt cũ không hỗ trợ thì vẫn mở/đóng tức thì như trước) */
 :root{interpolate-size:allow-keywords}
-.guide::details-content{block-size:0;overflow:hidden;transition:block-size .24s cubic-bezier(.4,0,.2,1),content-visibility .24s allow-discrete}
+.guide::details-content{block-size:0;overflow:hidden;transition:block-size .11s cubic-bezier(.4,0,.2,1),content-visibility .11s allow-discrete}
 .guide[open]::details-content{block-size:auto}
 @media (prefers-reduced-motion:reduce){.guide::details-content{transition:none}}
 @media (prefers-reduced-motion:reduce){.np-k .tag.live,.np-k .tag.live i{animation:none}}
@@ -1233,7 +1212,7 @@ html.wk-anim body{overflow-x:clip}   /* tránh thanh cuộn ngang thoáng qua l�
 .np-stats{padding:0 8px 6px}
 .np-wkpct{font-size:12px;color:var(--muted);margin-bottom:4px}.np-wkpct b{color:var(--ink)}
 .np-wkbar{height:6px;border-radius:99px;background:color-mix(in srgb,var(--ink) 10%,transparent);overflow:hidden;margin-bottom:8px}
-.np-wkbar>div{height:100%;border-radius:99px;background:var(--accent);transition:width .3s}
+.np-wkbar>div{height:100%;border-radius:99px;background:var(--accent);transition:width .14s}
 .np-statrow{display:flex;flex-wrap:wrap;gap:6px}
 .np-stat{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border:1px solid var(--line);border-radius:99px;font-size:12px;color:var(--muted);white-space:nowrap}
 .np-stat b{color:var(--ink);font-weight:700}
@@ -1266,7 +1245,7 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 .np-gl-l{display:flex;align-items:center;gap:6px;min-width:0;text-transform:none;letter-spacing:0;font-size:13px}   /* tiêu đề ngày: Thứ Sáu, 09 / 10 (không viết hoa toàn bộ) */
 .np-gl-arrow{display:inline-block;flex:0 0 auto;font-size:10px;transition:transform .15s}
 .np-day:not(.collapsed) .np-gl-arrow,.np-fold:not(.collapsed) .np-gl-arrow{transform:rotate(90deg)}
-.np-day-body{display:grid;grid-template-rows:1fr;transition:grid-template-rows .22s cubic-bezier(.4,0,.2,1)}   /* kỹ thuật grid-rows 0fr/1fr: co giãn chiều cao mượt mà không cần đo bằng JS */
+.np-day-body{display:grid;grid-template-rows:1fr;transition:grid-template-rows .1s cubic-bezier(.4,0,.2,1)}   /* kỹ thuật grid-rows 0fr/1fr: co giãn chiều cao mượt mà không cần đo bằng JS */
 .np-day-body>.np-day-in{overflow:hidden;min-height:0}
 .np-day.collapsed .np-day-body,.np-fold.collapsed .np-day-body{grid-template-rows:0fr}
 @media (prefers-reduced-motion:reduce){.np-day-body{transition:none}}
@@ -1422,7 +1401,7 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
   /* thanh tab dưới đáy: icon SVG + viên nền trượt (giống PC) */
   .tools #viewSeg{overflow:hidden}
   .tools #viewSeg button{gap:3px;font-size:11px;letter-spacing:.01em}
-  .tools #viewSeg button::before{width:22px;height:22px;transition:transform .22s cubic-bezier(.4,0,.2,1)}
+  .tools #viewSeg button::before{width:22px;height:22px;transition:transform .1s cubic-bezier(.4,0,.2,1)}
   .tools #viewSeg button.on::before{transform:translateY(-1px) scale(1.08)}
   #viewSeg [data-v=table]::before{content:"";--ic:var(--i-table)}
   #viewSeg [data-v=agenda]::before{content:"";--ic:var(--i-agenda)}
@@ -1465,7 +1444,7 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
   *::-webkit-scrollbar{width:0;height:0;display:none}
 
   /* --- hiệu ứng chuyển tab: trượt + mờ dần theo hướng (tab sau trượt từ phải, tab trước trượt từ trái) --- */
-  .sched-swap{animation:schedSwapX .3s cubic-bezier(.22,.8,.3,1)}
+  .sched-swap{animation:schedSwapX .14s cubic-bezier(.22,.8,.3,1)}
 }
 @media screen and (max-width:430px){
   .np-tabs .l-f{display:none}
@@ -1489,7 +1468,6 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
   /* (2) Ô buổi / giờ / nghỉ / trùng: giữ vị trí cũ, chỉ cho hiện cả khi bằng 0 */
   .stat.zero{display:grid}
 }
-}
 
 /* v4b: nguyên nhân thật của lỗi giật thanh tab = hiệu ứng trượt NGANG (translateX) làm nội dung tràn ra ngoài mép phải trong ~0,3s;
    trình duyệt điện thoại thấy trang rộng hơn màn hình nên nới "khung nhìn" ra (cả thanh tab, ô thống kê, nút + bị đẩy xuống/phải), rồi co lại.
@@ -1497,7 +1475,7 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 @keyframes schedSwapY{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @media screen and (max-width:700px){
   html,body,.app{overflow-x:clip}
-  .sched-swap{animation:schedSwapY .26s cubic-bezier(.22,.8,.3,1)}
+  .sched-swap{animation:schedSwapY .12s cubic-bezier(.22,.8,.3,1)}
 }
 @media (max-width:700px) and (prefers-reduced-motion:reduce){.sched-swap{animation:none}}
 @media screen and (max-width:700px){
@@ -1529,8 +1507,8 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
   animation-iteration-count:infinite;
   animation-delay:calc(var(--ph,0) * -1s);
 }
-.np-wkbody.slide-l{animation:npSlideL .3s cubic-bezier(.2,.7,.2,1)}
-.np-wkbody.slide-r{animation:npSlideR .3s cubic-bezier(.2,.7,.2,1)}
+.np-wkbody.slide-l{animation:npSlideL .14s cubic-bezier(.2,.7,.2,1)}
+.np-wkbody.slide-r{animation:npSlideR .14s cubic-bezier(.2,.7,.2,1)}
 @keyframes npSlideL{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
 @keyframes npSlideR{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.np-wkbody.slide-l,.np-wkbody.slide-r{animation:none}}
@@ -1977,25 +1955,25 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
    bóng đổ ngoài, viền đôi, z-index nâng ô…) vốn chồng lên nhau.
    Mỗi ô chỉ còn 4 thành phần, cùng một màu --st (đỏ = đang diễn ra, vàng = sắp diễn ra):
      1) nền pha màu nhẹ   2) vạch trái 4px   3) viền mảnh 1px   4) vòng 2px "thở" (chỉ đổi opacity)
-   Không có bóng đổ ra ngoài nên không lấn sang ô bên cạnh; mọi ô thở cùng pha theo --ph (syncPulses).
+   Không có bóng đổ ra ngoài nên không lấn sang ô bên cạnh; mọi ô thở cùng pha.
    =================================================================== */
-@keyframes stPulse{0%,100%{opacity:0}50%{opacity:.9}}
+@keyframes stPulse{0%,100%{opacity:.35}50%{opacity:1}}
 
-#sched .cell.live,#sched .ag.live,#nowBar.page .np-card.live{--st:var(--live-color);--st-ink:var(--live-ink);--nbc:var(--live-color);--gc:var(--live-color);--pulse-color:var(--live-color);--st-line:color-mix(in srgb,var(--live-color) 80%,var(--surface))}
-#sched .cell.next,#sched .ag.next,#nowBar.page .np-card.next{--st:var(--next-color);--st-ink:var(--next-ink);--nbc:var(--next-color);--gc:var(--next-color);--pulse-color:var(--next-color);--st-line:color-mix(in srgb,var(--next-color) 80%,var(--surface))}
-#sched .cell.live,#sched .cell.next,#sched .ag.live,#sched .ag.next,#nowBar.page .np-card.live,#nowBar.page .np-card.next{position:relative;z-index:auto;background:color-mix(in srgb,var(--st) 22%,var(--surface));text-shadow:none}
-#sched .cell.live:hover,#sched .cell.next:hover,#sched .ag.live:hover,#sched .ag.next:hover,#nowBar.page .np-card.live:hover,#nowBar.page .np-card.next:hover{background:color-mix(in srgb,var(--st) 30%,var(--surface))}
+#sched .cell.live,#sched .ag.live,#nowBar.page .np-card.live{--st:var(--live-color);--st-ink:var(--live-ink);--nbc:var(--live-color);--gc:var(--live-color);--pulse-color:var(--live-color);--st-line:var(--live-color)}
+#sched .cell.next,#sched .ag.next,#nowBar.page .np-card.next{--st:var(--next-color);--st-ink:var(--next-ink);--nbc:var(--next-color);--gc:var(--next-color);--pulse-color:var(--next-color);--st-line:var(--next-color)}
+#sched .cell.live,#sched .cell.next,#sched .ag.live,#sched .ag.next,#nowBar.page .np-card.live,#nowBar.page .np-card.next{position:relative;z-index:auto;background:color-mix(in srgb,var(--st) 34%,var(--surface));text-shadow:none}
+#sched .cell.live:hover,#sched .cell.next:hover,#sched .ag.live:hover,#sched .ag.next:hover,#nowBar.page .np-card.live:hover,#nowBar.page .np-card.next:hover{background:color-mix(in srgb,var(--st) 42%,var(--surface))}
 .sheet td.slot:has(.cell.live),.sheet td.slot:has(.cell.next){z-index:auto}   /* không nâng cả cột lên nữa: không còn bóng đổ ngoài nên không cần, và nhãn .ctag của ô kế bên không bị che */
-#sched .cell.live,#sched .cell.next{border-radius:10px;box-shadow:inset 4px 0 0 var(--st),inset 0 0 0 1px var(--st-line);padding-left:10px;padding-right:6px}
-#sched .ag.live,#sched .ag.next{border-radius:10px;border:1px solid var(--st-line);border-left:4px solid var(--st);box-shadow:none}   /* Danh sách: vạch trái chính là viền trái 4px (bo góc luôn khớp), không thêm bóng trong → hết viền đôi */
-#nowBar.page .np-card.live,#nowBar.page .np-card.next{border-radius:12px;border:1px solid var(--st-line);box-shadow:inset 4px 0 0 var(--st)}
+#sched .cell.live,#sched .cell.next{border-radius:10px;box-shadow:inset 7px 0 0 var(--st),inset 0 0 0 1px var(--st-line);padding-left:13px;padding-right:6px}
+#sched .ag.live,#sched .ag.next{border-radius:10px;border:1px solid var(--st-line);border-left:7px solid var(--st);box-shadow:none}   /* Danh sách: vạch trái chính là viền trái 4px (bo góc luôn khớp), không thêm bóng trong → hết viền đôi */
+#nowBar.page .np-card.live,#nowBar.page .np-card.next{border-radius:12px;border:1px solid var(--st-line);box-shadow:inset 7px 0 0 var(--st)}
 #sched .cell.live::after,#sched .cell.next::after,#sched .ag.live::after,#sched .ag.next::after,#nowBar.page .np-card.live::after,#nowBar.page .np-card.next::after{content:none;display:none;background:none}
 #sched .cell.live:not(.jump-highlight)::before,#sched .cell.next:not(.jump-highlight)::before,#sched .ag.live:not(.jump-highlight)::before,#sched .ag.next:not(.jump-highlight)::before,#nowBar.page .np-card.live:not(.jump-highlight)::before,#nowBar.page .np-card.next:not(.jump-highlight)::before{
   content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;
-  background:none;opacity:0;box-shadow:inset 0 0 0 2px var(--st);
+  background:none;opacity:0;box-shadow:inset 0 0 0 2px var(--st),0 0 0 2px color-mix(in srgb,var(--st) 35%,transparent),0 0 14px 2px color-mix(in srgb,var(--st) 50%,transparent);
   animation:stPulse 2.8s ease-in-out infinite;animation-delay:calc(var(--ph,0) * -1s);
   transition:none;will-change:opacity}
-#sched .ag.live:not(.jump-highlight)::before,#sched .ag.next:not(.jump-highlight)::before{inset:-1px -1px -1px -4px}   /* phủ đúng khung ngoài (kể cả viền trái 4px) */
+#sched .ag.live:not(.jump-highlight)::before,#sched .ag.next:not(.jump-highlight)::before{inset:-1px -1px -1px -7px}   /* phủ đúng khung ngoài (kể cả viền trái 4px) */
 #nowBar.page .np-card.live:not(.jump-highlight)::before,#nowBar.page .np-card.next:not(.jump-highlight)::before{inset:-1px}
 @media (hover:hover){
   #sched .cell.live:not(.jump-highlight):hover::before,#sched .cell.next:not(.jump-highlight):hover::before,#sched .ag.live:not(.jump-highlight):hover::before,#sched .ag.next:not(.jump-highlight):hover::before,#nowBar.page .np-card.live:not(.jump-highlight):hover::before,#nowBar.page .np-card.next:not(.jump-highlight):hover::before{animation:none;opacity:1}   /* rê chuột: vòng sáng đứng yên, giống mọi ô khác */
@@ -2010,10 +1988,10 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 @media (min-width:900px){
   #nowBar.page .np-row.live{--st:var(--live-color);--st-ink:var(--live-ink)}
   #nowBar.page .np-row.next{--st:var(--next-color);--st-ink:var(--next-ink)}
-  #nowBar.page .np-row.live,#nowBar.page .np-row.next{--gc:var(--st);--st-line:color-mix(in srgb,var(--st) 80%,var(--surface));position:relative;border-radius:8px;padding-left:16px;background:color-mix(in srgb,var(--st) 22%,var(--surface));box-shadow:inset 4px 0 0 var(--st),inset 0 0 0 1px var(--st-line)}
-  #nowBar.page .np-row.live:hover,#nowBar.page .np-row.next:hover{background:color-mix(in srgb,var(--st) 30%,var(--surface))}
+  #nowBar.page .np-row.live,#nowBar.page .np-row.next{--gc:var(--st);--st-line:var(--st);position:relative;border-radius:8px;padding-left:18px;background:color-mix(in srgb,var(--st) 34%,var(--surface));box-shadow:inset 7px 0 0 var(--st),inset 0 0 0 1px var(--st-line)}
+  #nowBar.page .np-row.live:hover,#nowBar.page .np-row.next:hover{background:color-mix(in srgb,var(--st) 42%,var(--surface))}
   #nowBar.page .np-row.live::after,#nowBar.page .np-row.next::after{content:none;display:none}
-  #nowBar.page .np-row.live::before,#nowBar.page .np-row.next::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:none;opacity:0;box-shadow:inset 0 0 0 2px var(--st);animation:stPulse 2.8s ease-in-out infinite;animation-delay:calc(var(--ph,0) * -1s);will-change:opacity}
+  #nowBar.page .np-row.live::before,#nowBar.page .np-row.next::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:none;opacity:0;box-shadow:inset 0 0 0 2px var(--st),0 0 0 2px color-mix(in srgb,var(--st) 35%,transparent),0 0 14px 2px color-mix(in srgb,var(--st) 50%,transparent);animation:stPulse 2.8s ease-in-out infinite;animation-delay:calc(var(--ph,0) * -1s);will-change:opacity}
   #nowBar.page .np-row.live:hover::before,#nowBar.page .np-row.next:hover::before{animation:none;opacity:1}
   #nowBar.page .np-row.live .np-st,#nowBar.page .np-row.next .np-st{display:inline-flex;align-items:center;justify-content:center;height:20px;min-width:0;padding:0 10px;border:0;border-radius:999px;font-size:11px;font-weight:700;line-height:1;white-space:nowrap;box-shadow:none}
   #nowBar.page .np-row.live .np-st{background:var(--live-color);color:var(--live-ink)}
@@ -2021,11 +1999,41 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
   #nowBar.page .np-row.live .np-st::before,#nowBar.page .np-row.next .np-st::before{content:none!important;display:none!important}
 }
 @media (max-width:700px){
-  #sched .cell.live,#sched .cell.next{padding-left:9px;padding-right:5px}
+  #sched .cell.live,#sched .cell.next{padding-left:11px;padding-right:5px}
 }
+/* nâng ô lên trên ô kế bên để vòng sáng ngoài không bị che */
+#sched .cell.live,#sched .cell.next,#sched .ag.live,#sched .ag.next{z-index:2}
+/* Khi ĐANG có buổi diễn ra: ô SẮP diễn ra lùi xuống làm nền phụ — nền nhạt, vạch trái mỏng, bỏ vòng sáng nhấp nháy.
+   Áp dụng đồng bộ cho Bảng, Danh sách và Công việc (mỗi trang tự xét theo việc trang đó có buổi đang diễn ra hay không). */
+#sched:has(.cell.live,.ag.live) :is(.cell.next,.ag.next),
+#nowBar.page:has(.np-card.live,.np-row.live) :is(.np-card.next,.np-row.next){--st-line:color-mix(in srgb,var(--st) 50%,var(--surface))}
+/* nền: trả về nền thường theo màu tag của ô (không tô vàng) — chỉ còn vạch trái + viền vàng mảnh */
+#sched:has(.cell.live,.ag.live) .cell.next{background:color-mix(in srgb,var(--cc) 22%,var(--surface))}
+#sched:has(.cell.live,.ag.live) .cell.next:hover{background:color-mix(in srgb,var(--cc) 30%,var(--surface))}
+#sched:has(.cell.live,.ag.live) .cell.next.nofill{background:var(--surface)}
+#sched:has(.cell.live,.ag.live) .ag.next{background:color-mix(in srgb,var(--bd) 22%,var(--surface))}
+#sched:has(.cell.live,.ag.live) .ag.next:hover{background:color-mix(in srgb,var(--bd) 30%,var(--surface))}
+:root:not([data-theme=dark]) #sched:has(.cell.live,.ag.live) .cell.next{background:color-mix(in srgb,var(--cc) 46%,var(--surface))}
+:root:not([data-theme=dark]) #sched:has(.cell.live,.ag.live) .cell.next:hover{background:color-mix(in srgb,var(--cc) 56%,var(--surface))}
+:root:not([data-theme=dark]) #sched:has(.cell.live,.ag.live) .cell.next.nofill{background:var(--surface)}
+:root:not([data-theme=dark]) #sched:has(.cell.live,.ag.live) .ag.next{background:color-mix(in srgb,var(--bd) 46%,var(--surface))}
+:root:not([data-theme=dark]) #sched:has(.cell.live,.ag.live) .ag.next:hover{background:color-mix(in srgb,var(--bd) 56%,var(--surface))}
+#nowBar.page:has(.np-card.live,.np-row.live) .np-card.next{background:var(--surface)}
+#nowBar.page:has(.np-card.live,.np-row.live) .np-card.next:hover{background:color-mix(in srgb,var(--ink) 5%,var(--surface))}
+#nowBar.page:has(.np-card.live,.np-row.live) .np-row.next{background:none}
+#nowBar.page:has(.np-card.live,.np-row.live) .np-row.next:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
+#sched:has(.cell.live,.ag.live) .cell.next{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cc) 60%,transparent);padding-left:6px;padding-right:6px}
+#sched:has(.cell.live,.ag.live) .ag.next{border:1px solid color-mix(in srgb,var(--bd) 60%,transparent);border-left:4px solid var(--bd)}
+#nowBar.page:has(.np-card.live,.np-row.live) .np-card.next{box-shadow:none;border-color:var(--line)}
+#nowBar.page:has(.np-card.live,.np-row.live) .np-row.next{box-shadow:none;padding-left:10px}
+#sched:has(.cell.live,.ag.live) :is(.cell.next,.ag.next)::before,
+#nowBar.page:has(.np-card.live,.np-row.live) :is(.np-card.next,.np-row.next)::before{animation:none!important;opacity:0!important;box-shadow:none!important}
+#sched:has(.cell.live,.ag.live) .tag.next,#nowBar.page:has(.np-card.live,.np-row.live) .np-k .tag.next,#nowBar.page:has(.np-card.live,.np-row.live) .np-row.next .np-st{opacity:.75}
 @media (prefers-reduced-motion:reduce){
   #sched .cell.live::before,#sched .cell.next::before,#sched .ag.live::before,#sched .ag.next::before,#nowBar.page .np-card.live::before,#nowBar.page .np-card.next::before,#nowBar.page .np-row.live::before,#nowBar.page .np-row.next::before{animation:none!important;opacity:.75!important}
 }
+/* chữ tiêu đề đậm hơn một chút để ô nổi bật hơn */
+#sched .cell.live .ev-title,#sched .cell.next .ev-title,#sched .ag.live .et,#sched .ag.next .et,#nowBar.page .np-card.live .np-t,#nowBar.page .np-card.next .np-t{font-weight:800}
 
 
 /* ===================================================================
@@ -2064,9 +2072,12 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 .hubHead{position:sticky;top:0;z-index:3;background:var(--surface);padding:18px 20px 12px;border-bottom:1px solid var(--line);border-radius:14px 14px 0 0}
 .hubHead .dlgHead h2{margin:0}
 .hubHead p{margin:3px 0 0;font-size:12.5px;color:var(--muted)}
-.hubTabs{display:flex;gap:6px;margin-top:12px}
-.hubTabs button{flex:1;height:34px;border:1px solid var(--line);background:none;border-radius:8px;font-size:13px;color:var(--ink);cursor:pointer}
-.hubTabs button.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent);font-weight:700}
+.hubTabs{position:relative;display:grid;grid-template-columns:1fr 1fr;margin-top:12px;padding:4px;border:1px solid var(--line);border-radius:12px;background:var(--line-soft)}
+.hubTabs button{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:7px;height:36px;border:0;background:none;border-radius:9px;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:color .15s}
+.hubTabs button svg{width:15px;height:15px;flex:none}
+.hubTabs button:not(.on):hover{color:var(--ink)}
+.hubTabs button.on{color:var(--accent-ink)}
+.hubTabs button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .hubBody{padding:14px 20px 8px}
 .hubFoot{position:sticky;bottom:0;z-index:3;display:flex;gap:8px;align-items:center;padding:12px 20px;background:var(--surface);border-top:1px solid var(--line);border-radius:0 0 14px 14px}
 .hubFoot small{color:var(--muted);font-size:12px;flex:1}
@@ -2074,7 +2085,7 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 .hubSum{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;font-size:13px;color:var(--muted);flex-wrap:wrap}
 .hubSum b{color:var(--ink)}
 .hubList{display:grid;gap:8px}
-.hubCard{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-left:5px solid var(--c);border-radius:10px;background:var(--surface);cursor:pointer;transition:background-color .15s,border-color .15s,opacity .15s}
+.hubCard{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-left:5px solid var(--c);border-radius:10px;background:var(--surface);cursor:pointer;transition:background-color .15s,border-color .15s,opacity .15s}
 .hubCard:hover{border-color:var(--c)}
 .hubCard:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .hubCard.sel{background:color-mix(in srgb,var(--c) 14%,var(--surface));border-color:var(--c);box-shadow:inset 0 0 0 1px var(--c)}
@@ -2088,7 +2099,6 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 .hubMain small{color:var(--muted);font-size:12px;line-height:1.35}
 .hubBar{height:4px;border-radius:99px;background:var(--line-soft);overflow:hidden;margin-top:2px}
 .hubBar i{display:block;height:100%;background:var(--c);border-radius:inherit}
-#dlgTags .hubOnly{height:30px;padding:0 10px;font-size:12.5px}
 .hubSec{margin:18px 0 8px;font-size:13px;font-weight:600;color:var(--muted)}
 .hubSw{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:8px 12px;border:1px solid var(--line);border-radius:10px;cursor:pointer;margin-bottom:6px}
 .hubSw i{width:12px;height:12px;border-radius:4px;background:var(--c)}
@@ -2103,16 +2113,18 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 .hubAdd input[type=color],.hubRow input[type=color]{width:44px;height:36px;padding:2px;border:1px solid var(--line);border-radius:8px;background:var(--surface);cursor:pointer}
 .hubPal{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px;align-items:center}
 .hubPal button{width:24px;height:24px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);background:var(--c);cursor:pointer;padding:0}
-.hubPal button:hover{transform:scale(1.12)}
+.hubPal button:hover{box-shadow:0 0 0 2px var(--muted)}
 .hubPal .rnd{width:auto;height:24px;border-radius:99px;padding:0 10px;background:var(--surface);color:var(--ink);font-size:12px;border:1px solid var(--line);box-shadow:none}
 .hubRows{display:grid;gap:8px}
 .hubRow{display:grid;grid-template-columns:auto 44px 1fr auto auto;gap:8px;align-items:center}
 .hubRow input.tn{width:100%}
 .hubRow input.tn.bad{border-color:var(--danger)}
-.hubMv{display:grid;gap:2px}
-.hubMv button{width:26px;height:17px;padding:0;border:1px solid var(--line);background:var(--surface);border-radius:5px;font-size:9px;line-height:1;color:var(--muted);cursor:pointer}
-.hubMv button:hover:not(:disabled){color:var(--accent);border-color:var(--accent)}
-.hubMv button:disabled{opacity:.3;cursor:not-allowed}
+.hubGrip{width:28px;height:36px;display:grid;place-items:center;padding:0;border:0;border-radius:6px;background:none;color:var(--muted);cursor:grab;touch-action:none}
+.hubGrip svg{width:14px;height:14px}
+.hubGrip:hover{color:var(--ink);background:var(--line-soft)}
+.hubGrip:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.hubRows>div.dragging{border-radius:10px;background:var(--accent-soft);box-shadow:0 0 0 6px var(--accent-soft),0 0 0 7px var(--accent)}
+#dlgTags.dragging,#dlgTags.dragging *{cursor:grabbing!important;user-select:none;-webkit-user-select:none}
 .hubRow .del{border:1px solid var(--line);background:none;border-radius:8px;height:36px;padding:0 10px;color:var(--danger);font-size:12.5px;cursor:pointer}
 .hubRow .del:disabled{opacity:.35;cursor:not-allowed}
 .hubDel{margin:-2px 0 4px 0;padding:10px 12px;border:1px dashed var(--danger);border-radius:10px;display:grid;gap:8px;font-size:13px}
@@ -2124,7 +2136,6 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
   .hubRow .fillc{grid-column:2 / 4}
   .hubRow .del{grid-row:1;grid-column:4}
   .hubCard{grid-template-columns:auto 1fr}
-  .hubCard .hubOnly{grid-column:2;justify-self:start}
 }
 @media (prefers-reduced-motion:reduce){.hubCard,.hubSw input,.hubSw input::after,.hubPal button{transition:none}}
 
@@ -2140,60 +2151,24 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 .hubRow{min-height:36px}
 @media (max-width:560px){
   #dlgTags[open]{height:min(680px,88dvh)}
-  .hubCard{grid-template-columns:auto 1fr auto}
-  .hubCard .hubOnly{grid-column:auto;justify-self:end}
+  .hubCard{grid-template-columns:auto 1fr}
 }
-/* hiệu ứng nhấn nút */
-#dlgTags button,#dlgTags .hubCard,#dlgTags .hubSw,#legend .lg{transition:transform .14s cubic-bezier(.3,1.4,.5,1),background-color .15s,border-color .15s,color .15s,opacity .15s,box-shadow .15s}
-#dlgTags button:not(:disabled):active,#dlgTags .hubCard:active,#dlgTags .hubSw:active,#legend .lg:active{transform:scale(.94)}
-#dlgTags .btn:not(:disabled):active,#legend .lg.tgl:active{box-shadow:inset 0 0 0 999px color-mix(in srgb,var(--accent) 12%,transparent)}
-/* hiệu ứng chuyển tab / ô */
-@keyframes hubInR{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
-@keyframes hubInL{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:none}}
-@keyframes hubPop{0%{transform:translateY(-1px) rotate(-45deg) scale(0)}60%{transform:translateY(-1px) rotate(-45deg) scale(1.35)}100%{transform:translateY(-1px) rotate(-45deg) scale(1)}}
-@keyframes hubDrop{from{opacity:0;transform:translateY(-6px) scaleY(.92)}to{opacity:1;transform:none}}
-@keyframes hubNew{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
-.hubBody.inR{animation:hubInR .24s cubic-bezier(.22,.8,.3,1) both}
-.hubBody.inL{animation:hubInL .24s cubic-bezier(.22,.8,.3,1) both}
-.hubCard.sel .hubChk::after{animation:hubPop .26s ease-out}
+/* tương tác nhẹ: chỉ đổi màu nền / viền, không phóng to – thu nhỏ, không trượt */
+#dlgTags button,#dlgTags .hubCard,#dlgTags .hubSw,#legend .lg{transition:background-color .15s,border-color .15s,color .15s,opacity .15s}
 .hubChk{transition:background-color .15s}
-.hubBar i{transition:width .35s cubic-bezier(.22,.8,.3,1)}
-.hubDel{animation:hubDrop .2s ease-out;transform-origin:top}
-.hubRow.isnew{animation:hubNew .26s cubic-bezier(.3,1.4,.5,1)}
-.hubTabs button{transition:background-color .18s,color .18s,border-color .18s,transform .14s cubic-bezier(.3,1.4,.5,1)}
-@media (prefers-reduced-motion:reduce){.hubBody.inR,.hubBody.inL,.hubCard.sel .hubChk::after,.hubDel,.hubRow.isnew{animation:none}#dlgTags button,#dlgTags .hubCard,#dlgTags .hubSw,#legend .lg{transition:none}#dlgTags button:active,#dlgTags .hubCard:active,#dlgTags .hubSw:active,#legend .lg:active{transform:none}}
+@media (prefers-reduced-motion:reduce){#dlgTags button,#dlgTags .hubCard,#dlgTags .hubSw,#legend .lg,.hubChk{transition:none}}
 
-/* --- hiệu ứng chuyển tab Xem & lọc <-> Quản lý --- */
-.hubTabs{position:relative}
-.hubTabs button{position:relative;z-index:1;border-color:transparent!important;background:none!important}
-.hubTabs button.on{color:var(--accent)}
-.hubInd{position:absolute;top:0;bottom:0;left:0;width:calc((100% - 6px) / 2);border-radius:8px;background:var(--accent-soft);border:1px solid var(--accent);box-sizing:border-box;transition:transform .34s cubic-bezier(.5,1.35,.45,1);pointer-events:none}
-.hubTabs[data-t="manage"] .hubInd{transform:translateX(calc(100% + 6px))}
-@keyframes hubOutL{to{opacity:0;transform:translateX(-30px)}}
-@keyframes hubOutR{to{opacity:0;transform:translateX(30px)}}
-@keyframes hubRise{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
-.hubBody.outL{animation:hubOutL .14s ease-in both}
-.hubBody.outR{animation:hubOutR .14s ease-in both}
-.hubBody.inR,.hubBody.inL{animation-duration:.3s}
-.hubBody.stag .hubCard,.hubBody.stag .hubSw,.hubBody.stag .hubRow,.hubBody.stag .hubAdd,.hubBody.stag .hubSum,.hubBody.stag .hubSec,.hubBody.stag .tagrow{animation:hubRise .34s cubic-bezier(.22,.8,.3,1) both;animation-delay:calc(var(--i,0) * 35ms)}
-@media (prefers-reduced-motion:reduce){.hubInd{transition:none}.hubBody.outL,.hubBody.outR,.hubBody.stag *{animation:none!important}}
+/* --- bộ chuyển tab Xem & lọc / Quản lý: nền ghép, tab đang chọn tô đặc --- */
+.hubInd{position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px) / 2);border-radius:9px;background:var(--accent);box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .2s ease;pointer-events:none}
+.hubTabs[data-t="manage"] .hubInd{transform:translateX(100%)}
+@keyframes hubFade{from{opacity:0}to{opacity:1}}
+.hubBody.fade{animation:hubFade .16s ease-out}
+.hubBar i{transition:width .11s ease}
+@media (prefers-reduced-motion:reduce){.hubInd{transition:none}.hubBody.fade{animation:none}}
 
-/* --- hiệu ứng chuyển Bảng / Danh sách / Công việc / Lớp: giống chuyển tab trong bảng Tag --- */
-@keyframes vwOutL{to{opacity:0;transform:translateX(-32px)}}
-@keyframes vwOutR{to{opacity:0;transform:translateX(32px)}}
-@keyframes vwOutY{to{opacity:0;transform:translateY(8px)}}
-@keyframes vwInX{from{opacity:0;transform:translateX(var(--sx,28px))}to{opacity:1;transform:none}}
-@keyframes vwInY{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-@keyframes vwRise{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
-.vw-outL{animation:vwOutL .14s ease-in both}
-.vw-outR{animation:vwOutR .14s ease-in both}
-.vw-in{animation:vwInX .32s cubic-bezier(.22,.8,.3,1)}
-.vw-stag{animation:vwRise .36s cubic-bezier(.22,.8,.3,1) backwards;animation-delay:calc(var(--i,0) * 40ms)}
-@media (max-width:700px){
-  .vw-outL,.vw-outR{animation-name:vwOutY}
-  .vw-in{animation-name:vwInY;animation-duration:.28s}
-}
-@media (prefers-reduced-motion:reduce){.vw-outL,.vw-outR,.vw-in,.vw-stag{animation:none!important}}
+/* --- chuyển Bảng / Danh sách / Công việc / Lớp: chỉ mờ dần (xem khối HIỆU ỨNG cuối file) --- */
+.vw-in{animation:vwInX .12s ease-out}
+@media (prefers-reduced-motion:reduce){.vw-in{animation:none!important}}
 
 /* ===================================================================
    Ô CHỌN (select) TÙY CHỈNH — thay hộp chọn mặc định của trình duyệt
@@ -2207,17 +2182,17 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 .cs-btn:disabled{opacity:.5;cursor:not-allowed}
 .cs-v{display:block;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cs-v.chg{animation:csVal .2s cubic-bezier(.22,.8,.3,1)}
-.cs-ar{position:absolute;right:10px;top:50%;width:14px;height:14px;margin-top:-7px;color:var(--muted);transition:transform .22s cubic-bezier(.3,1.3,.5,1),color .15s;pointer-events:none}
+.cs-ar{position:absolute;right:10px;top:50%;width:14px;height:14px;margin-top:-7px;color:var(--muted);transition:transform .1s cubic-bezier(.3,1.3,.5,1),color .1s;pointer-events:none}
 .cs-btn.open .cs-ar{transform:rotate(180deg);color:var(--accent)}
 .cs-pop{position:fixed;z-index:6000;box-sizing:border-box;padding:4px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:10px;box-shadow:0 14px 36px rgba(0,0,0,.34);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;transform-origin:var(--o,top) center;animation:csIn .17s cubic-bezier(.22,.9,.3,1)}
 .cs-pop.up{--o:bottom}
 .cs-pop.closing{animation:csOut .12s ease-in forwards;pointer-events:none}
-.cs-o{display:flex;align-items:center;gap:8px;min-height:34px;padding:6px 10px 6px 6px;border-radius:7px;cursor:pointer;font-size:14px;line-height:1.3;transition:background-color .12s,transform .12s;animation:csItem .22s cubic-bezier(.22,.8,.3,1) backwards;animation-delay:calc(var(--i,0) * 14ms)}
+.cs-o{display:flex;align-items:center;gap:8px;min-height:34px;padding:6px 10px 6px 6px;border-radius:7px;cursor:pointer;font-size:14px;line-height:1.3;transition:background-color .1s,transform .1s;animation:csItem .1s cubic-bezier(.22,.8,.3,1) backwards;animation-delay:calc(var(--i,0) * 14ms)}
 .cs-o span{flex:1;min-width:0}
 .cs-o.act{background:var(--accent-soft)}
 .cs-o:active{transform:scale(.97)}
 .cs-o[aria-selected=true]{color:var(--accent);font-weight:600}
-.cs-o[aria-selected=true]::after{content:"";flex:none;width:9px;height:5px;border-left:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-1px) rotate(-45deg);animation:csTick .26s ease-out}
+.cs-o[aria-selected=true]::after{content:"";flex:none;width:9px;height:5px;border-left:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-1px) rotate(-45deg);animation:csTick .12s ease-out}
 .cs-o[aria-disabled=true]{opacity:.4;cursor:not-allowed}
 .cs-g{padding:8px 10px 4px;font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
 @keyframes csIn{from{opacity:0;transform:translateY(-6px) scale(.96)}to{opacity:1;transform:none}}
@@ -2230,8 +2205,193 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 .hubDel .cs{flex:1;min-width:140px}
 @media (max-width:560px){.cs-btn{height:34px}.cs-o{min-height:38px}}
 @media (prefers-reduced-motion:reduce){.cs-btn,.cs-ar,.cs-o{transition:none}.cs-pop,.cs-pop.up,.cs-pop.closing,.cs-o,.cs-v.chg,.cs-o[aria-selected=true]::after{animation:none!important}}
+
+/* ================= LỚP TINH CHỈNH: gọn hơn, mượt hơn (đặt cuối để ghi đè) ================= */
+:root{--ease:cubic-bezier(.22,.8,.3,1);--r-card:14px}
+::selection{background:var(--accent-soft);color:var(--ink)}
+img{-webkit-user-drag:none}
+
+/* --- gọn: bớt khoảng trống thừa --- */
+.app{padding:10px 14px}
+.top{gap:8px;margin-bottom:10px}
+.stats,.legend{margin-bottom:8px}
+.nowbar{margin-bottom:6px;padding:4px 0}
+.below{gap:12px}
+.below .card{padding:12px 14px}
+.gt{font-size:13px;letter-spacing:.04em;margin-bottom:8px}
+.cell,.dlcell{padding:4px 6px}
+.sheet .tl{padding:6px}
+.card{border-radius:var(--r-card)}
+@media (max-width:700px){
+  .app{padding:8px 10px}
+  .top{gap:6px;margin-bottom:8px}
+  .below .card{padding:10px 12px}
+}
+
+/* --- thẻ & hộp thoại: bóng mềm, viền dịu --- */
+.card{border-color:var(--line-soft);box-shadow:0 1px 2px rgba(16,40,28,.05),0 8px 20px -12px rgba(16,40,28,.16)}
+[data-theme=dark] .card{box-shadow:none;border-color:var(--line)}
+dialog{border-radius:16px;border-color:var(--line-soft);box-shadow:0 24px 64px -16px rgba(0,0,0,.45)}
+dialog[open]::backdrop{animation:pageFade .2s ease}
+.authGateCard{border-color:var(--line-soft)}
+
+/* --- nút: đổi màu mượt + phản hồi khi bấm --- */
+.btn,.nav button,.tools button,.acct,.tabs button,.mini,.iconbtn,.forgotLink{
+  transition:background-color .16s var(--ease),border-color .16s var(--ease),color .16s var(--ease),box-shadow .16s var(--ease),transform .12s var(--ease)}
+.btn:active,.nav button:active,.tools button:active,.acct:active,.tabs button:active,.iconbtn:active,.addmenu button:active{transform:scale(.96)}
+.primary{box-shadow:0 1px 2px rgba(13,107,69,.25)}
+@media (hover:hover){.primary:hover{filter:brightness(1.07)}}
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
+input,select,textarea{transition:border-color .15s var(--ease),box-shadow .15s var(--ease)}
+
+/* --- hiệu ứng nhẹ & mượt hơn --- */
+@keyframes wkInNext{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+@keyframes wkInPrev{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+#sched.wk-next,#sched.wk-prev{animation-duration:.11s}
+.cell.next,.cell.live{text-shadow:none}
+.todo{transition:background-color .15s var(--ease)}
+.todo .x{transition:opacity .15s;visibility:visible;opacity:0}
+.todo:hover .x,.todo:focus-within .x{opacity:1}
+@media (hover:none){.todo .x{opacity:.55}}
+.addmenu{transform-origin:top right;box-shadow:0 16px 36px -12px rgba(0,0,0,.4)}
+
+/* --- hiệu năng --- */
+.below .card{contain:layout style}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* =====================================================================
+   HIỆU ỨNG — BẢN TỐI GIẢN (khối cuối cùng, thắng mọi luật cũ ở trên)
+   Nguyên tắc: MỘT nhịp duy nhất (--mo = .15s, ease); chỉ đổi màu nền / viền / chữ / độ mờ.
+   Không phóng to, không trượt, không phát sáng, không hiện lần lượt từng ô.
+   Giữ lại có chủ đích: thanh trượt ở nhóm tab, mũi tên xoay, mở/đóng danh sách,
+   ô tìm kiếm mở rộng, chấm nhấp nháy "Đang diễn ra", mờ dần khi mở hộp thoại / đổi trang / đổi tuần.
+   Muốn chỉnh tốc độ chung: sửa --mo bên dưới.
+   ===================================================================== */
+:root{--mo:.15s}
+
+/* 1) KHUNG CHUYỂN ĐỘNG — toàn bộ chỉ còn mờ dần (opacity), không dịch chuyển, không phóng to */
+@keyframes dlgIn{from{opacity:0}to{opacity:1}}
+@keyframes dlgOut{from{opacity:1}to{opacity:0}}
+@keyframes popIn{from{opacity:0}to{opacity:1}}
+@keyframes pwaIn{from{opacity:0}to{opacity:1}}
+@keyframes hubFade{from{opacity:0}to{opacity:1}}
+@keyframes schedSwap{from{opacity:0}to{opacity:1}}
+@keyframes schedSwapX{from{opacity:0}to{opacity:1}}
+@keyframes schedSwapY{from{opacity:0}to{opacity:1}}
+@keyframes vwInX{from{opacity:0}to{opacity:1}}
+@keyframes vwInY{from{opacity:0}to{opacity:1}}
+@keyframes wkInNext{from{opacity:0}to{opacity:1}}
+@keyframes wkInPrev{from{opacity:0}to{opacity:1}}
+@keyframes wkLbl{from{opacity:0}to{opacity:1}}
+@keyframes npSlideL{from{opacity:0}to{opacity:1}}
+@keyframes npSlideR{from{opacity:0}to{opacity:1}}
+@keyframes csIn{from{opacity:0}to{opacity:1}}
+@keyframes csInUp{from{opacity:0}to{opacity:1}}
+@keyframes csOut{to{opacity:0}}
+@keyframes schedJumpHighlight{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
+dialog[open]{animation-duration:.14s}
+dialog.closing{animation-duration:.12s}
+.sched-swap,.cs-pop,#range.wk-lbl{animation-duration:.12s}
+.cs-pop.closing{animation-duration:.1s}
+#sched.wk-next,#sched.wk-prev,.np-wkbody.slide-l,.np-wkbody.slide-r{animation-duration:.12s;animation-timing-function:ease-out}
+
+/* tắt hẳn: hiện lần lượt, nổi lên, nhảy vào, nảy */
+body.authed .app,body.gate #authGate,
+.rtrow.new,#dlg.fx-in form>.fgrid>*,#dlg.fx-in form>.actions,
+#untilBox,#untilWrap,#learnerBox,#daysWrap,#noneTimes,#timesWrap,
+.cs-o,.cs-v.chg,.cs-o[aria-selected=true]::after{animation:none!important}
+
+/* 2) Ô LỊCH / Ô DEADLINE / THẺ / DÒNG — đổi nền TỨC THÌ, không transition.
+   Đây là nguyên nhân chính khiến ô Deadline (Bảng + Danh sách) bị chớp: nền và nút ghim 📌 cùng mờ vào/ra .15s,
+   nên rê chuột nhanh qua nhiều ô hoặc lúc danh sách vẽ lại là thấy nhấp nháy. Bỏ transition thì hết chớp. */
+.cell,.dlcell,.nowbar .nb,.ag,.todo,.np-row,.np-dl,.np-card,.np-tile,.fx tbody tr{transition:none}
+.np-card:hover,.np-tile:hover{transform:none}
+.cell:not(.jump-highlight)::before,.dlcell:not(.jump-highlight)::before,
+.nowbar .nb::before,.ag:not(.jump-highlight)::before,
+#sched :is(.cell,.ag):is(.live,.next)::before,
+#nowBar.page :is(.np-card,.np-row):is(.live,.next)::before{display:none!important;animation:none!important}
+/* ô deadline (Bảng) + thẻ deadline (Danh sách): đổi nền/viền êm đúng nhịp như chuyển giữa "Xem & lọc" / "Quản lý" (--mo, ease).
+   Nút ghim 📌 vẫn hiện/ẩn ngay (không mờ) nên không còn nhấp nháy. */
+.dlcell,.ag.dl{transition:background-color var(--mo) ease,border-color var(--mo) ease,box-shadow var(--mo) ease}
+/* nút hiện khi rê chuột (ghim, sửa, xoá, công cụ): hiện/ẩn ngay, không mờ dần */
+.dlpin,.np-pin,.np-ed,.np-dl .np-tools,.todo .x{transition:none}
+/* nhãn "Đang diễn ra" chỉ còn chấm nhấp nháy ở trang Công việc */
+.np-chip.live,.np-chip.live *{animation-name:none}
+.np-chip.live .np-ld{animation:npLiveDot 1.6s ease-in-out infinite}
+/* nhảy tới ô: một vòng viền mờ dần */
+#sched .jump-highlight::before{inset:-3px;border-width:2px;box-shadow:none;animation-duration:1.6s;animation-timing-function:ease-out;will-change:auto}
+
+/* 3) NÚT — một cách phản hồi duy nhất cho MỌI nút
+   rê chuột: đổi màu nền/viền/chữ · bấm xuống: mờ nhẹ (không thu nhỏ) · vô hiệu: mờ + con trỏ cấm · bàn phím: viền focus chung */
+button,summary,.lkchip,.lnkbtn,.fgrid .days label,.rtchip,.fx-opt,.hubSw,.hubCard,.cs-btn,.acct,.iconbtn{
+  transition:background-color var(--mo) ease,border-color var(--mo) ease,color var(--mo) ease,box-shadow var(--mo) ease,opacity var(--mo) ease}
+.btn,.nav button,.tools button,.mini,.forgotLink,.np-ab,.np-chk,#dlg .btn,
+.seg button,#todoTabs button,#todoStatus button,.np-tabs button,.np-tabs button b{
+  transition:background-color var(--mo) ease,border-color var(--mo) ease,color var(--mo) ease,opacity var(--mo) ease}
+button:not(:disabled):active,.rtchip:active,.fgrid .days label:active{opacity:.7;transform:none;scale:none}
+#dlg .btn:active,.rtchip:active,.fgrid .days label:active{transform:none;scale:none;opacity:.7}
+.cs-btn:active:not(:disabled),.cs-o:active{transform:none}
+button:disabled{opacity:.4;cursor:not-allowed}
+.tools button:disabled{opacity:.4}
+:is(.btn,.nav button,.tools button):disabled:hover,
+:root:not([data-theme=dark]) :is(.btn,.nav button,.tools button):disabled:hover{background:var(--surface);border-color:var(--line)}
+.primary:disabled,.primary:disabled:hover{filter:none}
+.lkchip:hover,.cell a.lkchip:hover,.ag a.lkchip:hover{transform:none}
+.lg.tgl{transition:background-color var(--mo) ease,color var(--mo) ease}
+.lg.tgl:hover{box-shadow:none}
+/* các nút trước đây KHÔNG có phản hồi khi rê chuột: nhóm Bảng/Danh sách/Công việc/Lớp, tab Việc cần làm, tab Công việc, xoá dòng tag, chấm "hôm nay" của lịch */
+@media (hover:hover){
+  .seg button:not(.on):hover,.authSeg button:not(.on):hover{background:var(--line-soft)!important}
+  .tabs button:not(.on):hover,#todoTabs button:not(.on):hover,#todoStatus button:not(.on):hover{background:var(--line-soft)}
+  .np-tabs button:not(.on):hover,#nowBar.page .np-tabs button:not(.on):hover{color:var(--ink)}
+  .hubRow .del:not(:disabled):hover{background:var(--cancel-bg);border-color:var(--danger)}
+  .dp-dot:hover{background:var(--line-soft);border-radius:50%}
+}
+
+/* 4) THANH TRƯỢT Ở TAB + CÁC HIỆU ỨNG CÓ CHỦ ĐÍCH — cùng nhịp --mo */
+.seg-ind{transition:transform var(--mo) cubic-bezier(.4,0,.2,1)}
+.tabInd{transition:transform var(--mo) cubic-bezier(.4,0,.2,1),width var(--mo) cubic-bezier(.4,0,.2,1),height var(--mo) cubic-bezier(.4,0,.2,1)}
+.searchbox{transition:width var(--mo) ease,border-color var(--mo) ease}
+.acctArrow,.cs-ar,.tg,.np-gl-arrow,.np-car{transition:transform var(--mo) ease,color var(--mo) ease}
+.hubSw input,.hubSw input::after{transition-duration:var(--mo)}
+.cs-o{transition:background-color .1s ease}
+input,select,textarea,#dlg input,#dlg select,#dlg textarea{transition:border-color var(--mo) ease,box-shadow var(--mo) ease}
+.sbar::before,.sbthumb,.sbthumb::after{transition:opacity var(--mo) ease}
+/* kéo-thả: chỉ nổi bóng nhẹ, không phóng to */
+.lkrow.dragging,.rtrow.dragging,.fx .fx-row.dragging{scale:none}
+/* điện thoại: icon tab không phóng to khi chọn */
+@media (max-width:700px){
+  .tools #viewSeg button::before,.tools #viewSeg button.on::before{transition:none;transform:none}
+}
+
+/* 5) NGƯỜI DÙNG BẬT "GIẢM CHUYỂN ĐỘNG" TRONG HỆ ĐIỀU HÀNH: tắt hết */
+@media (prefers-reduced-motion:reduce){
+  *,::before,::after{animation:none!important;transition:none!important}
+}
+/* Tag: hai nút "Xem & lọc" / "Quản lý" tách thành 2 ô riêng (mỗi ô một viền), giữ nguyên hộp thoại và cách chuyển tab cũ */
+.hubTabs{gap:8px;padding:0;border:0;background:none;border-radius:0}
+.hubInd{display:none}
+.hubTabs button{border:1px solid var(--line);background:var(--surface);border-radius:10px;height:38px}
+.hubTabs button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.hubTabs button:not(.on):hover{border-color:var(--accent);color:var(--ink)}
+/* Deadline (Bảng + Danh sách): nhóm "Tất cả / Trong tuần" và "Tất cả / Chưa hoàn thành / Đã hoàn thành" dùng đúng kiểu của "Xem & lọc / Quản lý":
+   mỗi nút một ô riêng, ô đang chọn nền xanh, đổi màu êm theo --mo, không còn thanh nền trượt; danh sách bên dưới đổi ngay, không mờ dần */
+#todoTabs,#todoStatus{gap:8px}
+#todoTabs .tabInd,#todoStatus .tabInd{display:none}
+#todoTabs button,#todoStatus button{height:36px;padding:0 10px;border:1px solid var(--line);background:var(--surface);border-radius:10px;font-size:13px;font-weight:600;color:var(--muted)}
+#todoTabs button.on,#todoStatus button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+#todoTabs button:not(.on):hover,#todoStatus button:not(.on):hover{background:var(--surface);border-color:var(--accent);color:var(--ink)}
+/* Bảng › ô Deadline: thu nhỏ nút trạng thái để vừa tối đa 2 hàng */
+.dlcell .dlst-in{gap:2px .3em;font-size:9px;font-size:clamp(7px,4.6cqw,9px)}
+.dlcell .dlst-in .chip{padding:0 .45em;line-height:1.35;font-size:1em}
+.dlpin{width:16px;height:16px;font-size:10px}
+/* Deadline (Bảng): thu nhỏ các nút lọc để gọn trong 2 hàng (phạm vi / trạng thái) */
+#todoTabs,#todoStatus{gap:5px}
+#todoTabs button,#todoStatus button{height:28px;padding:0 7px;font-size:11.5px;border-radius:8px}
+#todoTabs button{flex:1 1 0}
+#todoStatus button{flex:1 1 auto;padding:0 6px}
 </style>
-<meta http-equiv="x-dns-prefetch-control" content="on"></head>
+</head>
 <body>
 <div id="bootScreen"><div class="bootSpin" aria-hidden="true"></div><p>Đang kiểm tra đăng nhập…</p></div>
 <div class="app">
@@ -2249,7 +2409,7 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
       <span class="grow"></span>
       <div class="searchbox" id="qWrap">
         <span class="q-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="2"/><line x1="15" y1="15" x2="20" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-        <input type="search" id="q" placeholder="Tìm môn, phòng, giảng viên…" aria-label="Tìm lịch">
+        <input type="search" id="q" placeholder="Tìm tên, địa điểm, người phụ trách…" aria-label="Tìm lịch">
       </div>
       <div class="seg" id="viewSeg"><span class="seg-ind" id="viewSegInd" aria-hidden="true"></span><button data-v="table">Bảng</button><button data-v="agenda">Danh sách</button><button data-v="now">Công việc</button><button data-v="fixed">Lớp</button></div>
       <button type="button" class="primary" id="addBtn" title="Thêm lịch hoặc deadline" aria-haspopup="menu" aria-expanded="false" aria-controls="addMenu" aria-label="Thêm lịch hoặc deadline"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button>
@@ -2310,6 +2470,8 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
       </fieldset>
       <label data-k="event">Mã<input name="code"></label>
       <label data-k="event">Trạng thái<select name="status"><option value="normal">Bình thường</option><option value="cancelled">Nghỉ</option></select></label>
+      <label data-k="event">Địa điểm<input name="room"></label>
+      <label data-k="event">Người phụ trách<input name="teacher"></label>
       <fieldset class="rep tm" data-k="both"><legend>Thời gian</legend>
         <div class="fgrid">
           <label>Ngày bắt đầu<input type="date" name="date" required></label>
@@ -2329,10 +2491,6 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
           <div class="times" id="timesWrap" hidden></div>
         </div>
       </fieldset>
-      <label data-k="event">Địa điểm<input name="room"></label>
-      <label data-k="event">Người phụ trách<input name="teacher"></label>
-      <label data-k="event">Sĩ số hiện tại<input type="number" name="sv" min="0" step="1" inputmode="numeric"></label>
-      <label data-k="event">Sĩ số tối đa<input type="number" name="svMax" min="0" step="1" inputmode="numeric"></label>
       <div class="full lkbox" data-k="event"><span class="lkt">Liên kết</span><div class="lkrows" id="evLinks"></div><button type="button" class="btn lkadd" id="evLinkAdd">+ Thêm liên kết</button></div>
       <label class="full" data-k="event">Ghi chú<textarea name="note" rows="2"></textarea></label>
     </div>
@@ -2354,7 +2512,7 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
   <form id="tagForm" autocomplete="off">
     <div class="hubHead">
       <div class="dlgHead"><div><h2 id="hubTitle">Tag</h2></div><button type="button" class="iconbtn" id="tagCloseX" aria-label="Đóng">×</button></div>
-      <div class="hubTabs" id="hubTabs" role="tablist" data-t="view"><i class="hubInd" aria-hidden="true"></i><button type="button" role="tab" data-tab="view">Xem &amp; lọc</button><button type="button" role="tab" data-tab="manage">Quản lý</button></div>
+      <div class="hubTabs" id="hubTabs" role="tablist" data-t="view"><i class="hubInd" aria-hidden="true"></i><button type="button" role="tab" data-tab="view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></svg>Xem &amp; lọc</button><button type="button" role="tab" data-tab="manage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>Quản lý</button></div>
     </div>
     <div class="hubBody" id="hubBody"></div>
     <div class="hubFoot"><span class="grow"></span><button type="button" class="btn primary" id="tagClose">Xong</button></div>
@@ -3609,9 +3767,9 @@ const fold = s => String(s == null ? '' : s).normalize('NFD').replace(/[\u0300-\
 /* Bộ lọc theo cột của tab Lớp (bấm biểu tượng phễu ở tiêu đề cột). fxFilter[bảng][cột] = danh sách giá trị BỊ BỎ TICK; chỉ lưu tạm theo phiên, không đồng bộ lên đám mây */
 const fxFilter = {school:{}, other:{}};
 const fxCache = {school:new Map(), other:new Map()};
-const FX_COLS = {school:['name','when','room','teacher','sv','note','link'], other:['name','tag','when','room','teacher','note','link']};
+const FX_COLS = {school:['name','when','room','teacher','note','link'], other:['name','tag','when','room','teacher','note','link']};
 const FX_LBL = {
-  school:{name:'Môn học', when:'Thời gian', room:'Phòng', teacher:'Giảng viên', sv:'Sĩ số', note:'Ghi chú', link:'Liên kết'},
+  school:{name:'Tên', when:'Thời gian', room:'Địa điểm', teacher:'Người phụ trách', note:'Ghi chú', link:'Liên kết'},
   other:{name:'Tên lịch / Nội dung', tag:'Tag', when:'Thời gian', room:'Địa điểm', teacher:'Người phụ trách', note:'Ghi chú', link:'Liên kết'}
 };
 const FX_SES = [['s','Sáng (00:00 - 11:29)'], ['r','Trưa (11:30 - 12:59)'], ['c','Chiều (13:00 - 17:59)'], ['t','Tối (18:00 - 23:59)'], ['x','Chưa có giờ']];
@@ -3775,25 +3933,13 @@ function render(){
   $('#notesWeek').textContent = `Tuần ${dmy(weekStart)}`;
   if(document.activeElement !== notes) notes.value = state.notes[weekStart] || '';
   renderNowBar();
-  // Đồng bộ pha một lần sau khi render hoàn tất. Không theo dõi MutationObserver vì
-  // các thay đổi nội dung/countdown trong Danh sách sẽ liên tục reset animation và gây giật.
-  requestAnimationFrame(syncPulses);
-}
-/* Đồng bộ hoàn toàn: mọi ô Đang diễn ra / Sắp diễn ra dùng cùng một pha theo đồng hồ chung.
-   Chỉ thiết lập pha sau khi DOM đã render xong để animation chạy liên tục, không bị reset giữa chừng. */
-const PULSE_SEL = '.cell.live,.cell.next,.ag.live,.ag.next,.tag.live,.tag.next';
-function syncPulses(){
-  const now = (document.timeline.currentTime || performance.now()) / 1000;
-  document.querySelectorAll(PULSE_SEL.split(',').map(x => '#sched ' + x).concat(['#nowBar .np-card.live','#nowBar .np-card.next','#nowBar .np-row.live','#nowBar .np-row.next']).join(',')).forEach(el => {
-    el.style.setProperty('--ph', now.toFixed(3));
-  });
 }
 /* trượt "viên nền" bên trong một nhóm nút kiểu .seg (Bảng/Danh sách/Lớp, hay Đăng nhập/Đăng ký)
    tới đúng nút đang chọn — dùng transform (translateX + scaleX) thay vì đổi width/left để
    trình duyệt chạy trên compositor, không phải tính lại layout mỗi khung hình -> hết khựng */
 function makeSegIndicator(segId, indId){
   let ready = false;
-  return function(){
+  const fn = function(){
     const seg = document.getElementById(segId), ind = document.getElementById(indId);
     const btn = seg?.querySelector('button.on');
     if(!seg || !ind || !btn) return;
@@ -3802,6 +3948,10 @@ function makeSegIndicator(segId, indId){
     ind.style.transform = `translateX(${btn.offsetLeft}px) scaleX(${btn.offsetWidth})`;
     if(!ready){ void ind.offsetWidth; ind.style.transition = ''; ready = true; }
   };
+  fn.snap = () => { ready = false; fn(); };   // đặt lại đúng vị trí NGAY, không trượt (dùng khi font tải xong / bề rộng nút đổi)
+  const seg0 = document.getElementById(segId);
+  if(seg0 && window.ResizeObserver) new ResizeObserver(() => fn.snap()).observe(seg0);
+  return fn;
 }
 const updateSegIndicator = makeSegIndicator('viewSeg', 'viewSegInd');
 const updateAuthSegIndicator = makeSegIndicator('authSeg', 'authSegInd');
@@ -3816,7 +3966,8 @@ function updateTabInds(){
     if(first){ void ind.offsetWidth; ind.style.transition = ''; ind.dataset.r = '1'; }
   });
 }
-if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { document.querySelectorAll('.tabInd').forEach(i => { delete i.dataset.r; }); updateTabInds(); positionNpTabInd(null); });   // font tải xong làm đổi bề rộng nút: đặt lại vị trí không hiệu ứng
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { document.querySelectorAll('.tabInd').forEach(i => { delete i.dataset.r; }); updateSegIndicator.snap(); updateAuthSegIndicator.snap(); updateTabInds(); positionNpTabInd(null); });
+addEventListener('load', () => { updateSegIndicator.snap(); updateAuthSegIndicator.snap(); }, {once:true});   // font tải xong làm đổi bề rộng nút: đặt lại vị trí không hiệu ứng
 addEventListener('resize', () => { updateSegIndicator(); updateAuthSegIndicator(); updateTabInds(); positionNpTabInd(null); });
 /* cuộn tới sự kiện đang diễn ra (hoặc sắp diễn ra, hoặc tiêu đề hôm nay) */
 function scrollToNow(smooth = true){
@@ -3890,13 +4041,13 @@ function stateTag(o){
   return l ? `<span class="tag live"><i></i>Kết thúc sau ${nb(l.left)}</span>` : nx ? `<span class="tag next">Diễn ra sau ${nb(nx.in)}</span>` : '';
 }
 /* Nhãn trạng thái của ô trong BẢNG: không nằm trong ô nữa mà vắt ngang viền trên, cạnh nhãn tag (position:absolute → không đổi kích thước/bố cục ô).
-   Chữ gọn để vừa cột hẹp: "Còn 2h10" (đang diễn ra) / "Sau 8h49" (sắp diễn ra); câu đầy đủ ("Kết thúc sau…" / "Diễn ra sau…") nằm ở tooltip của ô.
+   Chữ gọn để vừa cột hẹp: "Còn 2h10p" (đang diễn ra) / "Sau 8h49p" (sắp diễn ra); câu đầy đủ ("Kết thúc sau…" / "Diễn ra sau…") nằm ở tooltip của ô.
    Danh sách vẫn dùng stateTag() như cũ. */
 const fmtShort = m => {
   m = Math.max(0, Math.round(m));
   if(m >= 1440){ const d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60); return `${d} ngày${h ? ' ' + h + 'h' : ''}`; }
   const h = Math.floor(m / 60), r = m % 60;
-  return h ? (r ? `${h}h${String(r).padStart(2, '0')}` : `${h}h`) : `${r}p`;
+  return h ? (r ? `${h}h${String(r).padStart(2, '0')}p` : `${h}h`) : `${r}p`;
 };
 function cellState(o){
   const l = liveInfo(o), nx = nextInfo(o);
@@ -3919,7 +4070,7 @@ function chipsHTML(items){
 const evChips = ev => chipsHTML(getLinks(ev).map((l, i) => ({url:l.url, label:linkLabel(ev, l, i)})));
 const dlChips = t => chipsHTML(getLinks(t).map(l => ({url:l.url, label:l.name || hostOf(l.url)})));
 function linkHTML(ev){ return evChips(ev); }
-const svShow = ev => has(ev.sv) || has(ev.svMax) ? `👥 ${svText(ev)}` : '';
+const svShow = () => '';
 
 /* nội dung khi sao chép ô */
 function cellCopyText(ev){
@@ -3937,7 +4088,7 @@ function dlTitleAttr(t){
 /* 📝 (có nội dung chính) và 🔗 bấm được để mở liên kết ở tab mới */
 function dlLinkHTML(t){ return t.body ? '<span class="ind">📝</span>' : ''; }
 function dlCellHTML(t){
-  return `<div class="dlcell${t.done?' done':''}${t.pin?' pinned':''} ${dlMatch(t)?'':'dim'}" data-todo="${t.id}" tabindex="0" role="button" title="${esc(dlTitleAttr(t))}"><button type="button" class="dlpin${t.pin ? ' on' : ''}" data-pin="${t.id}" aria-pressed="${t.pin ? 'true' : 'false'}" aria-label="${t.pin ? 'Bỏ ghim' : 'Ghim deadline quan trọng'}" title="${t.pin ? 'Bỏ ghim' : 'Ghim lên đầu'}">📌</button>
+  return `<div class="dlcell${t.done?' done':''}${t.pin?' pinned':''} ${dlMatch(t)?'':'dim'}" data-todo="${t.id}" tabindex="0" role="button"><button type="button" class="dlpin${t.pin ? ' on' : ''}" data-pin="${t.id}" aria-pressed="${t.pin ? 'true' : 'false'}" aria-label="${t.pin ? 'Bỏ ghim' : 'Ghim deadline quan trọng'}" title="${t.pin ? 'Bỏ ghim' : 'Ghim lên đầu'}">📌</button>
     <div><b>${esc(t.text)}</b>${dlLinkHTML(t)}</div><div class="dlt">⏰ ${t.dueTime ? esc(t.dueTime) : 'Cả ngày'}</div>${dlChips(t)}<div class="dlst"><div class="dlst-in">${t.done ? '<span class="chip ok">Đã hoàn thành</span>' : '<span class="chip pend">Chưa hoàn thành</span>' + dueChip(t)}</div></div></div>`;
 }
 function dlArticleHTML(t){
@@ -3963,7 +4114,7 @@ function tableHTML(occs){
     const inner = `${codeLine}<div><b class="ev-title">${esc(ev.title)}</b></div>
       <div class="ctime">🕒 ${ev.start} - ${ev.end}</div>${ev.room ? `<div>📍 ${esc(ev.room)}</div>` : ''}${ev.teacher ? `<div>👤 ${esc(ev.teacher)}</div>` : ''}${learnerTxt(ev) ? `<div>🎓 ${esc(learnerTxt(ev))}</div>` : ''}${evChips(ev)}`;
     const st = cellState(o), badges = o.conflict ? '<span class="tag w">⚠ Trùng</span>' : '';
-    return `<div class="cell${liveCls(o)}${nof} ${cls} ${o.conflict ? 'conflict' : ''} ${matches(o)?'':'dim'}" ${sty} draggable="true" data-id="${ev.id}" data-date="${d}" data-s="${ev.start}" data-e="${ev.end}" tabindex="0" role="button" title="${esc(evTitleAttr(ev,d))}${o.cancelled?'\nNghỉ':''}${st?'\n'+st.full:''}">${copyBtns(ev,d)}${cellTopBar(ev, st)}${badges ? `<div class="lvb">${badges}</div>` : ''}${inner}</div>`;
+    return `<div class="cell${liveCls(o)}${nof} ${cls} ${o.conflict ? 'conflict' : ''} ${matches(o)?'':'dim'}" ${sty} draggable="true" data-id="${ev.id}" data-date="${d}" data-s="${ev.start}" data-e="${ev.end}" tabindex="0" role="button">${copyBtns(ev,d)}${cellTopBar(ev, st)}${badges ? `<div class="lvb">${badges}</div>` : ''}${inner}</div>`;
   };
 
   if(stacked){
@@ -4358,9 +4509,9 @@ const fxShow = list => query ? list.filter(x => evScore(x.cur) > 0).sort((a,b) =
 function fixedHTML(){
   const today = todayStr();
   const kind = 'school', list = fixedList(kind); fxCache[kind] = fxBuildCache(kind, list);
-  let h = `<h3 class="fxh">Thời khóa biểu của trường</h3>${fxBar(kind)}<div class="scroller"><table class="fx" data-fx-kind="${kind}"><thead><tr><th class="n">#</th>${fxSortTh(kind,'name','Môn học')}${fxSortTh(kind,'when','Thời gian')}${fxSortTh(kind,'room','Phòng')}${fxSortTh(kind,'teacher','Giảng viên')}${fxSortTh(kind,'sv','Sĩ số','r w-sv')}${fxSortTh(kind,'note','Ghi chú')}${fxLinkTh(kind)}</tr></thead><tbody>`;
-  if(!list.length) h += '<tr><td colspan="8" class="none">Chưa có lịch</td></tr>';
-  else if(query && !fxShow(list).length) h += '<tr><td colspan="8" class="none">Không có lớp nào khớp tìm kiếm</td></tr>';
+  let h = `<h3 class="fxh">Thời khóa biểu của trường</h3>${fxBar(kind)}<div class="scroller"><table class="fx" data-fx-kind="${kind}"><thead><tr><th class="n">#</th>${fxSortTh(kind,'name','Tên')}${fxSortTh(kind,'when','Thời gian')}${fxSortTh(kind,'room','Địa điểm')}${fxSortTh(kind,'teacher','Người phụ trách')}${fxSortTh(kind,'note','Ghi chú')}${fxLinkTh(kind)}</tr></thead><tbody>`;
+  if(!list.length) h += '<tr><td colspan="7" class="none">Chưa có lịch</td></tr>';
+  else if(query && !fxShow(list).length) h += '<tr><td colspan="7" class="none">Không có lớp nào khớp tìm kiếm</td></tr>';
   fxShow(list).forEach(({cur:ev, vs}, i) => {
     const cc = String(ev.code || '').split('.')[0];
     const occ = nextHit(ev, mondayOf(today)) || firstDate(ev);
@@ -4371,11 +4522,10 @@ function fixedHTML(){
       <td>${fixedWhen(ev, vs, false)}</td>
       <td>${esc(ev.room) || '<span class="sub">–</span>'}</td>
       <td>${esc(ev.teacher) || '<span class="sub">–</span>'}</td>
-      <td class="r svv">${esc(svText(ev))}</td>
       <td class="note">${esc(ev.note) || '<span class="sub">–</span>'}</td>
       <td>${linkHTML(ev) || '<span class="sub">–</span>'}</td></tr>`;
   });
-  h += `<tr class="fx-nores" hidden><td colspan="8" class="none">Không có lớp nào khớp bộ lọc.</td></tr></tbody></table></div>`;
+  h += `<tr class="fx-nores" hidden><td colspan="7" class="none">Không có lớp nào khớp bộ lọc.</td></tr></tbody></table></div>`;
   return `<div class="card fxblk">` + h + guideHTML() + `</div>` + otherFixedHTML();
 }
 function otherFixedHTML(){
@@ -4565,7 +4715,7 @@ const dlg = $('#dlg'), f = $('#f');
 let editing = null;
 let timesDraft = {};
 let tmWk = true;   // lần vẽ trước đang ở kiểu lặp theo tuần (chọn thứ + giờ riêng từng thứ) hay theo ngày/tháng/năm (một khung giờ)
-const FIELDS = ['title','code','type','date','start','end','room','teacher','note','repeat','until','status','sv','svMax','learner','grade','contact','fee'];
+const FIELDS = ['title','code','type','date','start','end','room','teacher','note','repeat','until','status','learner','grade','contact','fee'];
 const daysBoxes = () => [...document.querySelectorAll('#daysWrap input')];
 const evLinks = linkEditor($('#evLinks'), $('#evLinkAdd'));
 
@@ -4595,9 +4745,6 @@ function openModal(id, date, defaults, slot){
   const rec = !!ev && isRec(ev);
   applyKind(); tmWk = true; syncRepeat();
   dlg.showModal();
-  const blocks = [...f.querySelectorAll(':scope > .fgrid > *, :scope > .actions')].filter(el => !el.hidden);
-  blocks.forEach((el, i) => el.style.setProperty('--i', Math.min(i, 14)));
-  dlg.classList.add('fx-in'); clearTimeout(dlg._fx); dlg._fx = setTimeout(() => dlg.classList.remove('fx-in'), 900);
   f.elements.title.focus();
 }
 const kindOf = () => 'event';
@@ -4982,9 +5129,8 @@ function weekAnim(dir){
   void box.offsetWidth;   // buộc dựng lại để hiệu ứng chạy lại dù bấm liên tiếp rất nhanh
   box.classList.add(dir > 0 ? 'wk-next' : 'wk-prev'); lbl.classList.add('wk-lbl');
   root.classList.add('wk-anim');
-  if(state.view === 'table'){ box.classList.remove('wk-stagger'); void box.offsetWidth; box.classList.add('wk-stagger'); clearTimeout(weekAnim.t2); weekAnim.t2 = setTimeout(() => box.classList.remove('wk-stagger'), 800); }
   clearTimeout(weekAnim.t);
-  weekAnim.t = setTimeout(() => { box.classList.remove('wk-next','wk-prev'); lbl.classList.remove('wk-lbl'); root.classList.remove('wk-anim'); }, 340);
+  weekAnim.t = setTimeout(() => { box.classList.remove('wk-next','wk-prev'); lbl.classList.remove('wk-lbl'); root.classList.remove('wk-anim'); }, 200);
 }
 function setWeek(ns){
   const dir = ns > weekStart ? 1 : ns < weekStart ? -1 : 0;   // ngày dạng YYYY-MM-DD nên so sánh chuỗi là đúng thứ tự thời gian
@@ -5054,26 +5200,9 @@ function pageSwap(prev){
   const flat = v => v === 'table' || v === 'agenda';
   const el = state.view === 'now' ? $('#nowBar') : (flat(prev) && flat(state.view)) ? $('#sched') : document.querySelector('.layout');
   if(!el) return;
-  const ord = ['table','agenda','now','fixed'];
-  el.style.setProperty('--sx', (ord.indexOf(state.view) >= ord.indexOf(prev) ? 28 : -28) + 'px');   // hướng trượt (chỉ dùng trên mobile)
   el.classList.remove('sched-swap','vw-in'); void el.offsetWidth;   // reset để chạy lại dù chuyển đi chuyển lại nhanh
   el.classList.add('vw-in');
-  clearTimeout(pageSwap.t1); pageSwap.t1 = setTimeout(() => el.classList.remove('vw-in'), 400);
-  /* các ô trong trang mới lần lượt nổi lên (Bảng dùng lại hiệu ứng theo cột của lúc đổi tuần) */
-  if(state.view === 'table'){
-    const box = $('#sched'); box.classList.remove('wk-stagger'); void box.offsetWidth; box.classList.add('wk-stagger');
-    clearTimeout(pageSwap.t2); pageSwap.t2 = setTimeout(() => box.classList.remove('wk-stagger'), 800);
-  } else {
-    const sel = {agenda:'#sched .ad', fixed:'#sched .fx-row', now:'#nowBar .np-card'}[state.view];
-    const items = sel ? [...document.querySelectorAll(sel)] : [];
-    items.forEach((n, i) => { n.style.setProperty('--i', Math.min(i, 10)); n.classList.remove('vw-stag'); void n.offsetWidth; n.classList.add('vw-stag'); });
-    clearTimeout(pageSwap.t3); pageSwap.t3 = setTimeout(() => items.forEach(n => n.classList.remove('vw-stag')), 900);
-  }
-}
-/* trang cũ trượt ra (và mờ dần) trước khi dựng trang mới */
-function viewExitEl(prev, next){
-  const flat = v => v === 'table' || v === 'agenda';
-  return prev === 'now' ? $('#nowBar') : (flat(prev) && flat(next)) ? $('#sched') : document.querySelector('.layout');
+  clearTimeout(pageSwap.t1); pageSwap.t1 = setTimeout(() => el.classList.remove('vw-in'), 200);
 }
 let viewSwapTok = 0;
 $('#viewSeg').onclick = e => {
@@ -5083,20 +5212,13 @@ $('#viewSeg').onclick = e => {
     state.view = b.dataset.v; saveUI();
     document.querySelectorAll('#viewSeg button').forEach(x => x.classList.toggle('on', x === b));
     updateSegIndicator();   // trượt tab ngay lập tức, mượt, không chờ dựng lại nội dung
-    const tok = ++viewSwapTok, ord = ['table','agenda','now','fixed'];
-    const fwd = ord.indexOf(b.dataset.v) >= ord.indexOf(prevView);
-    const outEl = viewExitEl(prevView, b.dataset.v);
-    const go = () => {
+    const tok = ++viewSwapTok;
+    requestAnimationFrame(() => {
       if(tok !== viewSwapTok) return;   // đã bấm sang trang khác trong lúc chờ: chỉ lần bấm cuối được dựng
-      document.querySelectorAll('.vw-outL,.vw-outR').forEach(x => x.classList.remove('vw-outL','vw-outR'));
-      if(matchMedia('(max-width:700px)').matches) scrollTo({top:0, left:0, behavior:'instant'});   // điện thoại: về đầu trang trước khi dựng lại -> trình duyệt không phải ép lại vị trí cuộn làm thanh tab giật
+      if(matchMedia('(max-width:700px)').matches) scrollTo({top:0, left:0, behavior:'instant'});   // điện thoại: về đầu trang trước khi dựng lại
       render();
-      pageSwap(prevView);
-    };
-    if(outEl && !outEl.hidden && !(matchMedia('(prefers-reduced-motion: reduce)').matches)){
-      outEl.classList.remove('vw-in'); outEl.classList.add(fwd ? 'vw-outL' : 'vw-outR');
-      setTimeout(go, 140);
-    } else requestAnimationFrame(go);
+      pageSwap(prevView);   // trang mới chỉ mờ dần vào, không trượt
+    });
   }
 };
 
@@ -5465,7 +5587,7 @@ async function moveOcc(id, from, to, s, e, fs, fe){
 }
 
 /* việc cần làm */
-const swapTodoList = () => { const u = $('#todos'); u.classList.remove('sched-swap'); void u.offsetWidth; u.classList.add('sched-swap'); };
+const swapTodoList = () => {};   // đổi bộ lọc: danh sách đổi ngay, không mờ dần (tránh chớp)
 $('#todoTabs').onclick = e => { const b = e.target.closest('button'); if(b){ const ch = b.dataset.f !== todoFilter; todoFilter = b.dataset.f; renderTodos(); if(ch) swapTodoList(); } };
 $('#todoStatus').onclick = e => { const b = e.target.closest('button'); if(b){ const ch = b.dataset.s !== todoStatus; todoStatus = b.dataset.s; renderTodos(); if(ch) swapTodoList(); } };
 $('#todoAll').onclick = () => toggleAll(openTodos, visibleTodos(), renderTodos);
@@ -5661,8 +5783,15 @@ let hubTab = 'view', hubDel = null, hubDirty = false, hubT = 0, hubNewColor = ''
 const hubHrs = m => (m/60).toFixed(1).replace(/\.0$/,'');
 const HUB_PAL = ['#2f9463','#2a7ab0','#7550c0','#c0821f','#d1495b','#e07a5f','#00a896','#b5651d','#c2185b','#6c757d'];
 /* vẽ lại bảng/danh sách phía sau (gộp nhiều thay đổi liên tiếp thành một lần); khi đóng bảng sẽ vẽ ngay */
-function hubRenderSoon(){ hubDirty = true; clearTimeout(hubT); hubT = setTimeout(hubFlush, 300); }
-function hubFlush(){ clearTimeout(hubT); if(!hubDirty) return; hubDirty = false; render(); }
+let hubRaf = 0;
+/* fast = true (chọn / bỏ chọn tag, công tắc hiển thị): vẽ lại trang chính ngay sau khung hình kế tiếp, không chờ.
+   fast = false (gõ tên, chọn màu...): đợi 300 ms để gộp nhiều thao tác liên tiếp. */
+function hubRenderSoon(fast){
+  hubDirty = true; clearTimeout(hubT); cancelAnimationFrame(hubRaf);
+  if(fast) hubRaf = requestAnimationFrame(() => { hubT = setTimeout(hubFlush, 0); });   // để ô tag đổi trạng thái hiện ra trước rồi mới vẽ lại trang
+  else hubT = setTimeout(hubFlush, 300);
+}
+function hubFlush(){ clearTimeout(hubT); cancelAnimationFrame(hubRaf); if(!hubDirty) return; hubDirty = false; render(); }
 function tagStats(){
   const last = state.tags[state.tags.length - 1].id, S = {};
   state.tags.forEach(t => S[t.id] = {n:0, min:0, cx:0, total:0, rec:0});
@@ -5678,7 +5807,7 @@ function tagStats(){
 }
 function hubSumHTML(st, tsel){
   const head = tsel ? `Đang lọc <b>${state.tags.filter(t => tagSel.has(t.id)).length}/${state.tags.length}</b> tag` : 'Đang hiện <b>tất cả</b> tag';
-  return `<span>${head} · Tuần ${weekRange(weekStart)}: <b>${st.n}</b> buổi, <b>${hubHrs(st.totalMin)}</b> giờ</span><button type="button" class="btn" data-act="clr" data-k="clr" ${tsel ? '' : 'disabled'}>Hiện tất cả</button>`;
+  return `<span>${head} · Tuần ${weekRange(weekStart)}</span><button type="button" class="btn" data-act="clr" data-k="clr" ${tsel ? '' : 'disabled'}>Hiện tất cả</button>`;
 }
 /* đổi lựa chọn tag tại chỗ (không vẽ lại cả danh sách) để các hiệu ứng chạy mượt */
 function hubSelSync(){
@@ -5687,34 +5816,13 @@ function hubSelSync(){
     const sel = tsel && tagSel.has(c.dataset.id);
     c.classList.toggle('sel', sel); c.classList.toggle('nsel', tsel && !sel); c.setAttribute('aria-checked', String(sel));
   });
-  const s = $('#hubSum'); if(s) s.innerHTML = hubSumHTML(tagStats(), tsel);
+  const s = $('#hubSum'); if(s) s.innerHTML = hubSumHTML(null, tsel);   // dòng tóm tắt không còn dùng số liệu, khỏi tính lại thống kê mỗi lần bấm
 }
 /* chuyển tab: nội dung trượt vào theo hướng chuyển */
-function hubSlide(cls){
-  const b = $('#hubBody'); b.classList.remove('inR','inL','stag'); void b.offsetWidth; b.classList.add(cls, 'stag');
-  b.querySelectorAll('.hubCard,.hubSw,.hubRow,.hubAdd,.hubSum,.hubSec,.tagrow').forEach((el, i) => el.style.setProperty('--i', Math.min(i, 9)));
-  clearTimeout(hubSlide.t); hubSlide.t = setTimeout(() => b.classList.remove('stag'), 800);   // gỡ lớp để hiệu ứng nhấn (scale) không bị ghi đè
-}
-/* chuyển tab: nội dung cũ trượt ra, thanh nền trượt sang tab mới, nội dung mới trượt vào và lần lượt hiện từng ô */
-let hubSwitching = false;
+function hubSlide(){ const b = $('#hubBody'); b.classList.remove('fade'); void b.offsetWidth; b.classList.add('fade'); }   // chỉ mờ dần nhẹ khi đổi tab
 function hubSwitch(to){
-  if(to === hubTab || hubSwitching) return;
-  const fwd = to === 'manage', b = $('#hubBody');
-  hubSwitching = true; hubTab = to; hubDel = null; hubTabsSync();
-  b.classList.remove('inR','inL','stag'); b.classList.add(fwd ? 'outL' : 'outR');
-  setTimeout(() => {
-    b.classList.remove('outL','outR'); drawHub(); b.scrollTop = 0; hubSlide(fwd ? 'inR' : 'inL'); hubSwitching = false;
-  }, 140);
-}
-/* đổi thứ tự: các dòng trượt tới vị trí mới (FLIP) */
-function hubFlip(fn){
-  const old = new Map([...dlgTags.querySelectorAll('.hubRow')].map(r => [r.dataset.id, r.getBoundingClientRect().top]));
-  fn();
-  dlgTags.querySelectorAll('.hubRow').forEach(r => {
-    const o = old.get(r.dataset.id); if(o === undefined) return;
-    const dy = o - r.getBoundingClientRect().top; if(!dy) return;
-    r.animate([{transform:`translateY(${dy}px)`}, {transform:'none'}], {duration:260, easing:'cubic-bezier(.22,.8,.3,1)'});
-  });
+  if(to === hubTab) return;
+  hubTab = to; hubDel = null; hubTabsSync(); drawHub(); $('#hubBody').scrollTop = 0; hubSlide();
 }
 function hubViewHTML(st, tsel){
   const cards = state.tags.map(t => {
@@ -5723,7 +5831,7 @@ function hubViewHTML(st, tsel){
     return `<div class="hubCard${sel ? ' sel' : ''}${nsel ? ' nsel' : ''}" role="checkbox" aria-checked="${sel}" tabindex="0" data-act="sel" data-id="${esc(t.id)}" data-k="sel:${esc(t.id)}" style="--c:${esc(t.color)}">
       <span class="hubChk" aria-hidden="true"></span>
       <div class="hubMain"><b>${esc(t.name)}</b><small>${esc(meta)}</small><div class="hubBar" title="${pct}% số giờ trong tuần"><i style="width:${pct}%"></i></div></div>
-      <button type="button" class="btn hubOnly" data-act="only" data-id="${esc(t.id)}" data-k="only:${esc(t.id)}" title="Chỉ xem tag này rồi đóng bảng">Chỉ xem</button></div>`;
+    </div>`;
   }).join('');
   const sw = (k, name, col, note) => `<label class="hubSw"><i style="--c:${esc(col)}"></i><span>${name}<small>${note}</small></span><input type="checkbox" role="switch" data-act="vis" data-id="${k}" data-k="vis:${k}" ${hiddenTypes.has(k) ? '' : 'checked'}></label>`;
   return `<div class="hubSum" id="hubSum">${hubSumHTML(st, tsel)}</div>
@@ -5745,7 +5853,7 @@ function hubManageHTML(st){
         <button type="button" class="btn danger" data-act="delok" data-id="${esc(t.id)}" data-k="delok">${s.total ? 'Gộp &amp; xóa tag' : 'Xóa tag'}</button></div></div>`;
     })() : '';
     return `<div><div class="hubRow" data-id="${esc(t.id)}">
-      <div class="hubMv"><button type="button" data-act="up" data-id="${esc(t.id)}" data-k="up:${esc(t.id)}" aria-label="Đưa lên" ${i === 0 ? 'disabled' : ''}>▲</button><button type="button" data-act="dn" data-id="${esc(t.id)}" data-k="dn:${esc(t.id)}" aria-label="Đưa xuống" ${i === n - 1 ? 'disabled' : ''}>▼</button></div>
+      <button type="button" class="hubGrip" data-id="${esc(t.id)}" data-k="grip:${esc(t.id)}" aria-label="Kéo để đổi vị trí (hoặc bấm ↑ ↓ trên bàn phím)" title="Kéo để đổi vị trí"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.7"/><circle cx="15" cy="6" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="9" cy="18" r="1.7"/><circle cx="15" cy="18" r="1.7"/></svg></button>
       <input type="color" class="tc" value="${esc(t.color)}" aria-label="Màu tag">
       <input type="text" class="tn" value="${esc(t.name)}" placeholder="Tên tag" maxlength="40" aria-label="Tên tag">
       <label class="fillc" title="Tô màu nền các ô thuộc tag này trong bảng"><input type="checkbox" class="tf" ${t.fill ? 'checked' : ''}>Tô màu ô</label>
@@ -5755,7 +5863,7 @@ function hubManageHTML(st){
   return `<div class="hubSec" style="margin-top:0">Thêm tag mới</div>
     <div class="hubAdd"><input type="color" id="hubNewC" value="${esc(hubNewColor)}" aria-label="Màu tag mới"><input type="text" id="hubNewN" value="${esc(hubNewName)}" placeholder="Tên tag mới…" maxlength="40" aria-label="Tên tag mới"><button type="button" class="btn primary" data-act="add" data-k="add">+ Thêm</button></div>
     <div class="hubPal" aria-label="Màu gợi ý">${HUB_PAL.map(c => `<button type="button" style="--c:${c}" data-act="pal" data-id="${c}" aria-label="Màu ${c}"></button>`).join('')}<button type="button" class="rnd" data-act="rnd" data-k="rnd">🎲 Ngẫu nhiên</button></div>
-    <div class="hubSec">Tag hiện có (${n})</div>
+    <div class="hubSec">Tag hiện có (${n}) · kéo để sắp xếp</div>
     <div class="hubRows">${rows}</div>
     <div class="hubSec">Màu ô đặc biệt</div>
     <div class="tagrows" id="stRows">${stRow('stDl', 'dl', 'Deadline')}${stRow('stCancel', 'cancel', 'Nghỉ')}${stRow('stConflict', 'conflict', 'Trùng lịch')}</div>`;
@@ -5809,7 +5917,7 @@ function hubAddTag(){
   const nid = state.tags[state.tags.length - 1].id;
   save(); drawHub(); hubRenderSoon(); toast(`Đã thêm tag “${name}”`);
   const nr = [...dlgTags.querySelectorAll('.hubRow')].find(r => r.dataset.id === nid);
-  if(nr){ nr.classList.add('isnew'); nr.scrollIntoView({block:'nearest', behavior:'smooth'}); }
+  if(nr){ nr.scrollIntoView({block:'nearest'}); }
   $('#hubNewN').focus();
 }
 function hubMergeTag(id, toId){
@@ -5834,15 +5942,8 @@ dlgTags.addEventListener('click', e => {
   const b = e.target.closest('[data-act]'); if(!b || b.disabled) return;
   const a = b.dataset.act, id = b.dataset.id;
   if(a === 'vis') return;                                   // công tắc: xử lý ở sự kiện change
-  if(a === 'sel'){ tagSelToggle(id); hubSelSync(); hubRenderSoon(); }
-  else if(a === 'only'){ tagSel.clear(); tagSel.add(id); saveUI(); hubRenderSoon(); closeDialog(dlgTags); }
-  else if(a === 'clr'){ tagSelClear(); hubSelSync(); hubRenderSoon(); }
-  else if(a === 'up' || a === 'dn'){
-    const i = state.tags.findIndex(x => x.id === id), j = a === 'up' ? i - 1 : i + 1;
-    if(i < 0 || j < 0 || j >= state.tags.length) return;
-    [state.tags[i], state.tags[j]] = [state.tags[j], state.tags[i]];
-    save(); hubFlip(drawHub); hubRenderSoon();
-  }
+  if(a === 'sel'){ tagSelToggle(id); hubSelSync(); hubRenderSoon(true); }
+  else if(a === 'clr'){ tagSelClear(); hubSelSync(); hubRenderSoon(true); }
   else if(a === 'del'){ hubDel = hubDel === id ? null : id; drawHub(); }
   else if(a === 'delno'){ hubDel = null; drawHub(); }
   else if(a === 'delok'){ const m = $('#hubMerge'); hubMergeTag(id, m ? m.value : ''); hubDel = null; drawHub(); hubRenderSoon(); }
@@ -5869,12 +5970,56 @@ dlgTags.addEventListener('input', e => {
 });
 dlgTags.addEventListener('change', e => {
   const el = e.target;
-  if(el.dataset.act === 'vis'){ const k = el.dataset.id; el.checked ? hiddenTypes.delete(k) : hiddenTypes.add(k); saveUI(); hubRenderSoon(); return; }
+  if(el.dataset.act === 'vis'){ const k = el.dataset.id; el.checked ? hiddenTypes.delete(k) : hiddenTypes.add(k); saveUI(); hubRenderSoon(true); return; }
   const t = hubTag(el); if(!t) return;
   if(el.classList.contains('tf')){ t.fill = el.checked; save(); hubRenderSoon(); }
   else if(el.classList.contains('tn')){ el.value = t.name; el.classList.remove('bad'); }   // để trống thì giữ tên cũ
 });
 tagForm.addEventListener('submit', e => e.preventDefault());
+/* kéo thả để đổi thứ tự tag (chuột, cảm ứng; phím ↑ ↓ khi đang focus vào tay nắm) */
+function hubApplyOrder(box){
+  const ids = [...box.querySelectorAll('.hubRow')].map(r => r.dataset.id);
+  const m = new Map(state.tags.map(x => [x.id, x])), next = ids.map(i => m.get(i)).filter(Boolean);
+  if(next.length !== state.tags.length || next.every((x, i) => x === state.tags[i])) return;
+  state.tags.splice(0, state.tags.length, ...next); save(); hubRenderSoon();
+}
+let hubDrag = null;
+function hubDragMove(e){
+  if(!hubDrag) return;
+  const {wrap, box} = hubDrag;
+  const next = [...box.children].filter(x => x !== wrap).find(s => { const r = s.getBoundingClientRect(); return e.clientY < r.top + r.height / 2; });
+  if(next){ if(wrap.nextElementSibling !== next) box.insertBefore(wrap, next); }
+  else if(box.lastElementChild !== wrap) box.appendChild(wrap);
+  const b = $('#hubBody'), br = b.getBoundingClientRect();
+  if(e.clientY < br.top + 28) b.scrollTop -= 10; else if(e.clientY > br.bottom - 28) b.scrollTop += 10;
+}
+function hubDragEnd(){
+  if(!hubDrag) return;
+  const {wrap, box} = hubDrag; hubDrag = null;
+  wrap.classList.remove('dragging'); dlgTags.classList.remove('dragging');
+  document.removeEventListener('pointermove', hubDragMove);
+  document.removeEventListener('pointerup', hubDragEnd);
+  document.removeEventListener('pointercancel', hubDragEnd);
+  hubApplyOrder(box);
+}
+dlgTags.addEventListener('pointerdown', e => {
+  const g = e.target.closest('.hubGrip'); if(!g || (e.pointerType === 'mouse' && e.button !== 0)) return;
+  e.preventDefault(); g.focus();
+  const wrap = g.closest('.hubRow').parentElement;
+  hubDrag = {wrap, box: wrap.parentElement};
+  wrap.classList.add('dragging'); dlgTags.classList.add('dragging');
+  document.addEventListener('pointermove', hubDragMove);
+  document.addEventListener('pointerup', hubDragEnd);
+  document.addEventListener('pointercancel', hubDragEnd);
+});
+dlgTags.addEventListener('keydown', e => {
+  const g = e.target.closest && e.target.closest('.hubGrip'); if(!g || (e.key !== 'ArrowUp' && e.key !== 'ArrowDown')) return;
+  e.preventDefault();
+  const wrap = g.closest('.hubRow').parentElement, box = wrap.parentElement;
+  const other = e.key === 'ArrowUp' ? wrap.previousElementSibling : wrap.nextElementSibling; if(!other) return;
+  if(e.key === 'ArrowUp') box.insertBefore(wrap, other); else box.insertBefore(other, wrap);
+  wrap.querySelector('.hubGrip').focus(); hubApplyOrder(box);
+});
 dlgTags.addEventListener('close', () => { hubDel = null; hubFlush(); });
 $('#tagClose').onclick = () => closeDialog(dlgTags);
 $('#tagCloseX').onclick = () => closeDialog(dlgTags);
@@ -6480,7 +6625,6 @@ function renderNowBar(){
   const oldList = el.querySelector('.np-list'), keepTop = oldList ? oldList.scrollTop : 0;   // dựng lại không làm danh sách nhảy về đầu
   const ae = document.activeElement, keepFocus = ae && ae.id && el.contains(ae) ? {id:ae.id, s:ae.selectionStart, e:ae.selectionEnd} : null;
   el.innerHTML = html;
-  syncPulses();   // các thẻ/dòng vừa dựng lại thở cùng pha với phần còn lại của trang
   const qt = el.querySelector('#npQText'), qd = el.querySelector('#npQDue');
   if(qt) qt.value = npDraft.t; if(qd) qd.value = npDraft.d;   // chữ đang gõ không nằm trong html (để không làm đổi chữ ký) nên đặt lại tại đây
   const nl = el.querySelector('.np-list'); if(nl && keepTop) nl.scrollTop = keepTop;
@@ -6666,7 +6810,7 @@ function npQuickAdd(){   // thêm deadline nhanh: chỉ cần tiêu đề (hạn
   el.addEventListener('submit', e => { if(e.target.id !== 'npQuick') return; e.preventDefault(); npQuickAdd(); });
   el.addEventListener('keydown', e => { if(e.key === 'Escape' && e.target.id === 'npQText'){ npDraft.t = ''; e.target.value = ''; e.target.blur(); } });
 })();
-const swapNpList = () => { const l = document.querySelector('#nowBar .np-list'); if(l){ l.scrollTop = 0; l.classList.remove('sched-swap'); void l.offsetWidth; l.classList.add('sched-swap'); } };
+const swapNpList = () => { const l = document.querySelector('#nowBar .np-list'); if(l) l.scrollTop = 0; };   // đổi tab: về đầu danh sách, không mờ dần
 document.getElementById('nowBar').addEventListener('click', e => {
   const act = e.target.closest('[data-act]');
   if(act){
@@ -6764,13 +6908,21 @@ const visInterval = (fn, ms) => setInterval(() => { if(document.visibilityState 
 visInterval(renderNowBar, 1000);
 /* cập nhật chữ đếm ngược "còn ..." trong các thẻ Deadline ở mục Danh sách mỗi giây, không render lại cả danh sách */
 function tickAgendaCountdowns(){
-  document.querySelectorAll('.ag.dl .chip:not(.late)').forEach(el => {
+  const chips = document.querySelectorAll('.ag.dl .chip:not(.late)');
+  if(!chips.length) return;
+  const byId = new Map(state.todos.map(x => [x.id, x]));
+  chips.forEach(el => {
     const art = el.closest('[data-todo]'); if(!art) return;
-    const t = state.todos.find(x => x.id === art.dataset.todo); if(!t) return;
-    el.textContent = dueTxt(t);
-    el.classList.toggle('soon', daysBetween(todayStr(), t.due) <= 3);
-    el.classList.remove('sz-y', 'sz-mo', 'sz-d3', 'sz-d2', 'sz-d1', 'sz-hm');
-    el.classList.add('sz-' + hmsScale(dueEndMs(t) - Date.now()));
+    const t = byId.get(art.dataset.todo); if(!t) return;
+    const txt = dueTxt(t);
+    if(el.textContent !== txt) el.textContent = txt;   // chỉ ghi khi chữ đổi: không ép trình duyệt vẽ lại thẻ mỗi giây
+    const soon = daysBetween(todayStr(), t.due) <= 3;
+    if(el.classList.contains('soon') !== soon) el.classList.toggle('soon', soon);
+    const sz = 'sz-' + hmsScale(dueEndMs(t) - Date.now());
+    if(!el.classList.contains(sz)){
+      el.classList.remove('sz-y', 'sz-mo', 'sz-d3', 'sz-d2', 'sz-d1', 'sz-hm');
+      el.classList.add(sz);
+    }
   });
 }
 visInterval(tickAgendaCountdowns, 1000);

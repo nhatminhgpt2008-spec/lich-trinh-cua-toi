@@ -11,10 +11,15 @@ self.addEventListener('activate', e => e.waitUntil(
 self.addEventListener('fetch', e => {
   const r = e.request;
   if(r.method !== 'GET' || r.mode !== 'navigate') return;   // chỉ cache trang chính; Firebase/font để nguyên
-  e.respondWith(
-    fetch(r, {cache:'no-store'}).then(res => { if(res.ok && res.type === 'basic'){ const c = res.clone(); caches.open(CACHE).then(ch => ch.put('./', c)); } return res; })   // chỉ cache khi trang tải thành công (không lưu trang lỗi 404/500 làm bản offline)   // no-store: luôn lấy bản mới nhất từ mạng, không dùng cache HTTP của trình duyệt cho trang chính
-      .catch(() => caches.match('./'))
-  );
+  e.respondWith((async () => {
+    const cache = await caches.open(CACHE);
+    const cached = await cache.match('./');
+    const net = fetch(r, {cache:'no-store'}).then(res => { if(res.ok && res.type === 'basic') cache.put('./', res.clone()); return res; });   // chỉ lưu khi tải thành công; no-store = luôn lấy bản mới nhất
+    if(!cached) return net;                      // lần đầu: chờ mạng
+    e.waitUntil(net.catch(() => {}));           // mạng chậm vẫn kịp cập nhật cache cho lần mở sau
+    return Promise.race([net, new Promise(ok => setTimeout(() => ok(cached), 3000))]).catch(() => cached);   // mất mạng hoặc quá 3 giây → mở bản đã lưu cho nhanh
+  })());
+
 });
 
 /* Trang gọi registration.showNotification()/getNotifications() thẳng, nên
