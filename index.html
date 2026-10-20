@@ -3080,6 +3080,20 @@ function repeatEvery(ev, types){ const t = repeatType(ev, types); return t ? t.e
 const repeatDesc = (n, u) => n === 1 ? `Hàng ${REPEAT_UNITS[u]}` : `Mỗi ${n} ${REPEAT_UNITS[u]}`;
 const repeatBadge = ev => { if(!isRec(ev)) return ''; const n = repeatEvery(ev), u = repeatUnit(ev); if(u === 'week' && n < 2) return ''; const t = repeatType(ev); return `<span class="badge alt">${esc((t && t.name) || repeatDesc(n, u))}</span>`; };
 const evDays = ev => (ev.days && ev.days.length ? ev.days : [wd(ev.date)]);
+/* Ngày buổi đầu tiên thực tế của lịch lặp theo tuần.
+   Nếu ngày bắt đầu là thứ Ba nhưng chỉ chọn thứ Hai, buổi đầu tiên phải là thứ Hai kế tiếp,
+   thay vì lấy tuần rỗng trước đó làm mốc chu kỳ (đặc biệt quan trọng với lịch cách tuần). */
+function firstWeeklyDate(ev){
+  const start = ev.date;
+  const days = [...new Set(evDays(ev).map(Number).filter(d => Number.isInteger(d) && d >= 0 && d <= 6))].sort((a,b) => a-b);
+  if(!days.length) return start;
+  const mon = mondayOf(start);
+  for(const day of days){
+    const candidate = addDays(mon, day);
+    if(candidate >= start) return candidate;
+  }
+  return addDays(mon, 7 + days[0]);
+}
 function recurWhen(ev){   // mô tả ngắn cho lịch lặp theo ngày / tháng / năm (thay cho danh sách thứ)
   const u = repeatUnit(ev), n = repeatEvery(ev), [, m, d] = ev.date.split('-').map(Number);
   if(u === 'day') return n === 1 ? 'Hàng ngày' : `Mỗi ${n} ngày`;
@@ -3091,7 +3105,9 @@ function recurHit(ev, date, types){
   const t = repeatType(ev, types), u = t && REPEAT_UNITS[t.unit] ? t.unit : 'week', step = t ? t.every : (ev.repeat === 'biweekly' ? 2 : 1);
   if(u === 'week'){
     if(!evDays(ev).includes(wd(date))) return false;
-    return Math.round(daysBetween(mondayOf(ev.date), mondayOf(date))/7) % step === 0;
+    const anchor = firstWeeklyDate(ev);
+    if(date < anchor) return false;
+    return Math.round(daysBetween(mondayOf(anchor), mondayOf(date))/7) % step === 0;
   }
   if(u === 'day') return daysBetween(ev.date, date) % step === 0;
   // tháng / năm: cùng ngày trong tháng với ngày bắt đầu (tháng ngắn hơn thì lấy ngày cuối tháng, vd 31 → 30/28)
@@ -5246,6 +5262,12 @@ function buildData(){
   d.days = daysBoxes().filter(b => b.checked).map(b => +b.value); if(!d.days.length) d.days = [wd(d.date)];
   const wkMode = formWeekly();
   if(!wkMode) d.days = [wd(d.date)];   // lặp theo ngày/tháng/năm: không dùng danh sách thứ
+  else if(d.repeat !== 'none'){
+    // Căn ngày bắt đầu vào buổi đầu tiên thực sự được chọn, không vào một ngày trong tuần chưa có buổi.
+    // Ví dụ bắt đầu 20/10 (thứ Ba), chỉ chọn thứ Hai => buổi đầu tiên là 26/10.
+    d.date = firstWeeklyDate(d);
+    if(d.until && d.until < d.date) return err('Ngày kết thúc lặp phải từ ngày diễn ra buổi đầu tiên trở đi.');
+  }
   readTimes();
   const times = {};
   if(!wkMode){
