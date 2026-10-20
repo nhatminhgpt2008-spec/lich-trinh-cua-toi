@@ -813,6 +813,15 @@ fieldset.rep.tm .fgrid{gap:14px 12px}
 .ctxm hr{border:0;border-top:1px solid var(--line-soft);margin:4px 2px}
 .ctxm .ctxh{padding:5px 10px 6px;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media print{.ctxm{display:none!important}}
+#sched .cell>.editb,#sched .ag>.editb,#sched .dlcell>.editb{position:absolute;top:3px;right:3px;z-index:6;display:grid;place-items:center;width:20px;height:20px;padding:0;margin:0;border:1px solid color-mix(in srgb,var(--ink) 22%,transparent);border-radius:6px;background:color-mix(in srgb,var(--surface) 88%,transparent);color:var(--ink);cursor:pointer;visibility:hidden}
+#sched .cell:hover>.editb,#sched .ag:hover>.editb,#sched .dlcell:hover>.editb,#sched .cell:focus-visible>.editb,#sched .ag:focus-visible>.editb,#sched .dlcell:focus-visible>.editb,#sched .editb:focus-visible{visibility:visible;opacity:.9}
+@media (hover:none){#sched .editb{visibility:visible;opacity:.85}}
+#sched .ag>.editb{top:8px;right:8px;width:24px;height:24px}
+#sched .editb:hover,#sched .editb:focus-visible{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);opacity:1;outline:none}
+#sched .ag .et{padding-right:30px}
+#sched .dlcell .dlmark{right:26px}
+#sched .ag.dl .dlmark{right:38px}
+@media print{.editb{display:none!important}}
 
 /* thanh đề xuất cài web thành ứng dụng (PWA) */
 .pwaBar{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:150;width:calc(100% - 24px);max-width:460px;display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.28);animation:pwaIn .11s ease-out}
@@ -4369,9 +4378,9 @@ const dlChips = t => chipsHTML(getLinks(t).map(l => ({url:l.url, label:l.name ||
 function linkHTML(ev){ return evChips(ev); }
 const svShow = () => '';
 
-function copyBtns(ev){
-  const btn = (kind, label, ttl, text) => `<button type="button" class="cpy" data-copy="${kind}" data-text="${esc(encodeURIComponent(text))}" title="${esc(ttl)}" aria-label="${esc(ttl)}">${label}</button>`;
-  return ev.code ? `<div class="cpyw"><span class="cpyb">${btn('code', 'Mã', 'Sao chép mã môn học: ' + ev.code, ev.code)}</span></div>` : '';
+/* nút ✎ ở góc phải trên của ô: chỉ bấm vào đây mới mở hộp chỉnh sửa; bấm chỗ khác trên ô chỉ là chọn ô */
+function editBtn(){
+  return '<button type="button" class="editb" data-edit title="Chỉnh sửa" aria-label="Chỉnh sửa"><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>';
 }
 function dlTitleAttr(t){
   return ['⏰ Hạn chót ' + niceDate(t.due) + (t.dueTime ? ' · ' + t.dueTime : ''), t.text, t.body].filter(Boolean).join('\n');
@@ -4398,11 +4407,11 @@ function dlBarHTML(t){
   return `<div class="cbar">${dlTagHTML(t)}<i class="cbr"></i><span class="cstate dls-${k}">${txt}</span></div>`;
 }
 function dlCellHTML(t){
-  return `<div class="dlcell${t.done?' done':''}${t.pin?' pinned':''} ${dlMatch(t)?'':'dim'}" data-todo="${t.id}" tabindex="0" role="button">${dlBarHTML(t)}${t.pin ? '<span class="dlmark" aria-hidden="true" title="Đã ghim">📌</span>' : ''}
+  return `<div class="dlcell${t.done?' done':''}${t.pin?' pinned':''} ${dlMatch(t)?'':'dim'}" data-todo="${t.id}" tabindex="0" role="button">${editBtn()}${dlBarHTML(t)}${t.pin ? '<span class="dlmark" aria-hidden="true" title="Đã ghim">📌</span>' : ''}
     <div><b>${esc(t.text)}</b>${dlLinkHTML(t)}</div><div class="dlt">⏰ ${t.dueTime ? esc(t.dueTime) : 'Cả ngày'}</div>${dlChips(t)}</div>`;
 }
 function dlArticleHTML(t){
-  return `<article class="ag dl${t.done?' done':''}${t.pin?' pinned':''} ${dlMatch(t)?'':'dim'}" data-todo="${t.id}" tabindex="0" role="button">${dlTagHTML(t)}${t.pin ? '<span class="dlmark" aria-hidden="true" title="Đã ghim">📌</span>' : ''}
+  return `<article class="ag dl${t.done?' done':''}${t.pin?' pinned':''} ${dlMatch(t)?'':'dim'}" data-todo="${t.id}" tabindex="0" role="button">${editBtn()}${dlTagHTML(t)}${t.pin ? '<span class="dlmark" aria-hidden="true" title="Đã ghim">📌</span>' : ''}
         <div class="ag-time${t.dueTime ? '' : ' all'}">${t.dueTime ? esc(t.dueTime) : 'Cả ngày'}<br><small>hạn chót</small></div>
         <div><div class="et"><small>Deadline</small>${esc(t.text)}${t.done || !dueChipAgenda(t) ? '<span class="tag dl' + (t.done ? ' ok' : '') + '">' + (t.done ? 'Đã hoàn thành' : 'Chưa hoàn thành') + '</span>' : ''}${dueChipAgenda(t)}</div>
         ${hasLinks(t) ? `<div class="ag-links">${dlChips(t)}</div>` : ''}
@@ -4424,7 +4433,7 @@ function tableHTML(occs){
     const inner = `${codeLine}<div><b class="ev-title">${esc(ev.title)}</b></div>
       <div class="ctime">🕒 ${ev.start} - ${ev.end}</div>${ev.room ? `<div>📍 ${esc(ev.room)}</div>` : ''}${ev.teacher ? `<div>👤 ${esc(ev.teacher)}</div>` : ''}${learnerTxt(ev) ? `<div>🎓 ${esc(learnerTxt(ev))}</div>` : ''}${evChips(ev)}`;
     const st = cellState(o);
-    return `<div class="cell${liveCls(o)}${nof} ${cls} ${o.conflict ? 'conflict' : ''} ${matches(o)?'':'dim'}" ${sty} draggable="true" data-id="${ev.id}" data-date="${d}" data-s="${ev.start}" data-e="${ev.end}" tabindex="0" role="button">${copyBtns(ev,d)}${cellTopBar(ev, st, o.conflict)}${inner}</div>`;
+    return `<div class="cell${liveCls(o)}${nof} ${cls} ${o.conflict ? 'conflict' : ''} ${matches(o)?'':'dim'}" ${sty} draggable="true" data-id="${ev.id}" data-date="${d}" data-s="${ev.start}" data-e="${ev.end}" tabindex="0" role="button">${editBtn()}${cellTopBar(ev, st, o.conflict)}${inner}</div>`;
   };
 
   if(stacked){
@@ -4515,7 +4524,7 @@ function agendaHTML(occs){
     for(const it of items){
       if(it.t){ html += dlArticleHTML(it.t); continue; }
       const o = it.o, ev = o.ev;
-      html += `<article style="${tagStyle(tagOf(ev.type))}${liveStyle(o)}" class="ag${liveCls(o)}${!o.cancelled && !tagOf(ev.type).fill ? ' nofill' : ''} ${o.cancelled?'cancelled':''} ${o.conflict?'conflict':''} ${matches(o)?'':'dim'}" data-id="${ev.id}" data-date="${date}" data-s="${esc(ev.start)}" data-e="${esc(ev.end)}" tabindex="0" role="button">${ctagHTML(ev)}
+      html += `<article style="${tagStyle(tagOf(ev.type))}${liveStyle(o)}" class="ag${liveCls(o)}${!o.cancelled && !tagOf(ev.type).fill ? ' nofill' : ''} ${o.cancelled?'cancelled':''} ${o.conflict?'conflict':''} ${matches(o)?'':'dim'}" data-id="${ev.id}" data-date="${date}" data-s="${esc(ev.start)}" data-e="${esc(ev.end)}" tabindex="0" role="button">${editBtn()}${ctagHTML(ev)}
         <div class="ag-time">${ev.start}<br><small>${ev.end}</small></div>
         <div><div class="et">${ev.code?`<small>${esc(ev.code)}</small>`:''}${esc(ev.title)}${tagsHTML(o)}</div>
         <div class="em">${emHTML(o, [ev.room &&'📍 ' + ev.room, ev.teacher && '👤 ' + ev.teacher, learnerTxt(ev) && '🎓 ' + learnerTxt(ev), shortNote(ev) && '📝 ' + ev.note].filter(Boolean))}</div>
@@ -5532,19 +5541,20 @@ function onSchedClick(target){
     askConfirm('Xóa dòng này? Nếu trong dòng còn ô lịch, dòng vẫn hiển thị theo các ô đó.', {title:'Xóa dòng', ok:'Xóa', danger:true}).then(ok => { if(ok){ state.rows = state.rows.filter(r => r.id !== rowId); save(); render(); } });
     return;
   }
-  const dl = target.closest('[data-todo]'); if(dl) return openTodo(dl.dataset.todo);
+  const eb = target.closest('[data-edit]'); if(eb && eb.parentElement) return editCell(eb.parentElement);
+  const dl = target.closest('[data-todo]'); if(dl) return dl.querySelector(':scope>.editb') ? selectCell(dl) : openTodo(dl.dataset.todo);
   const el = target.closest('[data-id]');
+  if(el && el.querySelector(':scope>.editb')) return selectCell(el);
   if(el){ const slot = (el.dataset.s && el.dataset.e) ? {start:el.dataset.s, end:el.dataset.e} : null; return openModal(el.dataset.id, el.dataset.date, undefined, slot); }
   const td = target.closest('td.empty-c');
   if(td) return openModal(null, td.dataset.date, {start:td.dataset.s, end:td.dataset.e});
 }
 $('#sched').addEventListener('click', e => {
-  const cp = e.target.closest('[data-copy]');
-  if(cp){ clearTimeout(clickTimer); doCopy(cp); return; }
   const pn = e.target.closest('[data-pin]');
   if(pn){ clearTimeout(clickTimer); togglePin(pn.dataset.pin); return; }
   const t = e.target;
   clearTimeout(clickTimer);
+  if(t.closest('[data-edit]') || t.closest('[data-id],[data-todo]')?.querySelector(':scope>.editb')){ onSchedClick(t); return; }   // chọn ô / bấm ✎: phản hồi tức thì
   clickTimer = setTimeout(() => onSchedClick(t), 230);
 });
 async function copyText(text){
@@ -5563,16 +5573,9 @@ function toast(msg, ms = 1800){
   toastEl.textContent = msg; toastEl.classList.add('on');
   clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove('on'), ms);
 }
-async function doCopy(btn){
-  let text = btn.dataset.text || '';
-  try{ text = decodeURIComponent(text); }catch(_){}
-  if(!text) return;
-  const ok = await copyText(text);
-  toast(ok ? `Đã sao chép mã: ${text}` : 'Không sao chép được, hãy bôi đen chữ rồi nhấn Ctrl+C');
-}
 $('#sched').addEventListener('keydown', e => {
-  if((e.key === 'Enter' || e.key === ' ') && e.target.dataset && e.target.dataset.todo){ e.preventDefault(); openTodo(e.target.dataset.todo); return; }
-  if((e.key === 'Enter' || e.key === ' ') && e.target.dataset && e.target.dataset.id){ e.preventDefault(); const d=e.target.dataset; openModal(d.id, d.date, undefined, d.s&&d.e ? {start:d.s,end:d.e} : null); }
+  if((e.key === 'Enter' || e.key === ' ') && e.target.dataset && e.target.dataset.todo){ e.preventDefault(); if(e.target.querySelector(':scope>.editb')) selectCell(e.target); else openTodo(e.target.dataset.todo); return; }
+  if((e.key === 'Enter' || e.key === ' ') && e.target.dataset && e.target.dataset.id){ e.preventDefault(); const d=e.target.dataset; if(e.target.querySelector(':scope>.editb')) selectCell(e.target); else openModal(d.id, d.date, undefined, d.s&&d.e ? {start:d.s,end:d.e} : null); }
 });
 $('#notes').addEventListener('input', e => { state.notes[weekStart] = e.target.value; saveNotes(); });
 /* Ghi chú: đổi kích thước (zoom cả thẻ) và đặt lại mặc định; nhớ theo trình duyệt */
@@ -5900,12 +5903,6 @@ async function moveOcc(id, from, to, s, e, fs, fe){
 let cellClip = null, ctxMenu = null, ctxSuppressUntil = 0, hoverEl = null;
 const CLIP_DROP = ['id','skip','skipSlots','cancelledSlots','series','overrideOf','overrideDate','overrideStart','overrideEnd'];
 const CELL_SEL = '.cell[data-id], .ag[data-id]';
-function clipStyle(){   // viền nét đứt quanh ô đang được sao chép (dựng bằng CSS nên vẫn còn sau mỗi lần render)
-  let st = document.getElementById('clipStyle');
-  if(!st){ st = document.createElement('style'); st.id = 'clipStyle'; document.head.appendChild(st); }
-  const q = v => String(v).replace(/["\\]/g, '');
-  st.textContent = cellClip ? `.cell[data-id="${q(cellClip.srcId)}"][data-date="${q(cellClip.srcDate)}"],.ag[data-id="${q(cellClip.srcId)}"][data-date="${q(cellClip.srcDate)}"]{outline:2px dashed var(--accent);outline-offset:-3px}` : '';
-}
 function copyCellEl(el){
   const ev = state.events.find(x => x.id === el.dataset.id); if(!ev) return false;
   const ptd = el.closest('td');
@@ -5914,11 +5911,10 @@ function copyCellEl(el){
   CLIP_DROP.forEach(k => delete data[k]);
   Object.assign(data, {repeat:'none', until:'', days:[], times:null, status:'normal', start:s, end:e});
   cellClip = {data, srcId:ev.id, srcDate:el.dataset.date};
-  clipStyle();
   toast(`Đã sao chép “${data.title || 'ô lịch'}”`);
   return true;
 }
-function clearClip(){ if(!cellClip) return; cellClip = null; clipStyle(); toast('Đã bỏ sao chép'); }
+function clearClip(){ if(!cellClip) return; cellClip = null; toast('Đã bỏ sao chép'); }
 function pasteTarget(t){   // xác định ngày + khung giờ nơi dán từ phần tử được chuột phải / trỏ tới
   if(!t || !t.closest) return null;
   const td = t.closest('td.slot');
@@ -5933,7 +5929,32 @@ function pasteClip(tg){
   if(tg.s && tg.e){ d.start = tg.s; d.end = tg.e; }
   state.events.push({skip:[], ...d, id:uid(), date:tg.date});
   save(); render();
-  toast(`Đã dán “${d.title || 'ô lịch'}” vào ${DOW[wd(tg.date)]} ${dm(tg.date)} · ${d.start}–${d.end}`, 2600);
+  toast(`Đã dán “${d.title || 'ô lịch'}” vào ${DOW[wd(tg.date)]}, ${dm(tg.date)} · ${d.start}–${d.end}`, 2600);
+}
+let selCell = null;   // ô đang được chọn: {todo} hoặc {id, date, s}
+function selStyle(){   // viền đặc quanh ô đang chọn (dựng bằng CSS nên vẫn còn sau mỗi lần render)
+  let st = document.getElementById('selStyle');
+  if(!st){ st = document.createElement('style'); st.id = 'selStyle'; document.head.appendChild(st); }
+  const q = v => String(v).replace(/["\\]/g, '');
+  const css = 'outline:2px solid var(--accent)!important;outline-offset:-2px';
+  st.textContent = !selCell ? '' : selCell.todo
+    ? `#sched [data-todo="${q(selCell.todo)}"]{${css}}`
+    : `#sched [data-id="${q(selCell.id)}"][data-date="${q(selCell.date)}"][data-s="${q(selCell.s)}"]{${css}}`;
+}
+function selectCell(el){
+  selCell = el.dataset.todo ? {todo:el.dataset.todo} : {id:el.dataset.id, date:el.dataset.date, s:el.dataset.s || ''};
+  selStyle();
+}
+function clearSel(){ if(!selCell) return; selCell = null; selStyle(); }
+function selEl(){
+  if(!selCell || selCell.todo) return null;
+  const q = v => String(v).replace(/["\\]/g, '');
+  return document.querySelector(`#sched [data-id="${q(selCell.id)}"][data-date="${q(selCell.date)}"][data-s="${q(selCell.s)}"]`);
+}
+function editCell(c){   // mở hộp chỉnh sửa của ô (chỉ gọi khi bấm nút ✎)
+  selectCell(c);
+  if(c.dataset.todo) return openTodo(c.dataset.todo);
+  openModal(c.dataset.id, c.dataset.date, undefined, (c.dataset.s && c.dataset.e) ? {start:c.dataset.s, end:c.dataset.e} : null);
 }
 function closeCtx(){ if(ctxMenu){ ctxMenu.remove(); ctxMenu = null; } }
 function openCtx(x, y, items){
@@ -5976,13 +5997,19 @@ $('#sched').addEventListener('click', e => { if(performance.now() < ctxSuppressU
 $('#sched').addEventListener('mouseover', e => { hoverEl = e.target; });
 $('#sched').addEventListener('mouseleave', () => { hoverEl = null; });
 document.addEventListener('pointerdown', e => { if(ctxMenu && !ctxMenu.contains(e.target)) closeCtx(); }, true);
+document.addEventListener('pointerdown', e => {   // bấm ra ngoài ô (khoảng trống, nút khác…) thì bỏ chọn ô
+  if(!selCell) return;
+  const c = e.target.closest && e.target.closest('.cell[data-id], .ag[data-id], [data-todo]');
+  if(c && c.querySelector(':scope>.editb')) return;
+  clearSel();
+}, true);
 window.addEventListener('blur', closeCtx);
 window.addEventListener('resize', closeCtx);
 document.addEventListener('scroll', closeCtx, true);
 document.addEventListener('keydown', e => {
   if(e.key === 'Escape'){
     if(ctxMenu){ e.preventDefault(); e.stopPropagation(); closeCtx(); return; }
-    if(cellClip && !document.querySelector('dialog[open]')) clearClip();
+    if(!document.querySelector('dialog[open]')){ if(cellClip) clearClip(); else clearSel(); }
     return;
   }
   if(!(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey) return;
@@ -5991,12 +6018,12 @@ document.addEventListener('keydown', e => {
   const a = document.activeElement;
   if(a && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable)) return;
   const src = (hoverEl && hoverEl.isConnected && hoverEl) || (a && a.closest && a.closest('#sched') ? a : null);
-  if(!src) return;
+  if(!src && !selCell) return;
   if(k === 'c'){
     if(String(window.getSelection()).trim()) return;   // đang bôi đen chữ: để trình duyệt tự sao chép như thường
-    const cell = src.closest(CELL_SEL);
+    const cell = (src && src.closest(CELL_SEL)) || selEl();
     if(cell && copyCellEl(cell)) e.preventDefault();
-  } else if(cellClip){
+  } else if(cellClip && src){
     const tg = pasteTarget(src);
     if(tg){ e.preventDefault(); pasteClip(tg); }
   }
