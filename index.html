@@ -2225,7 +2225,7 @@ img{-webkit-user-drag:none}
 .sheet .tl{padding:6px}
 .card{border-radius:var(--r-card)}
 @media (max-width:700px){
-  .app{padding:8px 10px}
+  .app{padding:8px 10px calc(132px + env(safe-area-inset-bottom,0px))}   /* chừa chỗ cho thanh tab dưới đáy + nút + nổi, để cuộn xuống cuối không bị che */
   .top{gap:6px;margin-bottom:8px}
   .below .card{padding:10px 12px}
 }
