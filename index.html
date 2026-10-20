@@ -219,7 +219,7 @@ button,[role=button],a,summary,label,select{touch-action:manipulation}
 /* agenda */
 .agenda{padding:6px 14px 14px}
 .ad{margin-top:14px}
-.ad h3{margin:0 0 6px;font-size:14px;display:flex;gap:8px;align-items:center}
+.ad h3{cursor:pointer;margin:0 0 6px;font-size:14px;display:flex;gap:8px;align-items:center}
 .ad h3 .tdy{background:var(--accent);color:var(--accent-ink);font-size:11px;padding:0 7px;border-radius:99px;font-weight:600}
 .ad .none{color:var(--muted);font-size:13px;padding:4px 0}
 .ag{display:grid;grid-template-columns:54px 1fr;gap:10px;padding:8px 10px;border-radius:9px;border:1px solid var(--line);border-left:4px solid var(--bd);background:var(--bgt);margin-bottom:6px;cursor:pointer}
@@ -416,6 +416,7 @@ button,[role=button],a,summary,label,select{touch-action:manipulation}
 .sheet th,.sheet td{border:1px solid var(--line);padding:0;vertical-align:middle}
 .sheet col.c0{width:116px}
 .sheet .wk th{background:#1e9b57;color:#fff;font-weight:700;padding:4px}
+.sheet .dn th[data-col],.sheet .dd th[data-col]{cursor:pointer}
 .sheet .dn th{font-weight:600;padding:8px 4px 2px;background:var(--surface);border-bottom:0}
 .sheet .dd th{font-weight:400;color:var(--muted);padding:2px 4px 8px;background:var(--surface);border-top:0;font-size:12px}
 .sheet .today{background:var(--accent-soft)!important;color:var(--accent)}
@@ -4440,13 +4441,13 @@ function tableHTML(occs){
   if(stacked){
     let h = `<div class="scroller"><table class="sheet stack-mode"><colgroup><col class="c0"><col><col><col><col><col><col><col></colgroup><thead>
       <tr class="wk"><th>Tuần</th><th colspan="7">${dmy(weekStart)}</th></tr>
-      <tr class="dn"><th></th>${days.map((d,i) => `<th class="${d===today?'today':''}">${DOW[i]}</th>`).join('')}</tr>
-      <tr class="dd"><th></th>${days.map(d => `<th class="${d===today?'today':''}">${dm(d)}</th>`).join('')}</tr></thead><tbody>`;
+      <tr class="dn"><th></th>${days.map((d,i) => `<th class="${d===today?'today':''}" data-col="${d}" title="Bấm để chọn cả cột (rồi Ctrl+V để dán)">${DOW[i]}</th>`).join('')}</tr>
+      <tr class="dd"><th></th>${days.map(d => `<th class="${d===today?'today':''}" data-col="${d}" title="Bấm để chọn cả cột (rồi Ctrl+V để dán)">${dm(d)}</th>`).join('')}</tr></thead><tbody>`;
     if(!hiddenTypes.has('__dl')){   /* luôn hiện hàng Deadline dù tuần không có deadline, để bố cục các tuần đồng nhất; chỉ ẩn khi tắt chip Deadline */
       h += `<tr class="dlrow"><th class="tl"><div class="tlw"><span class="tlt">DEADLINE</span></div></th>`;
       for(const d of days){
         const ds = dls.filter(t => t.due === d);
-        h += ds.length ? `<td class="dlc"><div class="stk">${ds.map(dlCellHTML).join('')}</div></td>` : '<td class="dlc"></td>';
+        h += ds.length ? `<td class="dlc" data-col="${d}"><div class="stk">${ds.map(dlCellHTML).join('')}</div></td>` : `<td class="dlc" data-col="${d}"></td>`;
       }
       h += '</tr>';
     }
@@ -4477,13 +4478,13 @@ function tableHTML(occs){
   const slots = [...map.values()].sort((a,b) => (query ? (slotBest.get(b.s+'|'+b.e) || 0) - (slotBest.get(a.s+'|'+a.e) || 0) : 0) || toMin(a.s)-toMin(b.s) || toMin(a.e)-toMin(b.e));   // đang tìm: dòng giờ chứa ô khớp nhất lên đầu
   let h = `<div class="scroller"><table class="sheet"><colgroup><col class="c0"><col><col><col><col><col><col><col></colgroup><thead>
     <tr class="wk"><th>Tuần</th><th colspan="7">${dmy(weekStart)}</th></tr>
-    <tr class="dn"><th></th>${days.map((d,i) => `<th class="${d===today?'today':''}">${DOW[i]}</th>`).join('')}</tr>
-    <tr class="dd"><th></th>${days.map(d => `<th class="${d===today?'today':''}">${dm(d)}</th>`).join('')}</tr></thead><tbody>`;
+    <tr class="dn"><th></th>${days.map((d,i) => `<th class="${d===today?'today':''}" data-col="${d}" title="Bấm để chọn cả cột (rồi Ctrl+V để dán)">${DOW[i]}</th>`).join('')}</tr>
+    <tr class="dd"><th></th>${days.map(d => `<th class="${d===today?'today':''}" data-col="${d}" title="Bấm để chọn cả cột (rồi Ctrl+V để dán)">${dm(d)}</th>`).join('')}</tr></thead><tbody>`;
   if(!hiddenTypes.has('__dl')){   /* luôn hiện hàng Deadline dù tuần không có deadline */
     h += `<tr class="dlrow"><th class="tl"><div class="tlw"><span class="tlt">DEADLINE</span></div></th>`;
     for(const d of days){
       const ds = dls.filter(t => t.due === d);
-      h += ds.length ? `<td class="dlc"><div class="stk">${ds.map(dlCellHTML).join('')}</div></td>` : '<td class="dlc"></td>';
+      h += ds.length ? `<td class="dlc" data-col="${d}"><div class="stk">${ds.map(dlCellHTML).join('')}</div></td>` : `<td class="dlc" data-col="${d}"></td>`;
     }
     h += '</tr>';
   }
@@ -4518,7 +4519,7 @@ function agendaHTML(occs){
     const list = occs.filter(o => o.date === date).sort((a,b) => toMin(a.ev.start)-toMin(b.ev.start));
     if(query && !list.length && !shownDeadlines().some(t => t.due === date)) continue;   // đang tìm: bỏ hẳn ngày không có kết quả
     shownDays++;
-    html += `<div class="ad" data-date="${date}"><h3>${DOW[i]}, ${dm(date)}${date===today?'<span class="tdy">Hôm nay</span>':''}</h3>`;
+    html += `<div class="ad" data-date="${date}"><h3 title="Bấm để chọn cả ngày (rồi Ctrl+V để dán)">${DOW[i]}, ${dm(date)}${date===today?'<span class="tdy">Hôm nay</span>':''}</h3>`;
     const dls = shownDeadlines().filter(t => t.due === date);
     if(!list.length && !dls.length) html += '<div class="none">Không có lịch</div>';
     const items = [...list.map(o => ({o, m:toMin(o.ev.start)})), ...dls.map(t => ({t, m:t.pin ? -1 : t.dueTime ? toMin(t.dueTime) : 1440}))].sort((a,b) => (query ? (b.t ? dlScore(b.t) : evScore(b.o.ev)) - (a.t ? dlScore(a.t) : evScore(a.o.ev)) : 0) || a.m - b.m);   // đang tìm: khớp nhất lên đầu ngày; deadline ghim lên đầu ngày;   // trùng giờ thì sự kiện đứng trước deadline
@@ -5543,19 +5544,22 @@ function onSchedClick(target){
     return;
   }
   const eb = target.closest('[data-edit]'); if(eb && eb.parentElement) return editCell(eb.parentElement);
+  const ch = target.closest('th[data-col]'); if(ch) return selectCol(ch.dataset.col);   // bấm tiêu đề cột = chọn cả cột
   const dl = target.closest('[data-todo]'); if(dl) return dl.querySelector(':scope>.editb') ? selectCell(dl) : openTodo(dl.dataset.todo);
   const el = target.closest('[data-id]');
   if(el && el.querySelector(':scope>.editb')) return selectCell(el);
   if(el){ const slot = (el.dataset.s && el.dataset.e) ? {start:el.dataset.s, end:el.dataset.e} : null; return openModal(el.dataset.id, el.dataset.date, undefined, slot); }
   const td = target.closest('td.empty-c');
   if(td) return openModal(null, td.dataset.date, {start:td.dataset.s, end:td.dataset.e});
+  const ds = target.closest('td.day-stack'); if(ds) return selectCol(ds.dataset.date);
+  const ad = target.closest('.ad[data-date]'); if(ad) return selectCol(ad.dataset.date);   // Danh sách (không có cột): bấm tiêu đề / chỗ trống của ngày = chọn cả ngày   // chế độ thu gọn: bấm chỗ trống của cột = chọn cột
 }
 $('#sched').addEventListener('click', e => {
   const pn = e.target.closest('[data-pin]');
   if(pn){ clearTimeout(clickTimer); togglePin(pn.dataset.pin); return; }
   const t = e.target;
   clearTimeout(clickTimer);
-  if(t.closest('[data-edit]') || t.closest('[data-id],[data-todo]')?.querySelector(':scope>.editb')){ onSchedClick(t); return; }   // chọn ô / bấm ✎: phản hồi tức thì
+  if(t.closest('[data-edit]') || t.closest('[data-id],[data-todo]')?.querySelector(':scope>.editb') || t.closest('th[data-col]') || ((t.closest('td.day-stack') || t.closest('.ad[data-date]')) && !t.closest('[data-id],[data-todo]'))){ onSchedClick(t); return; }   // chọn ô / bấm ✎: phản hồi tức thì
   clickTimer = setTimeout(() => onSchedClick(t), 230);
 });
 async function copyText(text){
@@ -5899,7 +5903,7 @@ async function moveOcc(id, from, to, s, e, fs, fe){
 
 /* ===== Sao chép / dán ô lịch (Bảng + Danh sách) =====
    Chuột phải (hoặc chạm giữ trên điện thoại) vào ô → “Sao chép ô lịch”.
-   Chuột phải vào ô trống / khung giờ / ngày → “Dán vào …”. Phím tắt: Ctrl+C / Ctrl+V chỉ hoạt động khi đã chọn một ô (bấm vào ô); chuột rê ở đâu cũng không ảnh hưởng.
+   Chuột phải vào ô trống / khung giờ / ngày → “Dán vào …”. Phím tắt: Ctrl+C / Ctrl+V chỉ hoạt động khi đã chọn một ô (bấm vào ô) hoặc một cột (Bảng: bấm tiêu đề thứ/ngày) / một ngày (Danh sách: bấm tiêu đề ngày hoặc chỗ trống); Ctrl+V dán vào ngày đó, giữ khung giờ gốc; chuột rê ở đâu cũng không ảnh hưởng.
    Bản dán luôn là lịch MỘT LẦN (không lặp) ở đúng ngày + khung giờ được chọn; ô gốc không bị đổi. Dùng “Bỏ sao chép” để hủy trạng thái sao chép. */
 let cellClip = null, ctxMenu = null, ctxSuppressUntil = 0;
 const CLIP_DROP = ['id','skip','skipSlots','cancelledSlots','series','overrideOf','overrideDate','overrideStart','overrideEnd'];
@@ -5938,7 +5942,10 @@ function selStyle(){   // viền đặc quanh ô đang chọn (dựng bằng CSS
   if(!st){ st = document.createElement('style'); st.id = 'selStyle'; document.head.appendChild(st); }
   const q = v => String(v).replace(/["\\]/g, '');
   const css = 'outline:2px solid var(--accent)!important;outline-offset:-2px';
-  st.textContent = !selCell ? '' : selCell.todo
+  const col = selCell && selCell.col ? q(selCell.col) : '', cl = 'inset 2px 0 0 var(--accent),inset -2px 0 0 var(--accent)';   // cả cột: chỉ 4 viền ngoài cùng — trái/phải chạy dọc cột, viền trên ở hàng thứ, viền dưới ở ô cuối cùng của cột
+  st.textContent = !selCell ? '' : selCell.col
+    ? `#sched [data-col="${col}"],#sched td.slot[data-date="${col}"]{box-shadow:${cl}!important}#sched .ad[data-date="${col}"]{outline:2px solid var(--accent);outline-offset:6px;border-radius:8px}#sched .sheet .dn th[data-col="${col}"]{box-shadow:${cl},inset 0 2px 0 var(--accent)!important}#sched .sheet tbody tr:last-child :is(td.slot[data-date="${col}"],td.dlc[data-col="${col}"]){box-shadow:${cl},inset 0 -2px 0 var(--accent)!important}`
+    : selCell.todo
     ? `#sched [data-todo="${q(selCell.todo)}"]{${css}}`
     : `#sched [data-id="${q(selCell.id)}"][data-date="${q(selCell.date)}"][data-s="${q(selCell.s)}"]{${css}}`;
 }
@@ -5946,9 +5953,10 @@ function selectCell(el){
   selCell = el.dataset.todo ? {todo:el.dataset.todo} : {id:el.dataset.id, date:el.dataset.date, s:el.dataset.s || ''};
   selStyle();
 }
+function selectCol(d){ if(!d) return; selCell = {col:d}; selStyle(); }   // chọn cả cột ngày: Ctrl+V dán vào ngày này
 function clearSel(){ if(!selCell) return; selCell = null; selStyle(); }
 function selEl(){
-  if(!selCell || selCell.todo) return null;
+  if(!selCell || selCell.todo || selCell.col) return null;
   const q = v => String(v).replace(/["\\]/g, '');
   return document.querySelector(`#sched [data-id="${q(selCell.id)}"][data-date="${q(selCell.date)}"][data-s="${q(selCell.s)}"]`);
 }
@@ -6022,9 +6030,15 @@ document.addEventListener('keydown', e => {
   const a = document.activeElement;
   if(a && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable)) return;
   /* Chỉ làm việc với ô ĐANG ĐƯỢC CHỌN (bấm vào ô). Rê chuột không chọn ô; chưa chọn ô nào thì Ctrl+C / Ctrl+V không làm gì. */
+  if(selCell && selCell.col){   // đang chọn cả cột: Ctrl+V dán vào ngày của cột (giữ nguyên khung giờ của ô đã sao chép)
+    const colEl = [...document.querySelectorAll('#sched th[data-col], #sched .ad[data-date]')].find(x => (x.dataset.col || x.dataset.date) === selCell.col);
+    if(!colEl || !colEl.getClientRects().length){ clearSel(); return; }   // cột / ngày đã chọn không còn trên màn hình (đã đổi tuần / đổi chế độ xem / sang trang khác): bỏ chọn, không dán vào ngày đang ẩn
+    if(k === 'v' && cellClip){ e.preventDefault(); pasteClip({date:selCell.col, s:'', e:''}); }
+    return;
+  }
   if(!selCell || selCell.todo) return;   // chưa chọn ô, hoặc đang chọn deadline: không có ô lịch để chép/dán
   const src = selEl();
-  if(!src) return;
+  if(!src || !src.getClientRects().length) return;   // ô đã chọn không còn hiển thị (đổi tuần / sang trang khác): không chép/dán
   if(k === 'c'){
     if(String(window.getSelection()).trim()) return;   // đang bôi đen chữ: để trình duyệt tự sao chép như thường
     const cell = src.closest(CELL_SEL);
