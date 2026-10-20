@@ -805,6 +805,15 @@ fieldset.rep.tm .fgrid{gap:14px 12px}
 .cpy:hover{border-color:var(--accent);color:var(--accent);opacity:1}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);max-width:90vw;background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .15s;z-index:200}
 .toast.on{opacity:1}
+/* ===== Sao chép / dán ô lịch ===== */
+.ctxm{position:fixed;z-index:6000;min-width:210px;max-width:min(320px,92vw);padding:5px;border-radius:12px;background:var(--surface);color:var(--ink);border:1px solid var(--line);box-shadow:0 12px 32px rgba(0,0,0,.28);font-size:13.5px;animation:dlgIn .12s ease}
+.ctxm button{display:flex;align-items:center;gap:8px;width:100%;padding:9px 10px;border:0;border-radius:8px;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.ctxm button:hover:not(:disabled),.ctxm button:focus-visible{background:var(--accent-soft);outline:none}
+.ctxm button:disabled{opacity:.45;cursor:not-allowed}
+.ctxm hr{border:0;border-top:1px solid var(--line-soft);margin:4px 2px}
+.ctxm .ctxh{padding:5px 10px 6px;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media print{.ctxm{display:none!important}}
+
 /* thanh đề xuất cài web thành ứng dụng (PWA) */
 .pwaBar{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:150;width:calc(100% - 24px);max-width:460px;display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.28);animation:pwaIn .11s ease-out}
 .pwaBar[hidden]{display:none}
@@ -4360,15 +4369,9 @@ const dlChips = t => chipsHTML(getLinks(t).map(l => ({url:l.url, label:l.name ||
 function linkHTML(ev){ return evChips(ev); }
 const svShow = () => '';
 
-/* nội dung khi sao chép ô */
-function cellCopyText(ev){
-  const tiet = tietOf(ev), links = getLinks(ev);
-  return [ev.code, ev.title, `🕒 ${ev.start} - ${ev.end}${tiet ? ` ${tiet}` : ''}`,
-    ev.room && `📍 ${ev.room}`, ev.teacher && `👤 ${ev.teacher}`, svShow(ev), learnerTxt(ev) && `🎓 ${learnerTxt(ev)}`, ev.contact && `📞 ${ev.contact}`, ev.fee && `💰 ${ev.fee}`, ...links.map(l => `📄 ${l.name ? l.name + ': ' : ''}${l.url}`), ev.note && `📝 ${ev.note}`].filter(Boolean).join('\n');
-}
 function copyBtns(ev){
   const btn = (kind, label, ttl, text) => `<button type="button" class="cpy" data-copy="${kind}" data-text="${esc(encodeURIComponent(text))}" title="${esc(ttl)}" aria-label="${esc(ttl)}">${label}</button>`;
-  return `<div class="cpyw"><span class="cpyb">${btn('cell', '📋', 'Sao chép nội dung ô', cellCopyText(ev))}${ev.code ? btn('code', 'Mã', 'Sao chép mã môn học: ' + ev.code, ev.code) : ''}</span></div>`;
+  return ev.code ? `<div class="cpyw"><span class="cpyb">${btn('code', 'Mã', 'Sao chép mã môn học: ' + ev.code, ev.code)}</span></div>` : '';
 }
 function dlTitleAttr(t){
   return ['⏰ Hạn chót ' + niceDate(t.due) + (t.dueTime ? ' · ' + t.dueTime : ''), t.text, t.body].filter(Boolean).join('\n');
@@ -4505,7 +4508,7 @@ function agendaHTML(occs){
     const list = occs.filter(o => o.date === date).sort((a,b) => toMin(a.ev.start)-toMin(b.ev.start));
     if(query && !list.length && !shownDeadlines().some(t => t.due === date)) continue;   // đang tìm: bỏ hẳn ngày không có kết quả
     shownDays++;
-    html += `<div class="ad"><h3>${DOW[i]}, ${dm(date)}${date===today?'<span class="tdy">Hôm nay</span>':''}</h3>`;
+    html += `<div class="ad" data-date="${date}"><h3>${DOW[i]}, ${dm(date)}${date===today?'<span class="tdy">Hôm nay</span>':''}</h3>`;
     const dls = shownDeadlines().filter(t => t.due === date);
     if(!list.length && !dls.length) html += '<div class="none">Không có lịch</div>';
     const items = [...list.map(o => ({o, m:toMin(o.ev.start)})), ...dls.map(t => ({t, m:t.pin ? -1 : t.dueTime ? toMin(t.dueTime) : 1440}))].sort((a,b) => (query ? (b.t ? dlScore(b.t) : evScore(b.o.ev)) - (a.t ? dlScore(a.t) : evScore(a.o.ev)) : 0) || a.m - b.m);   // đang tìm: khớp nhất lên đầu ngày; deadline ghim lên đầu ngày;   // trùng giờ thì sự kiện đứng trước deadline
@@ -5555,17 +5558,17 @@ async function copyText(text){
   }catch(_){ return false; }
 }
 let toastEl = null, toastT = 0;
-function toast(msg){
+function toast(msg, ms = 1800){
   if(!toastEl){ toastEl = document.createElement('div'); toastEl.className = 'toast'; toastEl.setAttribute('role','status'); document.body.appendChild(toastEl); }
   toastEl.textContent = msg; toastEl.classList.add('on');
-  clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove('on'), 1800);
+  clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove('on'), ms);
 }
 async function doCopy(btn){
   let text = btn.dataset.text || '';
   try{ text = decodeURIComponent(text); }catch(_){}
   if(!text) return;
   const ok = await copyText(text);
-  toast(ok ? (btn.dataset.copy === 'code' ? `Đã sao chép mã: ${text}` : 'Đã sao chép nội dung ô') : 'Không sao chép được, hãy bôi đen chữ rồi nhấn Ctrl+C');
+  toast(ok ? `Đã sao chép mã: ${text}` : 'Không sao chép được, hãy bôi đen chữ rồi nhấn Ctrl+C');
 }
 $('#sched').addEventListener('keydown', e => {
   if((e.key === 'Enter' || e.key === ' ') && e.target.dataset && e.target.dataset.todo){ e.preventDefault(); openTodo(e.target.dataset.todo); return; }
@@ -5889,6 +5892,115 @@ async function moveOcc(id, from, to, s, e, fs, fe){
   save(); render();
 }
 
+
+/* ===== Sao chép / dán ô lịch (Bảng + Danh sách) =====
+   Chuột phải (hoặc chạm giữ trên điện thoại) vào ô → “Sao chép ô lịch”.
+   Chuột phải vào ô trống / khung giờ / ngày → “Dán vào …”. Phím tắt: Ctrl+C / Ctrl+V (trỏ chuột đặt trên ô cần chép / nơi cần dán).
+   Bản dán luôn là lịch MỘT LẦN (không lặp) ở đúng ngày + khung giờ được chọn; ô gốc không bị đổi. Esc hoặc “Bỏ sao chép” để hủy. */
+let cellClip = null, ctxMenu = null, ctxSuppressUntil = 0, hoverEl = null;
+const CLIP_DROP = ['id','skip','skipSlots','cancelledSlots','series','overrideOf','overrideDate','overrideStart','overrideEnd'];
+const CELL_SEL = '.cell[data-id], .ag[data-id]';
+function clipStyle(){   // viền nét đứt quanh ô đang được sao chép (dựng bằng CSS nên vẫn còn sau mỗi lần render)
+  let st = document.getElementById('clipStyle');
+  if(!st){ st = document.createElement('style'); st.id = 'clipStyle'; document.head.appendChild(st); }
+  const q = v => String(v).replace(/["\\]/g, '');
+  st.textContent = cellClip ? `.cell[data-id="${q(cellClip.srcId)}"][data-date="${q(cellClip.srcDate)}"],.ag[data-id="${q(cellClip.srcId)}"][data-date="${q(cellClip.srcDate)}"]{outline:2px dashed var(--accent);outline-offset:-3px}` : '';
+}
+function copyCellEl(el){
+  const ev = state.events.find(x => x.id === el.dataset.id); if(!ev) return false;
+  const ptd = el.closest('td');
+  const s = el.dataset.s || (ptd && ptd.dataset.s) || ev.start, e = el.dataset.e || (ptd && ptd.dataset.e) || ev.end;
+  const data = JSON.parse(JSON.stringify(ev));
+  CLIP_DROP.forEach(k => delete data[k]);
+  Object.assign(data, {repeat:'none', until:'', days:[], times:null, status:'normal', start:s, end:e});
+  cellClip = {data, srcId:ev.id, srcDate:el.dataset.date};
+  clipStyle();
+  toast(`Đã sao chép “${data.title || 'ô lịch'}”`);
+  return true;
+}
+function clearClip(){ if(!cellClip) return; cellClip = null; clipStyle(); toast('Đã bỏ sao chép'); }
+function pasteTarget(t){   // xác định ngày + khung giờ nơi dán từ phần tử được chuột phải / trỏ tới
+  if(!t || !t.closest) return null;
+  const td = t.closest('td.slot');
+  if(td && td.dataset.date) return td.classList.contains('day-stack') ? {date:td.dataset.date, s:'', e:''} : {date:td.dataset.date, s:td.dataset.s || '', e:td.dataset.e || ''};
+  const ad = t.closest('.ad[data-date]');
+  return ad ? {date:ad.dataset.date, s:'', e:''} : null;
+}
+function pasteClip(tg){
+  if(!cellClip) return toast('Chưa sao chép ô nào');
+  if(!tg) return;
+  const d = JSON.parse(JSON.stringify(cellClip.data));
+  if(tg.s && tg.e){ d.start = tg.s; d.end = tg.e; }
+  state.events.push({skip:[], ...d, id:uid(), date:tg.date});
+  save(); render();
+  toast(`Đã dán “${d.title || 'ô lịch'}” vào ${DOW[wd(tg.date)]} ${dm(tg.date)} · ${d.start}–${d.end}`, 2600);
+}
+function closeCtx(){ if(ctxMenu){ ctxMenu.remove(); ctxMenu = null; } }
+function openCtx(x, y, items){
+  closeCtx();
+  const m = document.createElement('div'); m.className = 'ctxm'; m.setAttribute('role', 'menu');
+  m.innerHTML = items.map((it, i) => it.sep ? '<hr>' : it.head ? `<div class="ctxh">${it.html}</div>` : `<button type="button" role="menuitem" data-i="${i}"${it.off ? ' disabled' : ''}>${it.html}</button>`).join('');
+  m.style.left = '0px'; m.style.top = '0px';
+  document.body.appendChild(m);
+  const r = m.getBoundingClientRect();
+  m.style.left = Math.max(6, Math.min(x, innerWidth - r.width - 6)) + 'px';
+  m.style.top = Math.max(6, Math.min(y, innerHeight - r.height - 6)) + 'px';
+  m.addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if(!b || b.disabled) return; const it = items[+b.dataset.i]; closeCtx(); it.run(); });
+  ctxMenu = m;
+  const first = m.querySelector('button:not(:disabled)'); if(first) first.focus({preventScroll:true});
+}
+function schedMenu(t, x, y){
+  const cell = t.closest(CELL_SEL), tg = pasteTarget(t), items = [];
+  if(cell) items.push({html:'📋 Sao chép', run:() => copyCellEl(cell)});
+  if(tg) items.push({html:'📥 Dán', off:!cellClip, run:() => pasteClip(tg)});
+  if(cellClip){ items.push({sep:true}); items.push({html:'✖ Bỏ sao chép', run:clearClip}); }
+  if(!cell && !tg) return false;
+  openCtx(x, y, items);
+  return true;
+}
+$('#sched').addEventListener('contextmenu', e => {
+  if(e.target.closest('a, input, textarea, select, .fx-grab')) return;   // giữ menu mặc định cho liên kết / ô nhập
+  if(schedMenu(e.target, e.clientX, e.clientY)){ e.preventDefault(); clearTimeout(clickTimer); if(e.pointerType === 'touch') ctxSuppressUntil = performance.now() + 700; }
+});
+/* màn hình cảm ứng: chạm giữ ~0,5 giây để mở cùng menu (iOS không tự bắn contextmenu) */
+let lpTimer = 0, lpX = 0, lpY = 0;
+$('#sched').addEventListener('pointerdown', e => {
+  clearTimeout(lpTimer);
+  if(e.pointerType !== 'touch' || e.target.closest('a, button, input, textarea, select, .fx-grab')) return;
+  lpX = e.clientX; lpY = e.clientY; const t = e.target;
+  lpTimer = setTimeout(() => { if(schedMenu(t, lpX, lpY)){ ctxSuppressUntil = performance.now() + 700; clearTimeout(clickTimer); } }, 520);
+});
+$('#sched').addEventListener('pointermove', e => { if(lpTimer && Math.hypot(e.clientX - lpX, e.clientY - lpY) > 10){ clearTimeout(lpTimer); lpTimer = 0; } });
+['pointerup', 'pointercancel'].forEach(n => $('#sched').addEventListener(n, () => { clearTimeout(lpTimer); lpTimer = 0; }));
+$('#sched').addEventListener('click', e => { if(performance.now() < ctxSuppressUntil){ e.stopImmediatePropagation(); e.preventDefault(); } }, true);   // nhả tay sau khi chạm giữ không được mở hộp thoại sửa
+$('#sched').addEventListener('mouseover', e => { hoverEl = e.target; });
+$('#sched').addEventListener('mouseleave', () => { hoverEl = null; });
+document.addEventListener('pointerdown', e => { if(ctxMenu && !ctxMenu.contains(e.target)) closeCtx(); }, true);
+window.addEventListener('blur', closeCtx);
+window.addEventListener('resize', closeCtx);
+document.addEventListener('scroll', closeCtx, true);
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape'){
+    if(ctxMenu){ e.preventDefault(); e.stopPropagation(); closeCtx(); return; }
+    if(cellClip && !document.querySelector('dialog[open]')) clearClip();
+    return;
+  }
+  if(!(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey) return;
+  const k = String(e.key).toLowerCase(); if(k !== 'c' && k !== 'v') return;
+  if(document.querySelector('dialog[open]')) return;
+  const a = document.activeElement;
+  if(a && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable)) return;
+  const src = (hoverEl && hoverEl.isConnected && hoverEl) || (a && a.closest && a.closest('#sched') ? a : null);
+  if(!src) return;
+  if(k === 'c'){
+    if(String(window.getSelection()).trim()) return;   // đang bôi đen chữ: để trình duyệt tự sao chép như thường
+    const cell = src.closest(CELL_SEL);
+    if(cell && copyCellEl(cell)) e.preventDefault();
+  } else if(cellClip){
+    const tg = pasteTarget(src);
+    if(tg){ e.preventDefault(); pasteClip(tg); }
+  }
+});
 
 /* ghim / bỏ ghim một deadline (dùng chung cho Bảng, Danh sách, khung Deadline và trang Thông báo) */
 function togglePin(id){ const t = state.todos.find(x => x.id === id); if(!t) return; t.pin = !t.pin; save(); render(); }
