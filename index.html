@@ -2405,6 +2405,101 @@ input,select,textarea,#dlg input,#dlg select,#dlg textarea{transition:border-col
   .hubFoot{padding:10px 16px calc(12px + env(safe-area-inset-bottom,0px));border-radius:0}
   .hubFoot .btn{flex:1;justify-content:center}
 }
+/* Nút chuyển trang Bảng / Danh sách / Công việc / Lớp: chỉ icon (cả điện thoại lẫn máy tính) */
+:root{--i-table:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3.5' y='5' width='17' height='15.5' rx='3'/%3E%3Cpath d='M3.5 10h17M8 3v4M16 3v4'/%3E%3C/svg%3E"); --i-agenda:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6h11M9 12h11M9 18h11'/%3E%3Ccircle cx='4.5' cy='6' r='1' fill='black'/%3E%3Ccircle cx='4.5' cy='12' r='1' fill='black'/%3E%3Ccircle cx='4.5' cy='18' r='1' fill='black'/%3E%3C/svg%3E"); --i-now:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M8 12.5l2.8 2.8L16.5 9.5'/%3E%3C/svg%3E"); --i-fixed:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='10' height='4.5' rx='2.25'/%3E%3Crect x='8' y='9.75' width='13' height='4.5' rx='2.25'/%3E%3Crect x='5' y='15.5' width='10' height='4.5' rx='2.25'/%3E%3C/svg%3E");}
+.tools #viewSeg button{font-size:0!important;line-height:0;gap:0!important;display:inline-flex;align-items:center;justify-content:center;padding:0 14px!important}
+.tools #viewSeg button::before{content:"";display:block;flex:none;width:20px;height:20px;background:currentColor;-webkit-mask:var(--ic) center/contain no-repeat;mask:var(--ic) center/contain no-repeat}
+#viewSeg [data-v=table]::before{--ic:var(--i-table)}
+#viewSeg [data-v=agenda]::before{--ic:var(--i-agenda)}
+#viewSeg [data-v=now]::before{--ic:var(--i-now)}
+#viewSeg [data-v=fixed]::before{--ic:var(--i-agenda)}
+@media (max-width:700px){
+  .tools #viewSeg button{padding:0!important}
+  .tools #viewSeg button::before{width:26px;height:26px}
+}
+/* Công tắc Bảng / Danh sách: nằm chung hàng với nút Tag, không chiếm thêm một hàng */
+#modeBar{flex:none;display:inline-flex;align-items:center;justify-content:center;width:38px;height:28px;margin:0;padding:0;border-radius:999px;border:1px solid var(--accent);background:var(--accent-soft);color:var(--accent);cursor:pointer;transition:background-color var(--mo,.18s) ease,color var(--mo,.18s) ease}
+#modeBar:hover{background:color-mix(in srgb,var(--accent) 18%,var(--accent-soft))}
+#modeBar:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#modeBar svg{display:block}
+#modeBar[data-cur="agenda"] .mb-tbl,#modeBar[data-cur="table"] .mb-ag{display:none}
+/* ô tổng quan có số 0 cũng phải có hiệu ứng di chuột như các ô khác (luật nền của ô 0 trước đây đè mất :hover) */
+#nowBar.page .np-tile.zero:not(.on):hover{background:var(--line-soft)}
+.np-bk-r{display:inline-flex;align-items:center;gap:10px}
+.np-bk .np-clr{margin:0;padding:0 4px;text-transform:none;letter-spacing:0;font-size:inherit;line-height:inherit;font-weight:600;cursor:pointer}
+#tagToggle,#npTagToggle{height:28px;min-width:38px;padding:0 10px;justify-content:center;gap:5px}
+/* điện thoại: hàng tag ở Công việc cũng là một hàng cuộn ngang, y như hàng tag ở Lịch */
+@media (max-width:700px){
+  .np-tagf{flex-wrap:nowrap;overflow-x:auto;margin:0 -10px;padding:2px 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .np-tagf::-webkit-scrollbar{display:none}
+  .np-tagf .lg{flex:0 0 auto}
+}
+/* Bảng tuần: bo hai góc trên theo khung thẻ để thanh "Tuần" không nhô ra ngoài góc bo;
+   viền trái hàng DEADLINE vẽ bên trong ô (không còn lấn ra ngoài mép bảng) */
+#sched>.scroller{margin:-1px -1px 0;border-radius:var(--r-card,14px) var(--r-card,14px) 0 0}   /* thanh "Tuần" phủ luôn lên viền của khung */
+.sheet tr:not(.wk)>:first-child{box-shadow:inset 1px 0 0 var(--line-soft,var(--line))}
+.sheet tr:not(.wk)>:last-child{box-shadow:inset -1px 0 0 var(--line-soft,var(--line))}
+.sheet .dlrow th.tl{border-left:1px solid var(--line);box-shadow:inset 4px 0 0 var(--dl)}
+.sheet{border-style:hidden}   /* bỏ viền ngoài của bảng: viền của thẻ là đường bao duy nhất, thanh "Tuần" sát khít vào khung */
+.sheet{min-width:min(700px,100%)}   /* khổ vừa: bảng co vừa khít khung, không tràn vài px làm lệch cột Chủ Nhật */
+
+/* ===== Deadline gọn hơn: ô lọc nhỏ dạng viên thuốc, gộp chung một hàng với nhóm Tất cả / Trong tuần ===== */
+#nowBar.page .np-ctl{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin:0 0 2px}
+#nowBar.page .np-dlcol .np-tiles{display:flex;flex-wrap:wrap;gap:6px;margin:0}
+#nowBar.page .np-dlcol .np-tile,#nowBar.page .np-dlcol .np-tile.zero:not(.on){flex-direction:row;align-items:center;justify-content:center;gap:6px;height:28px;padding:0 11px;border-radius:99px;text-align:left}
+#nowBar.page .np-dlcol .np-tile .np-tl{order:1;max-width:none;font-size:12.5px;font-weight:600;color:var(--ink)}
+#nowBar.page .np-dlcol .np-tile .np-tn{order:2;font-size:12px;font-weight:700}
+#nowBar.page .np-dlcol .np-tile.zero:not(.on) .np-tl{color:var(--muted)}
+#nowBar.page .np-dlcol .np-filters{margin-left:auto;justify-content:flex-end;gap:6px}
+#nowBar.page .np-dlcol .np-tabs{padding:2px}
+#nowBar.page .np-dlcol .np-tabs button{height:26px;padding:0 10px;font-size:12px}
+#nowBar.page .np-quick .np-qt,#nowBar.page .np-quick .np-qd{height:36px}
+@media (min-width:701px){
+  #nowBar.page .np-dlcol .np-dl{padding:8px 8px}
+  #nowBar.page .np-dlcol .np-bk{padding:10px 8px 4px}
+}
+
+/* số đếm và chữ của ô lọc: cùng cỡ chữ, cùng chiều cao dòng, căn giữa theo chiều dọc */
+#nowBar.page .np-dlcol .np-tile .np-tl,#nowBar.page .np-dlcol .np-tile .np-tn{font-size:12.5px;line-height:1.25;height:auto;display:block;align-self:center;overflow:visible;margin:0;padding:0}
+#nowBar.page .np-dlcol .np-tile .np-tn{font-weight:600}
+
+/* 4 ô thống kê mục Lịch: số và chữ cùng cỡ, cùng chiều cao dòng, xếp ngang và căn giữa theo chiều dọc (cả desktop lẫn mobile) */
+.stat .st-in{flex-direction:row;align-items:center;justify-content:center;gap:6px;line-height:1.25}
+.stat b,.stat span{font-size:15px;line-height:1.25;margin:0;padding:0}
+.stat b{font-weight:700}
+
+/* 4 ô thống kê: dùng bộ màu giống bản mobile ở mọi kích thước màn hình (mỗi ô một tông màu) */
+.stat{--sc:var(--accent);background:color-mix(in srgb,var(--sc) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--sc) 32%,var(--line));border-radius:12px}
+.stat:nth-child(2){--sc:var(--soon-color)}
+.stat.bad{--sc:var(--cancel-bd)}
+.stat.warn{--sc:var(--warn)}
+.stat b{color:var(--sc);font-weight:800}
+.stat:nth-child(2) b{color:var(--soon-text)}
+.stat span{font-weight:500}
+
+/* nút lịch (chọn ngày) cạnh Hôm nay: bỏ hiệu ứng, sửa lỗi nút bị tụt xuống khi bấm
+   (trước đây lúc bấm, quy tắc chung của nút ghi đè transform dùng để căn giữa làm nút nhảy lệch) */
+.dpw>.dpb{top:0;bottom:0;margin:auto 0;transform:none;transition:none}
+.dpw>.dpb:active,.nav .dpw>.dpb:active{transform:none;opacity:1;scale:none}
+:root .nav .dpw>.dpb:hover{background:var(--line-soft);color:var(--ink)}
+
+/* thẻ lớn "Đang diễn ra" / "Tiếp theo" ở Công việc: tag (ICPC...) vắt ngang viền trên, góc phải, giống ô ở mục Lịch */
+#nowBar .np-card>.ctag{top:-6px;right:10px}
+#nowBar.page .np-card.live:has(>.ctag),#nowBar.page .np-card.next:has(>.ctag){padding-top:14px;margin-top:8px}
+
+/* trạng thái "Quá hạn" của deadline ở mục Lịch (Bảng + Danh sách): đỏ đậm hơn "Chưa hoàn thành" để dễ phân biệt */
+.dlcell .dlst-in .chip.st-late,.ag.dl .tag.dl.late:not(.ok){background:color-mix(in srgb,var(--cancel-bd) 62%,#000);border-color:color-mix(in srgb,var(--cancel-bd) 62%,#000);color:#fff;font-weight:800}
+
+/* Công việc > Deadline: "Quá hạn ... ngày" / "còn ..." thành viên thuốc có màu nổi bật */
+#nowBar.page .np-dl .np-meta b.cd{display:inline-flex;align-items:center;padding:1px 9px;border-radius:99px;font-size:12px;font-weight:700;line-height:1.5;background:color-mix(in srgb,var(--ink) 9%,transparent);color:var(--ink)}
+#nowBar.page .np-dl.bk-week .np-meta b.cd{background:var(--accent-soft);color:var(--accent)}
+#nowBar.page .np-dl.bk-today .np-meta b.cd{background:color-mix(in srgb,var(--warn) 24%,transparent);color:var(--warn)}
+#nowBar.page .np-dl .np-meta b.cd.late{background:var(--cancel-bd);color:#fff}
+
+/* Lịch > Deadline: 3 ô lọc chọn nhiều (Quá hạn / Chưa hoàn thành / Đã hoàn thành) dùng đúng khung của "Tất cả / Trong tuần" (#todoTabs); chỉ thêm nowrap để luôn nằm 1 hàng và hiện đủ chữ */
+#todoStatus.tabs{flex-wrap:nowrap}
+#todoStatus.tabs button{white-space:nowrap;min-width:auto}
+@media (max-width:350px){#todoStatus.tabs button{padding:0 4px;font-size:10.5px}}
 </style>
 </head>
 <body>
@@ -2426,7 +2521,7 @@ input,select,textarea,#dlg input,#dlg select,#dlg textarea{transition:border-col
         <span class="q-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="2"/><line x1="15" y1="15" x2="20" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
         <input type="search" id="q" placeholder="Tìm tên, địa điểm, người phụ trách…" aria-label="Tìm lịch">
       </div>
-      <div class="seg" id="viewSeg"><span class="seg-ind" id="viewSegInd" aria-hidden="true"></span><button data-v="table">Bảng</button><button data-v="agenda">Danh sách</button><button data-v="now">Công việc</button><button data-v="fixed">Lớp</button></div>
+      <div class="seg" id="viewSeg"><span class="seg-ind" id="viewSegInd" aria-hidden="true"></span><button data-v="table" title="Lịch" aria-label="Lịch">Lịch</button><button data-v="now" title="Công việc" aria-label="Công việc">Công việc</button><button data-v="fixed" title="Lớp" aria-label="Lớp">Lớp</button></div>
       <button type="button" class="primary" id="addBtn" title="Thêm lịch hoặc deadline" aria-haspopup="menu" aria-expanded="false" aria-controls="addMenu" aria-label="Thêm lịch hoặc deadline"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button>
       <div class="addmenu" id="addMenu" role="menu" hidden>
         <button type="button" role="menuitem" data-add="event">Thêm lịch</button>
@@ -2444,7 +2539,7 @@ input,select,textarea,#dlg input,#dlg select,#dlg textarea{transition:border-col
 
   <div class="layout">
     <main>
-      <div class="legend" id="legend"><button type="button" class="lg tgl" id="tagToggle" title="Mở bảng Tag" aria-label="Mở bảng Tag" aria-haspopup="dialog"><svg class="tgi" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M3.5 12.2V4.5a1 1 0 0 1 1-1h7.7a1 1 0 0 1 .7.3l7.6 7.6a1 1 0 0 1 0 1.4l-7.7 7.7a1 1 0 0 1-1.4 0L3.8 12.9a1 1 0 0 1-.3-.7z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="8.2" cy="8.2" r="1.5" fill="currentColor"/></svg><span class="tgt">Tag</span><b class="tgn" id="tagBadge" hidden></b></button><div class="lgclip"><div class="lgroup" id="lgroup"></div></div></div>
+      <div class="legend" id="legend"><button type="button" id="modeBar" title="Đổi dạng hiển thị lịch" aria-label="Đổi dạng hiển thị lịch" data-cur="table"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/><g class="mb-tbl" fill="currentColor" stroke="none"><circle cx="8.3" cy="14" r="1.1"/><circle cx="12" cy="14" r="1.1"/><circle cx="15.7" cy="14" r="1.1"/><circle cx="8.3" cy="17.3" r="1.1"/><circle cx="12" cy="17.3" r="1.1"/><circle cx="15.7" cy="17.3" r="1.1"/></g><g class="mb-ag" stroke-width="1.9"><path d="M8 14h8M8 17.2h8"/></g></svg></button><button type="button" class="lg tgl" id="tagToggle" title="Mở bảng Tag" aria-label="Mở bảng Tag" aria-haspopup="dialog"><svg class="tgi" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M3.5 12.2V4.5a1 1 0 0 1 1-1h7.7a1 1 0 0 1 .7.3l7.6 7.6a1 1 0 0 1 0 1.4l-7.7 7.7a1 1 0 0 1-1.4 0L3.8 12.9a1 1 0 0 1-.3-.7z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="8.2" cy="8.2" r="1.5" fill="currentColor"/></svg><b class="tgn" id="tagBadge" hidden></b></button><div class="lgclip"><div class="lgroup" id="lgroup"></div></div></div>
       <section class="card" id="sched"></section>
     </main>
     <section class="below">
@@ -2453,8 +2548,8 @@ input,select,textarea,#dlg input,#dlg select,#dlg textarea{transition:border-col
         <div class="tabs" id="todoTabs"><span class="tabInd" aria-hidden="true"></span>
           <button data-f="all">Tất cả</button><button data-f="week">Trong tuần</button>
         </div>
-        <div class="tabs" id="todoStatus"><span class="tabInd" aria-hidden="true"></span>
-          <button data-s="all">Tất cả</button><button data-s="open">Chưa hoàn thành</button><button data-s="done">Đã hoàn thành</button>
+        <div class="tabs" id="todoStatus" role="group" aria-label="Lọc deadline (chọn được nhiều mục)">
+          <button type="button" data-s="late" aria-pressed="false"><span>Quá hạn</span></button><button type="button" data-s="open" aria-pressed="false"><span>Chưa hoàn thành</span></button><button type="button" data-s="done" aria-pressed="false"><span>Đã hoàn thành</span></button>
         </div>
         <div class="listbar" id="todoBar" style="visibility:hidden"><button type="button" class="mini" id="todoAll">Mở hết</button></div>
         <ul class="todos" id="todos"></ul>
@@ -3614,7 +3709,7 @@ authForm.addEventListener('submit', async e => {
     if(pass.length < 6){ errEl.textContent = 'Mật khẩu cần ít nhất 6 ký tự.'; return; }
     if(pass !== f.pass2.value){ errEl.textContent = 'Hai mật khẩu không khớp.'; return; }
   }
-  if(authMode !== 'reset'){ todoFilter = 'all'; todoStatus = 'all'; renderTodos(); }   // vừa đăng nhập/đăng ký: Deadline về mặc định (Tất cả / Tất cả)
+  if(authMode !== 'reset'){ todoFilter = 'all'; todoSel.clear(); renderTodos(); }   // vừa đăng nhập/đăng ký: Deadline về mặc định (Tất cả / Tất cả)
   authBusy = true; document.getElementById('authSubmit').disabled = true;
   try{
     if(authMode === 'login'){
@@ -3636,7 +3731,7 @@ authForm.addEventListener('submit', async e => {
 document.getElementById('authGoogle').addEventListener('click', async () => {
   if(!fb.auth){ document.getElementById('authErr').textContent = 'Đang tải dịch vụ tài khoản, vui lòng thử lại sau vài giây.'; return; }
   if(authBusy) return;
-  todoFilter = 'all'; todoStatus = 'all'; renderTodos();
+  todoFilter = 'all'; todoSel.clear(); renderTodos();
   const prov = new firebase.auth.GoogleAuthProvider();
   try{ await fb.auth.signInWithPopup(prov); /* onAuthStateChanged sẽ chuyển trang */ }
   catch(e){
@@ -3675,7 +3770,13 @@ document.getElementById('curPassToggle').addEventListener('click', () => {
   btn.textContent = show ? '🙈' : '👁';
   btn.setAttribute('aria-label', show ? 'Ẩn mật khẩu hiện tại' : 'Hiện mật khẩu hiện tại');
 });
-profileDlg.addEventListener('click', e => { if(e.target === profileDlg) closeDialog(profileDlg); });
+/* Bấm ra ngoài để đóng hộp thoại: chỉ tính khi NHẤN và NHẢ chuột đều nằm trên lớp nền.
+   Trước đây bôi đen chữ trong hộp rồi thả chuột ra ngoài cũng làm hộp tự đóng (vì sự kiện click rơi lên lớp nền). */
+let lastDownEl = null;
+document.addEventListener('pointerdown', e => { lastDownEl = e.target; }, true);
+document.addEventListener('mousedown', e => { lastDownEl = e.target; }, true);
+const bdHit = (e, d) => e.target === d && lastDownEl === d;
+profileDlg.addEventListener('click', e => { if(bdHit(e, profileDlg)) closeDialog(profileDlg); });
 /* mỗi lần chỉ mở một mục (accordion) + reset về trạng thái đóng hết mỗi khi mở lại hộp thoại */
 const acctAccordionSections = Array.from(document.querySelectorAll('#profileForm .acctSection'));
 acctAccordionSections.forEach(sec => {
@@ -3759,7 +3860,7 @@ try{
 }catch(e){}
 let weekStart = mondayOf(todayStr());
 let todoFilter = 'all';
-let todoStatus = 'all';
+let todoSel = new Set();   // lọc deadline ở mục Lịch, chọn nhiều ô cùng lúc: late / open / done; rỗng = hiện tất cả (kết quả là hợp của các ô đã chọn)
 const hiddenTypes = new Set(['__cancel']);
 /* LỌC THEO TAG — dùng chung cho Bảng, Danh sách và Công việc.
    tagSel rỗng = hiện tất cả; có phần tử = CHỈ hiện các tag đã chọn (bấm một tag = xem riêng tag đó, bấm thêm để xem nhiều tag). */
@@ -3791,6 +3892,8 @@ const FX_SES = [['s','Sáng (00:00 - 11:29)'], ['r','Trưa (11:30 - 12:59)'], ['
 let fxPop = null;
 let guideOpen = false;       // “Cách đọc thời khoá biểu”: mặc định đóng
 const VIEWS = ['table','agenda','fixed','now'];
+const segKey = v => v === 'agenda' ? 'table' : v;   // Bảng + Danh sách dùng chung một nút trên thanh chuyển trang
+let lastSched = null;   // chế độ lịch dùng gần nhất ('table' | 'agenda')
 const fixView = () => { if(!VIEWS.includes(state.view)) state.view = innerWidth < 800 ? 'agenda' : 'table'; };
 
 /* ---------- sửa / dời / xóa lịch lặp theo “phiên bản” ---------- */
@@ -3926,7 +4029,8 @@ function render(){
   document.body.dataset.view = state.view;
   document.body.classList.toggle('searching', !!query);   // đang tìm: tắt kéo-thả đổi vị trí ở tab Lớp (thứ tự hiển thị lúc này là theo độ liên quan, không được lưu)   // để CSS biết đang ở mục nào (mobile ẩn chuông/giao diện/tài khoản ở mục Công việc, Lớp)
   if(document.activeElement !== $('#jump')) $('#jump').value = weekStart;   /* đang gõ ngày bằng bàn phím thì không ghi đè giá trị */
-  document.querySelectorAll('#viewSeg button').forEach(b => b.classList.toggle('on', b.dataset.v === state.view));
+  document.querySelectorAll('#viewSeg button').forEach(b => b.classList.toggle('on', b.dataset.v === segKey(state.view)));
+  syncModeBtn();
   updateSegIndicator();
 
   tagSelMigrate();
@@ -3971,7 +4075,7 @@ function makeSegIndicator(segId, indId){
 const updateSegIndicator = makeSegIndicator('viewSeg', 'viewSegInd');
 const updateAuthSegIndicator = makeSegIndicator('authSeg', 'authSegInd');
 function updateTabInds(){
-  ['todoTabs','todoStatus'].forEach(id => {
+  ['todoTabs'].forEach(id => {
     const box = document.getElementById(id), ind = box && box.querySelector('.tabInd'), btn = box && box.querySelector('button.on');
     if(!ind || !btn || box.offsetParent === null) return;   // đang bị ẩn (chưa đăng nhập xong): chưa đo được, đợi lần gọi sau
     const first = !ind.dataset.r;
@@ -4104,12 +4208,12 @@ function dlTitleAttr(t){
 function dlLinkHTML(t){ return t.body ? '<span class="ind">📝</span>' : ''; }
 function dlCellHTML(t){
   return `<div class="dlcell${t.done?' done':''}${t.pin?' pinned':''} ${dlMatch(t)?'':'dim'}" data-todo="${t.id}" tabindex="0" role="button"><button type="button" class="dlpin${t.pin ? ' on' : ''}" data-pin="${t.id}" aria-pressed="${t.pin ? 'true' : 'false'}" aria-label="${t.pin ? 'Bỏ ghim' : 'Ghim deadline quan trọng'}" title="${t.pin ? 'Bỏ ghim' : 'Ghim lên đầu'}">📌</button>
-    <div><b>${esc(t.text)}</b>${dlLinkHTML(t)}</div><div class="dlt">⏰ ${t.dueTime ? esc(t.dueTime) : 'Cả ngày'}</div>${dlChips(t)}<div class="dlst"><div class="dlst-in">${t.done ? '<span class="chip ok">Đã hoàn thành</span>' : '<span class="chip pend">Chưa hoàn thành</span>' + dueChip(t)}</div></div></div>`;
+    <div><b>${esc(t.text)}</b>${dlLinkHTML(t)}</div><div class="dlt">⏰ ${t.dueTime ? esc(t.dueTime) : 'Cả ngày'}</div>${dlChips(t)}<div class="dlst"><div class="dlst-in">${t.done ? '<span class="chip ok">Đã hoàn thành</span>' : (dueChip(t) || '<span class="chip pend">Chưa hoàn thành</span>')}</div></div></div>`;
 }
 function dlArticleHTML(t){
   return `<article class="ag dl${t.done?' done':''}${t.pin?' pinned':''} ${dlMatch(t)?'':'dim'}" data-todo="${t.id}" tabindex="0" role="button"><button type="button" class="dlpin${t.pin ? ' on' : ''}" data-pin="${t.id}" aria-pressed="${t.pin ? 'true' : 'false'}" aria-label="${t.pin ? 'Bỏ ghim' : 'Ghim deadline quan trọng'}" title="${t.pin ? 'Bỏ ghim' : 'Ghim lên đầu'}">📌</button>
         <div class="ag-time${t.dueTime ? '' : ' all'}">${t.dueTime ? esc(t.dueTime) : 'Cả ngày'}<br><small>hạn chót</small></div>
-        <div><div class="et"><small>Deadline</small>${esc(t.text)}<span class="tag dl${t.done?' ok':''}">${t.done?'Đã hoàn thành':'Chưa hoàn thành'}</span>${dueChipAgenda(t)}</div>
+        <div><div class="et"><small>Deadline</small>${esc(t.text)}<span class="tag dl${t.done?' ok':''}${!t.done && dueLate(t) ? ' late' : ''}">${t.done?'Đã hoàn thành':dueLate(t)?'Quá hạn':'Chưa hoàn thành'}</span>${dueChipAgenda(t)}</div>
         ${hasLinks(t) ? `<div class="ag-links">${dlChips(t)}</div>` : ''}
         ${t.body ? `<div class="ex">📝 ${esc(t.body)}</div>` : ''}</div></article>`;
 }
@@ -4569,6 +4673,19 @@ function otherFixedHTML(){
 const dowShort = d => { const i = (parse(d).getDay()+6)%7; return i < 6 ? `Thứ ${i+2}` : 'Chủ nhật'; };
 const niceDate = d => `${dmy(d)} ${dowShort(d)}`;
 const nowHM = () => { const d = new Date(); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+/* bản chữ thường (không khung) của dueChip: dùng cho dòng Trạng thái trong chi tiết deadline */
+function dueLabel(t){
+  const n = daysBetween(todayStr(), t.due);
+  if(n < 0) return `Quá hạn ${-n} ngày`;
+  if(n === 0) return t.dueTime && t.dueTime < nowHM() ? 'Quá giờ' : 'Hôm nay';
+  if(n === 1) return 'Ngày mai';
+  return `Còn ${n} ngày`;
+}
+/* dòng Trạng thái: chữ thường, chưa xong = đỏ, đã xong = xanh; không có biểu tượng ○ / ✓ ở đầu */
+function dueStatusHTML(t){
+  if(t.done) return '<span class="st ok">Đã hoàn thành</span>';
+  return `<span class="st no">${t.due ? dueLabel(t) : 'Chưa hoàn thành'}</span>`;
+}
 function dueChip(t){
   if(t.done || !t.due) return '';
   const n = daysBetween(todayStr(), t.due);
@@ -4645,9 +4762,9 @@ function todoBody(t){
   const row = (k, v) => `<span class="k">${k}</span><span class="v">${v}</span>`;
   const open = hasDetail(t) && openTodos.has(t.id);
   return `<div class="hd"><div class="ttl"><span class="tt"><span class="tx" title="Bấm đúp để sửa">${esc(t.text)}</span>${open ? '' : indHTML(t)}</span>${toggleBtn(t, open)}</div>
-    <div class="tmeta">${row('Trạng thái', `<span class="st ${t.done?'ok':'no'}">${t.done?'Đã hoàn thành':'Chưa hoàn thành'}</span>`)}${
+    <div class="tmeta">${row('Trạng thái', dueStatusHTML(t))}${
       row('Ngày tạo', t.on ? niceDate(t.on) + (t.onTime ? ' · ' + t.onTime : '') : '–')}${
-      row('Hạn chót', t.due ? `<b>${niceDate(t.due)}${t.dueTime ? ' · ' + t.dueTime : ''}</b>${dueChip(t)}` : 'Không thời hạn')}</div></div>${open ? detailHTML(t) : ''}`;
+      row('Hạn chót', t.due ? `<b>${niceDate(t.due)}${t.dueTime ? ' · ' + t.dueTime : ''}</b>` : 'Không thời hạn')}</div></div>${open ? detailHTML(t) : ''}`;
 }
 function fitTodoMeta(){
   document.querySelectorAll('#todos .tmeta').forEach(m => {
@@ -4659,11 +4776,13 @@ function fitTodoMeta(){
     }
   });
 }
+const inTodoWeek = t => { const d = t.on || t.due; return d && ((d >= weekStart && d <= addDays(weekStart,6)) || (t.due && t.due >= weekStart && t.due <= addDays(weekStart,6))); };
+const isTodoLate = t => !t.done && !!t.due && dueLate(t);
+const todoPass = t => (todoSel.has('late') && isTodoLate(t)) || (todoSel.has('open') && !t.done) || (todoSel.has('done') && t.done);
 function visibleTodos(){
   let list = [...state.todos];
-  if(todoStatus === 'open') list = list.filter(t => !t.done);
-  if(todoStatus === 'done') list = list.filter(t => t.done);
-  if(todoFilter === 'week') list = list.filter(t => { const d = t.on || t.due; return d && ((d >= weekStart && d <= addDays(weekStart,6)) || (t.due && t.due >= weekStart && t.due <= addDays(weekStart,6))); });
+  if(todoFilter === 'week') list = list.filter(inTodoWeek);
+  if(todoSel.size) list = list.filter(todoPass);
   // chưa hoàn thành trước, rồi đến hạn chót gần nhất (không có hạn chót thì xuống cuối), cuối cùng theo thời điểm tạo
   // mục đã hoàn thành: hạn chót gần thời điểm hiện tại nhất (kể cả đã qua hay chưa tới) lên trước, không có hạn chót xuống cuối
   const dueKey = t => t.due ? t.due + ' ' + (t.dueTime || '23:59') : '9999';
@@ -4676,7 +4795,9 @@ function visibleTodos(){
 }
 function renderTodos(){
   document.querySelectorAll('#todoTabs button').forEach(b => b.classList.toggle('on', b.dataset.f === todoFilter));
-  document.querySelectorAll('#todoStatus button').forEach(b => b.classList.toggle('on', b.dataset.s === todoStatus));
+  const scoped = todoFilter === 'week' ? state.todos.filter(inTodoWeek) : state.todos;   // số đếm trên mỗi ô theo phạm vi Tất cả / Trong tuần đang chọn
+  const cnt = {late: scoped.filter(isTodoLate).length, open: scoped.filter(t => !t.done).length, done: scoped.filter(t => t.done).length};
+  document.querySelectorAll('#todoStatus button').forEach(b => { const on = todoSel.has(b.dataset.s); b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); const n = b.querySelector('b'); if(n && n.textContent !== String(cnt[b.dataset.s])) n.textContent = cnt[b.dataset.s]; });
   const list = visibleTodos(), ul = $('#todos'), keep = ul.scrollTop;
   ul.innerHTML = list.length ? list.map(t => `<li class="todo ${t.done?'done':''}${t.pin?' pinned':''} ${hasDetail(t) && openTodos.has(t.id) ? 'open' : ''}" data-id="${t.id}">
       <input type="checkbox" ${t.done?'checked':''} aria-label="Đã hoàn thành">
@@ -4717,7 +4838,7 @@ function askConfirm(message, {title='Xác nhận', ok='Đồng ý', danger=false
     okBtn.textContent = ok; okBtn.classList.toggle('danger', danger); okBtn.classList.toggle('primary', !danger);
     okBtn.onclick = () => { out = true; closeDialog(dlgConfirm); };
     $('#cfCancel').onclick = () => { out = false; closeDialog(dlgConfirm); };
-    dlgConfirm.onclick = e => { if(e.target === dlgConfirm) closeDialog(dlgConfirm); };
+    dlgConfirm.onclick = e => { if(bdHit(e, dlgConfirm)) closeDialog(dlgConfirm); };
     dlgConfirm.onclose = () => res(out);
     dlgConfirm.showModal();
     (danger ? $('#cfCancel') : okBtn).focus();   // yêu cầu xóa: mặc định focus vào Hủy để lỡ bấm Enter không xóa nhầm
@@ -4960,7 +5081,7 @@ $('#rtSave').addEventListener('click', () => {
 });
 $('#rtCancel').addEventListener('click', () => closeDialog(dlgRepeat));
 $('#rtCloseX').addEventListener('click', () => closeDialog(dlgRepeat));
-dlgRepeat.addEventListener('click', e => { if(e.target === dlgRepeat) closeDialog(dlgRepeat); });
+dlgRepeat.addEventListener('click', e => { if(bdHit(e, dlgRepeat)) closeDialog(dlgRepeat); });
 f.elements.untilMode.addEventListener('change', syncRepeat);
 f.elements.date.addEventListener('change', () => {
   if(!f.elements.date.value) return;
@@ -5112,7 +5233,7 @@ f.addEventListener('submit', async e => {
 });
 $('#closeBtn').onclick = () => closeDialog(dlg);
 $('#dlgCloseX').onclick = () => closeDialog(dlg);
-dlg.addEventListener('click', e => { if(e.target === dlg) closeDialog(dlg); });
+dlg.addEventListener('click', e => { if(bdHit(e, dlg)) closeDialog(dlg); });
 $('#delBtn').onclick = async () => {
   const ev = state.events.find(e => e.id === editing.id); if(!ev) return;
   if(!isRec(ev)){
@@ -5137,6 +5258,7 @@ $('#delBtn').onclick = async () => {
 /* ---------- sự kiện giao diện ---------- */
 /* đổi tuần kèm hiệu ứng trượt: dir > 0 = sang tuần sau, dir < 0 = về tuần trước */
 function weekAnim(dir){
+  return;   // đã tắt hiệu ứng khi đổi tuần (không còn chớp/trượt)
   if(!dir || state.view === 'fixed' || state.view === 'now') return;
   if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
   const box = $('#sched'), lbl = $('#range'), root = document.documentElement;
@@ -5220,22 +5342,36 @@ function pageSwap(prev){
   clearTimeout(pageSwap.t1); pageSwap.t1 = setTimeout(() => el.classList.remove('vw-in'), 200);
 }
 let viewSwapTok = 0;
+function switchView(target){
+  if(target === state.view) return;
+  const prevView = state.view;
+  state.view = target; saveUI();
+  if(target === 'table' || target === 'agenda') lastSched = target;
+  document.querySelectorAll('#viewSeg button').forEach(x => x.classList.toggle('on', x.dataset.v === segKey(target)));
+  syncModeBtn();
+  updateSegIndicator();   // trượt tab ngay lập tức, mượt, không chờ dựng lại nội dung
+  const tok = ++viewSwapTok;
+  requestAnimationFrame(() => {
+    if(tok !== viewSwapTok) return;   // đã bấm sang trang khác trong lúc chờ: chỉ lần bấm cuối được dựng
+    if(matchMedia('(max-width:700px)').matches) scrollTo({top:0, left:0, behavior:'instant'});   // điện thoại: về đầu trang trước khi dựng lại
+    render();
+    pageSwap(prevView);   // trang mới chỉ mờ dần vào, không trượt
+  });
+}
 $('#viewSeg').onclick = e => {
-  const b = e.target.closest('button');
-  if(b && b.dataset.v !== state.view){
-    const prevView = state.view;
-    state.view = b.dataset.v; saveUI();
-    document.querySelectorAll('#viewSeg button').forEach(x => x.classList.toggle('on', x === b));
-    updateSegIndicator();   // trượt tab ngay lập tức, mượt, không chờ dựng lại nội dung
-    const tok = ++viewSwapTok;
-    requestAnimationFrame(() => {
-      if(tok !== viewSwapTok) return;   // đã bấm sang trang khác trong lúc chờ: chỉ lần bấm cuối được dựng
-      if(matchMedia('(max-width:700px)').matches) scrollTo({top:0, left:0, behavior:'instant'});   // điện thoại: về đầu trang trước khi dựng lại
-      render();
-      pageSwap(prevView);   // trang mới chỉ mờ dần vào, không trượt
-    });
-  }
+  const b = e.target.closest('button'); if(!b) return;
+  let target = b.dataset.v;
+  if(target === 'table') target = segKey(state.view) === 'table' ? state.view : (lastSched || (innerWidth < 800 ? 'agenda' : 'table'));   // nút Lịch: về chế độ Bảng/Danh sách dùng gần nhất
+  switchView(target);
 };
+function syncModeBtn(){   // nút lịch duy nhất: bấm để đổi Bảng <-> Danh sách; biểu tượng đổi theo dạng đang dùng
+  const b = $('#modeBar'); if(!b) return;
+  const ag = state.view === 'agenda';
+  b.dataset.cur = ag ? 'agenda' : 'table';
+  const t = 'Đang ở dạng ' + (ag ? 'Danh sách' : 'Bảng') + ' — bấm để chuyển sang ' + (ag ? 'Bảng' : 'Danh sách');
+  b.title = t; b.setAttribute('aria-label', t);
+}
+$('#modeBar').onclick = () => switchView(state.view === 'agenda' ? 'table' : 'agenda');
 
 $('#themeBtn').onclick = () => {
   const cur = document.documentElement.dataset.theme;
@@ -5604,7 +5740,7 @@ async function moveOcc(id, from, to, s, e, fs, fe){
 /* việc cần làm */
 const swapTodoList = () => {};   // đổi bộ lọc: danh sách đổi ngay, không mờ dần (tránh chớp)
 $('#todoTabs').onclick = e => { const b = e.target.closest('button'); if(b){ const ch = b.dataset.f !== todoFilter; todoFilter = b.dataset.f; renderTodos(); if(ch) swapTodoList(); } };
-$('#todoStatus').onclick = e => { const b = e.target.closest('button'); if(b){ const ch = b.dataset.s !== todoStatus; todoStatus = b.dataset.s; renderTodos(); if(ch) swapTodoList(); } };
+$('#todoStatus').onclick = e => { const b = e.target.closest('button'); if(b){ const k = b.dataset.s; if(todoSel.has(k)) todoSel.delete(k); else todoSel.add(k); renderTodos(); } };   // bấm để bật/tắt từng ô, chọn được nhiều ô; bỏ hết thì hiện tất cả
 $('#todoAll').onclick = () => toggleAll(openTodos, visibleTodos(), renderTodos);
 $('#todos').addEventListener('change', e => {
   const li = e.target.closest('.todo'); if(!li) return;
@@ -5723,7 +5859,7 @@ $('#todoDel').onclick = async () => {
 };
 $('#todoClose').onclick = () => closeDialog(dlgTodo);
 $('#todoCloseX').onclick = () => closeDialog(dlgTodo);
-dlgTodo.addEventListener('click', e => { if(e.target === dlgTodo) closeDialog(dlgTodo); });
+dlgTodo.addEventListener('click', e => { if(bdHit(e, dlgTodo)) closeDialog(dlgTodo); });
 
 dlgTodo.addEventListener('close', () => { clearInterval(todoClock); todoAuto = false; });
 dlgTodo.addEventListener('keydown', e => {
@@ -5821,7 +5957,7 @@ function tagStats(){
   return {S, n, totalMin, cancel:occs.filter(o => o.cancelled).length, conflict:occs.filter(o => o.conflict).length, dl:weekDeadlines().length};
 }
 function hubSumHTML(st, tsel){
-  const head = tsel ? `Đang lọc <b>${state.tags.filter(t => tagSel.has(t.id)).length}/${state.tags.length}</b> tag` : 'Đang hiện <b>tất cả</b> tag';
+  const head = tsel ? `Đang lọc <b>${state.tags.filter(t => tagSel.has(t.id)).length}/${state.tags.length}</b> tag` : `Đang hiện <b>${state.tags.length}</b> tag`;
   return `<span>${head} · Tuần ${weekRange(weekStart)}</span><button type="button" class="btn" data-act="clr" data-k="clr" ${tsel ? '' : 'disabled'}>Hiện tất cả</button>`;
 }
 /* đổi lựa chọn tag tại chỗ (không vẽ lại cả danh sách) để các hiệu ứng chạy mượt */
@@ -6080,7 +6216,7 @@ rowForm.addEventListener('submit', e => {
 });
 $('#rowClose').onclick = () => closeDialog(dlgRow);
 $('#rowCloseX').onclick = () => closeDialog(dlgRow);
-[dlgTags, dlgRow, dlgScope].forEach(d => d.addEventListener('click', e => { if(e.target === d) closeDialog(d); }));
+[dlgTags, dlgRow, dlgScope].forEach(d => d.addEventListener('click', e => { if(bdHit(e, d)) closeDialog(d); }));
 
 /* phím tắt */
 document.addEventListener('keydown', e => {
@@ -6341,7 +6477,7 @@ function innerScrollSnap(){
 function uiSnap(){
   if(!UIS) return;
   try{
-    const s = {hv:2, view:state.view, week:weekStart, tf:todoFilter, ts:todoStatus, hid:[...hiddenTypes], tsel:[...tagSel], ot:[...openTodos], q:$('#q').value, fxf:fxFilter, guide:guideOpen, sx:scrollX, sy:scrollY, npt:npTab, npf:npScope, npc:npTodayCollapsed, npd:[...npExpandedDays], isc:innerScrollSnap(), dlg:null};
+    const s = {hv:2, view:state.view, week:weekStart, tf:todoFilter, tss:[...todoSel], hid:[...hiddenTypes], tsel:[...tagSel], ot:[...openTodos], q:$('#q').value, fxf:fxFilter, guide:guideOpen, sx:scrollX, sy:scrollY, nps:[...npSel], npf:npScope, npc:npTodayCollapsed, npd:[...npExpandedDays], isc:innerScrollSnap(), dlg:null};
     const ae = document.activeElement, fc = ae && ae.closest && ae.closest('dialog[open]') && ae.name ? {name:ae.name, a:ae.selectionStart, b:ae.selectionEnd} : null;
     if(dlg.open){ readTimes(); s.dlg = {k:'ev', id:editing && editing.id, date:editing && editing.date, form:formSnap(f), days:daysBoxes().map(b => b.checked), times:timesDraft}; }
     else if(dlgTodo.open) s.dlg = {k:'todo', id:todoEditing, form:formSnap(todoEditForm), auto:todoAuto};
@@ -6362,9 +6498,11 @@ try{ uiSaved = UIS && JSON.parse(UIS.getItem(UI_KEY)); }catch(e){}
 try{ if('scrollRestoration' in history) history.scrollRestoration = 'manual'; }catch(e){}
 if(uiSaved){
   if(VIEWS.includes(uiSaved.view)) state.view = uiSaved.view;
+  if(state.view === 'table' || state.view === 'agenda') lastSched = state.view;
   if(/^\d{4}-\d{2}-\d{2}$/.test(uiSaved.week)) weekStart = mondayOf(uiSaved.week);
   if(['week','all'].includes(uiSaved.tf)) todoFilter = uiSaved.tf;
-  if(['all','open','done'].includes(uiSaved.ts)) todoStatus = uiSaved.ts;
+  if(Array.isArray(uiSaved.tss)) todoSel = new Set(uiSaved.tss.filter(k => ['late','open','done'].includes(k)));
+  else if(['open','done'].includes(uiSaved.ts)) todoSel = new Set([uiSaved.ts]);
   if(uiSaved.hv === 2 && Array.isArray(uiSaved.hid)){ hiddenTypes.clear(); uiSaved.hid.forEach(x => hiddenTypes.add(x)); }   // đã có trạng thái lưu: theo đúng lựa chọn lần trước (kể cả đã bật hiện Nghỉ)
   if(Array.isArray(uiSaved.tsel)) uiSaved.tsel.forEach(x => { if(typeof x === 'string') tagSel.add(x); });
   (uiSaved.ot || []).forEach(x => openTodos.add(x));
@@ -6433,18 +6571,18 @@ const fmtHMS = ms => {
   return (h ? h + ':' + pad(m) : m) + ':' + pad(sec);
 };
 /* ---------- Trang "Thông báo": tổng quan lịch đang/sắp diễn ra + deadline, bật thông báo, đánh dấu xong ---------- */
-let npTab = 'open';   // tab Deadline: open = chưa hoàn thành, done = đã hoàn thành, all = tất cả
+let npSel = new Set(['open']);   // bộ lọc Deadline chọn được nhiều mục cùng lúc: late = quá hạn, open = chưa hoàn thành, done = đã hoàn thành; rỗng = hiện tất cả (kết quả là hợp của các mục đã chọn)
 let npScope = 'all';   // bộ lọc Deadline: all = tất cả, week = chỉ trong tuần đang xem ở mục lịch
 let npWk = 0;   // mục tuần: 0 = tuần này, +1 = tuần sau, -1 = tuần trước... (chỉ trong phiên này)
 let npTodayCollapsed = false;   // mục "Hôm nay": true = đã thu gọn danh sách buổi (mặc định mở, chỉ trong phiên này)
-let npBk = 'all';   // lọc nhanh theo nhóm hạn chót (bấm ô tổng quan ở đầu trang): all | late | today | week (chỉ trong phiên này)
 let npOpen = new Set();   // id deadline đang mở chi tiết ngay trong trang Công việc (chỉ trong phiên này)
 let npDraft = {t:'', d:''};   // chữ đang gõ ở ô "Thêm deadline mới" — giữ lại khi trang tự dựng lại
 let npComposing = false;   // đang gõ dấu tiếng Việt (IME): tạm không dựng lại trang để khỏi cắt ngang
 let npClearIds = [];   // id các deadline đã hoàn thành đang hiện (cho nút "Xóa … đã xong")
 let npExpandedDays = new Set();   // các ngày (yyyy-mm-dd) đang MỞ RỘNG trong mục "7 ngày tới"; mặc định mọi ngày thu gọn (chỉ trong phiên này, không lưu)
 if(uiSaved){   /* F5: giữ tab Deadline, mục "Hôm nay" thu gọn/mở và các ngày đang mở rộng */
-  if(['open','done','all'].includes(uiSaved.npt)) npTab = uiSaved.npt;
+  if(Array.isArray(uiSaved.nps)) npSel = new Set(uiSaved.nps.filter(k => ['late','open','done'].includes(k)));
+  else if(['open','done','all'].includes(uiSaved.npt)) npSel = uiSaved.npt === 'all' ? new Set() : new Set([uiSaved.npt]);
   if(['week','all'].includes(uiSaved.npf)) npScope = uiSaved.npf;
   npTodayCollapsed = !!uiSaved.npc;
   (uiSaved.npd || []).forEach(d => { if(/^\d{4}-\d{2}-\d{2}$/.test(d)) npExpandedDays.add(d); });
@@ -6540,8 +6678,6 @@ function renderNowBar(){
   const row = (o, showState) => { const [c, l] = rowState(o);
     return `<div class="np-row ${showState ? c : ''}${o_cf(o)}${matches(o) ? '' : ' dim'}" ${dataOf(o)}>${ctagHTML(o.ev)}<span class="np-time">${o.ev.start}<small>${o.ev.end}</small></span><span class="np-dot"></span><span class="np-main"><b>${esc(o.ev.title)}${cfChip(o)}</b><small>${[o.ev.room ? '📍 ' + esc(o.ev.room) : '', o.ev.teacher ? '👤 ' + esc(o.ev.teacher) : ''].filter(Boolean).join(' · ')}</small></span>${showState ? `<span class="np-st">${l}</span>` : ''}</div>`; };
   const doneN = todayOccs.filter(o => !o.cancelled && occEndMs(o) <= now).length, actN = todayOccs.filter(o => !o.cancelled).length;
-  const todayPct = actN ? Math.round(doneN / actN * 100) : 0;
-  const todayBar = actN ? `<div class="np-stats"><div class="np-wkbar" title="${todayPct}%"><div style="width:${todayPct}%"></div></div></div>` : '';   // thanh tiến độ trong ngày, cùng kiểu với thanh của mục Tuần này
   const todayHTML = todayOccs.length ? todayOccs.map(o => row(o, true)).join('') : '<div class="np-empty sm">Hôm nay không có lịch</div>';
   /* Tuần này / Tuần sau: mỗi tuần từ Thứ Hai đến Chủ Nhật, mỗi ngày là một nhóm có thể thu gọn */
   const monThis = mondayOf(today), monNext = addDays(monThis, 7);
@@ -6571,9 +6707,8 @@ function renderNowBar(){
       subjects: new Set(actList.map(o => o.ev.code || o.ev.title)).size,
       freeDays: ds.filter(x => !x.act).length, busiest};
   };
-  const wkStats = (w, withDone) => {   // chỉ còn thanh tiến độ (tuần này) và cảnh báo trùng lịch khi có
-    const pct = w.act ? Math.round(w.dn / w.act * 100) : 0;
-    const bar = withDone && w.act ? `<div class="np-wkbar" title="${pct}%"><div style="width:${pct}%"></div></div>` : '';
+  const wkStats = (w, withDone) => {   // chỉ còn cảnh báo trùng lịch khi có (đã bỏ thanh tiến độ)
+    const bar = '';
     const bad = w.conflicts ? `<div class="np-wkline"><span class="np-bad">Trùng lịch ${w.conflicts} buổi</span></div>` : '';
     return bar || bad ? `<div class="np-stats">${bar}${bad}</div>` : '';
   };
@@ -6590,7 +6725,8 @@ function renderNowBar(){
   const BK = {late:'Quá hạn', today:'Hôm nay', week:'7 ngày tới', later:'Sau này', none:'Không thời hạn'};
   const scoped = npScope === 'week' ? allG.filter(inWeek) : allG;
   const openG = scoped.filter(t => !t.done);   // các ô tổng quan ở đầu trang đếm theo phạm vi đang chọn (Tất cả / Trong tuần)
-  const all = npBk === 'all' ? scoped : scoped.filter(t => bkOf(t) === npBk), open = all.filter(t => !t.done), done = all.filter(t => t.done);
+  const pass = t => !npSel.size || (npSel.has('open') && !t.done) || (npSel.has('late') && bkOf(t) === 'late') || (npSel.has('done') && t.done);
+  const all = scoped.filter(pass), open = all.filter(t => !t.done), done = all.filter(t => t.done);
   npClearIds = done.map(t => t.id);
   const key = t => t.due ? t.due + (t.dueTime || '23:59') : '9999';
   const cntBk = k => openG.filter(t => bkOf(t) === k).length;
@@ -6614,27 +6750,31 @@ function renderNowBar(){
   };
   const doneHTML = list => [...list].sort((a, b) => doneNewest(a, b) || key(b).localeCompare(key(a))).map(dlRow).join('');   // vừa hoàn thành nằm trên cùng
   let dlHTML = '';
-  if(npTab === 'open') dlHTML = open.length ? openHTML(open) : `<div class="np-empty">${!allG.length ? 'Chưa có deadline nào' : npBk === 'all' ? 'Không có deadline nào chưa hoàn thành' : 'Không có deadline nào trong mục này'}</div>`;
-  else if(npTab === 'done') dlHTML = done.length ? doneHTML(done) : '<div class="np-empty">Chưa có deadline nào hoàn thành</div>';
+  const onlyOpen = npSel.size > 0 && !npSel.has('done'), onlyDone = npSel.size === 1 && npSel.has('done');
+  if(onlyOpen) dlHTML = open.length ? openHTML(open) : `<div class="np-empty">${!allG.length ? 'Chưa có deadline nào' : 'Không có deadline nào trong mục này'}</div>`;
+  else if(onlyDone) dlHTML = done.length ? `<div class="np-gl np-bk bk-done"><span>Đã hoàn thành</span><div class="np-bk-r"><button type="button" class="np-clr" data-act="clrdone" title="Xóa hết deadline đã hoàn thành đang hiện (hoàn tác được)">Xóa ${done.length} deadline đã xong</button><small>${done.length}</small></div></div>` + doneHTML(done) : '<div class="np-empty">Chưa có deadline nào hoàn thành</div>';
   else dlHTML = all.length ? (open.length ? openHTML(open) : '') + (done.length ? head('bk-done', 'Đã hoàn thành', done.length) + doneHTML(done) : '') : '<div class="np-empty">Chưa có deadline nào</div>';
   const totS = scoped.length, doneS = scoped.filter(t => t.done).length, pctS = totS ? Math.round(doneS / totS * 100) : 0;
   const progHTML = totS ? `<div class="np-prog2"><div class="np-wkbar" title="${pctS}%"><div style="width:${pctS}%"></div></div><small><b>${doneS}</b> đã hoàn thành</small></div>` : '';
-  const listBar = (npBk !== 'all' ? `<button type="button" class="np-fchip" data-act="bk" data-bk="${npBk}" title="Bỏ lọc">Đang lọc: ${BK[npBk]} <i aria-hidden="true">×</i></button>` : '') + (npTab === 'done' && done.length ? `<button type="button" class="np-clr" data-act="clrdone" title="Xóa hết deadline đã hoàn thành đang hiện (hoàn tác được)">Xóa ${done.length} deadline đã xong</button>` : '');
+  const listBar = '';   // cac o tong quan tu sang len khi dang chon nen khong can thanh Dang loc
 
   /* ----- đầu trang: 4 ô tổng quan, bấm để lọc danh sách Deadline ----- */
-  const nToday = cntBk('today'), nWeek = cntBk('week'), doneG = scoped.length - openG.length;
+  const doneG = scoped.length - openG.length;
   const tile = (k, ic, lb, txt, on, zero) => `<button type="button" class="np-tile ${k}${on ? ' on' : ''}${zero ? ' zero' : ''}" data-act="bk" data-bk="${k}" aria-pressed="${on ? 'true' : 'false'}"><span class="np-ti" aria-hidden="true">${ic}</span><span class="np-tn">${txt}</span><span class="np-tl">${lb}</span></button>`;
-  const tiles = `<div class="np-tiles">${tile('late', '⚠️', 'Quá hạn', lateN, npBk === 'late', !lateN)}${tile('today', '⏰', 'Hạn hôm nay', nToday, npBk === 'today', !nToday)}${tile('week', '📅', '7 ngày tới', nWeek, npBk === 'week', !nWeek)}${tile('open', '📋', 'Chưa hoàn thành', openG.length, npTab === 'open' && npBk === 'all', !openG.length)}${tile('done', '✅', 'Đã hoàn thành', doneG, npTab === 'done' && npBk === 'all', !doneG)}</div>`;
+  const tiles = `<div class="np-tiles">${tile('late', '⚠️', 'Quá hạn', lateN, npSel.has('late'), !lateN)}${tile('open', '📋', 'Chưa hoàn thành', openG.length, npSel.has('open'), !openG.length)}${tile('done', '✅', 'Đã hoàn thành', doneG, npSel.has('done'), !doneG)}</div>`;
   const tsel = tagSelActive();
-  const tagBar = state.tags.length > 1 ? `<div class="np-tagf" role="group" aria-label="Lọc theo tag">${tsel ? '<button type="button" class="lg clr" id="npTagClr" data-act="tagclr" title="Hiện lại tất cả tag">✕ Bỏ lọc tag</button>' : ''}${state.tags.map(t => `<button type="button" class="lg ${tsel ? (tagSel.has(t.id) ? 'sel' : 'nsel') : ''}" id="npTag_${esc(t.id)}" data-act="tagsel" data-tag="${esc(t.id)}" aria-pressed="${tsel && tagSel.has(t.id) ? 'true' : 'false'}" style="--bd:${esc(t.color)}" title="${tagSel.has(t.id) ? 'Bấm để bỏ tag này khỏi bộ lọc' : 'Bấm để chỉ xem tag này · bấm thêm tag khác để xem nhiều tag cùng lúc'}"><i></i>${esc(t.name)}</button>`).join('')}</div>` : '';
+  /* Giống hệt hàng tag ở mục Lịch: nút icon mở bảng Tag + các tag đang lọc (chung một bộ lọc tagSel) */
+  const tselList = state.tags.filter(t => tagSel.has(t.id));
+  const tgTitle = tsel ? `Mở bảng Tag (đang lọc ${tselList.length}/${state.tags.length} tag)` : 'Mở bảng Tag';
+  const tagBar = `<div class="np-tagf" role="group" aria-label="Lọc theo tag"><button type="button" class="lg tgl${tsel ? ' on' : ''}" id="npTagToggle" data-act="tagopen" title="${tgTitle}" aria-label="${tgTitle}" aria-haspopup="dialog"><svg class="tgi" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M3.5 12.2V4.5a1 1 0 0 1 1-1h7.7a1 1 0 0 1 .7.3l7.6 7.6a1 1 0 0 1 0 1.4l-7.7 7.7a1 1 0 0 1-1.4 0L3.8 12.9a1 1 0 0 1-.3-.7z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="8.2" cy="8.2" r="1.5" fill="currentColor"/></svg>${tsel ? `<b class="tgn">${tselList.length}/${state.tags.length}</b>` : ''}</button>${tsel ? '<button type="button" class="lg clr" id="npTagClr" data-act="tagclr" title="Hiện lại tất cả tag">✕ Bỏ lọc tag</button>' + tselList.map(t => `<button type="button" class="lg sel" data-act="tagsel" data-tag="${esc(t.id)}" aria-pressed="true" style="--bd:${esc(t.color)}" title="Bấm để bỏ tag này khỏi bộ lọc"><i></i>${esc(t.name)} <span aria-hidden="true">×</span></button>`).join('') : ''}</div>`;
   const html = `<div class="np-grid">
       <section class="np-col"><h2 class="np-h">Lịch học</h2>${tagBar}${liveCards.join('')}${liveCards.length ? '' : nextCard}${emptyCard}
-        <div class="np-sec"><div class="np-sh"><span>Hôm nay <span class="np-sub">${esc(npDayHead(today))}</span></span><small>${doneN}/${actN} buổi đã xong</small></div>${todayBar}${todayHTML}</div>
+        <div class="np-sec"><div class="np-sh"><span>Hôm nay <span class="np-sub">${esc(npDayHead(today))}</span></span><small>${doneN}/${actN} buổi đã xong</small></div>${todayHTML}</div>
         <div class="np-sec"><div class="np-sh"><span class="np-wknav"><button type="button" class="np-wkb" data-act="wknav" data-d="-1" aria-label="Tuần trước">‹</button><button type="button" class="np-wkb" data-act="wknav" data-d="1" aria-label="Tuần sau">›</button><span>${wkTitle} <span class="np-sub">${wkRange}</span></span></span><span class="np-sh-r"><small>${npWk > 0 ? `${wkSel.act} buổi` : `${wkSel.dn}/${wkSel.act} buổi đã xong`}</small>${npWk !== 0 ? '<button type="button" class="np-collapseall" data-act="wknav" data-d="0">Tuần này</button>' : ''}${selToggle}</span></div><div class="np-wkbody">${wkStats(wkSel, npWk <= 0)}${selHTML}</div></div></section>
       <section class="np-col np-dlcol"><h2 class="np-h">Deadline</h2>
-        ${tiles}
+        <div class="np-ctl">${tiles}
         <div class="np-filters"><div class="np-tabs np-scope"><span class="tabInd" aria-hidden="true"></span><button type="button" data-act="scope" data-scope="all" class="${npScope === 'all' ? 'on' : ''}">Tất cả</button><button type="button" data-act="scope" data-scope="week" class="${npScope === 'week' ? 'on' : ''}" title="Theo tuần đang xem ở mục Lịch học: ${wkRange}">Trong tuần</button></div>
-        <div class="np-tabs np-status"><span class="tabInd" aria-hidden="true"></span><button type="button" data-act="tab" data-tab="all" class="${npTab === 'all' ? 'on' : ''}">Tất cả</button><button type="button" data-act="tab" data-tab="open" class="${npTab === 'open' ? 'on' : ''}"><span class="l-f">Chưa hoàn thành</span><span class="l-s">Chưa xong</span></button><button type="button" data-act="tab" data-tab="done" class="${npTab === 'done' ? 'on' : ''}"><span class="l-f">Đã hoàn thành</span><span class="l-s">Đã xong</span></button></div></div>
+        </div></div>
         ${listBar ? `<div class="np-listbar">${listBar}</div>` : ''}
         <div class="np-list">${dlHTML}</div></section>
     </div>`;
@@ -6815,7 +6955,8 @@ function highlightSchedElement(el){
 
 function leaveNowPage(){   // rời trang "Thông báo" về Bảng (điện thoại: Danh sách) để nhảy tới một mục
   state.view = innerWidth < 800 ? 'agenda' : 'table'; saveUI();
-  document.querySelectorAll('#viewSeg button').forEach(x => x.classList.toggle('on', x.dataset.v === state.view));
+  document.querySelectorAll('#viewSeg button').forEach(x => x.classList.toggle('on', x.dataset.v === segKey(state.view)));
+  syncModeBtn();
   updateSegIndicator();
   pageSwap('now');
 }
@@ -6830,7 +6971,7 @@ function npQuickAdd(){   // thêm deadline nhanh: chỉ cần tiêu đề (hạn
   if(!text){ if(qt) qt.focus(); return; }
   const n = new Date(), p = v => String(v).padStart(2, '0');
   state.todos.push({id:uid(), text, body:'', links:[], link:'', linkName:'', on:todayStr(), onTime:`${p(n.getHours())}:${p(n.getMinutes())}`, createdAt:n.getTime(), due:npDraft.d || '', dueTime:'', done:false, pin:false});
-  npDraft = {t:'', d:''}; npBk = 'all'; if(npTab === 'done') npTab = 'open';
+  npDraft = {t:'', d:''}; if(npSel.size && !npSel.has('open')) { npSel.delete('done'); npSel.add('open'); }   // deadline mới là việc chưa xong: đảm bảo nó hiện ra
   save(); render();
   const q2 = document.getElementById('npQText'); if(q2) q2.focus({preventScroll:true});   // gõ tiếp deadline kế tiếp luôn được
 }
@@ -6848,17 +6989,13 @@ document.getElementById('nowBar').addEventListener('click', e => {
   const act = e.target.closest('[data-act]');
   if(act){
     const a = act.dataset.act;
-    if(a === 'tagsel'){ tagSelToggle(act.dataset.tag); renderNowBar(); }
+    if(a === 'tagopen') openTags();
+    else if(a === 'tagsel'){ tagSelToggle(act.dataset.tag); renderNowBar(); }
     else if(a === 'tagclr'){ tagSelClear(); renderNowBar(); }
-    else if(a === 'tab'){ if(npTab !== act.dataset.tab){
-      const old = document.querySelector('#nowBar .np-status button.on');
-      const prevRect = old ? {l:old.offsetLeft, t:old.offsetTop, w:old.offsetWidth, h:old.offsetHeight} : null;
-      npTab = act.dataset.tab; npBk = 'all'; renderNowBar(); swapNpList(); positionNpTabInd(prevRect);
-    } }
     else if(a === 'scope'){ if(npScope !== act.dataset.scope){   // bộ lọc phạm vi: cùng hiệu ứng thanh trượt + làm mới danh sách như các tab trạng thái
       const box = document.querySelector('#nowBar .np-scope'), old = box && box.querySelector('button.on');
       const prevRect = old ? {l:old.offsetLeft, t:old.offsetTop, w:old.offsetWidth, h:old.offsetHeight} : null;
-      npScope = act.dataset.scope; npBk = 'all'; renderNowBar(); swapNpList(); positionNpTabInd(prevRect, document.querySelector('#nowBar .np-scope'));
+      npScope = act.dataset.scope; renderNowBar(); swapNpList(); positionNpTabInd(prevRect, document.querySelector('#nowBar .np-scope'));
     } }
     else if(a === 'daytoggle'){   // chỉ đổi class trên đúng ô vừa bấm (không gọi lại renderNowBar) để CSS transition của .np-day-body chạy mượt; renderNowBar gọi lại ở tick sau sẽ tự khớp vì npExpandedDays đã cập nhật
       const d = act.dataset.day, dayEl = act.closest('.np-day'), willOpen = !npExpandedDays.has(d);
@@ -6868,8 +7005,6 @@ document.getElementById('nowBar').addEventListener('click', e => {
     }
     else if(a === 'wknav'){   // đổi tuần: dựng lại rồi cho danh sách ngày trượt vào từ phía tuần mới
       const d = +act.dataset.d, old = npWk; npWk = d === 0 ? 0 : npWk + d; renderNowBar();
-      const b = document.querySelector('#nowBar .np-wkbody');
-      if(b && npWk !== old){ b.classList.remove('slide-l', 'slide-r'); void b.offsetWidth; b.classList.add(npWk > old ? 'slide-l' : 'slide-r'); }
     }
     else if(a === 'todaytoggle'){   // như daytoggle: chỉ đổi class tại chỗ để transition chạy mượt
       npTodayCollapsed = !npTodayCollapsed;
@@ -6885,10 +7020,7 @@ document.getElementById('nowBar').addEventListener('click', e => {
     }
     else if(a === 'bk'){   // ô tổng quan: bấm để lọc danh sách Deadline theo nhóm hạn chót, bấm lại để bỏ lọc ("Đã hoàn thành" thì chuyển sang tab đã xong)
       const b = act.dataset.bk;
-      if(b === 'open'){ npTab = npTab === 'open' && npBk === 'all' ? 'all' : 'open'; npBk = 'all'; }
-      else if(b === 'done'){ npTab = npTab === 'done' && npBk === 'all' ? 'all' : 'done'; npBk = 'all'; }   // tắt thì về "không lọc" (Tất cả), không tự bật lại Chưa hoàn thành
-      else if(npBk === b){ npBk = 'all'; npTab = 'all'; }
-      else { npBk = b; npTab = 'open'; }
+      if(npSel.has(b)) npSel.delete(b); else npSel.add(b);   // bấm để bật/tắt từng ô, chọn được nhiều ô cùng lúc; bỏ hết thì hiện tất cả
       renderNowBar(); swapNpList(); positionNpTabInd(null);
     }
     else if(a === 'quickfull'){   // mở form đầy đủ, mang theo chữ/ngày đã gõ ở ô thêm nhanh
