@@ -1043,6 +1043,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
   .nav button{padding:0 8px}
 }
 /* ===== Thanh cuộn riêng (luôn hiển thị ở mọi vùng có thể cuộn) ===== */
+*{scrollbar-width:none}*::-webkit-scrollbar{width:0;height:0;display:none}   /* ẩn thanh cuộn mặc định ngay từ đầu để không bị nháy khi tải lại trang (thanh cuộn riêng ở cuối trang sẽ tự vẽ lại) */
 .sb-hide{scrollbar-width:none!important;-ms-overflow-style:none}
 .sb-hide::-webkit-scrollbar{width:0!important;height:0!important;display:none!important}
 .sbLayer{position:fixed;inset:0;z-index:990;pointer-events:none}
@@ -3896,7 +3897,7 @@ authForm.addEventListener('submit', async e => {
     if(pass.length < 6){ errEl.textContent = 'Mật khẩu cần ít nhất 6 ký tự.'; return; }
     if(pass !== f.pass2.value){ errEl.textContent = 'Hai mật khẩu không khớp.'; return; }
   }
-  if(authMode !== 'reset'){ npScope = 'all'; npSel = new Set(['open']); renderDlPanel(); }   // vừa đăng nhập/đăng ký: Deadline về mặc định
+  if(authMode !== 'reset'){ npScope = 'all'; npSel = new Set(); renderDlPanel(); }   // vừa đăng nhập/đăng ký: Deadline về mặc định (không chọn lọc gì)
   authBusy = true; document.getElementById('authSubmit').disabled = true;
   try{
     if(authMode === 'login'){
@@ -3918,7 +3919,7 @@ authForm.addEventListener('submit', async e => {
 document.getElementById('authGoogle').addEventListener('click', async () => {
   if(!fb.auth){ document.getElementById('authErr').textContent = 'Đang tải dịch vụ tài khoản, vui lòng thử lại sau vài giây.'; return; }
   if(authBusy) return;
-  npScope = 'all'; npSel = new Set(['open']); renderDlPanel();
+  npScope = 'all'; npSel = new Set(); renderDlPanel();
   const prov = new firebase.auth.GoogleAuthProvider();
   try{ await fb.auth.signInWithPopup(prov); /* onAuthStateChanged sẽ chuyển trang */ }
   catch(e){
@@ -5898,9 +5899,9 @@ async function moveOcc(id, from, to, s, e, fs, fe){
 
 /* ===== Sao chép / dán ô lịch (Bảng + Danh sách) =====
    Chuột phải (hoặc chạm giữ trên điện thoại) vào ô → “Sao chép ô lịch”.
-   Chuột phải vào ô trống / khung giờ / ngày → “Dán vào …”. Phím tắt: Ctrl+C / Ctrl+V (trỏ chuột đặt trên ô cần chép / nơi cần dán).
-   Bản dán luôn là lịch MỘT LẦN (không lặp) ở đúng ngày + khung giờ được chọn; ô gốc không bị đổi. Esc hoặc “Bỏ sao chép” để hủy. */
-let cellClip = null, ctxMenu = null, ctxSuppressUntil = 0, hoverEl = null;
+   Chuột phải vào ô trống / khung giờ / ngày → “Dán vào …”. Phím tắt: Ctrl+C / Ctrl+V chỉ hoạt động khi đã chọn một ô (bấm vào ô); chuột rê ở đâu cũng không ảnh hưởng.
+   Bản dán luôn là lịch MỘT LẦN (không lặp) ở đúng ngày + khung giờ được chọn; ô gốc không bị đổi. Dùng “Bỏ sao chép” để hủy trạng thái sao chép. */
+let cellClip = null, ctxMenu = null, ctxSuppressUntil = 0;
 const CLIP_DROP = ['id','skip','skipSlots','cancelledSlots','series','overrideOf','overrideDate','overrideStart','overrideEnd'];
 const CELL_SEL = '.cell[data-id], .ag[data-id]';
 function copyCellEl(el){
@@ -5994,8 +5995,6 @@ $('#sched').addEventListener('pointerdown', e => {
 $('#sched').addEventListener('pointermove', e => { if(lpTimer && Math.hypot(e.clientX - lpX, e.clientY - lpY) > 10){ clearTimeout(lpTimer); lpTimer = 0; } });
 ['pointerup', 'pointercancel'].forEach(n => $('#sched').addEventListener(n, () => { clearTimeout(lpTimer); lpTimer = 0; }));
 $('#sched').addEventListener('click', e => { if(performance.now() < ctxSuppressUntil){ e.stopImmediatePropagation(); e.preventDefault(); } }, true);   // nhả tay sau khi chạm giữ không được mở hộp thoại sửa
-$('#sched').addEventListener('mouseover', e => { hoverEl = e.target; });
-$('#sched').addEventListener('mouseleave', () => { hoverEl = null; });
 document.addEventListener('pointerdown', e => { if(ctxMenu && !ctxMenu.contains(e.target)) closeCtx(); }, true);
 document.addEventListener('pointerdown', e => {   // bấm ra ngoài ô (khoảng trống, nút khác…) thì bỏ chọn ô
   if(!selCell) return;
@@ -6009,7 +6008,12 @@ document.addEventListener('scroll', closeCtx, true);
 document.addEventListener('keydown', e => {
   if(e.key === 'Escape'){
     if(ctxMenu){ e.preventDefault(); e.stopPropagation(); closeCtx(); return; }
-    if(!document.querySelector('dialog[open]')){ if(cellClip) clearClip(); else clearSel(); }
+    if(!document.querySelector('dialog[open]')){
+      clearSel();   // Esc chỉ bỏ chọn ô; giữ nguyên ô đang được sao chép để có thể dán tiếp
+      /* Ô vừa bấm vẫn đang giữ focus; khi có phím bấm, :focus-visible (outline 2px, offset 2px ở dòng 56) bật lên và vẽ viền to hơn viền chọn → bỏ focus để viền biến mất hẳn */
+      const a = document.activeElement;
+      if(a && a !== document.body && a.closest && a.closest('#sched') && !/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) && !a.isContentEditable) a.blur();
+    }
     return;
   }
   if(!(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey) return;
@@ -6017,13 +6021,15 @@ document.addEventListener('keydown', e => {
   if(document.querySelector('dialog[open]')) return;
   const a = document.activeElement;
   if(a && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable)) return;
-  const src = (hoverEl && hoverEl.isConnected && hoverEl) || (a && a.closest && a.closest('#sched') ? a : null);
-  if(!src && !selCell) return;
+  /* Chỉ làm việc với ô ĐANG ĐƯỢC CHỌN (bấm vào ô). Rê chuột không chọn ô; chưa chọn ô nào thì Ctrl+C / Ctrl+V không làm gì. */
+  if(!selCell || selCell.todo) return;   // chưa chọn ô, hoặc đang chọn deadline: không có ô lịch để chép/dán
+  const src = selEl();
+  if(!src) return;
   if(k === 'c'){
     if(String(window.getSelection()).trim()) return;   // đang bôi đen chữ: để trình duyệt tự sao chép như thường
-    const cell = (src && src.closest(CELL_SEL)) || selEl();
+    const cell = src.closest(CELL_SEL);
     if(cell && copyCellEl(cell)) e.preventDefault();
-  } else if(cellClip && src){
+  } else if(cellClip){
     const tg = pasteTarget(src);
     if(tg){ e.preventDefault(); pasteClip(tg); }
   }
@@ -6831,7 +6837,7 @@ const fmtHMS = ms => {
   return (h ? h + ':' + pad(m) : m) + ':' + pad(sec);
 };
 /* ---------- Mục Deadline ở Lịch › Danh sách: ô tổng quan bấm để lọc, nhóm theo hạn chót, đánh dấu xong, mở chi tiết tại chỗ ---------- */
-let npSel = new Set(['open']);   // bộ lọc Deadline chọn được nhiều mục cùng lúc: late = quá hạn, open = chưa hoàn thành, done = đã hoàn thành; rỗng = hiện tất cả (kết quả là hợp của các mục đã chọn)
+let npSel = new Set();   // mặc định KHÔNG chọn lọc gì (hiện tất cả); bộ lọc Deadline chọn được nhiều mục cùng lúc: late = quá hạn, open = chưa hoàn thành, done = đã hoàn thành; rỗng = hiện tất cả (kết quả là hợp của các mục đã chọn)
 let npScope = 'all';   // bộ lọc Deadline: all = tất cả, week = chỉ trong tuần đang xem ở mục Lịch
 let npOpen = new Set();   // id deadline đang mở chi tiết ngay trong mục Deadline (chỉ trong phiên này)
 let npVisible = [];   // các deadline đang hiện trong mục (cho nút Mở hết / Thu gọn hết)
