@@ -222,7 +222,7 @@ button,[role=button],a,summary,label,select{touch-action:manipulation}
 .ad h3{cursor:pointer;margin:0 0 6px;font-size:14px;display:flex;gap:8px;align-items:center}
 .ad h3 .tdy{background:var(--accent);color:var(--accent-ink);font-size:11px;padding:0 7px;border-radius:99px;font-weight:600}
 .ad .none{color:var(--muted);font-size:13px;padding:4px 0}
-.ag{display:grid;grid-template-columns:54px 1fr;gap:10px;padding:8px 10px;border-radius:9px;border:1px solid var(--line);border-left:4px solid var(--bd);background:var(--bgt);margin-bottom:6px;cursor:pointer}
+.ag{display:grid;grid-template-columns:54px 1fr;gap:10px;padding:8px 10px;border-radius:9px;border:1px solid var(--line);background:var(--bgt);margin-bottom:6px;cursor:pointer}
 .ag-time{font-variant-numeric:tabular-nums;font-weight:600;line-height:1.25}
 .ag-time small{color:var(--muted);font-weight:500}
 /* sự kiện đang diễn ra: dùng đúng một hiệu ứng chung cho Bảng + Danh sách */
@@ -237,8 +237,6 @@ button,[role=button],a,summary,label,select{touch-action:manipulation}
   --pulse-color:var(--live-color);
   box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pulse-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--pulse-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--pulse-color) 55%,transparent);
 }
-/* viền đều 1px khi đang diễn ra: bỏ phần viền trái dày 4px của Danh sách để khớp với vòng glow tròn đều, mượt như ở Bảng */
-.ag.live{border-left-width:1px}
 /* hover: đổi đúng sắc thái của chính ô đó (không rơi về màu môn học như .cell:hover mặc định), đồng thời tạo hiệu ứng sáng nhẹ khi rê chuột cho cả ô đỏ (đang diễn ra) và ô vàng (sắp diễn ra) */
 .cell.live:hover,.ag.live:hover{background:color-mix(in srgb,var(--live-color) 34%,var(--surface))}
 
@@ -283,7 +281,7 @@ button,[role=button],a,summary,label,select{touch-action:manipulation}
 @keyframes scheduleGlowNext{0%,100%{opacity:0}50%{opacity:1}}
 
 .tag.live i{width:6px;height:6px;border-radius:50%;background:currentColor;contain:layout style}
-.ag.next{border-radius:10px;border-left-width:1px;border-color:color-mix(in srgb,var(--next-color) 70%,transparent);background:color-mix(in srgb,var(--next-color) 26%,var(--surface));--pulse-color:var(--next-color);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pulse-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--pulse-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--pulse-color) 55%,transparent);}
+.ag.next{border-radius:10px;border-color:color-mix(in srgb,var(--next-color) 70%,transparent);background:color-mix(in srgb,var(--next-color) 26%,var(--surface));--pulse-color:var(--next-color);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pulse-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--pulse-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--pulse-color) 55%,transparent);}
 .ag.next::after,.cell.next::after{content:"";position:absolute;inset:0;border-radius:inherit;background:color-mix(in srgb,var(--next-color) 26%,transparent);pointer-events:none}
 .cell.next{--pulse-color:var(--next-color);border-radius:10px;background:color-mix(in srgb,var(--next-color) 26%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pulse-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--pulse-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--pulse-color) 55%,transparent);}
 .cell.next:hover,.ag.next:hover{background:color-mix(in srgb,var(--next-color) 34%,var(--surface))}
@@ -336,7 +334,7 @@ button,[role=button],a,summary,label,select{touch-action:manipulation}
 /* viền hàng Deadline: phải có tiền tố .sheet để thắng luật `.sheet th,.sheet td{border:1px solid var(--line)}` khai báo phía dưới (cùng độ ưu tiên thì luật đứng sau thắng, nên trước đây các viền này bị ghi đè) */
 .sheet .dlrow th,.sheet .dlrow td{border-top:2px solid color-mix(in srgb,var(--dl) 75%,var(--line));border-bottom:2px solid color-mix(in srgb,var(--dl) 75%,var(--line))}
 .sheet .dlrow td{border-left:2px solid color-mix(in srgb,var(--dl) 45%,var(--line));border-right:2px solid color-mix(in srgb,var(--dl) 45%,var(--line))}
-.sheet .dlrow th.tl{border-left:4px solid var(--dl);border-right:2px solid color-mix(in srgb,var(--dl) 45%,var(--line))}
+.sheet .dlrow th.tl{border-left:1px solid var(--line);border-right:2px solid color-mix(in srgb,var(--dl) 45%,var(--line))}
 .dlrow .dlcell{background:color-mix(in srgb,var(--dl) 26%,var(--surface));box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--dl) 85%,var(--surface));font-weight:700}
 .dlrow .dlcell:hover{background:color-mix(in srgb,var(--dl) 36%,var(--surface))}
 .dlrow .dlcell.done{background:color-mix(in srgb,var(--accent) 30%,var(--surface));box-shadow:inset 0 0 0 2px var(--accent)}
@@ -379,6 +377,22 @@ button,[role=button],a,summary,label,select{touch-action:manipulation}
 .det .bd + .lkchips{margin-top:8px}
 .fx .lkchips{justify-content:flex-start;margin:0}
 .cell.c-cancel .lkchip{opacity:.75}
+/* nhiều liên kết trong một ô: chỉ hiện 1 nút “Liên kết” + số lượng, bấm mở trang nhỏ liệt kê */
+.lkchip.lkopen b{flex:none;font-size:12px;font-weight:700;line-height:1.5;font-variant-numeric:tabular-nums}
+#dlgLinks{width:min(420px,94vw)}
+#dlgLinks[open]{display:flex;flex-direction:column;height:min(460px,82vh)}   /* khung cố định: ít hay nhiều liên kết đều cùng kích thước */
+#dlgLinks form{flex:1;min-height:0;display:flex;flex-direction:column}
+#dlgLinks h2{margin:0 0 4px;flex:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#dlgLinks .lkcount{flex:none;margin:0 0 12px;color:var(--muted);font-size:12.5px}
+#dlgLinks .lkl{display:flex;flex-direction:column;gap:6px;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;margin:0 -6px 14px;padding:0 6px}   /* nhiều liên kết: cuộn trong danh sách, tiêu đề và nút Đóng đứng yên */
+#dlgLinks .actions{flex:none}
+#dlgLinks .lkl a{flex:none;display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);text-decoration:none;transition:background .15s,border-color .15s}
+#dlgLinks .lkl a:hover,#dlgLinks .lkl a:focus-visible{background:var(--accent-soft);border-color:var(--accent)}
+#dlgLinks .lkl i{font-style:normal;flex:none}
+#dlgLinks .lkl .t{display:flex;flex-direction:column;min-width:0;flex:1}
+#dlgLinks .lkl .n{font-weight:600;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#dlgLinks .lkl .h{color:var(--muted);font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#dlgLinks .lkl em{font-style:normal;color:var(--muted);flex:none}
 .fx td.note{max-width:240px;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--muted);font-size:12.5px}
 
 /* sidebar */
@@ -416,7 +430,7 @@ button,[role=button],a,summary,label,select{touch-action:manipulation}
 .sheet th,.sheet td{border:1px solid var(--line);padding:0;vertical-align:middle}
 .sheet col.c0{width:116px}
 .sheet .wk th{background:#1e9b57;color:#fff;font-weight:700;padding:4px}
-.sheet .dn th[data-col],.sheet .dd th[data-col]{cursor:pointer}
+.sheet .dn th[data-col]{cursor:pointer}
 .sheet .dn th{font-weight:600;padding:8px 4px 2px;background:var(--surface);border-bottom:0}
 .sheet .dd th{font-weight:400;color:var(--muted);padding:2px 4px 8px;background:var(--surface);border-top:0;font-size:12px}
 .sheet .today{background:var(--accent-soft)!important;color:var(--accent)}
@@ -844,20 +858,20 @@ body:not(.authed):not(.gate) .pwaBar{display:none}
 #sched .jump-highlight::before{
   content:"";
   position:absolute;
-  inset:-4px;
-  border:4px solid color-mix(in srgb,var(--accent) 90%,transparent);
+  inset:0;                       /* bám đúng mép ô; vòng sáng vẽ bằng box-shadow nên tự bo góc đồng tâm với ô */
+  box-sizing:border-box;
+  border:0;
   border-radius:inherit;
-  box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 28%,transparent),0 0 28px 9px color-mix(in srgb,var(--accent) 60%,transparent);
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 95%,transparent),0 0 0 5px color-mix(in srgb,var(--accent) 28%,transparent),0 0 20px 6px color-mix(in srgb,var(--accent) 50%,transparent);
   pointer-events:none;
   z-index:13;
-  animation:schedJumpHighlight 2.5s ease-in-out both;
-  will-change:opacity,transform;
+  animation:schedJumpHighlight 2.4s ease-in-out both;
 }
+#sched .ag.jump-highlight::before{inset:-1px}   /* thẻ Danh sách có viền 1px: phủ khung ngoài (border-box) */
 @keyframes schedJumpHighlight{
-  0%,100%{opacity:0;transform:scale(.98)}
-  12%{opacity:1;transform:scale(1)}
-  42%{opacity:1;transform:scale(1.01)}
-  72%{opacity:.8;transform:scale(1)}
+  0%,100%{opacity:0}
+  12%,45%{opacity:1}
+  72%{opacity:.8}
 }
 
 @media print{.cpyw,.toast{display:none!important}}
@@ -1016,13 +1030,13 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
   .tools #viewSeg{order:2}
   .tools #addBtn{order:3;flex:0 0 auto;width:36px;height:34px;padding:0!important;justify-content:center}
   .tools::after{content:'';order:4;flex:0 0 100%;height:0;margin:-3px 0}   /* ngắt dòng: các nút nhỏ xuống hàng 2 */
-  .tools #notifyTop{order:5}.tools #themeBtn{order:6}.tools #undoBtn{order:7}.tools #redoBtn{order:8}
+  .tools #notifyTop{order:5}.tools #undoBtn{order:7}.tools #redoBtn{order:8}
   .tools #acctChip{order:9;margin-left:auto;min-width:0;flex:0 1 auto}
   .tools #acctChip .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:34vw}
   .tools #qWrap:focus-within,.tools #qWrap.has-val{flex:1 1 auto;width:100%}
   .tools #viewSeg{flex:1 1 auto;min-width:0}
   .tools #viewSeg button{flex:1 1 auto;padding:0 8px!important;white-space:nowrap;justify-content:center}
-  .tools #undoBtn,.tools #redoBtn,.tools #themeBtn,.tools #notifyTop{width:36px;padding:0!important;justify-content:center;flex:0 0 auto}
+  .tools #undoBtn,.tools #redoBtn,.tools #notifyTop{width:36px;padding:0!important;justify-content:center;flex:0 0 auto}
   .tools #addBtn::before{content:none}
   .addmenu{min-width:210px;padding:8px;border-radius:16px}
   .addmenu button{height:48px;font-size:15px;font-weight:600;padding:0 14px;border-radius:10px}
@@ -1040,7 +1054,7 @@ body.lk-grabbing,body.lk-grabbing *{cursor:grabbing!important;user-select:none!i
 @media screen and (max-width:400px){
   .tools{gap:5px}
   .tools #viewSeg button{padding:0 6px!important;font-size:13px}
-  .tools #undoBtn,.tools #redoBtn,.tools #themeBtn,.tools #notifyTop{width:32px}
+  .tools #undoBtn,.tools #redoBtn,.tools #notifyTop{width:32px}
   .nav button{padding:0 8px}
 }
 /* ===== Thanh cuộn riêng (luôn hiển thị ở mọi vùng có thể cuộn) ===== */
@@ -1129,7 +1143,7 @@ html.wk-anim body{overflow-x:clip}   /* tránh thanh cuộn ngang thoáng qua l�
 }
 /* thanh Tiếp theo/Deadline và thẻ Danh sách có viền TRÁI dày (5px / 4px) bo tròn ở hai đầu: lớp viền sáng phải phủ đúng khung ngoài (border-box) chứ không phải khung trong (padding-box),
    nếu không đường cong của viền sáng lệch với đường cong của thanh màu bên trái */
-.ag:not(.jump-highlight)::before{inset:-1px -1px -1px -4px}
+.ag:not(.jump-highlight)::before{inset:-1px}
 .ag.live:not(.jump-highlight)::before,.ag.next:not(.jump-highlight)::before{inset:-1px}
 @media (prefers-reduced-motion:reduce){.cell,.dlcell,.nowbar .nb,.ag,.cell::before,.dlcell::before,.nowbar .nb::before,.ag::before{transition:none}}
 
@@ -1237,17 +1251,17 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
   .tools::after{display:none}
   .top{gap:8px;margin-bottom:6px;align-items:center}
   .top{gap:8px 6px}
-  /* hàng 1: điều hướng tuần + chuông + giao diện + avatar (đã bỏ tiêu đề/ngày nên dồn lên hàng đầu, đỡ tốn 1 hàng) */
+  /* hàng 1: điều hướng tuần + chuông + avatar (đã bỏ tiêu đề/ngày nên dồn lên hàng đầu, đỡ tốn 1 hàng) */
   .nav{order:1;flex:1 1 auto;min-width:0;flex-wrap:nowrap;gap:6px}
   .nav button{height:36px;min-width:36px;flex:none;white-space:nowrap}
   .nav #todayBtn{flex:1 1 auto;justify-content:center}
   .nav .dpw{width:36px;flex:none}
   .nav .dpw>input{position:absolute;width:0;height:0;padding:0;border:0;visibility:hidden}   /* chỉ giữ nút lịch, ẩn ô input gốc */
   .nav .dpw>.dpb{position:static;transform:none;width:36px;height:36px;border:1px solid var(--line);background:var(--surface);border-radius:8px;color:var(--ink)}
-  .tools #notifyTop{order:2}.tools #themeBtn{order:3}
+  .tools #notifyTop{order:2}
   .tools #acctChip{order:4;margin:0;flex:0 0 auto;height:36px;padding:0 8px;gap:6px}
   .tools #acctChip .nm{display:none}
-  .tools #notifyTop,.tools #themeBtn{width:36px;height:36px}
+  .tools #notifyTop{width:36px;height:36px}
   .tools #undoBtn,.tools #redoBtn{display:none}   /* điện thoại không có Ctrl+Z; có hộp xác nhận + bản an toàn */
   /* hàng 2: ô tìm kiếm rộng hết hàng (trước đây chỉ là icon nhỏ thu gọn, giờ có đủ chỗ nên mở sẵn luôn cho dễ bấm) */
   .tools #qWrap{order:5;flex:1 0 100%;width:100%}
@@ -1290,23 +1304,22 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 @keyframes schedSwapX{from{opacity:0;transform:translateX(var(--sx,0px))}to{opacity:1;transform:none}}
 @media screen and (max-width:700px){
   :root{
-    --i-chl:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 5l-7 7 7 7'/%3E%3C/svg%3E"); --i-chr:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 5l7 7-7 7'/%3E%3C/svg%3E"); --i-bell:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9z'/%3E%3Cpath d='M10 20a2 2 0 0 0 4 0'/%3E%3C/svg%3E"); --i-belloff:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9z'/%3E%3Cpath d='M10 20a2 2 0 0 0 4 0'/%3E%3Cpath d='M4 4l16 16'/%3E%3C/svg%3E"); --i-theme:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 3a9 9 0 0 1 0 18z' fill='black'/%3E%3C/svg%3E");
+    --i-chl:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 5l-7 7 7 7'/%3E%3C/svg%3E"); --i-chr:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 5l7 7-7 7'/%3E%3C/svg%3E"); --i-bell:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9z'/%3E%3Cpath d='M10 20a2 2 0 0 0 4 0'/%3E%3C/svg%3E"); --i-belloff:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9z'/%3E%3Cpath d='M10 20a2 2 0 0 0 4 0'/%3E%3Cpath d='M4 4l16 16'/%3E%3C/svg%3E");
     --i-table:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3.5' y='5' width='17' height='15.5' rx='3'/%3E%3Cpath d='M3.5 10h17M8 3v4M16 3v4'/%3E%3C/svg%3E"); --i-agenda:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6h11M9 12h11M9 18h11'/%3E%3Ccircle cx='4.5' cy='6' r='1' fill='black'/%3E%3Ccircle cx='4.5' cy='12' r='1' fill='black'/%3E%3Ccircle cx='4.5' cy='18' r='1' fill='black'/%3E%3C/svg%3E"); --i-now:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M8 12.5l2.8 2.8L16.5 9.5'/%3E%3C/svg%3E"); --i-fixed:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 9.5L12 5l9.5 4.5L12 14z'/%3E%3Cpath d='M6.5 11.8V16c0 1.4 2.5 3 5.5 3s5.5-1.6 5.5-3v-4.2M21.5 9.5V15'/%3E%3C/svg%3E");
     --i-pin:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 3h6l-1 6 3 3v2H7v-2l3-3z'/%3E%3Cpath d='M12 14v7'/%3E%3C/svg%3E"); --i-pinon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 3h6l-1 6 3 3v2H7v-2l3-3z' fill='black'/%3E%3Cpath d='M12 14v7'/%3E%3C/svg%3E"); --i-edit:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19z'/%3E%3Cpath d='M14.5 6.5l3 3'/%3E%3C/svg%3E");
   }
   body{overflow-x:clip}
 
   /* --- icon: thay ký tự/emoji (mỗi font vẽ một kiểu, lệch tâm) bằng SVG nét đều, tô theo màu chữ, luôn căn giữa --- */
-  #prev,#next,#notifyTop,#themeBtn{font-size:0;line-height:0;display:inline-flex;align-items:center;justify-content:center;padding:0!important}
+  #prev,#next,#notifyTop{font-size:0;line-height:0;display:inline-flex;align-items:center;justify-content:center;padding:0!important}
   #prev,#next{width:36px}
-  #prev::before,#next::before,#notifyTop::before,#themeBtn::before,
+  #prev::before,#next::before,#notifyTop::before,
   .np-pin::before,.np-ed::before,
   #viewSeg button::before{content:"";display:block;flex:none;background:currentColor;-webkit-mask:var(--ic) center/contain no-repeat;mask:var(--ic) center/contain no-repeat}
   #prev::before,#next::before{width:20px;height:20px}
   #prev::before{--ic:var(--i-chl)} #next::before{--ic:var(--i-chr)}
-  #notifyTop::before,#themeBtn::before{width:19px;height:19px}
+  #notifyTop::before{width:19px;height:19px}
   #notifyTop::before{--ic:var(--i-belloff)} #notifyTop.on::before{--ic:var(--i-bell)}
-  #themeBtn::before{--ic:var(--i-theme)}
   .nav .dpw>.dpb svg{width:18px;height:18px}
 
   /* thanh tab dưới đáy: icon SVG + viên nền trượt (giống PC) */
@@ -1389,7 +1402,7 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 }
 @media (max-width:700px) and (prefers-reduced-motion:reduce){.sched-swap{animation:none}}
 @media screen and (max-width:700px){
-    body[data-view="fixed"] .tools #notifyTop,body[data-view="fixed"] .tools #themeBtn,body[data-view="fixed"] .tools #acctChip{display:none!important}   /* mobile: mục Công việc / Lớp không cần chuông thông báo, nút giao diện và tài khoản */
+    body[data-view="fixed"] .tools #notifyTop,body[data-view="fixed"] .tools #acctChip{display:none!important}   /* mobile: mục Công việc / Lớp không cần chuông thông báo và tài khoản */
 }
 /* ===== tinh chỉnh theo yêu cầu: deadline + đồng bộ trạng thái Bảng/Danh sách ===== */
 /* Ba nút ghim/sửa/xóa của deadline dùng cùng một khung kích thước, căn giữa và nền trong suốt. */
@@ -1404,8 +1417,8 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 
 
 /* Đồng bộ hình thức ô Đang diễn ra / Sắp diễn ra giữa Bảng (.cell) và Danh sách (.ag). */
-.cell.live,.ag.live{border-radius:10px;border-width:1px;border-left-width:1px;border-color:color-mix(in srgb,var(--live-color) 70%,transparent);background:color-mix(in srgb,var(--live-color) 26%,var(--surface));--pulse-color:var(--live-color);--gc:var(--live-color);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--live-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--live-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--live-color) 55%,transparent)}
-.cell.next,.ag.next{border-radius:10px;border-width:1px;border-left-width:1px;border-color:color-mix(in srgb,var(--next-color) 70%,transparent);background:color-mix(in srgb,var(--next-color) 26%,var(--surface));--pulse-color:var(--next-color);--gc:var(--next-color);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--next-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--next-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--next-color) 55%,transparent)}
+.cell.live,.ag.live{border-radius:10px;border-width:1px;border-color:color-mix(in srgb,var(--live-color) 70%,transparent);background:color-mix(in srgb,var(--live-color) 26%,var(--surface));--pulse-color:var(--live-color);--gc:var(--live-color);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--live-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--live-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--live-color) 55%,transparent)}
+.cell.next,.ag.next{border-radius:10px;border-width:1px;border-color:color-mix(in srgb,var(--next-color) 70%,transparent);background:color-mix(in srgb,var(--next-color) 26%,var(--surface));--pulse-color:var(--next-color);--gc:var(--next-color);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--next-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--next-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--next-color) 55%,transparent)}
 .cell.live:hover,.ag.live:hover{background:color-mix(in srgb,var(--live-color) 34%,var(--surface))}
 .cell.next:hover,.ag.next:hover{background:color-mix(in srgb,var(--next-color) 34%,var(--surface))}
 /* ĐỒNG BỘ HIỆU ỨNG Ô ĐANG DIỄN RA / SẮP DIỄN RA: cùng nhịp, cùng biên độ; chỉ khác màu */
@@ -1461,8 +1474,6 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 .np-car{margin-left:auto;font-size:15px;line-height:1;color:var(--muted);opacity:.55;transition:transform .15s,opacity .15s}
 .np-dl:hover .np-car,.np-dl.open .np-car{opacity:1}
 .np-dl.open .np-car{transform:rotate(90deg)}
-.np-dl.bk-late{box-shadow:inset 3px 0 0 var(--danger)}
-.np-dl.bk-today{box-shadow:inset 3px 0 0 var(--warn)}
 .np-dl.open{background:color-mix(in srgb,var(--ink) 5%,transparent)}
 .np-dl.pinned.open{background:color-mix(in srgb,var(--warn) 12%,transparent)}
 .np-dl>.np-det{grid-column:2/-1;cursor:default;padding:2px 0 4px}
@@ -1584,9 +1595,9 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 
 /* ===== Đang diễn ra / Sắp diễn ra: MỘT kiểu chung cho Bảng, Danh sách, Công việc =====
    nền pha màu đậm hơn + vạch màu bên trái (vẽ bằng bóng trong nên bo góc luôn khớp) + viền mảnh + đổ bóng nhẹ cố định + nhãn dạng viên đặc. Không nhấp nháy, không phát sáng. */
-#sched .cell.live,#sched .ag.live,#dlPanel.page .np-card.live,#dlPanel.page .np-row.live{background:color-mix(in srgb,var(--live-color) 17%,var(--surface));border-color:color-mix(in srgb,var(--live-color) 60%,var(--line));box-shadow:inset 4px 0 0 var(--live-color),inset 0 0 0 1px color-mix(in srgb,var(--live-color) 45%,transparent),0 8px 18px -12px color-mix(in srgb,var(--live-color) 80%,transparent)}
+#sched .cell.live,#sched .ag.live,#dlPanel.page .np-card.live,#dlPanel.page .np-row.live{background:color-mix(in srgb,var(--live-color) 17%,var(--surface));border-color:color-mix(in srgb,var(--live-color) 60%,var(--line));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--live-color) 45%,transparent),0 8px 18px -12px color-mix(in srgb,var(--live-color) 80%,transparent)}
 #sched .cell.live:hover,#sched .ag.live:hover,#dlPanel.page .np-card.live:hover,#dlPanel.page .np-row.live:hover{background:color-mix(in srgb,var(--live-color) 24%,var(--surface))}
-#sched .cell.next,#sched .ag.next,#dlPanel.page .np-card.next,#dlPanel.page .np-row.next{background:color-mix(in srgb,var(--next-color) 17%,var(--surface));border-color:color-mix(in srgb,var(--next-color) 60%,var(--line));box-shadow:inset 4px 0 0 var(--next-color),inset 0 0 0 1px color-mix(in srgb,var(--next-color) 45%,transparent),0 8px 18px -12px color-mix(in srgb,var(--next-color) 80%,transparent)}
+#sched .cell.next,#sched .ag.next,#dlPanel.page .np-card.next,#dlPanel.page .np-row.next{background:color-mix(in srgb,var(--next-color) 17%,var(--surface));border-color:color-mix(in srgb,var(--next-color) 60%,var(--line));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--next-color) 45%,transparent),0 8px 18px -12px color-mix(in srgb,var(--next-color) 80%,transparent)}
 #sched .cell.next:hover,#sched .ag.next:hover,#dlPanel.page .np-card.next:hover,#dlPanel.page .np-row.next:hover{background:color-mix(in srgb,var(--next-color) 24%,var(--surface))}
 /* nhãn trạng thái: viên đặc nhỏ, dùng chung */
 #sched .tag.live,#sched .tag.next,#sched .ag .et .tag.live,#sched .ag .et .tag.next,#dlPanel.page .np-k .tag.live,#dlPanel.page .np-k .tag.next,#dlPanel.page .np-row.live .np-st,#dlPanel.page .np-row.next .np-st{display:inline-flex;align-items:center;gap:5px;height:20px;min-width:0;padding:0 9px;border:0;border-radius:999px;box-shadow:none;font-size:11px;font-weight:700;line-height:1;white-space:nowrap}
@@ -1596,9 +1607,9 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 #sched .tag.next::before,#sched .ag .et .tag.next::before,#dlPanel.page .np-k .tag.next::before,#dlPanel.page .np-row.next .np-st::before{display:none}
 
 /* nổi bật hơn: nền đậm, vạch dày, viền rõ, bóng sâu hơn */
-#sched .cell.live,#sched .ag.live,#dlPanel.page .np-card.live,#dlPanel.page .np-row.live{background:color-mix(in srgb,var(--live-color) 30%,var(--surface));border-color:var(--live-color);box-shadow:inset 6px 0 0 var(--live-color),inset 0 0 0 1px var(--live-color),0 10px 22px -10px color-mix(in srgb,var(--live-color) 90%,transparent)}
+#sched .cell.live,#sched .ag.live,#dlPanel.page .np-card.live,#dlPanel.page .np-row.live{background:color-mix(in srgb,var(--live-color) 30%,var(--surface));border-color:var(--live-color);box-shadow:inset 0 0 0 1px var(--live-color),0 10px 22px -10px color-mix(in srgb,var(--live-color) 90%,transparent)}
 #sched .cell.live:hover,#sched .ag.live:hover,#dlPanel.page .np-card.live:hover,#dlPanel.page .np-row.live:hover{background:color-mix(in srgb,var(--live-color) 38%,var(--surface))}
-#sched .cell.next,#sched .ag.next,#dlPanel.page .np-card.next,#dlPanel.page .np-row.next{background:color-mix(in srgb,var(--next-color) 30%,var(--surface));border-color:var(--next-color);box-shadow:inset 6px 0 0 var(--next-color),inset 0 0 0 1px var(--next-color),0 10px 22px -10px color-mix(in srgb,var(--next-color) 90%,transparent)}
+#sched .cell.next,#sched .ag.next,#dlPanel.page .np-card.next,#dlPanel.page .np-row.next{background:color-mix(in srgb,var(--next-color) 30%,var(--surface));border-color:var(--next-color);box-shadow:inset 0 0 0 1px var(--next-color),0 10px 22px -10px color-mix(in srgb,var(--next-color) 90%,transparent)}
 #sched .cell.next:hover,#sched .ag.next:hover,#dlPanel.page .np-card.next:hover,#dlPanel.page .np-row.next:hover{background:color-mix(in srgb,var(--next-color) 38%,var(--surface))}
 #sched .cell.live .ev-title,#sched .cell.next .ev-title,#sched .ag.live .et,#sched .ag.next .et,#dlPanel.page .np-card.live .np-t,#dlPanel.page .np-card.next .np-t,#dlPanel.page .np-row.live .np-main b,#dlPanel.page .np-row.next .np-main b{font-weight:800}
 #sched .tag.live,#sched .tag.next,#sched .ag .et .tag.live,#sched .ag .et .tag.next,#dlPanel.page .np-k .tag.live,#dlPanel.page .np-k .tag.next,#dlPanel.page .np-row.live .np-st,#dlPanel.page .np-row.next .np-st{height:22px;padding:0 11px;font-size:11.5px;box-shadow:0 2px 6px -2px rgba(0,0,0,.35)}
@@ -1620,7 +1631,7 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 
 /* ===================================================================
    MOBILE FIX v5
-   1) hàng đầu: điều hướng tuần + chuông + giao diện + avatar luôn nằm CÙNG MỘT hàng
+   1) hàng đầu: điều hướng tuần + chuông + avatar luôn nằm CÙNG MỘT hàng
    2) trang Công việc: Lịch học → (ô lọc Deadline) → Deadline
    3) hết tràn/đè chữ: danh sách Deadline, nhãn "Diễn ra sau…", ghim trong ô bảng…
    =================================================================== */
@@ -1632,7 +1643,7 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
   .top{flex-wrap:wrap}
   .nav{flex:1 1 0;min-width:0}
   .nav #todayBtn{flex:1 1 0;min-width:48px;padding:0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .tools #notifyTop,.tools #themeBtn,.tools #acctChip{flex:0 0 auto}
+  .tools #notifyTop,.tools #acctChip{flex:0 0 auto}
   .tools #acctChip{max-width:72px;overflow:hidden}
   .tools #acctChip .av{flex:none}
 
@@ -1645,8 +1656,8 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 @media screen and (max-width:359px){
   .nav,.tools{gap:4px}
   .top{gap:6px 4px}
-  .nav button,.nav .dpw,.nav .dpw>.dpb,.tools #notifyTop,.tools #themeBtn{min-width:32px}
-  #prev,#next,.tools #notifyTop,.tools #themeBtn,.nav .dpw,.nav .dpw>.dpb{width:32px;height:32px}
+  .nav button,.nav .dpw,.nav .dpw>.dpb,.tools #notifyTop{min-width:32px}
+  #prev,#next,.tools #notifyTop,.nav .dpw,.nav .dpw>.dpb{width:32px;height:32px}
   .nav button{height:32px}
   .tools #acctChip{height:32px;padding:0 5px;max-width:56px}
 }
@@ -1784,15 +1795,15 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 #sched .cell.live,#sched .cell.next,#sched .ag.live,#sched .ag.next,#dlPanel.page .np-card.live,#dlPanel.page .np-card.next{position:relative;z-index:auto;background:color-mix(in srgb,var(--st) 34%,var(--surface));text-shadow:none}
 #sched .cell.live:hover,#sched .cell.next:hover,#sched .ag.live:hover,#sched .ag.next:hover,#dlPanel.page .np-card.live:hover,#dlPanel.page .np-card.next:hover{background:color-mix(in srgb,var(--st) 42%,var(--surface))}
 .sheet td.slot:has(.cell.live),.sheet td.slot:has(.cell.next){z-index:auto}   /* không nâng cả cột lên nữa: không còn bóng đổ ngoài nên không cần, và nhãn .ctag của ô kế bên không bị che */
-#sched .cell.live,#sched .cell.next{border-radius:10px;box-shadow:inset 7px 0 0 var(--st),inset 0 0 0 1px var(--st-line);padding-left:13px;padding-right:6px}
-#sched .ag.live,#sched .ag.next{border-radius:10px;border:1px solid var(--st-line);border-left:7px solid var(--st);box-shadow:none}   /* Danh sách: vạch trái chính là viền trái 4px (bo góc luôn khớp), không thêm bóng trong → hết viền đôi */
+#sched .cell.live,#sched .cell.next{border-radius:10px;box-shadow:inset 0 0 0 1px var(--st-line);padding-left:6px;padding-right:6px}
+#sched .ag.live,#sched .ag.next{border-radius:10px;border:1px solid var(--st-line);box-shadow:none}   /* Danh sách: viền đều 1px cả 4 cạnh, không có vạch trái */
 #sched .cell.live::after,#sched .cell.next::after,#sched .ag.live::after,#sched .ag.next::after,#dlPanel.page .np-card.live::after,#dlPanel.page .np-card.next::after{content:none;display:none;background:none}
 #sched .cell.live:not(.jump-highlight)::before,#sched .cell.next:not(.jump-highlight)::before,#sched .ag.live:not(.jump-highlight)::before,#sched .ag.next:not(.jump-highlight)::before,#dlPanel.page .np-card.live:not(.jump-highlight)::before,#dlPanel.page .np-card.next:not(.jump-highlight)::before{
   content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;
   background:none;opacity:0;box-shadow:inset 0 0 0 2px var(--st),0 0 0 2px color-mix(in srgb,var(--st) 35%,transparent),0 0 14px 2px color-mix(in srgb,var(--st) 50%,transparent);
   animation:stPulse 2.8s ease-in-out infinite;animation-delay:calc(var(--ph,0) * -1s);
   transition:none;will-change:opacity}
-#sched .ag.live:not(.jump-highlight)::before,#sched .ag.next:not(.jump-highlight)::before{inset:-1px -1px -1px -7px}   /* phủ đúng khung ngoài (kể cả viền trái 4px) */
+#sched .ag.live:not(.jump-highlight)::before,#sched .ag.next:not(.jump-highlight)::before{inset:-1px}   /* phủ đúng khung ngoài */
 @media (hover:hover){
   #sched .cell.live:not(.jump-highlight):hover::before,#sched .cell.next:not(.jump-highlight):hover::before,#sched .ag.live:not(.jump-highlight):hover::before,#sched .ag.next:not(.jump-highlight):hover::before,#dlPanel.page .np-card.live:not(.jump-highlight):hover::before,#dlPanel.page .np-card.next:not(.jump-highlight):hover::before{animation:none;opacity:1}   /* rê chuột: vòng sáng đứng yên, giống mọi ô khác */
 }
@@ -1804,7 +1815,7 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 #sched .cell .lvb .tag.live::before,#sched .cell .lvb .tag.next::before,#sched .ag .et .tag.live::before,#sched .ag .et .tag.next::before,#dlPanel.page .np-k .tag.live::before,#dlPanel.page .np-k .tag.next::before,#sched .cell .lvb .tag.live::after,#sched .cell .lvb .tag.next::after,#sched .ag .et .tag.live::after,#sched .ag .et .tag.next::after,#dlPanel.page .np-k .tag.live::after,#dlPanel.page .np-k .tag.next::after,#sched .cell .lvb .tag.live i,#sched .ag .et .tag.live i,#dlPanel.page .np-k .tag.live i{content:none!important;display:none!important}
 
 @media (max-width:700px){
-  #sched .cell.live,#sched .cell.next{padding-left:11px;padding-right:5px}
+  #sched .cell.live,#sched .cell.next{padding-left:5px;padding-right:5px}
 }
 /* nâng ô lên trên ô kế bên để vòng sáng ngoài không bị che */
 #sched .cell.live,#sched .cell.next,#sched .ag.live,#sched .ag.next{z-index:2}
@@ -1823,7 +1834,7 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 :root:not([data-theme=dark]) #sched:has(.cell.live,.ag.live) .ag.next{background:color-mix(in srgb,var(--bd) 46%,var(--surface))}
 :root:not([data-theme=dark]) #sched:has(.cell.live,.ag.live) .ag.next:hover{background:color-mix(in srgb,var(--bd) 56%,var(--surface))}
 #sched:has(.cell.live,.ag.live) .cell.next{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cc) 60%,transparent);padding-left:6px;padding-right:6px}
-#sched:has(.cell.live,.ag.live) .ag.next{border:1px solid color-mix(in srgb,var(--bd) 60%,transparent);border-left:4px solid var(--bd)}
+#sched:has(.cell.live,.ag.live) .ag.next{border:1px solid color-mix(in srgb,var(--bd) 60%,transparent)}
 #sched:has(.cell.live,.ag.live) :is(.cell.next,.ag.next)::before{animation:none!important;opacity:0!important;box-shadow:none!important}
 #sched:has(.cell.live,.ag.live) .tag.next,#dlPanel.page:has(.np-card.live,.np-row.live) .np-k .tag.next,#dlPanel.page:has(.np-card.live,.np-row.live) .np-row.next .np-st{opacity:.75}
 @media (prefers-reduced-motion:reduce){
@@ -2116,11 +2127,12 @@ body.authed .app,body.gate #authGate,
 .dlpin,.np-pin,.np-ed,.np-dl .np-tools,.todo .x{transition:none}
 /* nhãn "Đang diễn ra" chỉ còn chấm nhấp nháy ở trang Công việc */
 /* nhảy tới ô: một vòng viền mờ dần */
-#sched .jump-highlight::before{inset:-3px;border-width:2px;box-shadow:none;animation-duration:1.6s;animation-timing-function:ease-out;will-change:auto}
+#sched .jump-highlight::before{animation-duration:1.6s;animation-timing-function:ease-out}
 /* nhãn nằm trên mép ô (.ctag/.cbar) phải nổi lên trên vòng sáng, không bị vòng đè lên */
-#sched .jump-highlight>.ctag,#sched .jump-highlight>.cbar{z-index:14}
+#sched .jump-highlight>.ctag,#sched .jump-highlight>.cbar{z-index:14!important}   /* !important: luật z-index:2 của .cbar ở ô Deadline (Bảng/Danh sách) đứng sau nên từng đè mất, vòng sáng phủ lên tag */
 /* ô đang / sắp diễn ra (nút Hôm nay): vòng sáng đậm và lâu hơn để dễ thấy */
-#sched :is(.cell,.ag):is(.live,.next).jump-highlight::before{display:block;inset:-4px;border-width:3px;box-shadow:0 0 0 5px color-mix(in srgb,var(--accent) 30%,transparent),0 0 22px 6px color-mix(in srgb,var(--accent) 55%,transparent);animation-duration:2.4s;animation-timing-function:ease-in-out}
+#sched :is(.dlcell,.ag.dl).jump-highlight::before{display:block;animation-duration:3.4s;animation-timing-function:ease-in-out}   /* nhảy tới ô Deadline: cùng kiểu vòng sáng với ô lịch đang/sắp diễn ra, lâu hơn một chút */
+#sched :is(.cell,.ag):is(.live,.next).jump-highlight::before{display:block;animation-duration:2.4s;animation-timing-function:ease-in-out}
 
 /* 3) NÚT — một cách phản hồi duy nhất cho MỌI nút
    rê chuột: đổi màu nền/viền/chữ · bấm xuống: mờ nhẹ (không thu nhỏ) · vô hiệu: mờ + con trỏ cấm · bàn phím: viền focus chung */
@@ -2234,7 +2246,7 @@ input,select,textarea,#dlg input,#dlg select,#dlg textarea{transition:border-col
 #sched>.scroller{margin:-1px -1px 0;border-radius:var(--r-card,14px) var(--r-card,14px) 0 0}   /* thanh "Tuần" phủ luôn lên viền của khung */
 .sheet tr:not(.wk)>:first-child{box-shadow:inset 1px 0 0 var(--line-soft,var(--line))}
 .sheet tr:not(.wk)>:last-child{box-shadow:inset -1px 0 0 var(--line-soft,var(--line))}
-.sheet .dlrow th.tl{border-left:1px solid var(--line);box-shadow:inset 4px 0 0 var(--dl)}
+.sheet .dlrow th.tl{border-left:1px solid var(--line)}
 .sheet{border-style:hidden}   /* bỏ viền ngoài của bảng: viền của thẻ là đường bao duy nhất, thanh "Tuần" sát khít vào khung */
 .sheet{min-width:min(700px,100%)}   /* khổ vừa: bảng co vừa khít khung, không tràn vài px làm lệch cột Chủ Nhật */
 
@@ -2386,6 +2398,16 @@ input,select,textarea,#dlg input,#dlg select,#dlg textarea{transition:border-col
 #dlPanel.page .np-bk.bk-later small{color:var(--bc)}
 #dlPanel.page .np-dl.bk-later .np-meta b.cd{background:color-mix(in srgb,var(--warn) 24%,transparent);color:var(--warn)}
 #dlPanel.page .np-dl .np-when.later{color:var(--warn)}
+/* dòng "Hạn: …" đồng bộ màu với trạng thái: đã xong = xanh, quá hạn = đỏ, chưa xong (hôm nay / còn hạn) = vàng; không thời hạn = xám */
+#dlPanel.page .np-dl .np-when.done{color:var(--accent);font-weight:600}
+#dlPanel.page .np-dl .np-when.late{color:var(--danger);font-weight:600}
+#dlPanel.page .np-dl .np-when.today,#dlPanel.page .np-dl .np-when.later{color:var(--warn);font-weight:600}
+#dlPanel.page .np-dl .np-when.none{color:var(--muted);font-weight:500}
+/* dấu tick khi hoàn thành: nét vẽ SVG bo tròn, thanh mảnh, nằm giữa ô tròn */
+#dlPanel.page .np-chk .np-tk{display:block;margin:auto;flex:none;width:72%;height:72%;fill:none;stroke:currentColor;stroke-width:4.4;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+/* rê chuột vào ô tròn chưa xong: màu theo trạng thái — quá hạn = đỏ, hôm nay / còn hạn = vàng (đã xong giữ xanh) */
+#dlPanel.page .np-dl.bk-late:not(.done) .np-chk:hover{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 18%,transparent)}
+#dlPanel.page .np-dl.bk-today:not(.done) .np-chk:hover,#dlPanel.page .np-dl.bk-later:not(.done) .np-chk:hover{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 22%,transparent)}
 @media (max-width:820px){#dlPanel.page .np-list{max-height:none;overflow:visible}#dlPanel.page .np-list .np-bk{position:static}}
 @media (max-width:700px){.below #dlNew{padding:10px 12px}}
 /* Ô lọc "Chưa hoàn thành": số luôn màu vàng, kể cả khi đang được chọn hoặc bằng 0 */
@@ -2433,7 +2455,7 @@ input,select,textarea,#dlg input,#dlg select,#dlg textarea{transition:border-col
 #dlPanel.page .np-dl.open{--oc:var(--warn)}
 #dlPanel.page .np-dl.open.bk-late{--oc:var(--danger)}
 #dlPanel.page .np-dl.open.done,#dlPanel.page .np-dl.open.bk-done{--oc:var(--accent)}
-#dlPanel.page .np-dl.open,#dlPanel.page .np-dl.open:hover,#dlPanel.page .np-dl.pinned.open,#dlPanel.page .np-dl.bk-late.open,#dlPanel.page .np-dl.bk-today.open{background:color-mix(in srgb,var(--oc) 9%,var(--surface));border-radius:10px;border-bottom-color:transparent;margin:0;box-shadow:inset 3px 0 0 var(--oc),inset 0 0 0 1px color-mix(in srgb,var(--oc) 35%,transparent)}
+#dlPanel.page .np-dl.open,#dlPanel.page .np-dl.open:hover,#dlPanel.page .np-dl.pinned.open,#dlPanel.page .np-dl.bk-late.open,#dlPanel.page .np-dl.bk-today.open{background:color-mix(in srgb,var(--oc) 9%,var(--surface));border-radius:10px;border-bottom-color:transparent;margin:0;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--oc) 35%,transparent)}
 #dlPanel.page .np-dl.open+.np-dl{border-top:0}
 #dlPanel.page .np-dl.open>.np-det{margin-top:0;padding-top:3px;border-top:1px solid color-mix(in srgb,var(--oc) 24%,transparent)}
 #dlPanel.page .np-dl.open .np-main b:not(.cd):not(.dn){color:var(--ink)}
@@ -2513,7 +2535,7 @@ body.dl-resizing{cursor:col-resize;user-select:none;-webkit-user-select:none}
 @media (max-width:700px){
   .tools #viewSeg button[data-v=deadline]{display:flex}
   body[data-view=agenda] .layout #dlNew{display:none}
-  body[data-view=deadline] #sched,body[data-view=deadline] #legend,body[data-view=deadline] #stats,body[data-view=deadline] .top .nav,body[data-view=deadline] #qWrap,body[data-view=deadline] .below>.card:not(#dlNew){display:none!important}
+  body[data-view=deadline] #sched,body[data-view=deadline] #legend,body[data-view=deadline] #stats,body[data-view=deadline] .top .nav,body[data-view=deadline] .below>.card:not(#dlNew){display:none!important}
   body[data-view=deadline] .layout.ag-on .below #dlNew{padding:12px 8px 20px;min-height:calc(100vh - 220px)}
   body[data-view=deadline] #dlPanel.page .np-list{border:0;background:none;padding:2px 0 8px;border-radius:0}
 }
@@ -2522,7 +2544,7 @@ body.dl-resizing{cursor:col-resize;user-select:none;-webkit-user-select:none}
 #dlPanel.page .np-dl{--oc:var(--warn)}
 #dlPanel.page .np-dl.bk-late{--oc:var(--danger)}
 #dlPanel.page .np-dl.done,#dlPanel.page .np-dl.bk-done{--oc:var(--accent)}
-#dlPanel.page .np-dl,#dlPanel.page .np-dl.bk-late,#dlPanel.page .np-dl.bk-today,#dlPanel.page .np-dl.pinned{background:color-mix(in srgb,var(--oc) 9%,var(--surface));border-radius:10px;border-bottom:0;margin:0 0 6px;box-shadow:inset 3px 0 0 var(--oc),inset 0 0 0 1px color-mix(in srgb,var(--oc) 35%,transparent)}
+#dlPanel.page .np-dl,#dlPanel.page .np-dl.bk-late,#dlPanel.page .np-dl.bk-today,#dlPanel.page .np-dl.pinned{background:color-mix(in srgb,var(--oc) 9%,var(--surface));border-radius:10px;border-bottom:0;margin:0 0 6px;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--oc) 35%,transparent)}
 #dlPanel.page .np-dl:hover,#dlPanel.page .np-dl.pinned:hover{background:color-mix(in srgb,var(--oc) 14%,var(--surface))}
 #dlPanel.page .np-dl:last-child{margin-bottom:0}
 #dlPanel.page .np-dl.open,#dlPanel.page .np-dl.open:hover,#dlPanel.page .np-dl.pinned.open,#dlPanel.page .np-dl.bk-late.open,#dlPanel.page .np-dl.bk-today.open{margin:0 0 6px}
@@ -2699,6 +2721,109 @@ body .layout.ag-on .below #dlNew.card:not([hidden]){padding-top:10px}   /* PC: 1
 #dlPanel.page .np-dl.open .np-det .np-dmeta:empty{display:none}
 /* Khoảng cách giữa chip liên kết và hàng nút bấm (lịch / ghim / sửa / xóa) ở cuối thẻ: xa hơn (trước 4px) */
 #dlPanel.page .np-dl.open .np-det .np-dact{margin-top:11px}
+/* ===== Lịch: ô Đang diễn ra / Sắp diễn ra — khung "thở" trùm đúng mép ô, mảnh bằng viền gốc (1px) =====
+   Đang diễn ra = viền liền + ánh sáng + nền nhấp nháy nhẹ; Sắp diễn ra = viền nét đứt, nhịp chậm hơn, không nền.
+   Bảng: khung bao trọn ô (không có vạch dọc); Danh sách: vạch là viền trái thật, khung phủ cả viền đó.
+   Chỉ vẽ trong phạm vi ô, nằm dưới chữ/nhãn; đường viền gốc 1px của ô nhường chỗ cho khung nên không bị chồng 2 đường. */
+@keyframes stRing{0%,100%{opacity:.45}50%{opacity:1}}
+#sched :is(.cell,.ag):is(.live,.next)::after{content:"";display:block;position:absolute;inset:0;z-index:0;box-sizing:border-box;border-radius:inherit;pointer-events:none;animation:stRing 2s ease-in-out infinite;animation-delay:calc(var(--ph,0) * -1s);will-change:opacity}
+#sched :is(.cell,.ag).live::after{border:1px solid var(--live-color);background:color-mix(in srgb,var(--live-color) 16%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--live-color) 55%,transparent),inset 0 0 20px -2px color-mix(in srgb,var(--live-color) 85%,transparent)}
+#sched :is(.cell,.ag).next::after{border:1px dashed var(--next-color);background:none;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--next-color) 45%,transparent),inset 0 0 12px -3px color-mix(in srgb,var(--next-color) 75%,transparent);animation-duration:2.8s}
+/* Bảng: không còn vạch dọc trái ở ô Đang/Sắp diễn ra (chỉ còn khung bao trọn ô) và ở nhãn hàng Deadline */
+#sched .cell.live,#sched .cell.next:not(.live){box-shadow:none;border-radius:10px;padding-left:6px;padding-right:6px}
+#sched .cell.live:not(.jump-highlight)::before{display:none!important}
+#sched .sheet .dlrow th.tl{border-left:1px solid var(--line);box-shadow:none}
+@media (max-width:700px){#sched .sheet .dlrow th.tl{padding-left:0}}
+/* Danh sách: bỏ vạch dọc trái — viền trái chỉ còn 1px như 3 cạnh còn lại; ô Đang/Sắp diễn ra: viền gốc trong suốt, khung phủ ngay mép ngoài */
+#sched .ag:not(.live):not(.next){border-left-color:color-mix(in srgb,var(--bd) var(--rp,60%),transparent)}
+#sched .ag.live,#sched .ag.next:not(.live){border:1px solid transparent}
+#sched .ag:is(.live,.next)::after{inset:-1px}
+#sched .ag.live:not(.jump-highlight)::before,#sched .ag.next:not(.jump-highlight)::before{display:none!important}
+/* Deadline (cột phải ở Danh sách): bỏ vạch dọc trái 3px, giữ viền mảnh 1px */
+#dlPanel.page .np-dl,#dlPanel.page .np-dl.bk-late,#dlPanel.page .np-dl.bk-today,#dlPanel.page .np-dl.pinned,#dlPanel.page .np-dl.open,#dlPanel.page .np-dl.open:hover,#dlPanel.page .np-dl.pinned.open,#dlPanel.page .np-dl.bk-late.open,#dlPanel.page .np-dl.bk-today.open{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--oc) 35%,transparent)}
+@media (prefers-reduced-motion:reduce){#sched :is(.cell,.ag):is(.live,.next)::after{animation:none!important;opacity:.9}}
+/* Sắp diễn ra: bỏ nền vàng + vạch vàng, chỉ giữ khung nét đứt (ô trông như ô thường); khung nằm dưới nhãn/chữ, không đè lên tag */
+#sched .cell.next:not(.live){background:color-mix(in srgb,var(--cc) 22%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cc) 60%,transparent);padding-left:6px;padding-right:6px}
+#sched .cell.next:not(.live):hover{background:color-mix(in srgb,var(--cc) 30%,var(--surface))}
+#sched .cell.next.nofill:not(.live){background:var(--surface)}
+:root:not([data-theme=dark]) #sched .cell.next:not(.live){background:color-mix(in srgb,var(--cc) 46%,var(--surface))}
+:root:not([data-theme=dark]) #sched .cell.next:not(.live):hover{background:color-mix(in srgb,var(--cc) 56%,var(--surface))}
+:root:not([data-theme=dark]) #sched .cell.next.nofill:not(.live){background:var(--surface)}
+#sched .ag.next:not(.live){background:color-mix(in srgb,var(--bd) 22%,var(--surface));border:1px solid color-mix(in srgb,var(--bd) 60%,transparent)}
+#sched .ag.next:not(.live):hover{background:color-mix(in srgb,var(--bd) 30%,var(--surface))}
+:root:not([data-theme=dark]) #sched .ag.next:not(.live){background:color-mix(in srgb,var(--bd) 46%,var(--surface))}
+:root:not([data-theme=dark]) #sched .ag.next:not(.live):hover{background:color-mix(in srgb,var(--bd) 56%,var(--surface))}
+/* Deadline: tiêu đề nhóm "Hôm nay" màu vàng như nhóm "Chưa hoàn thành" */
+#dlPanel.page .np-bk.bk-today{--bc:var(--warn)}
+#dlPanel.page .np-bk.bk-today small{color:var(--bc)}
+/* Quá hạn: số đếm luôn màu đỏ (ô lọc kể cả khi = 0, và số ở tiêu đề nhóm), cùng kiểu với "Chưa hoàn thành" = vàng, "Đã hoàn thành" = xanh */
+#dlPanel.page .np-tile.late .np-tn,#dlPanel.page .np-tile.late.on .np-tn,#dlPanel.page .np-tile.late.zero:not(.on) .np-tn,#dlPanel.page .np-dlcol .np-tile.late .np-tn{color:var(--danger)}
+#dlPanel.page .np-bk.bk-late small{color:var(--danger)}
+/* Danh sách: nhãn tag + nhãn trạng thái (Kết thúc sau / Diễn ra sau) cùng một hàng trên viền trên thẻ */
+#sched .ag>.cbar{position:absolute;top:-6px;right:10px;display:flex;align-items:center;gap:3px;box-sizing:border-box;max-width:calc(100% - 20px);height:12px;pointer-events:none;white-space:nowrap;z-index:2}
+#sched .ag>.cbar>.ctag{position:static;flex:0 1 auto;min-width:0;max-width:none}
+#sched .ag:has(>.cbar){margin-top:9px}
+#sched .ag.dl:has(>.cbar){padding-top:11px}
+#sched .cstate.dls-ok,#sched .cstate.dls-late,#sched .cstate.dls-soon,#sched .cstate.dls-n,#sched .cstate.dls-pend{font-variant-numeric:tabular-nums}
+#sched .ag.dl .et{padding-right:28px}
+#sched .ag.live:has(>.cbar),#sched .ag.next:has(>.cbar){padding-top:11px}
+
+/* Icon dùng chung + thanh nút hành động của dòng Deadline: hiện ở GÓC PHẢI TRÊN, nằm trong ô, khi rê chuột (như nút sửa của ô lịch); điện thoại dùng hàng nút trong phần chi tiết */
+.ic{display:block;flex:none}
+.np-ab{display:inline-flex;align-items:center;justify-content:center}
+.np-abpin.on .ic{fill:currentColor}
+.np-abpin.on{color:var(--warn)}
+.dlmark{color:var(--warn)}
+.dlmark .ic{fill:currentColor}
+.np-dl{position:relative}
+.np-hv{display:none}
+@media (hover:hover){
+  #dlPanel .np-dl>.np-hv{position:absolute;top:3px;right:3px;z-index:6;display:flex;gap:3px;visibility:hidden}
+  #dlPanel .np-dl:hover>.np-hv,#dlPanel .np-dl:has(.np-hv :focus-visible)>.np-hv{visibility:visible}
+  #dlPanel .np-hv .np-ab{width:20px;height:20px;padding:0;border-radius:6px;border:1px solid color-mix(in srgb,var(--ink) 22%,transparent);background:color-mix(in srgb,var(--surface) 94%,transparent);color:var(--ink);opacity:.92;transition:none}
+  #dlPanel .np-hv .np-ab .ic{width:12px;height:12px}
+  #dlPanel .np-hv .np-ab:hover,#dlPanel .np-hv .np-ab:focus-visible{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);opacity:1;outline:none}
+  #dlPanel .np-hv .np-ab.danger:hover{background:var(--danger);border-color:var(--danger);color:#fff}
+  #dlPanel .np-hv .np-abpin.on{color:var(--warn)}
+  #dlPanel .np-dl .np-det .np-dact{display:none}   /* máy có chuột: nút đã nằm ở góc trái trên khi rê chuột */
+}
+
+/* ===== Deadline: nút hành động to bằng nút sửa của ô Lịch; nút xóa rê chuột = chỉ còn nền đỏ (ẩn icon) ===== */
+@media (hover:hover){
+  #dlPanel .np-dl>.np-hv{top:4px;right:4px}
+  #dlPanel .np-hv .np-ab{width:24px;height:24px;border-radius:6px}
+  #dlPanel .np-hv .np-ab .ic{width:13px;height:13px}
+}
+#dlPanel .np-ab.danger:hover,#dlPanel .np-ab.danger:focus-visible{background:var(--danger)!important;border-color:var(--danger)!important;color:#fff}
+#dlPanel .np-ab.danger:hover .ic,#dlPanel .np-ab.danger:focus-visible .ic{visibility:hidden}
+/* ===== Tag trạng thái của ô Deadline ở Lịch: cùng màu với tag ở mục Deadline (quá hạn đỏ nhạt · còn hạn/hôm nay vàng nhạt · hoàn thành xanh nhạt) ===== */
+#sched .cstate.dls-late{background:linear-gradient(color-mix(in srgb,var(--danger) 15%,transparent),color-mix(in srgb,var(--danger) 15%,transparent)),var(--surface);color:var(--danger);font-weight:700}
+#sched .cstate.dls-soon,#sched .cstate.dls-n,#sched .cstate.dls-pend{background:linear-gradient(color-mix(in srgb,var(--warn) 24%,transparent),color-mix(in srgb,var(--warn) 24%,transparent)),var(--surface);color:var(--warn);font-weight:700}
+#sched .cstate.dls-ok{background:linear-gradient(var(--accent-soft),var(--accent-soft)),var(--surface);color:var(--accent);font-weight:700}
+
+/* ===== MỘT bộ màu duy nhất cho tag trạng thái (Hoàn thành / Quá hạn / Còn hạn): dùng chung cho Bảng, Danh sách và mục Deadline.
+   Nền đặc (tô trên --surface) nên nhìn giống hệt nhau dù tag nằm trên nền ô đỏ của Lịch hay nền thẻ của Deadline; không viền sáng bao quanh. ===== */
+:root{
+  --tg-ok-bg:linear-gradient(var(--accent-soft),var(--accent-soft)),var(--surface);--tg-ok-fg:var(--accent);
+  --tg-late-bg:linear-gradient(color-mix(in srgb,var(--danger) 15%,transparent),color-mix(in srgb,var(--danger) 15%,transparent)),var(--surface);--tg-late-fg:var(--danger);
+  --tg-wait-bg:linear-gradient(color-mix(in srgb,var(--warn) 24%,transparent),color-mix(in srgb,var(--warn) 24%,transparent)),var(--surface);--tg-wait-fg:var(--warn);
+}
+#sched .cstate.dls-ok,#dlPanel .np-dl .np-meta b.dn{background:var(--tg-ok-bg)!important;color:var(--tg-ok-fg)!important;font-weight:700!important}
+#sched .cstate.dls-late,#dlPanel .np-dl .np-meta b.cd.late{background:var(--tg-late-bg)!important;color:var(--tg-late-fg)!important;font-weight:700!important}
+#sched .cstate.dls-soon,#sched .cstate.dls-n,#sched .cstate.dls-pend,#dlPanel .np-dl .np-meta b.cd:not(.late){background:var(--tg-wait-bg)!important;color:var(--tg-wait-fg)!important;font-weight:700!important}
+#sched .cstate.dls-ok,#sched .cstate.dls-late,#sched .cstate.dls-soon,#sched .cstate.dls-n,#sched .cstate.dls-pend{box-shadow:none;border:0}
+
+
+/* nút chọn phạm vi tìm (Lịch / Deadline) trong ô tìm: tối giản — chỉ chữ mảnh sau một vạch ngăn, không nền/viền; rộng cố định để hai nhãn bằng nhau và ô không nhảy khi đổi */
+.searchbox .q-scope{position:absolute;right:4px;top:8px;display:none;height:18px;box-sizing:border-box;width:58px;padding:0 0 0 2px;justify-content:center;text-align:center;border:0;border-left:1px solid var(--line);border-radius:0;background:transparent!important;color:var(--muted);font:inherit;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;transition:color var(--mo,.18s) ease}
+.searchbox .q-scope:hover{color:var(--accent);background:transparent!important;border-color:var(--line)}
+.searchbox:focus-within .q-scope,.searchbox.has-val .q-scope{display:inline-flex;align-items:center}
+.searchbox #q{padding-right:68px!important}
+/* máy tính: ô tìm mở rộng hơn (300px → 400px) để có chỗ gõ; điện thoại vẫn rộng 100% như cũ */
+@media (min-width:821px){.searchbox:focus-within,.searchbox.has-val{width:min(400px,100%)}}
+/* Vùng chọn cột: con trỏ bàn tay phủ kín khung tiêu đề ghép (tên thứ + ngày tháng), không lan xuống ô lịch */
+.sheet .dn th[data-col],.sheet .dd th[data-col]{position:relative;cursor:pointer}
+.sheet .dn th[data-col]::after,.sheet .dd th[data-col]::after{content:"";display:block;position:absolute;inset:0;z-index:5;background:transparent;pointer-events:auto;cursor:pointer}
 </style>
 </head>
 <body>
@@ -2718,7 +2843,7 @@ body .layout.ag-on .below #dlNew.card:not([hidden]){padding-top:10px}   /* PC: 1
       <span class="grow"></span>
       <div class="searchbox" id="qWrap">
         <span class="q-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="2"/><line x1="15" y1="15" x2="20" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-        <input type="search" id="q" placeholder="Tìm tên, địa điểm, người phụ trách…" aria-label="Tìm lịch">
+        <input type="search" id="q" aria-label="Tìm lịch"><button type="button" id="qScope" class="q-scope" title="Đang tìm Lịch — bấm để tìm Deadline">Lịch</button>
       </div>
       <div class="seg" id="viewSeg"><span class="seg-ind" id="viewSegInd" aria-hidden="true"></span><button data-v="table" title="Lịch" aria-label="Lịch">Lịch</button><button data-v="deadline" title="Deadline" aria-label="Deadline">Deadline</button><button data-v="fixed" title="Lớp" aria-label="Lớp">Lớp</button></div>
       <button type="button" class="primary" id="addBtn" title="Thêm lịch hoặc deadline" aria-haspopup="menu" aria-expanded="false" aria-controls="addMenu" aria-label="Thêm lịch hoặc deadline"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button>
@@ -2727,7 +2852,6 @@ body .layout.ag-on .below #dlNew.card:not([hidden]){padding-top:10px}   /* PC: 1
         <button type="button" role="menuitem" data-add="todo">Thêm deadline</button>
       </div>
       <button type="button" id="notifyTop" title="Bật thông báo lịch" aria-label="Bật thông báo lịch">🔕</button>
-      <button id="themeBtn" title="Đổi giao diện sáng/tối" aria-label="Đổi giao diện">◐</button>
       <button id="undoBtn" title="Hoàn tác (Ctrl+Z)" aria-label="Hoàn tác" disabled>↶</button>
       <button id="redoBtn" title="Làm lại (Ctrl+Y)" aria-label="Làm lại" disabled>↷</button>
       <button type="button" class="acct" id="acctChip" hidden aria-label="Tài khoản"><span class="av" id="acctAv"></span><span class="nm" id="acctNm"></span><span class="sy" id="acctSy" title=""></span></button>
@@ -2841,7 +2965,7 @@ body .layout.ag-on .below #dlNew.card:not([hidden]){padding-top:10px}   /* PC: 1
       <label>Giờ hạn chót<input type="text" name="dueTime" class="t24" inputmode="numeric" maxlength="5" placeholder="HH:MM" autocomplete="off"></label>
       <label class="cust"><input type="checkbox" name="noDue"> Không thời hạn</label>
       <label class="cust"><input type="checkbox" name="pin"> Ghim</label>
-      <label class="cust"><input type="checkbox" name="done"> Đã hoàn thành</label>
+      <label class="cust"><input type="checkbox" name="done"> Hoàn thành</label>
     </div>
     <p class="err" id="todoErr" role="alert"></p>
     <div class="actions"><button type="button" class="btn danger" id="todoDel" hidden>Xóa</button><span class="grow"></span><button type="button" class="btn" id="todoClose">Đóng</button><button type="submit" class="btn primary">Lưu</button></div>
@@ -2868,6 +2992,14 @@ body .layout.ag-on .below #dlNew.card:not([hidden]){padding-top:10px}   /* PC: 1
     <button type="button" class="btn lkadd" id="rtAdd">+ Thêm kiểu lặp</button>
     <p class="err" id="rtErr" role="alert"></p>
     <div class="actions"><span class="grow"></span><button type="button" class="btn" id="rtCancel">Hủy</button><button type="button" class="btn primary" id="rtSave">Lưu</button></div>
+  </form>
+</dialog>
+<dialog id="dlgLinks" aria-labelledby="lkTitle">
+  <form onsubmit="return false" autocomplete="off">
+    <h2 id="lkTitle">Liên kết</h2>
+    <p class="lkcount" id="lkCount"></p>
+    <div class="lkl" id="lkList"></div>
+    <div class="actions"><span class="grow"></span><button type="button" class="btn" id="lkClose">Đóng</button></div>
   </form>
 </dialog>
 <dialog id="dlgConfirm">
@@ -3181,7 +3313,7 @@ function linkEditor(box, addBtn){
   };
   box.addEventListener('click', e => { if(e.target.closest('.x')) e.target.closest('.lkrow').remove(); });
   addBtn.addEventListener('click', () => { row().querySelector('.lu').focus(); });   /* nút "+ Thêm liên kết" trước đây không gắn sự kiện nên bấm không có phản ứng */
-  const hint = r => { const u = normLink(r.querySelector('.lu').value); r.querySelector('.ln').placeholder = u ? 'Để trống sẽ hiện: ' + hostOf(u) : 'Tên hiển thị (để trống = tự động)'; };
+  const hint = r => { const u = normLink(r.querySelector('.lu').value); r.querySelector('.ln').placeholder = u ? 'Để trống sẽ hiện: ' + hostOf(u) : 'Tên hiển thị'; };
   box.addEventListener('input', e => { if(e.target.classList.contains('lu')) hint(e.target.closest('.lkrow')); });
   /* đổi thứ tự: kéo tay nắm ⠿ (chuột + cảm ứng) hoặc bấm vào tay nắm rồi dùng ↑ ↓ */
   const mid = el => { const b = el.getBoundingClientRect(); return b.top + b.height / 2; };
@@ -3280,7 +3412,7 @@ const KEY = 'uit-planner-v2';
 const SCHEMA = 6;
 const DATA_FILE = 'lich-trinh-data.json';
 function emptyState(){
-  return {events:[], todos:[], notes:{}, theme:null, view:null, tableStacked:false, tags:DEFAULT_TAGS.map(t=>({...t})), rows:[], status:{cancel:null, conflict:null}, fixedOrder:{school:[], other:[]}, fixedSort:{school:{key:'manual',dir:1}, other:{key:'manual',dir:1}}, repeatTypes:DEFAULT_REPEATS.map(r => ({...r})), fillV2:true, repeatV2:true, schema:SCHEMA};
+  return {events:[], todos:[], notes:{}, view:null, tableStacked:false, tags:DEFAULT_TAGS.map(t=>({...t})), rows:[], status:{cancel:null, conflict:null}, fixedOrder:{school:[], other:[]}, fixedSort:{school:{key:'manual',dir:1}, other:{key:'manual',dir:1}}, repeatTypes:DEFAULT_REPEATS.map(r => ({...r})), fillV2:true, repeatV2:true, schema:SCHEMA};
 }
 function migrate(st){
   st.events.forEach(ev => {
@@ -3351,6 +3483,7 @@ function normRepeatTypes(list, events){
 }
 function norm(s){
   const st = {notes:{}, rows:[], ...s};
+  delete st.theme;   // dữ liệu cũ còn trường theme (từ nút đổi giao diện đã bỏ)
   if(!Array.isArray(st.tags) || !st.tags.length) st.tags = DEFAULT_TAGS.map(t => ({...t}));
   if(!Array.isArray(st.rows)) st.rows = [];
   if(typeof st.tableStacked !== 'boolean') st.tableStacked = false;
@@ -3466,8 +3599,8 @@ function persistLocal(){
   if(sync.ready && (!curUid || memOwner === curUid)) pushSoon();
 }
 function save(){ persistLocal(); commitHistory(); }
-// giống save() nhưng không ghi vào lịch sử hoàn tác/làm lại — dùng cho các thay đổi không phải dữ liệu (chế độ xem, giao diện sáng/tối)
-function saveUI(){ mirror(); }   /* đổi chế độ xem / sáng-tối / sắp xếp là của RIÊNG từng thiết bị: chỉ lưu tại máy, KHÔNG được tăng mốc thời gian đồng bộ hay đẩy lên đám mây
+// giống save() nhưng không ghi vào lịch sử hoàn tác/làm lại — dùng cho các thay đổi không phải dữ liệu (chế độ xem, sắp xếp)
+function saveUI(){ mirror(); }   /* đổi chế độ xem / sắp xếp là của RIÊNG từng thiết bị: chỉ lưu tại máy, KHÔNG được tăng mốc thời gian đồng bộ hay đẩy lên đám mây
                                     (trước đây mỗi lần đổi giao diện trên một máy cũ/offline sẽ tăng mốc thời gian, rồi đè bản cũ của máy đó lên dữ liệu mới hơn trên đám mây) */
 // giống save() nhưng gộp lịch sử theo đợt gõ (tránh mỗi ký tự gõ vào ghi chú lại thành một bước hoàn tác riêng)
 function saveNotes(){ persistLocal(); commitHistoryDebounced(); }
@@ -3477,7 +3610,7 @@ let hist = [];
 let histIndex = -1;
 let histSuppressed = false;
 let histTimer = null;
-function snapshotState(){ const {view, theme, ...rest} = state; return JSON.stringify(rest); }   // chế độ xem / sáng-tối không thuộc lịch sử hoàn tác (trước đây đổi giao diện xong, Hoàn tác chỉ lùi lại giao diện chứ không lùi dữ liệu)
+function snapshotState(){ const {view, ...rest} = state; return JSON.stringify(rest); }   // chế độ xem không thuộc lịch sử hoàn tác
 function initHistory(){ hist = [snapshotState()]; histIndex = 0; updateHistBtns(); }
 function commitHistory(){
   if(histSuppressed) return;
@@ -3497,8 +3630,8 @@ function commitHistoryDebounced(){
 function restoreSnapshot(snap){
   histSuppressed = true;
   try{
-    const keep = {view:state.view, theme:state.theme};
-    state = {...JSON.parse(snap), ...keep};   // giữ nguyên chế độ xem và giao diện hiện tại
+    const keep = {view:state.view};
+    state = {...JSON.parse(snap), ...keep};   // giữ nguyên chế độ xem hiện tại
     mirror();
     syncTs = nowTs(); saveTs();
     abSoon();
@@ -3657,7 +3790,7 @@ async function safeRestoreUI(){
   let st; try{ st = norm(JSON.parse(rev[n - 1].json)); }catch(e){ alert('Bản này bị hỏng, không khôi phục được.'); return; }
   if(!(await askConfirm('Thay dữ liệu hiện tại bằng bản số ' + n + '? (Dữ liệu hiện tại cũng được giữ lại thành một bản an toàn.)', {title:'Khôi phục bản an toàn', ok:'Thay thế'}))) return;
   safeSnap('trước khi khôi phục bản an toàn', state);
-  st.view = state.view; st.theme = state.theme;
+  st.view = state.view;
   state = st; sync.sawData = true; save(); render();
 }
 function pushSoon(){ clearTimeout(sync.timer); sync.timer = setTimeout(pushNow, 800); }
@@ -3700,7 +3833,7 @@ function applyRemote(){
   let st; try{ st = norm(JSON.parse(r.json)); }catch(e){ return; }
   if(!Array.isArray(st.events) || !Array.isArray(st.todos)) return;
   if(hasData(state)) safeSnap('bản trên máy trước khi nhận bản từ đám mây', state);   // giữ lại bản cũ của thiết bị này trước khi bị bản đám mây thay thế
-  st.view = state.view; st.theme = state.theme;   // giao diện/chế độ xem là của riêng từng thiết bị
+  st.view = state.view;   // chế độ xem là của riêng từng thiết bị
   state = st; syncTs = r.ts; sync.sawData = hasData(state);
   mirror();
   saveTs(); initHistory(); render(); abSoon();
@@ -4079,7 +4212,11 @@ function tagSelMigrate(){
   real.forEach(k => hiddenTypes.delete(k));
   if(!tagSel.size) state.tags.filter(t => !real.includes(t.id)).forEach(t => tagSel.add(t.id));
 }   // mặc định ẩn các buổi Nghỉ ở Bảng + Danh sách (bấm tag "Nghỉ" để hiện lại)
-let query = '';
+let query = '';          // từ khóa tìm LỊCH (và tab Lớp)
+let dquery = '';         // từ khóa tìm DEADLINE (riêng, không ảnh hưởng lịch)
+let lastQView = null;
+let qScope = 'lich';     // ô tìm trên đầu trang đang tìm ở đâu: 'lich' | 'dl'
+const qRaw = {lich:'', dl:''};
 /* Chuẩn hóa để tìm kiếm tiếng Việt: bỏ dấu, đ→d, không phân biệt hoa/thường. Nhờ vậy chữ gõ bằng Telex/VNI (tổ hợp dấu khác nhau) vẫn khớp với dữ liệu đã lưu, và gõ "giai tich" cũng tìm được "Giải tích". */
 const fold = s => String(s == null ? '' : s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'d').toLowerCase();
 /* Bộ lọc theo cột của tab Lớp (bấm biểu tượng phễu ở tiêu đề cột). fxFilter[bảng][cột] = danh sách giá trị BỊ BỎ TICK; chỉ lưu tạm theo phiên, không đồng bộ lên đám mây */
@@ -4189,13 +4326,13 @@ function weekDeadlines(){
 const shownDeadlines = () => {
   if(hiddenTypes.has('__dl')) return [];
   const l = weekDeadlines();
-  return query ? l.filter(dlMatch).sort((a,b) => dlScore(b) - dlScore(a)) : l;   // đang tìm: ẩn deadline không khớp, khớp nhất lên đầu
+  return l;   // tìm Deadline chỉ áp dụng cho khung Deadline; deadline nằm trong Lịch không bị ảnh hưởng
 };
 /* Tìm kiếm: mọi từ (cách nhau bằng dấu cách) đều phải có mặt. Điểm càng cao càng liên quan
    (khớp tên > mã/phòng/giảng viên > phần còn lại); điểm 0 = không khớp → ô bị ẩn, ô điểm cao được đẩy lên đầu. */
-const qToks = () => query.split(/\s+/).filter(Boolean);
-function scoreText(main, sub, rest){
-  const toks = qToks(), all = main + ' ' + sub + ' ' + rest;
+const qToks = q => q.split(/\s+/).filter(Boolean);
+function scoreText(main, sub, rest, query){
+  const toks = qToks(query), all = main + ' ' + sub + ' ' + rest;
   if(!toks.every(t => all.includes(t))) return 0;
   let sc = 1;
   if(main.startsWith(query)) sc += 100;
@@ -4206,8 +4343,8 @@ function scoreText(main, sub, rest){
   else if(toks.some(t => sub.includes(t))) sc += 10;
   return sc;
 }
-const dlScore = t => !query ? 1 : scoreText(fold(t.text), '', fold([t.body,...getLinks(t).flatMap(l => [l.url,l.name])].join(' ')));
-const evScore = e => !query ? 1 : scoreText(fold(e.title), fold([e.code,e.room,e.teacher].join(' ')), fold([e.note,e.learner,e.grade,e.contact].join(' ')));
+const dlScore = t => !dquery ? 1 : scoreText(fold(t.text), '', fold([t.body,...getLinks(t).flatMap(l => [l.url,l.name])].join(' ')), dquery);
+const evScore = e => !query ? 1 : scoreText(fold(e.title), fold([e.code,e.room,e.teacher].join(' ')), fold([e.note,e.learner,e.grade,e.contact].join(' ')), query);
 const dlMatch = t => dlScore(t) > 0;
 const matches = o => evScore(o.ev) > 0;
 const rawQuery = () => ($('#q').value || '').trim();
@@ -4216,7 +4353,7 @@ const rawQuery = () => ($('#q').value || '').trim();
 function render(){
   dropUpcoming();
   fixView();
-  document.documentElement.dataset.theme = state.theme || (matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
+  document.documentElement.dataset.theme = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';   // giao diện sáng/tối theo hệ thống (đã bỏ nút đổi tay)
   applyStatusColors();
   const end = addDays(weekStart,6);
   const fx = state.view === 'fixed';
@@ -4228,6 +4365,13 @@ function render(){
   } else if(state.view === 'deadline'){ const n = state.todos.filter(t => !t.done).length; $('#range').textContent = n ? `${n} deadline chưa hoàn thành` : 'Không còn deadline nào'; }
   else $('#range').textContent = `${dmy(weekStart)}\u00a0–\u00a0${dmy(end)}`;
   document.querySelector('.nav').hidden = fx;
+  if(state.view !== lastQView){   // đổi tab: sang/rời tab Deadline thì xóa từ khóa tìm kiếm cũ (cả Lịch lẫn Deadline), chuyển phạm vi tìm theo tab
+    const crossing = lastQView !== null && ((state.view === 'deadline') !== (lastQView === 'deadline'));
+    lastQView = state.view;
+    const want = state.view === 'deadline' ? 'dl' : 'lich';
+    if(crossing){ qRaw.lich = ''; qRaw.dl = ''; applyQ(); qScope = want; syncQ(); saveUI(); }
+    else if(want !== qScope){ qScope = want; syncQ(); }
+  }
   document.body.dataset.view = state.view;
   document.body.classList.toggle('searching', !!query);   // đang tìm: tắt kéo-thả đổi vị trí ở tab Lớp (thứ tự hiển thị lúc này là theo độ liên quan, không được lưu)   // để CSS biết đang ở mục nào (mobile ẩn chuông/giao diện/tài khoản ở mục Công việc, Lớp)
   if(document.activeElement !== $('#jump')) $('#jump').value = weekStart;   /* đang gõ ngày bằng bàn phím thì không ghi đè giá trị */
@@ -4383,22 +4527,46 @@ function cellTopBar(ev, st, conflict){   // nhãn tag + (nếu có) nhãn trạn
   if(!st && !conflict) return tg;
   return `<span class="cbar${st && conflict ? ' cb3' : ''}">${tg}${st && conflict ? '<i class="cbr"></i>' : ''}${st ? `<span class="cstate ${st.cls}">${esc(st.short)}</span>` : ''}${conflict ? '<span class="cstate cconf">Trùng</span>' : ''}</span>`;
 }
+/* Danh sách: nhãn "Kết thúc sau…" / "Diễn ra sau…" nằm cùng hàng với nhãn tag loại lịch, vắt ngang viền trên thẻ (giống Bảng) */
+function agBarHTML(ev, o){
+  const tg = ctagHTML(ev), st = cellState(o);
+  return st ? `<span class="cbar">${tg}<span class="cstate ${st.cls}">${esc(st.full)}</span></span>` : tg;
+}
 function tagsHTML(o){
-  return stateTag(o) + (o.cancelled ? '<span class="tag x">Nghỉ</span>' : '') + (o.conflict ? '<span class="tag w">Trùng</span>' : '');
+  return (o.cancelled ? '<span class="tag x">Nghỉ</span>' : '') + (o.conflict ? '<span class="tag w">Trùng</span>' : '');
 }
 const linkLabel = (ev, l, i = 0) => l.name || (ev.type === 'class' && i === 0 ? 'Đề cương' : hostOf(l.url));   // tên tự đặt > “Đề cương” (liên kết đầu của lớp trường) > tên miền
 /* liên kết hiển thị đồng nhất ở mọi nơi: “viên thuốc” 🔗 + tên, bấm mở tab mới */
 function chipsHTML(items){
   return items.length ? `<span class="lkchips">${items.map(x => `<a class="lkchip" href="${esc(x.url)}" target="_blank" rel="noopener" title="${esc(x.label + ' — ' + x.url)}" draggable="false"><i>🔗</i><span>${esc(x.label)}</span></a>`).join('')}</span>` : '';
 }
-const evChips = ev => chipsHTML(getLinks(ev).map((l, i) => ({url:l.url, label:linkLabel(ev, l, i)})));
+const evChips = ev => {
+  const ls = getLinks(ev), items = ls.map((l, i) => ({url:l.url, label:linkLabel(ev, l, i)}));
+  const data = items.map(x => ({u:x.url, n:x.label}));
+  return `<span class="lkchips"><a class="lkchip lkopen" href="#" role="button" aria-label="Liên kết: ${ls.length}" data-lkt="${esc(ev.title || ev.code || '')}" data-lk="${esc(JSON.stringify(data))}" title="${ls.length ? 'Xem ' + ls.length + ' liên kết' : 'Chưa có liên kết'}" draggable="false"><i>🔗</i><b>${ls.length}</b></a></span>`;
+};
 const dlChips = t => chipsHTML(getLinks(t).map(l => ({url:l.url, label:l.name || hostOf(l.url)})));
+/* deadline trong ô / danh sách: nhiều liên kết thì chỉ hiện 1 nút “Liên kết” (chi tiết deadline vẫn dùng dlChips đầy đủ) */
+const dlBtn = t => {
+  const ls = getLinks(t);
+  const data = ls.map(l => ({u:l.url, n:l.name || hostOf(l.url)}));
+  return `<span class="lkchips"><a class="lkchip lkopen" href="#" role="button" aria-label="Liên kết: ${ls.length}" data-lkt="${esc(t.text || '')}" data-lk="${esc(JSON.stringify(data))}" title="${ls.length ? 'Xem ' + ls.length + ' liên kết' : 'Chưa có liên kết'}" draggable="false"><i>🔗</i><b>${ls.length}</b></a></span>`;
+};
 function linkHTML(ev){ return evChips(ev); }
 const svShow = () => '';
 
+/* BỘ ICON DÙNG CHUNG: mỗi hành động chỉ một biểu tượng (cây bút, ghim, thùng rác, lịch dạng Danh sách / Bảng) ở mọi nơi */
+const IC = {
+  edit:'<path d="M4 20h4L19.5 8.5a2.1 2.1 0 0 0 0-3l-1-1a2.1 2.1 0 0 0-3 0L4 16z"/><path d="M13.5 6l4.5 4.5"/>',
+  pin:'<path d="M12 16.5V22M8.5 3h7l-1 5.5 3 3.5v2.5h-12V12l3-3.5z"/>',
+  trash:'<path d="M4 7h16M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13M10 11v5.5M14 11v5.5"/>',
+  list:'<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/><path d="M8 14h8M8 17.2h8" stroke-width="1.9"/>',
+  table:'<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/><g fill="currentColor" stroke="none"><circle cx="8.3" cy="14" r="1.1"/><circle cx="12" cy="14" r="1.1"/><circle cx="15.7" cy="14" r="1.1"/><circle cx="8.3" cy="17.3" r="1.1"/><circle cx="12" cy="17.3" r="1.1"/><circle cx="15.7" cy="17.3" r="1.1"/></g>'
+};
+const ico = (k, sz = 14) => `<svg class="ic ic-${k}" viewBox="0 0 24 24" width="${sz}" height="${sz}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${IC[k]}</svg>`;
 /* nút ✎ ở góc phải trên của ô: chỉ bấm vào đây mới mở hộp chỉnh sửa; bấm chỗ khác trên ô chỉ là chọn ô */
 function editBtn(){
-  return '<button type="button" class="editb" data-edit title="Chỉnh sửa" aria-label="Chỉnh sửa"><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>';
+  return `<button type="button" class="editb" data-edit title="Chỉnh sửa" aria-label="Chỉnh sửa">${ico('edit', 13)}</button>`;
 }
 function dlTitleAttr(t){
   return ['⏰ Hạn chót ' + niceDate(t.due) + (t.dueTime ? ' · ' + t.dueTime : ''), t.text, t.body].filter(Boolean).join('\n');
@@ -4411,28 +4579,30 @@ function dlTagHTML(t){
   return `<span class="ctag" style="--tg:${c};--tgi:${i}">Deadline</span>`;
 }
 /* Bảng: nhãn trạng thái (Đã hoàn thành / Quá hạn N ngày / Còn N ngày / Hôm nay…) đứng cùng hàng với nhãn tag Deadline, vắt ngang viền trên ô */
-function dlStateText(t){
-  if(t.done) return ['ok','Đã hoàn thành'];
-  if(!t.due) return ['pend','Chưa hoàn thành'];
-  const n = daysBetween(todayStr(), t.due);
-  if(n < 0) return ['late','Quá hạn ' + (-n) + ' ngày'];
-  if(n === 0) return t.dueTime && t.dueTime < nowHM() ? ['late','Quá giờ'] : ['soon','Hôm nay'];
-  if(n === 1) return ['soon','Ngày mai'];
-  return [n <= 3 ? 'soon' : 'n', 'Còn ' + n + ' ngày'];
+function dlStateText(t){   // Hoàn thành / Quá hạn <bao lâu> / Còn <bao lâu> / Không thời hạn — cùng chữ với mục Deadline
+  if(t.done) return ['ok','Hoàn thành'];
+  if(!t.due) return ['n','Không thời hạn'];
+  if(dueLate(t)) return ['late', dlTimeTxt(t)];
+  return [daysBetween(todayStr(), t.due) === 0 ? 'soon' : 'n', dlTimeTxt(t)];
 }
 function dlBarHTML(t){
   const [k, txt] = dlStateText(t);
-  return `<div class="cbar">${dlTagHTML(t)}<i class="cbr"></i><span class="cstate dls-${k}">${txt}</span></div>`;
+  return `<div class="cbar">${dlTagHTML(t)}<i class="cbr"></i><span class="cstate dls-${k}" data-dl>${txt}</span></div>`;
 }
 function dlCellHTML(t){
-  return `<div class="dlcell${t.done?' done':''}${t.pin?' pinned':''} ${dlMatch(t)?'':'dim'}" data-todo="${t.id}" tabindex="0" role="button">${editBtn()}${dlBarHTML(t)}${t.pin ? '<span class="dlmark" aria-hidden="true" title="Đã ghim">📌</span>' : ''}
-    <div><b>${esc(t.text)}</b>${dlLinkHTML(t)}</div><div class="dlt">⏰ ${t.dueTime ? esc(t.dueTime) : 'Cả ngày'}</div>${dlChips(t)}</div>`;
+  return `<div class="dlcell${t.done?' done':''}${t.pin?' pinned':''} " data-todo="${t.id}" tabindex="0" role="button">${editBtn()}${dlBarHTML(t)}${t.pin ? `<span class="dlmark" aria-hidden="true" title="Đã ghim">${ico('pin', 13)}</span>` : ''}
+    <div><b>${esc(t.text)}</b>${dlLinkHTML(t)}</div><div class="dlt">⏰ ${t.dueTime ? esc(t.dueTime) : 'Cả ngày'}</div>${dlBtn(t)}</div>`;
+}
+/* Danh sách: nhãn trạng thái (Đã hoàn thành / Quá hạn… / còn …) đứng cùng hàng với nhãn tag Deadline, vắt ngang viền trên thẻ (giống Kết thúc sau… / Diễn ra sau… của các ô lịch) */
+function dlAgendaBarHTML(t){   // cùng 4 trạng thái như Bảng: Hoàn thành / Quá hạn / Hôm nay / Còn hạn
+  const [k, txt] = dlStateText(t);
+  return `<span class="cbar">${dlTagHTML(t)}<span class="cstate dls-${k}" data-dl>${txt}</span></span>`;
 }
 function dlArticleHTML(t){
-  return `<article class="ag dl${t.done?' done':''}${t.pin?' pinned':''} ${dlMatch(t)?'':'dim'}" data-todo="${t.id}" tabindex="0" role="button">${editBtn()}${dlTagHTML(t)}${t.pin ? '<span class="dlmark" aria-hidden="true" title="Đã ghim">📌</span>' : ''}
-        <div class="ag-time${t.dueTime ? '' : ' all'}">${t.dueTime ? esc(t.dueTime) : 'Cả ngày'}<br><small>hạn chót</small></div>
-        <div><div class="et"><small>Deadline</small>${esc(t.text)}${t.done || !dueChipAgenda(t) ? '<span class="tag dl' + (t.done ? ' ok' : '') + '">' + (t.done ? 'Đã hoàn thành' : 'Chưa hoàn thành') + '</span>' : ''}${dueChipAgenda(t)}</div>
-        ${hasLinks(t) ? `<div class="ag-links">${dlChips(t)}</div>` : ''}
+  return `<article class="ag dl${t.done?' done':''}${t.pin?' pinned':''} " data-todo="${t.id}" tabindex="0" role="button">${editBtn()}${dlAgendaBarHTML(t)}${t.pin ? `<span class="dlmark" aria-hidden="true" title="Đã ghim">${ico('pin', 13)}</span>` : ''}
+        <div class="ag-time${t.dueTime ? '' : ' all'}">${t.dueTime ? esc(t.dueTime) : 'Cả ngày'}</div>
+        <div><div class="et">${esc(t.text)}</div>
+        <div class="ag-links">${dlBtn(t)}</div>
         ${t.body ? `<div class="ex">📝 ${esc(t.body)}</div>` : ''}</div></article>`;
 }
 const lv0 = o => { const l = liveInfo(o); return l ? `--p:${l.pct}%;` : ''; };
@@ -4458,23 +4628,17 @@ function tableHTML(occs){
     let h = `<div class="scroller"><table class="sheet stack-mode"><colgroup><col class="c0"><col><col><col><col><col><col><col></colgroup><thead>
       <tr class="wk"><th>Tuần</th><th colspan="7">${dmy(weekStart)}</th></tr>
       <tr class="dn"><th></th>${days.map((d,i) => `<th class="${d===today?'today':''}" data-col="${d}" title="Bấm để chọn cả cột (rồi Ctrl+V để dán)">${DOW[i]}</th>`).join('')}</tr>
-      <tr class="dd"><th></th>${days.map(d => `<th class="${d===today?'today':''}" data-col="${d}" title="Bấm để chọn cả cột (rồi Ctrl+V để dán)">${dm(d)}</th>`).join('')}</tr></thead><tbody>`;
-    if(!hiddenTypes.has('__dl')){   /* luôn hiện hàng Deadline dù tuần không có deadline, để bố cục các tuần đồng nhất; chỉ ẩn khi tắt chip Deadline */
-      h += `<tr class="dlrow"><th class="tl"><div class="tlw"><span class="tlt">DEADLINE</span></div></th>`;
-      for(const d of days){
-        const ds = dls.filter(t => t.due === d);
-        h += ds.length ? `<td class="dlc" data-col="${d}"><div class="stk">${ds.map(dlCellHTML).join('')}</div></td>` : `<td class="dlc" data-col="${d}"></td>`;
-      }
-      h += '</tr>';
-    }
+      <tr class="dd"><th></th>${days.map(d => `<th class="${d===today?'today':''}" data-col="${d}">${dm(d)}</th>`).join('')}</tr></thead><tbody>`;
     h += `<tr><th class="tl"><div class="stack-time-empty">&nbsp;</div></th>`;
     for(const d of days){
       const events = occs.filter(o => o.date === d).sort((a,b) => toMin(a.ev.start)-toMin(b.ev.start) || toMin(a.ev.end)-toMin(b.ev.end) || String(a.ev.title||'').localeCompare(String(b.ev.title||'')));
       const items = events.map(o => ({kind:'event', time:toMin(o.ev.start), o}));
-      items.sort((a,b) => evScore(b.o.ev)-evScore(a.o.ev) || a.time-b.time || toMin(a.o.ev.end)-toMin(b.o.ev.end) || String(a.o.ev.title||'').localeCompare(String(b.o.ev.title||'')));
+      if(!hiddenTypes.has('__dl')) dls.filter(t => t.due === d).forEach(t => items.push({kind:'dl', time:t.dueTime ? toMin(t.dueTime) : -1, t}));   // deadline nằm chung ô với lịch của ngày, xếp theo giờ hạn chót
+      const isDl = x => x.kind === 'dl';
+      items.sort((a,b) => (query ? (isDl(b) ? 0 : evScore(b.o.ev)) - (isDl(a) ? 0 : evScore(a.o.ev)) : 0) || a.time-b.time || (isDl(a) ? a.time : toMin(a.o.ev.end)) - (isDl(b) ? b.time : toMin(b.o.ev.end)) || String(isDl(a) ? a.t.text : a.o.ev.title||'').localeCompare(String(isDl(b) ? b.t.text : b.o.ev.title||'')));
       let body = '';
       if(items.length){
-        body = items.map(x => eventCellHTML(x.o,d)).join('');
+        body = items.map(x => isDl(x) ? dlCellHTML(x.t) : eventCellHTML(x.o,d)).join('');
       } else {
         body = `<div class="stack-empty">${query ? 'Không khớp' : 'Chưa có lịch'}</div>`;
       }
@@ -4491,25 +4655,29 @@ function tableHTML(occs){
      Deadline có giờ vẫn giữ giờ hạn chót ngay trong ô, không tạo thêm dòng giờ. */
   const slotBest = new Map();
   if(query) occs.forEach(o => { const k = o.ev.start+'|'+o.ev.end; slotBest.set(k, Math.max(slotBest.get(k) || 0, evScore(o.ev))); });
-  const slots = [...map.values()].sort((a,b) => (query ? (slotBest.get(b.s+'|'+b.e) || 0) - (slotBest.get(a.s+'|'+a.e) || 0) : 0) || toMin(a.s)-toMin(b.s) || toMin(a.e)-toMin(b.e));   // đang tìm: dòng giờ chứa ô khớp nhất lên đầu
+  const tm = x => x ? toMin(x) : -1;   // deadline không có giờ ("Cả ngày") đứng đầu
+  const dlSlots = new Map();   // deadline vào chung bảng: mỗi giờ hạn chót là một dòng riêng, xếp lẫn với các dòng giờ của lịch
+  if(!hiddenTypes.has('__dl')) dls.forEach(t => { if(t.due && days.includes(t.due)){ const k = t.dueTime || ''; if(!dlSlots.has(k)) dlSlots.set(k, {s:k, e:k, row:null, dl:true}); } });
+  const slots = [...map.values(), ...dlSlots.values()].sort((a,b) => (query ? (slotBest.get(b.s+'|'+b.e) || 0) - (slotBest.get(a.s+'|'+a.e) || 0) : 0) || tm(a.s)-tm(b.s) || tm(a.e)-tm(b.e) || (a.dl ? 1 : 0) - (b.dl ? 1 : 0));   // đang tìm: dòng giờ chứa ô khớp nhất lên đầu
   let h = `<div class="scroller"><table class="sheet"><colgroup><col class="c0"><col><col><col><col><col><col><col></colgroup><thead>
     <tr class="wk"><th>Tuần</th><th colspan="7">${dmy(weekStart)}</th></tr>
     <tr class="dn"><th></th>${days.map((d,i) => `<th class="${d===today?'today':''}" data-col="${d}" title="Bấm để chọn cả cột (rồi Ctrl+V để dán)">${DOW[i]}</th>`).join('')}</tr>
-    <tr class="dd"><th></th>${days.map(d => `<th class="${d===today?'today':''}" data-col="${d}" title="Bấm để chọn cả cột (rồi Ctrl+V để dán)">${dm(d)}</th>`).join('')}</tr></thead><tbody>`;
-  if(!hiddenTypes.has('__dl')){   /* luôn hiện hàng Deadline dù tuần không có deadline */
-    h += `<tr class="dlrow"><th class="tl"><div class="tlw"><span class="tlt">DEADLINE</span></div></th>`;
-    for(const d of days){
-      const ds = dls.filter(t => t.due === d);
-      h += ds.length ? `<td class="dlc" data-col="${d}"><div class="stk">${ds.map(dlCellHTML).join('')}</div></td>` : `<td class="dlc" data-col="${d}"></td>`;
-    }
-    h += '</tr>';
-  }
+    <tr class="dd"><th></th>${days.map(d => `<th class="${d===today?'today':''}" data-col="${d}">${dm(d)}</th>`).join('')}</tr></thead><tbody>`;
   if(!slots.length) h += `<tr><td colspan="8" class="none">${query ? 'Không có kết quả cho “' + esc(rawQuery()) + '” trong tuần này' : 'Tuần này chưa có lịch'}</td></tr>`;
   for(const sl of slots){
     const {s,e,row} = sl;
+    if(sl.dl){
+      h += `<tr><th class="tl"><div class="tlw"><span class="tlt">${s ? esc(s) : 'Cả ngày'}</span></div></th>`;
+      for(const d of days){
+        const ds = dls.filter(t => t.due === d && (t.dueTime || '') === s);
+        h += ds.length ? `<td class="dlc" data-col="${d}"><div class="stk">${ds.map(dlCellHTML).join('')}</div></td>` : `<td class="dlc" data-col="${d}"></td>`;
+      }
+      h += '</tr>';
+      continue;
+    }
     const rng = `${s}<span class="tle"><span class="dash"> - </span>${e}</span>`;
     const lab = rng;
-    const ctl = row ? `<span class="rowctl"><button type="button" data-rowedit="${row.id}" title="Sửa dòng" aria-label="Sửa dòng">✎</button><button type="button" data-rowdel="${row.id}" title="Xóa dòng" aria-label="Xóa dòng">×</button></span>` : '';
+    const ctl = row ? `<span class="rowctl"><button type="button" data-rowedit="${row.id}" title="Sửa dòng" aria-label="Sửa dòng">${ico('edit', 13)}</button><button type="button" data-rowdel="${row.id}" title="Xóa dòng" aria-label="Xóa dòng">×</button></span>` : '';
     h += `<tr><th class="tl"><div class="tlw"><span class="tlt">${lab}</span>${ctl}</div></th>`;
     for(const d of days){
       const list = occs.filter(o => o.date === d && o.ev.start === s && o.ev.end === e).sort((a,b) => evScore(b.ev) - evScore(a.ev));
@@ -4538,15 +4706,15 @@ function agendaHTML(occs){
     html += `<div class="ad" data-date="${date}"><h3 title="Bấm để chọn cả ngày (rồi Ctrl+V để dán)">${DOW[i]}, ${dm(date)}${date===today?'<span class="tdy">Hôm nay</span>':''}</h3>`;
     const dls = shownDeadlines().filter(t => t.due === date);
     if(!list.length && !dls.length) html += '<div class="none">Không có lịch</div>';
-    const items = [...list.map(o => ({o, m:toMin(o.ev.start)})), ...dls.map(t => ({t, m:t.pin ? -1 : t.dueTime ? toMin(t.dueTime) : 1440}))].sort((a,b) => (query ? (b.t ? dlScore(b.t) : evScore(b.o.ev)) - (a.t ? dlScore(a.t) : evScore(a.o.ev)) : 0) || a.m - b.m);   // đang tìm: khớp nhất lên đầu ngày; deadline ghim lên đầu ngày;   // trùng giờ thì sự kiện đứng trước deadline
+    const items = [...list.map(o => ({o, m:toMin(o.ev.start)})), ...dls.map(t => ({t, m:t.pin ? -1 : t.dueTime ? toMin(t.dueTime) : 1440}))].sort((a,b) => (query ? (b.t ? 0 : evScore(b.o.ev)) - (a.t ? 0 : evScore(a.o.ev)) : 0) || a.m - b.m);   // đang tìm: khớp nhất lên đầu ngày; deadline ghim lên đầu ngày;   // trùng giờ thì sự kiện đứng trước deadline
     for(const it of items){
       if(it.t){ html += dlArticleHTML(it.t); continue; }
       const o = it.o, ev = o.ev;
-      html += `<article style="${tagStyle(tagOf(ev.type))}${liveStyle(o)}" class="ag${liveCls(o)}${!o.cancelled && !tagOf(ev.type).fill ? ' nofill' : ''} ${o.cancelled?'cancelled':''} ${o.conflict?'conflict':''} ${matches(o)?'':'dim'}" data-id="${ev.id}" data-date="${date}" data-s="${esc(ev.start)}" data-e="${esc(ev.end)}" tabindex="0" role="button">${editBtn()}${ctagHTML(ev)}
+      html += `<article style="${tagStyle(tagOf(ev.type))}${liveStyle(o)}" class="ag${liveCls(o)}${!o.cancelled && !tagOf(ev.type).fill ? ' nofill' : ''} ${o.cancelled?'cancelled':''} ${o.conflict?'conflict':''} ${matches(o)?'':'dim'}" data-id="${ev.id}" data-date="${date}" data-s="${esc(ev.start)}" data-e="${esc(ev.end)}" tabindex="0" role="button">${editBtn()}${agBarHTML(ev, o)}
         <div class="ag-time">${ev.start}<br><small>${ev.end}</small></div>
         <div><div class="et">${ev.code?`<small>${esc(ev.code)}</small>`:''}${esc(ev.title)}${tagsHTML(o)}</div>
         <div class="em">${emHTML(o, [ev.room &&'📍 ' + ev.room, ev.teacher && '👤 ' + ev.teacher, learnerTxt(ev) && '🎓 ' + learnerTxt(ev), shortNote(ev) && '📝 ' + ev.note].filter(Boolean))}</div>
-        ${hasLinks(ev) ? `<div class="ag-links">${evChips(ev)}</div>` : ''}
+        <div class="ag-links">${evChips(ev)}</div>
         ${ev.note && !shortNote(ev) ? `<div class="ex">📝 ${esc(ev.note)}</div>` : ''}</div></article>`;
     }
     html += '</div>';
@@ -4892,25 +5060,29 @@ const dowShort = d => { const i = (parse(d).getDay()+6)%7; return i < 6 ? `Thứ
 const niceDate = d => `${dmy(d)} ${dowShort(d)}`;
 const nowHM = () => { const d = new Date(); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
 /* bản chữ thường (không khung) của dueChip: dùng cho dòng Trạng thái trong chi tiết deadline */
-function dueLabel(t){
-  const n = daysBetween(todayStr(), t.due);
-  if(n < 0) return `Quá hạn ${-n} ngày`;
-  if(n === 0) return t.dueTime && t.dueTime < nowHM() ? 'Quá giờ' : 'Hôm nay';
-  if(n === 1) return 'Ngày mai';
-  return `Còn ${n} ngày`;
+/* Thời gian còn lại / quá hạn: MỘT cách viết duy nhất cho mọi mục (Bảng, Danh sách, Deadline, banner) — lấy đơn vị lớn nhất cho gọn: phút · giờ · ngày · tháng · năm */
+function durShort(ms){
+  const m = Math.floor(Math.max(0, ms) / 60000), h = Math.floor(m / 60), d = Math.floor(h / 24);
+  if(d >= 365) return Math.floor(d / 365) + ' năm';
+  if(d >= 30) return Math.floor(d / 30) + ' tháng';
+  if(d >= 1) return d + ' ngày';
+  if(h >= 1) return h + ' giờ';
+  return Math.max(1, m) + ' phút';
 }
+function dlTimeTxt(t){
+  const ms = dueEndMs(t) - Date.now();
+  return dueLate(t) ? 'Quá hạn ' + durShort(-ms) : 'Còn ' + durShort(ms);
+}
+function dueLabel(t){ return dlTimeTxt(t); }
 /* dòng Trạng thái: chữ thường, chưa xong = đỏ, đã xong = xanh; không có biểu tượng ○ / ✓ ở đầu */
 function dueStatusHTML(t){
-  if(t.done) return '<span class="st ok">Đã hoàn thành</span>';
+  if(t.done) return '<span class="st ok">Hoàn thành</span>';
   return `<span class="st no">${t.due ? dueLabel(t) : 'Chưa hoàn thành'}</span>`;
 }
 function dueChip(t){
   if(t.done || !t.due) return '';
   const n = daysBetween(todayStr(), t.due);
-  if(n < 0) return `<span class="chip late">Quá hạn ${-n} ngày</span>`;
-  if(n === 0) return t.dueTime && t.dueTime < nowHM() ? '<span class="chip late">Quá giờ</span>' : '<span class="chip soon">Hôm nay</span>';
-  if(n === 1) return '<span class="chip soon">Ngày mai</span>';
-  return `<span class="chip${n <= 3 ? ' soon' : ''}">Còn ${n} ngày</span>`;
+  return `<span class="chip${dueLate(t) ? ' late' : n <= 3 ? ' soon' : ''}">${esc(dlTimeTxt(t))}</span>`;
 }
 /* bản dùng cho thẻ Danh sách: quá hạn vẫn hiện dạng ô (pill) như dueChip; còn hạn thì hiện chữ đếm ngược trực tiếp "còn ...", viền vàng khi sắp đến hạn (hôm nay/ngày mai/≤3 ngày) */
 /* phân loại "quy mô" thời gian còn lại để gán kích thước cố định riêng cho từng loại: hm (giờ/phút), d (vài ngày), dd (nhiều ngày ≥10), mo (tháng), y (năm) */
@@ -4935,14 +5107,7 @@ function dueChipAgenda(t){
   return `<span class="chip${n <= 3 ? ' soon' : ''} sz-${hmsScale(dueEndMs(t) - Date.now())}">${esc(dueTxt(t))}</span>`;
 }
 /* bản chữ thường (không có khung chip) của dueChip, dùng cho banner “Đang diễn ra / Tiếp theo” để cùng kiểu chữ đậm với “sau …” của lịch tiếp theo */
-function dueTxt(t){
-  if(dueLate(t)){
-    const n = daysBetween(todayStr(), t.due);
-    return n < 0 ? `Quá hạn ${-n} ngày` : 'Quá giờ';
-  }
-  const end = new Date(`${t.due}T${t.dueTime || '23:59'}:59`).getTime();
-  return 'còn ' + fmtHMS(end - Date.now());
-}
+function dueTxt(t){ return dlTimeTxt(t); }
 const dueSoon24 = t => !t.done && !!t.due && !dueLate(t) && new Date(`${t.due}T${t.dueTime || '23:59'}:59`).getTime() - Date.now() < 864e5;   // chưa xong và còn dưới 24 giờ
 const dueLate = t => { const n = daysBetween(todayStr(), t.due); return n < 0 || (n === 0 && t.dueTime && t.dueTime < nowHM()); };
 /* tiêu đề · nội dung chính · liên kết (dùng chung cho deadline và ghi chú) */
@@ -4984,13 +5149,14 @@ function askScope({title, one=false, oneLabel='Chỉ buổi này', fromLabel='T�
 }
 /* ---------- hộp thoại xác nhận riêng: trả về Promise<boolean> ---------- */
 const dlgConfirm = $('#dlgConfirm');
-function askConfirm(message, {title='Xác nhận', ok='Đồng ý', danger=false} = {}){
+function askConfirm(message, {title='Xác nhận', ok='Đồng ý', danger=false, cancel='Hủy'} = {}){
   return new Promise(res => {
     let out = false;
     $('#cfTitle').textContent = title;
     $('#cfMsg').textContent = message;
     const okBtn = $('#cfOk');
     okBtn.textContent = ok; okBtn.classList.toggle('danger', danger); okBtn.classList.toggle('primary', !danger);
+    $('#cfCancel').textContent = cancel;
     okBtn.onclick = () => { out = true; closeDialog(dlgConfirm); };
     $('#cfCancel').onclick = () => { out = false; closeDialog(dlgConfirm); };
     dlgConfirm.onclick = e => { if(bdHit(e, dlgConfirm)) closeDialog(dlgConfirm); };
@@ -4999,6 +5165,17 @@ function askConfirm(message, {title='Xác nhận', ok='Đồng ý', danger=false
     (danger ? $('#cfCancel') : okBtn).focus();   // yêu cầu xóa: mặc định focus vào Hủy để lỡ bấm Enter không xóa nhầm
   });
 }
+/* ---------- Hộp thoại thêm/sửa không đóng bằng Esc ----------
+   Áp dụng cho: thêm/sửa lịch (#dlg), thêm/sửa deadline (#dlgTodo), thêm/sửa dòng (#dlgRow).
+   Muốn đóng thì bấm nút Đóng/Hủy hoặc bấm ra nền như cũ. */
+const NO_ESC_DLG = ['dlg', 'dlgTodo', 'dlgRow'];
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Escape' || e.defaultPrevented || e.isComposing || e.keyCode === 229) return;   // đang gõ tiếng Việt (Telex/VNI): Esc chỉ hủy chữ đang soạn
+  if(ctxMenu || document.querySelector('.dp, .cs-pop')) return;                              // Esc đang dành cho menu / bộ chọn ngày / danh sách thả xuống
+  const open = document.querySelectorAll('dialog[open]');
+  if(open.length !== 1 || !NO_ESC_DLG.includes(open[0].id)) return;                           // đang có hộp thoại xác nhận chồng lên: để nó tự xử lý
+  e.preventDefault();                                                                         // chặn từ keydown để trình duyệt không bắn 'cancel' (Chrome không cho hủy 'cancel' lần thứ hai liên tiếp)
+}, true);
 const weekRange = d => { const w = mondayOf(d); return `${dm(w)} – ${dm(addDays(w,6))}`; };
 
 /* ---------- hộp thoại thêm/sửa ---------- */
@@ -5489,7 +5666,38 @@ let addMenuW = innerWidth;
 addEventListener('resize', () => { if(innerWidth !== addMenuW){ addMenuW = innerWidth; closeAddMenu(); } });   // thanh địa chỉ điện thoại co/giãn cũng bắn resize: chỉ đóng khi đổi chiều rộng thật
 addEventListener('scroll', () => { if(performance.now() - addMenuOpenedAt > 400) closeAddMenu(); }, true);
 $('#notifyTop').onclick = () => enableScheduleNotifications();
-$('#q').oninput = e => { query = fold(e.target.value.trim()); $('#qWrap').classList.toggle('has-val', !!e.target.value); render(); };
+/* Ô tìm trên đầu trang có 2 phạm vi RIÊNG: Lịch (ô lịch/lớp) và Deadline; mỗi phạm vi nhớ từ khóa riêng. Nút nhỏ trong ô tìm để chuyển; vào tab Deadline thì tự chuyển sang tìm Deadline. */
+function syncQ(){
+  const q = $('#q'), dl = qScope === 'dl';
+  q.value = qRaw[qScope];
+  q.setAttribute('aria-label', dl ? 'Tìm deadline' : 'Tìm lịch');
+  const b = $('#qScope'); b.textContent = dl ? 'Deadline' : 'Lịch'; b.title = dl ? 'Đang tìm Deadline — bấm để tìm Lịch' : 'Đang tìm Lịch — bấm để tìm Deadline';
+  $('#qWrap').classList.toggle('has-val', !!qRaw[qScope]);
+}
+$('#qScope').addEventListener('mousedown', e => e.preventDefault());   // giữ focus ở ô gõ
+$('#qScope').addEventListener('click', () => { const txt = qRaw[qScope]; qRaw[qScope] = ''; qScope = qScope === 'dl' ? 'lich' : 'dl'; qRaw[qScope] = txt; applyQ(); syncQ(); render(); $('#q').focus(); });   // chuyển phạm vi tìm: chữ đang gõ giữ nguyên và chuyển sang phạm vi mới; phạm vi cũ hết lọc
+function applyQ(){ query = fold(qRaw.lich.trim()); dquery = fold(qRaw.dl.trim()); }
+$('#q').oninput = e => { qRaw[qScope] = e.target.value; applyQ(); $('#qWrap').classList.toggle('has-val', !!e.target.value); render(); };
+/* Esc tắt tìm kiếm: xóa từ khóa của phạm vi đang tìm (bỏ lọc) và thoát khỏi ô gõ để ô tìm thu gọn lại.
+   - đang gõ trong ô tìm: Esc xóa + thoát ngay (preventDefault để trình duyệt không tự xóa theo kiểu riêng, Safari/Firefox mỗi nơi một khác)
+   - đang lọc nhưng con trỏ ở ngoài ô tìm: Esc cũng xóa, trừ khi Esc đang dùng để đóng menu/hộp thoại/ô nhập khác (kiểm tra ở pha capture, trước khi các trình xử lý đó kịp đóng) */
+function clearSearch(){ if(qRaw[qScope]){ qRaw[qScope] = ''; applyQ(); syncQ(); render(); } }
+$('#q').addEventListener('keydown', e => {
+  if(e.key !== 'Escape' || e.isComposing || e.keyCode === 229) return;   // đang gõ tiếng Việt (Telex/VNI): Esc là để hủy chữ đang soạn, không phải để tắt tìm kiếm
+  e.preventDefault(); clearSearch(); e.target.blur();
+});
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Escape' || e.defaultPrevented || e.isComposing || !qRaw[qScope]) return;
+  if(ctxMenu || fxPop || !addMenu.hidden || document.querySelector('dialog[open], .dp, .cs-pop')) return;   // .dp = bộ chọn ngày, .cs-pop = danh sách thả xuống: Esc chỉ đóng chúng
+  const a = document.activeElement;
+  if(a && a !== document.body && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable)) return;
+  clearSearch();
+}, true);
+/* Esc trong hộp thoại: trình duyệt tự đóng ngay (không có hiệu ứng mờ dần như nút X / bấm nền) → chuyển sang closeDialog cho đồng nhất.
+   Riêng hộp thoại thêm/sửa (NO_ESC_DLG) thì không đóng bằng Esc.
+   'cancel' không nổi bọt nên bắt ở pha capture; các hộp thoại dùng onclose để trả kết quả (hỏi xác nhận, hỏi phạm vi) vẫn chạy như cũ */
+document.addEventListener('cancel', e => { const d = e.target; if(d && d.tagName === 'DIALOG'){ e.preventDefault(); if(!NO_ESC_DLG.includes(d.id)) closeDialog(d); } }, true);
+
 /* hiệu ứng chuyển trang: vùng nào đổi thì vùng đó chạy hiệu ứng.
    - sang/đi khỏi "Thông báo": cả trang Thông báo hoặc cả khung chính (trước đây chỉ #sched đang trống nên không thấy gì)
    - sang/đi khỏi "Lớp": cả khung chính, vì cột bên cạnh cũng đổi bố cục
@@ -5534,10 +5742,6 @@ function syncModeBtn(){   // nút lịch duy nhất: bấm để đổi Bảng <
 }
 $('#modeBar').onclick = () => switchView(state.view === 'agenda' ? 'table' : 'agenda');
 
-$('#themeBtn').onclick = () => {
-  const cur = document.documentElement.dataset.theme;
-  state.theme = cur === 'dark' ? 'light' : 'dark'; saveUI(); render();
-};
 $('#legend').onclick = e => {
   if(e.target.closest('#tagToggle')) return openTags();
   if(e.target.closest('#tagClear')){ tagSelClear(); render(); return; }
@@ -5566,22 +5770,38 @@ function onSchedClick(target){
     return;
   }
   const eb = target.closest('[data-edit]'); if(eb && eb.parentElement) return editCell(eb.parentElement);
-  const ch = target.closest('th[data-col]'); if(ch) return selectCol(ch.dataset.col);   // bấm tiêu đề cột = chọn cả cột
+  const ch = target.closest('.sheet .dn th[data-col]'); if(ch) return selectCol(ch.dataset.col);   // chỉ bấm ô thứ mới chọn cả cột
   const dl = target.closest('[data-todo]'); if(dl) return dl.querySelector(':scope>.editb') ? selectCell(dl) : openTodo(dl.dataset.todo);
   const el = target.closest('[data-id]');
   if(el && el.querySelector(':scope>.editb')) return selectCell(el);
   if(el){ const slot = (el.dataset.s && el.dataset.e) ? {start:el.dataset.s, end:el.dataset.e} : null; return openModal(el.dataset.id, el.dataset.date, undefined, slot); }
   const td = target.closest('td.empty-c');
   if(td) return openModal(null, td.dataset.date, {start:td.dataset.s, end:td.dataset.e});
-  const ds = target.closest('td.day-stack'); if(ds) return selectCol(ds.dataset.date);
-  const ad = target.closest('.ad[data-date]'); if(ad) return selectCol(ad.dataset.date);   // Danh sách (không có cột): bấm tiêu đề / chỗ trống của ngày = chọn cả ngày   // chế độ thu gọn: bấm chỗ trống của cột = chọn cột
 }
+// Chọn cột ở bất kỳ điểm nào bên trong khung tiêu đề ngày: từ hàng tên thứ
+// đến hết hàng ngày tháng. Không chỉ phụ thuộc vào chữ hoặc pseudo-element.
+$('#sched').addEventListener('click', e => {
+  const dateHeads = [...$('#sched').querySelectorAll('.sheet .dd th[data-col]')];
+  const dayHead = [...$('#sched').querySelectorAll('.sheet .dn th[data-col]')].find(th => {
+    const r = th.getBoundingClientRect();
+    const dateHead = dateHeads.find(x => x.dataset.col === th.dataset.col);
+    const dr = dateHead ? dateHead.getBoundingClientRect() : r;
+    const left = Math.min(r.left, dr.left), right = Math.max(r.right, dr.right);
+    return e.clientX >= left && e.clientX <= right && e.clientY >= r.top && e.clientY <= dr.bottom;
+  });
+  if(dayHead){
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    selectCol(dayHead.dataset.col);
+    return;
+  }
+}, true);
 $('#sched').addEventListener('click', e => {
   const pn = e.target.closest('[data-pin]');
   if(pn){ clearTimeout(clickTimer); togglePin(pn.dataset.pin); return; }
   const t = e.target;
   clearTimeout(clickTimer);
-  if(t.closest('[data-edit]') || t.closest('[data-id],[data-todo]')?.querySelector(':scope>.editb') || t.closest('th[data-col]') || ((t.closest('td.day-stack') || t.closest('.ad[data-date]')) && !t.closest('[data-id],[data-todo]'))){ onSchedClick(t); return; }   // chọn ô / bấm ✎: phản hồi tức thì
+  if(t.closest('[data-edit]') || t.closest('[data-id],[data-todo]')?.querySelector(':scope>.editb') || t.closest('.sheet .dn th[data-col]') || ((t.closest('td.day-stack') || t.closest('.ad[data-date]')) && !t.closest('[data-id],[data-todo]'))){ onSchedClick(t); return; }   // chọn ô / bấm ✎: phản hồi tức thì
   clickTimer = setTimeout(() => onSchedClick(t), 230);
 });
 async function copyText(text){
@@ -5925,7 +6145,7 @@ async function moveOcc(id, from, to, s, e, fs, fe){
 
 /* ===== Sao chép / dán ô lịch (Bảng + Danh sách) =====
    Chuột phải (hoặc chạm giữ trên điện thoại) vào ô → “Sao chép ô lịch”.
-   Chuột phải vào ô trống / khung giờ / ngày → “Dán vào …”. Phím tắt: Ctrl+C / Ctrl+V chỉ hoạt động khi đã chọn một ô (bấm vào ô) hoặc một cột (Bảng: bấm tiêu đề thứ/ngày) / một ngày (Danh sách: bấm tiêu đề ngày hoặc chỗ trống); Ctrl+V dán vào ngày đó, giữ khung giờ gốc; chuột rê ở đâu cũng không ảnh hưởng.
+   Chuột phải vào ô trống / khung giờ / ngày → “Dán vào …”. Phím tắt: Ctrl+C / Ctrl+V chỉ hoạt động khi đã chọn một ô (bấm vào ô) hoặc một cột (Bảng: bấm ô thứ như Thứ Hai, Thứ Ba...); Ctrl+V dán vào ngày đó, giữ khung giờ gốc; chuột rê ở đâu cũng không ảnh hưởng.
    Bản dán luôn là lịch MỘT LẦN (không lặp) ở đúng ngày + khung giờ được chọn; ô gốc không bị đổi. Dùng “Bỏ sao chép” để hủy trạng thái sao chép. */
 let cellClip = null, ctxMenu = null, ctxSuppressUntil = 0;
 const CLIP_DROP = ['id','skip','skipSlots','cancelledSlots','series','overrideOf','overrideDate','overrideStart','overrideEnd'];
@@ -6053,7 +6273,7 @@ document.addEventListener('keydown', e => {
   if(a && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable)) return;
   /* Chỉ làm việc với ô ĐANG ĐƯỢC CHỌN (bấm vào ô). Rê chuột không chọn ô; chưa chọn ô nào thì Ctrl+C / Ctrl+V không làm gì. */
   if(selCell && selCell.col){   // đang chọn cả cột: Ctrl+V dán vào ngày của cột (giữ nguyên khung giờ của ô đã sao chép)
-    const colEl = [...document.querySelectorAll('#sched th[data-col], #sched .ad[data-date]')].find(x => (x.dataset.col || x.dataset.date) === selCell.col);
+    const colEl = [...document.querySelectorAll('#sched .sheet .dn th[data-col]')].find(x => (x.dataset.col || x.dataset.date) === selCell.col);
     if(!colEl || !colEl.getClientRects().length){ clearSel(); return; }   // cột / ngày đã chọn không còn trên màn hình (đã đổi tuần / đổi chế độ xem / sang trang khác): bỏ chọn, không dán vào ngày đang ẩn
     if(k === 'v' && cellClip){ e.preventDefault(); pasteClip({date:selCell.col, s:'', e:''}); }
     return;
@@ -6320,7 +6540,7 @@ function hubManageHTML(st){
   return `<div class="hubSec" style="margin-top:0">Thêm tag mới</div>
     <div class="hubAdd"><input type="color" id="hubNewC" value="${esc(hubNewColor)}" aria-label="Màu tag mới"><input type="text" id="hubNewN" value="${esc(hubNewName)}" placeholder="Tên tag mới…" maxlength="40" aria-label="Tên tag mới"><button type="button" class="btn primary" data-act="add" data-k="add">+ Thêm</button></div>
     <div class="hubPal" aria-label="Màu gợi ý">${HUB_PAL.map(c => `<button type="button" style="--c:${c}" data-act="pal" data-id="${c}" aria-label="Màu ${c}"></button>`).join('')}<button type="button" class="rnd" data-act="rnd" data-k="rnd">🎲 Ngẫu nhiên</button></div>
-    <div class="hubSec">Tag hiện có (${n}) · kéo để sắp xếp</div>
+    <div class="hubSec">Tag hiện có (${n})</div>
     <div class="hubRows">${rows}</div>
     <div class="hubSec">Màu ô đặc biệt</div>
     <div class="tagrows" id="stRows">${stRow('stDl', 'dl', 'Deadline')}${stRow('stCancel', 'cancel', 'Nghỉ')}${stRow('stConflict', 'conflict', 'Trùng lịch')}</div>`;
@@ -6523,6 +6743,20 @@ rowForm.addEventListener('submit', e => {
 $('#rowClose').onclick = () => closeDialog(dlgRow);
 $('#rowCloseX').onclick = () => closeDialog(dlgRow);
 [dlgTags, dlgRow, dlgScope].forEach(d => d.addEventListener('click', e => { if(bdHit(e, d)) closeDialog(d); }));
+/* trang nhỏ liệt kê các liên kết của một ô */
+const dlgLinks = $('#dlgLinks');
+document.addEventListener('click', e => {
+  const b = e.target.closest && e.target.closest('a.lkopen'); if(!b) return;
+  e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+  let list = []; try{ list = JSON.parse(b.dataset.lk || '[]'); }catch(_){}
+  list = list.filter(x => x && safeUrl(x.u));
+  $('#lkTitle').textContent = b.dataset.lkt || 'Liên kết';
+  $('#lkCount').textContent = list.length ? list.length + ' liên kết' : 'Chưa có liên kết nào.';
+  $('#lkList').innerHTML = list.map(x => `<a href="${esc(x.u)}" target="_blank" rel="noopener" title="${esc(x.u)}"><i>🔗</i><span class="t"><span class="n">${esc(x.n || hostOf(x.u))}</span><span class="h">${esc(hostOf(x.u))}</span></span><em>↗</em></a>`).join('');
+  if(!dlgLinks.open) dlgLinks.showModal();
+}, true);
+$('#lkClose').addEventListener('click', () => closeDialog(dlgLinks));
+dlgLinks.addEventListener('click', e => { if(bdHit(e, dlgLinks)) closeDialog(dlgLinks); });
 
 /* phím tắt */
 document.addEventListener('keydown', e => {
@@ -6783,7 +7017,7 @@ function innerScrollSnap(){
 function uiSnap(){
   if(!UIS) return;
   try{
-    const s = {hv:2, view:state.view, week:weekStart, hid:[...hiddenTypes], tsel:[...tagSel], q:$('#q').value, fxf:fxFilter, guide:guideOpen, sx:scrollX, sy:scrollY, nps:[...npSel], npf:npScope, isc:innerScrollSnap(), dlg:null};
+    const s = {hv:2, view:state.view, week:weekStart, hid:[...hiddenTypes], tsel:[...tagSel], q:qRaw.lich, qd:qRaw.dl, fxf:fxFilter, guide:guideOpen, sx:scrollX, sy:scrollY, nps:[...npSel], npf:npScope, isc:innerScrollSnap(), dlg:null};
     const ae = document.activeElement, fc = ae && ae.closest && ae.closest('dialog[open]') && ae.name ? {name:ae.name, a:ae.selectionStart, b:ae.selectionEnd} : null;
     if(dlg.open){ readTimes(); s.dlg = {k:'ev', id:editing && editing.id, date:editing && editing.date, form:formSnap(f), days:daysBoxes().map(b => b.checked), times:timesDraft}; }
     else if(dlgTodo.open) s.dlg = {k:'todo', id:todoEditing, form:formSnap(todoEditForm), auto:todoAuto};
@@ -6808,7 +7042,9 @@ if(uiSaved){
   if(/^\d{4}-\d{2}-\d{2}$/.test(uiSaved.week)) weekStart = mondayOf(uiSaved.week);
   if(uiSaved.hv === 2 && Array.isArray(uiSaved.hid)){ hiddenTypes.clear(); uiSaved.hid.forEach(x => hiddenTypes.add(x)); }   // đã có trạng thái lưu: theo đúng lựa chọn lần trước (kể cả đã bật hiện Nghỉ)
   if(Array.isArray(uiSaved.tsel)) uiSaved.tsel.forEach(x => { if(typeof x === 'string') tagSel.add(x); });
-  if(typeof uiSaved.q === 'string'){ $('#q').value = uiSaved.q; query = fold(uiSaved.q.trim()); $('#qWrap').classList.toggle('has-val', !!uiSaved.q); }
+  if(typeof uiSaved.q === 'string') qRaw.lich = uiSaved.q;
+  if(typeof uiSaved.qd === 'string') qRaw.dl = uiSaved.qd;
+  applyQ(); syncQ();
   guideOpen = !!uiSaved.guide;
   if(uiSaved.fxf && typeof uiSaved.fxf === 'object') ['school','other'].forEach(k => { const o = uiSaved.fxf[k]; if(!o || typeof o !== 'object') return; Object.keys(o).forEach(c => { if(FX_COLS[k].includes(c) && Array.isArray(o[c])){ const a = o[c].filter(x => typeof x === 'string'); if(a.length) fxFilter[k][c] = a; } }); });
 }
@@ -6873,7 +7109,7 @@ const fmtHMS = ms => {
   return (h ? h + ':' + pad(m) : m) + ':' + pad(sec);
 };
 /* ---------- Mục Deadline ở Lịch › Danh sách: ô tổng quan bấm để lọc, nhóm theo hạn chót, đánh dấu xong, mở chi tiết tại chỗ ---------- */
-let npSel = new Set();   // mặc định KHÔNG chọn lọc gì (hiện tất cả); bộ lọc Deadline chọn được nhiều mục cùng lúc: late = quá hạn, open = chưa hoàn thành, done = đã hoàn thành; rỗng = hiện tất cả (kết quả là hợp của các mục đã chọn)
+let npSel = new Set();   // mặc định KHÔNG chọn lọc gì (hiện tất cả); bộ lọc Deadline chọn được nhiều mục cùng lúc: late = quá hạn, open = còn hạn (chưa xong, chưa quá hạn), done = đã hoàn thành; rỗng = hiện tất cả (kết quả là hợp của các mục đã chọn)
 let npScope = 'all';   // bộ lọc Deadline: all = tất cả, week = chỉ trong tuần đang xem ở mục Lịch
 let npOpen = new Set();   // id deadline đang mở chi tiết ngay trong mục Deadline (chỉ trong phiên này)
 let npVisible = [];   // các deadline đang hiện trong mục (cho nút Mở hết / Thu gọn hết)
@@ -6911,21 +7147,27 @@ function positionNpTabInd(prevRect, onlyBox){   // thanh trượt nền của c�
 /* ghi lại thời điểm hoàn thành để sắp xếp các deadline đã xong theo thứ tự hoàn thành (bỏ đánh dấu thì xóa mốc) */
 function setTodoDone(t, v){ if(!t) return; t.done = !!v; if(t.done) t.doneAt = Date.now(); else delete t.doneAt; }
 const doneNewest = (a, b) => ((b.doneAt || 0) - (a.doneAt || 0));   // đã có mốc: mới hoàn thành nhất lên đầu; bản cũ chưa có mốc nằm sau
+function dlActBtns(t){   // 5 nút hành động của một deadline: xem trong lịch (Danh sách / Bảng), ghim, sửa, xóa — cùng bộ icon ở mọi nơi
+  return (t.due ? `<button type="button" class="np-ab" data-act="jump" data-m="agenda" title="Xem trong lịch dạng Danh sách" aria-label="Xem trong lịch dạng Danh sách">${ico('list', 15)}</button><button type="button" class="np-ab" data-act="jump" data-m="table" title="Xem trong lịch dạng Bảng" aria-label="Xem trong lịch dạng Bảng">${ico('table', 15)}</button>` : '')
+    + `<button type="button" class="np-ab np-abpin${t.pin ? ' on' : ''}" data-act="pin" aria-pressed="${t.pin ? 'true' : 'false'}" title="${t.pin ? 'Bỏ ghim' : 'Ghim'}" aria-label="${t.pin ? 'Bỏ ghim' : 'Ghim'}">${ico('pin', 15)}</button><button type="button" class="np-ab" data-act="edit" title="Sửa" aria-label="Sửa">${ico('edit', 15)}</button><button type="button" class="np-ab danger" data-act="del" title="Xóa" aria-label="Xóa">${ico('trash', 15)}</button>`;
+}
 function renderDlPanel(){
   const el = document.getElementById('dlPanel'); if(!el) return;
   const wrap = document.getElementById('dlNew'), show = state.view === 'agenda' || state.view === 'deadline';
   if(wrap) wrap.hidden = !show;
-  if(!show) return;   // chỉ hiện ở Lịch › Danh sách (Bảng vẫn dùng thẻ Deadline cũ)
+  if(!show) return;   // chỉ hiện ở Lịch › Danh sách
   const today = todayStr(), now = Date.now();
   const wkEnd = addDays(weekStart, 6), wkRange = `${npDM(weekStart)} – ${npDM(wkEnd)}`;
   const allG = state.todos;
   const inWeek = t => { const d = t.on || t.due; return !!d && ((d >= weekStart && d <= wkEnd) || !!(t.due && t.due >= weekStart && t.due <= wkEnd)); };   // cùng cách tính với bộ lọc "Trong tuần" ở Bảng, theo tuần đang xem
   /* nhóm theo hạn chót: quá hạn / hôm nay / 7 ngày tới / sau này / không thời hạn (đã xong riêng một nhóm) */
   const bkOf = t => { if(t.done) return 'done'; if(!t.due) return 'none'; if(dueLate(t)) return 'late'; const n = daysBetween(today, t.due); return n === 0 ? 'today' : 'later'; };   // bỏ nhóm "7 ngày tới": mọi deadline còn hạn từ ngày mai trở đi nằm chung nhóm "Chưa hoàn thành"
-  const BK = {late:'Quá hạn', today:'Hôm nay', later:'Chưa hoàn thành', none:'Không thời hạn'};
-  const scoped = npScope === 'week' ? allG.filter(inWeek) : allG;
+  const BK = {late:'Quá hạn', today:'Hôm nay', later:'Còn hạn', none:'Không thời hạn'};
+  const scoped0 = npScope === 'week' ? allG.filter(inWeek) : allG;
+  const scoped = dquery ? scoped0.filter(dlMatch) : scoped0;   // đang tìm kiếm: ẩn hẳn deadline không khớp (cả đã hoàn thành), giống các ô ở mục Lịch; ô đếm + nhóm đếm theo kết quả tìm; vẫn kết hợp với phạm vi Tất cả/Trong tuần và các ô lọc trạng thái
+  const byScore = (a, b) => dquery ? dlScore(b) - dlScore(a) : 0;   // khớp nhất lên đầu trong nhóm
   const openG = scoped.filter(t => !t.done);   // các ô tổng quan ở đầu mục đếm theo phạm vi đang chọn (Tất cả / Trong tuần)
-  const pass = t => !npSel.size || (npSel.has('open') && !t.done) || (npSel.has('late') && bkOf(t) === 'late') || (npSel.has('done') && t.done);
+  const pass = t => !npSel.size || (npSel.has('open') && !t.done && bkOf(t) !== 'late') || (npSel.has('late') && bkOf(t) === 'late') || (npSel.has('done') && t.done);
   const all = scoped.filter(pass), open = all.filter(t => !t.done), done = all.filter(t => t.done);
   npClearIds = done.map(t => t.id); npVisible = all;
   const key = t => t.due ? t.due + (t.dueTime || '23:59') : '9999';
@@ -6934,29 +7176,29 @@ function renderDlPanel(){
   const dlRow = t => {
     const bk = bkOf(t), isOpen = npOpen.has(t.id);
     const when = t.due ? `Hạn: ${esc(npRel(t.due))}${t.dueTime ? ' · ' + esc(t.dueTime) : ''}` : 'Không thời hạn';
-    const cd = bk === 'done' ? '<small class="np-meta np-cdrow"><b class="dn">Đã hoàn thành</b></small>' : !t.due ? '' : `<small class="np-meta np-cdrow"><b class="cd${bk === 'late' ? ' late' : dueSoon24(t) ? ' soon' : ''}" data-v="${esc(t.id)}">${esc(dueTxt(t))}</b></small>`;   // thẻ "Quá hạn …" / "còn …" nằm hàng riêng dưới dòng Hạn; còn dưới 1 ngày thì vàng
+    const cd = bk === 'done' ? '<small class="np-meta np-cdrow"><b class="dn">Hoàn thành</b></small>' : !t.due ? '' : `<small class="np-meta np-cdrow"><b class="cd${bk === 'late' ? ' late' : dueSoon24(t) ? ' soon' : ''}" data-v="${esc(t.id)}">${esc(dueTxt(t))}</b></small>`;   // thẻ "Quá hạn …" / "còn …" nằm hàng riêng dưới dòng Hạn; còn dưới 1 ngày thì vàng
     const info = [t.on ? `Ngày tạo: ${esc(dowShort(t.on))}, ${esc(dmy(t.on))}${t.onTime ? ' · ' + esc(t.onTime) : ''}` : '', t.done && t.doneAt ? `Hoàn thành ${stamp(t.doneAt)}` : ''].filter(Boolean).join(' · ');
-    const det = isOpen ? `<div class="np-det">${hasDetail(t) ? detailHTML(t) : '<div class="np-nodet">Chưa có nội dung chi tiết hay liên kết.</div>'}<div class="np-dmeta">${info}</div><div class="np-dact">${t.due ? '<button type="button" class="np-ab" data-act="jump" title="Xem trong lịch" aria-label="Xem trong lịch">📅</button>' : ''}<button type="button" class="np-ab np-abpin${t.pin ? ' on' : ''}" data-act="pin" aria-pressed="${t.pin ? 'true' : 'false'}" title="${t.pin ? 'Bỏ ghim' : 'Ghim'}" aria-label="${t.pin ? 'Bỏ ghim' : 'Ghim'}">📌</button><button type="button" class="np-ab" data-act="edit" title="Sửa" aria-label="Sửa">✎</button><button type="button" class="np-ab danger" data-act="del" title="Xóa" aria-label="Xóa">🗑</button></div></div>` : '';
-    return `<div class="np-dl bk-${bk}${dlMatch(t) ? '' : ' dim'}${t.done ? ' done' : ''}${t.pin ? ' pinned' : ''}${bk === 'late' ? ' late' : ''}${isOpen ? ' open' : ''}" data-todo="${esc(t.id)}"><button type="button" class="np-chk" data-act="toggle" aria-label="${t.done ? 'Bỏ đánh dấu hoàn thành' : 'Đánh dấu hoàn thành'}" title="${t.done ? 'Bỏ đánh dấu hoàn thành' : 'Đánh dấu hoàn thành'}">${t.done ? '✓' : ''}</button>
-      <span class="np-main"><b>${esc(t.text)}</b><small class="np-meta"><span class="np-when ${bk}">${when}</span>${hasDetail(t) ? indHTML(t) : ''}<span class="np-car" aria-hidden="true">›</span></small>${cd}</span><span class="np-tools"><button type="button" class="np-ed" data-act="edit" aria-label="Sửa deadline" title="Sửa">✎</button></span>${det}</div>`; };
+    const det = isOpen ? `<div class="np-det">${hasDetail(t) ? detailHTML(t) : '<div class="np-nodet">Chưa có nội dung chi tiết hay liên kết.</div>'}<div class="np-dmeta">${info}</div><div class="np-dact">${dlActBtns(t)}</div></div>` : '';
+    return `<div class="np-dl bk-${bk}${dlMatch(t) ? '' : ' dim'}${t.done ? ' done' : ''}${t.pin ? ' pinned' : ''}${bk === 'late' ? ' late' : ''}${isOpen ? ' open' : ''}" data-todo="${esc(t.id)}"><button type="button" class="np-chk" data-act="toggle" aria-label="${t.done ? 'Bỏ đánh dấu hoàn thành' : 'Đánh dấu hoàn thành'}" title="${t.done ? 'Bỏ đánh dấu hoàn thành' : 'Đánh dấu hoàn thành'}">${t.done ? '<svg class="np-tk" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5.5 12l4.2 4.2L18.5 7.4"/></svg>' : ''}</button>
+      <span class="np-main"><b>${esc(t.text)}</b><small class="np-meta"><span class="np-when ${bk}">${when}</span>${hasDetail(t) ? indHTML(t) : ''}<span class="np-car" aria-hidden="true">›</span></small>${cd}</span><span class="np-tools"><button type="button" class="np-ed" data-act="edit" aria-label="Sửa deadline" title="Sửa">${ico('edit', 14)}</button></span><div class="np-hv">${dlActBtns(t)}</div>${det}</div>`; };
   const head = (cls, txt, n) => `<div class="np-gl np-bk ${cls}"><span>${txt}</span><small>${n}</small></div>`;
   /* chưa xong: ghim lên đầu, còn lại chia nhóm theo hạn chót (quá hạn trên cùng), trong nhóm xếp theo hạn */
   const openHTML = list => {
-    const sorted = [...list].sort((a, b) => key(a).localeCompare(key(b)));
+    const sorted = [...list].sort((a, b) => byScore(a, b) || key(a).localeCompare(key(b)));
     const pins = sorted.filter(t => t.pin), rest = sorted.filter(t => !t.pin);
     const groups = ['late', 'today', 'later', 'none'].map(k => { const g = rest.filter(t => bkOf(t) === k); return g.length ? head('bk-' + k, BK[k], g.length) + g.map(dlRow).join('') : ''; }).join('');
     return (pins.length ? head('bk-pin', 'Đã ghim', pins.length) + pins.map(dlRow).join('') : '') + groups;
   };
-  const doneHTML = list => [...list].sort((a, b) => doneNewest(a, b) || key(b).localeCompare(key(a))).map(dlRow).join('');   // vừa hoàn thành nằm trên cùng
+  const doneHTML = list => [...list].sort((a, b) => byScore(a, b) || doneNewest(a, b) || key(b).localeCompare(key(a))).map(dlRow).join('');   // vừa hoàn thành nằm trên cùng
   let dlHTML = '';
   const onlyOpen = npSel.size > 0 && !npSel.has('done'), onlyDone = npSel.size === 1 && npSel.has('done');
-  if(onlyOpen) dlHTML = open.length ? openHTML(open) : `<div class="np-empty">${!allG.length ? 'Chưa có deadline nào' : 'Không có deadline nào trong mục này'}</div>`;
-  else if(onlyDone) dlHTML = done.length ? `<div class="np-gl np-bk bk-done"><span>Đã hoàn thành</span><div class="np-bk-r"><button type="button" class="np-clr" data-act="clrdone" title="Xóa hết deadline đã hoàn thành đang hiện (hoàn tác được)">Xóa ${done.length} deadline đã xong</button><small>${done.length}</small></div></div>` + doneHTML(done) : '<div class="np-empty">Chưa có deadline nào hoàn thành</div>';
-  else dlHTML = all.length ? (open.length ? openHTML(open) : '') + (done.length ? head('bk-done', 'Đã hoàn thành', done.length) + doneHTML(done) : '') : '<div class="np-empty">Chưa có deadline nào</div>';
+  if(onlyOpen) dlHTML = open.length ? openHTML(open) : `<div class="np-empty">${dquery ? 'Không có deadline nào khớp tìm kiếm' : !allG.length ? 'Chưa có deadline nào' : 'Không có deadline nào trong mục này'}</div>`;
+  else if(onlyDone) dlHTML = done.length ? `<div class="np-gl np-bk bk-done"><span>Hoàn thành</span><small>${done.length}</small></div>` + doneHTML(done) : `<div class="np-empty">${dquery ? 'Không có deadline nào khớp tìm kiếm' : 'Chưa có deadline nào hoàn thành'}</div>`;
+  else dlHTML = all.length ? (open.length ? openHTML(open) : '') + (done.length ? head('bk-done', 'Hoàn thành', done.length) + doneHTML(done) : '') : `<div class="np-empty">${dquery ? 'Không có deadline nào khớp tìm kiếm' : 'Chưa có deadline nào'}</div>`;
   /* 3 ô tổng quan, bấm để lọc danh sách */
-  const doneG = scoped.length - openG.length;
+  const doneG = scoped.length - openG.length, validN = openG.filter(t => bkOf(t) !== 'late').length;   // validN = còn hạn: chưa xong và chưa quá hạn
   const tile = (k, ic, lb, txt, on, zero, tip) => `<button type="button" class="np-tile ${k}${on ? ' on' : ''}${zero ? ' zero' : ''}" data-act="bk" data-bk="${k}" title="${tip}" aria-label="${tip}: ${txt}" aria-pressed="${on ? 'true' : 'false'}"><span class="np-ti" aria-hidden="true">${ic}</span><span class="np-tn">${txt}</span><span class="np-tl">${lb}</span></button>`;
-  const tiles = `<div class="np-tiles">${tile('late', '⚠️', 'Quá hạn', lateN, npSel.has('late'), !lateN, 'Quá hạn')}${tile('open', '📋', 'Chưa hoàn thành', openG.length, npSel.has('open'), !openG.length, 'Chưa hoàn thành')}${tile('done', '✅', 'Đã hoàn thành', doneG, npSel.has('done'), !doneG, 'Đã hoàn thành')}</div>`;
+  const tiles = `<div class="np-tiles">${tile('late', '⚠️', 'Quá hạn', lateN, npSel.has('late'), !lateN, 'Quá hạn')}${tile('open', '📋', 'Còn hạn', validN, npSel.has('open'), !validN, 'Còn hạn')}${tile('done', '✅', 'Hoàn thành', doneG, npSel.has('done'), !doneG, 'Hoàn thành')}</div>`;
   const withDet = all.filter(hasDetail), allOpen = withDet.length > 0 && withDet.every(t => npOpen.has(t.id));   // nút Mở hết / Thu gọn hết chỉ tính các deadline có nội dung chi tiết hoặc liên kết
   const html = `<div class="np-grid"><section class="np-col np-dlcol"><h2 class="np-h"><span>Deadline</span>${tiles}<span class="np-hr"><span class="np-sz" role="group" aria-label="Kích thước mục Deadline"><button type="button" data-act="szdec" title="Thu nhỏ mục Deadline" aria-label="Thu nhỏ">A−</button><button type="button" data-act="szinc" title="Phóng to mục Deadline" aria-label="Phóng to">A+</button><button type="button" data-act="szreset" title="Về kích thước mặc định" aria-label="Về kích thước mặc định">↺</button></span>${withDet.length ? `<button type="button" class="np-expall" data-act="expall">${allOpen ? 'Thu gọn hết' : 'Mở hết'}</button>` : ''}</span></h2>
         <div class="np-list">${dlHTML}</div></section>
@@ -7104,21 +7346,25 @@ async function updateScheduleNotification(force = false){
   notifyLastSig = sig;
   await showScheduleNotification(title, body);
 }
-function highlightSchedElement(el){
+function highlightSchedElement(el, ms = 2500){
   if(!el) return;
   clearTimeout(highlightSchedElement.timer);
   el.classList.remove('jump-highlight');
   void el.offsetWidth;
   el.classList.add('jump-highlight');
-  highlightSchedElement.timer = setTimeout(() => el.classList.remove('jump-highlight'), 2500);
+  highlightSchedElement.timer = setTimeout(() => el.classList.remove('jump-highlight'), ms);
 }
 
-function npJump(t){   // từ mục Deadline nhảy tới đúng tuần và thẻ của deadline trong danh sách lịch
+function npJump(t, mode){   // từ mục Deadline nhảy tới đúng tuần và ô của deadline trong lịch, dạng Danh sách ('agenda') hoặc Bảng ('table')
   if(!t || !t.due) return;
-  if(state.view === 'deadline'){ state.view = lastSched || 'agenda'; saveUI(); }   // trang Deadline riêng: quay về lịch rồi mới nhảy tới thẻ
+  if(mode !== 'table' && mode !== 'agenda') mode = state.view === 'table' ? 'table' : 'agenda';
+  if(state.view !== mode){ state.view = mode; saveUI(); }   // đổi sang đúng dạng lịch (cả khi đang ở trang Deadline riêng trên điện thoại)
+  lastSched = mode;
   setWeek(mondayOf(t.due));
-  const el = $('#sched').querySelector(`[data-todo="${CSS.escape(t.id)}"]`);
-  if(el){ el.scrollIntoView({block:'center', behavior:'smooth'}); highlightSchedElement(el); }
+  const find = () => $('#sched').querySelector(`[data-todo="${CSS.escape(t.id)}"]`);
+  let el = find();
+  if(!el && hiddenTypes.has('__dl')){ hiddenTypes.delete('__dl'); saveUI(); render(); el = find(); }   // đang tắt hiển thị Deadline trong lịch: bật lại để có ô mà nhảy tới
+  if(el){ el.scrollIntoView({block:'center', inline:'center', behavior:'smooth'}); setTimeout(() => { if(el.isConnected) highlightSchedElement(el, 3600); }, 350); }   // đợi cuộn tới nơi rồi mới sáng, để người xem kịp thấy cả hiệu ứng
 }
 document.getElementById('dlPanel').addEventListener('dblclick', e => {   // bấm đúp tiêu đề deadline để sửa (như thẻ cũ)
   const row = e.target.closest('[data-todo]'); if(!row || !e.target.closest('.np-main b')) return;
@@ -7190,20 +7436,12 @@ document.getElementById('dlPanel').addEventListener('click', e => {
       if(npSel.has(b)) npSel.delete(b); else npSel.add(b);
       saveUI(); renderDlPanel(); swapNpList(); positionNpTabInd(null);
     }
-    else if(a === 'clrdone'){
-      const ids = new Set(npClearIds); if(!ids.size) return;
-      askConfirm(`Xóa ${ids.size} deadline đã hoàn thành? (Có thể hoàn tác bằng nút ↶ hoặc Ctrl+Z)`, {title:'Xóa deadline đã hoàn thành', ok:'Xóa', danger:true}).then(ok => {
-        if(!ok) return;
-        state.todos = state.todos.filter(t => !ids.has(t.id)); ids.forEach(id => npOpen.delete(id));
-        save(); render();
-      });
-    }
     else {
       const id = act.closest('[data-todo]')?.dataset.todo, t = state.todos.find(x => x.id === id); if(!t) return;
       if(a === 'toggle'){ setTodoDone(t, !t.done); save(); render(); }
       else if(a === 'pin') togglePin(id);
       else if(a === 'edit') openTodo(id);
-      else if(a === 'jump') npJump(t);
+      else if(a === 'jump') npJump(t, act.dataset.m);
       else if(a === 'del'){
         askConfirm(`Xóa deadline "${t.text}"?`, {title:'Xóa deadline', ok:'Xóa', danger:true}).then(ok => {
           if(!ok) return;
@@ -7226,27 +7464,24 @@ document.getElementById('dlPanel').addEventListener('click', e => {
 const visInterval = (fn, ms) => setInterval(() => { if(document.visibilityState === 'visible') fn(); }, ms);
 visInterval(renderDlPanel, 1000);
 /* cập nhật chữ đếm ngược "còn ..." trong các thẻ Deadline ở mục Danh sách mỗi giây, không render lại cả danh sách */
-function tickAgendaCountdowns(){
-  const chips = document.querySelectorAll('.ag.dl .chip:not(.late)');
-  if(!chips.length) return;
+function setDlState(el, k, txt){
+  if(el.textContent !== txt) el.textContent = txt;   // chỉ ghi khi chữ đổi: không ép trình duyệt vẽ lại thẻ mỗi giây
+  const cls = 'dls-' + k;
+  if(!el.classList.contains(cls)){ el.classList.remove('dls-ok', 'dls-late', 'dls-soon', 'dls-n', 'dls-pend'); el.classList.add(cls); }
+}
+/* Bảng: trạng thái của ô Deadline (Quá hạn / Hôm nay / Còn hạn / Hoàn thành) tự cập nhật khi qua giờ hạn hoặc qua nửa đêm */
+function tickTableCountdowns(){
+  const els = document.querySelectorAll('.dlcell .cstate[data-dl], .ag.dl .cstate[data-dl]');
+  if(!els.length) return;
   const byId = new Map(state.todos.map(x => [x.id, x]));
-  chips.forEach(el => {
-    const art = el.closest('[data-todo]'); if(!art) return;
-    const t = byId.get(art.dataset.todo); if(!t) return;
-    const txt = dueTxt(t);
-    if(el.textContent !== txt) el.textContent = txt;   // chỉ ghi khi chữ đổi: không ép trình duyệt vẽ lại thẻ mỗi giây
-    const soon = daysBetween(todayStr(), t.due) <= 3;
-    if(el.classList.contains('soon') !== soon) el.classList.toggle('soon', soon);
-    const sz = 'sz-' + hmsScale(dueEndMs(t) - Date.now());
-    if(!el.classList.contains(sz)){
-      el.classList.remove('sz-y', 'sz-mo', 'sz-d3', 'sz-d2', 'sz-d1', 'sz-hm');
-      el.classList.add(sz);
-    }
+  els.forEach(el => {
+    const t = byId.get(el.closest('[data-todo]')?.dataset.todo); if(!t) return;
+    const [k, txt] = dlStateText(t); setDlState(el, k, txt);
   });
 }
-visInterval(tickAgendaCountdowns, 1000);
+visInterval(tickTableCountdowns, 1000);
 setInterval(updateScheduleNotification, 1000);
-document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible'){ renderDlPanel(); tickAgendaCountdowns(); updateScheduleNotification(); } });
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible'){ renderDlPanel(); tickTableCountdowns(); updateScheduleNotification(); } });
 
 initHistory();
 render();
