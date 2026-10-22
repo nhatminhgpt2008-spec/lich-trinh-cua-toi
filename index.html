@@ -464,7 +464,7 @@ button,[role=button],a,summary,label,select{touch-action:manipulation}
 .rtlist button{display:flex;align-items:center;justify-content:center;width:42px;height:34px;padding:0;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);cursor:pointer;transition:border-color .12s,background .12s,color .12s}
 .rtlist button:hover{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
 .rtpop button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
-.rtbody{min-height:104px;max-height:min(46vh,380px);overflow:auto;padding:8px 10px;font-size:14px;line-height:1.55;color:var(--ink);outline:none;overflow-wrap:anywhere;white-space:pre-wrap;resize:vertical;border-radius:0 0 7px 7px}
+.rtbody{min-height:220px;max-height:min(62vh,560px);overflow:auto;padding:8px 10px;font-size:14px;line-height:1.55;color:var(--ink);outline:none;overflow-wrap:anywhere;white-space:pre-wrap;resize:vertical;border-radius:0 0 7px 7px}
 .rt{white-space:pre-wrap;overflow-wrap:anywhere}
 .rt ul,.rt ol,.rtbody ul,.rtbody ol{margin:.2em 0;padding-left:1.5em}
 .rt ul,.rtbody ul{list-style:disc}
@@ -3195,6 +3195,18 @@ body .layout.ag-on .below #dlNew.card:not([hidden]){padding-top:10px}   /* PC: 1
   body:not([data-view=table]):not([data-view=agenda]) .top .nav{transition:opacity .15s ease}
   body:not([data-view=table]):not([data-view=agenda]) .top:has(#qWrap:focus-within) .nav,body:not([data-view=table]):not([data-view=agenda]) .top:has(#qWrap.has-val) .nav{opacity:0;pointer-events:none}
 }
+
+/* v13: hộp "Liên kết" — giữ kiểu hiển thị gốc (biểu tượng · tên + tên miền cùng dòng · mũi tên), ô to hơn, tên dài xuống dòng chứ không bị cắt */
+#dlgLinks{width:min(760px,calc(100vw - 16px))!important;max-width:none!important;margin:auto!important;padding:0!important}
+#dlgLinks[open]{max-height:min(760px,92vh);max-height:min(760px,92dvh)}
+#dlgLinks .lkscroll{scrollbar-width:thin}
+#dlgLinks form{padding:16px 18px 14px!important}
+#dlgLinks h2{margin:0 0 12px}
+#dlgLinks .lkl a{padding:10px 14px}
+#dlgLinks .lkl .t{flex-wrap:wrap;align-items:baseline;column-gap:10px;row-gap:2px}
+#dlgLinks .lkl .n{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;flex:0 1 auto;max-width:100%}
+#dlgLinks .lkl .h{flex:0 0 auto;max-width:100%}
+@media (max-width:700px){#dlgLinks form{padding:14px 12px 12px!important}}
 </style>
 </head>
 <body>
@@ -3688,7 +3700,7 @@ const hasLinks = x => getLinks(x).length > 0;
 function linkEditor(box, addBtn){
   const row = (u = '', n = '') => {
     const r = document.createElement('div'); r.className = 'lkrow';
-    r.innerHTML = '<button type="button" class="gr" title="Kéo để đổi thứ tự (hoặc bấm rồi dùng phím ↑ ↓)" aria-label="Đổi thứ tự liên kết">⠿</button><input type="text" class="lu" inputmode="url" placeholder="https://" autocomplete="off"><input type="text" class="ln" maxlength="60" placeholder="Tên hiển thị" autocomplete="off"><button type="button" class="x" title="Xóa liên kết" aria-label="Xóa liên kết">×</button>';
+    r.innerHTML = '<button type="button" class="gr" title="Kéo để đổi thứ tự (hoặc bấm rồi dùng phím ↑ ↓)" aria-label="Đổi thứ tự liên kết">⠿</button><input type="text" class="lu" inputmode="url" placeholder="https://" autocomplete="off"><input type="text" class="ln" maxlength="300" placeholder="Tên hiển thị" autocomplete="off"><button type="button" class="x" title="Xóa liên kết" aria-label="Xóa liên kết">×</button>';
     r.querySelector('.lu').value = u; r.querySelector('.ln').value = n;
     box.appendChild(r); hint(r); return r;
   };
@@ -5558,10 +5570,15 @@ function rtStyle(s, tag, full){
   }
   return out.join(';');
 }
+let rtKeepNl = false;
 function rtWalk(src, dst, full){
   for(const ch of [...src.childNodes]){
     if(ch.nodeType === 3){
       let t = ch.nodeValue;
+      if(rtKeepNl && /\n/.test(t)){   // trong ô soạn thảo (white-space:pre-wrap) ký tự xuống dòng là xuống dòng thật: đổi thành <br> thay vì gộp lên 1 dòng
+        t.replace(/\r/g, '').split('\n').forEach((part, i) => { if(i) dst.appendChild(document.createElement('br')); if(part) dst.appendChild(document.createTextNode(part.replace(/\t+/g, ' '))); });
+        continue;
+      }
       if(/^\s*$/.test(t) && /[\r\n\t]/.test(t)) continue;           // khoảng trắng dùng để xuống dòng trong mã HTML: bỏ
       dst.appendChild(document.createTextNode(t.replace(/[\r\n\t]+/g, ' ')));
       continue;
@@ -5631,7 +5648,7 @@ function rtPlain(html){
 const RT_FMT = /<(span|b|strong|i|em|u|s|strike|del|ul|ol|li|a)[\s>]|text-align/i;
 /* nội dung trong ô soạn thảo -> chuỗi lưu: không có định dạng thì lưu văn bản thường như trước */
 function rtSerialize(html){
-  let clean = rtSanitize(html, true);
+  rtKeepNl = true; let clean; try{ clean = rtSanitize(html, true); } finally { rtKeepNl = false; }
   clean = clean.replace(/(?:<div><br><\/div>|<br>)+$/, '');
   const plain = rtPlain(clean);
   if(!plain) return '';
