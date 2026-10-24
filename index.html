@@ -3207,6 +3207,14 @@ body .layout.ag-on .below #dlNew.card:not([hidden]){padding-top:10px}   /* PC: 1
 #dlgLinks .lkl .n{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;flex:0 1 auto;max-width:100%}
 #dlgLinks .lkl .h{flex:0 0 auto;max-width:100%}
 @media (max-width:700px){#dlgLinks form{padding:14px 12px 12px!important}}
+
+/* ===== Mobile: nút chọn ngày chỉ còn icon lịch (ẩn ô hiển thị ngày) ===== */
+@media screen and (max-width:700px){
+  .top .nav .dpw{flex:0 0 auto!important;width:32px!important;min-width:32px!important}
+  .top .nav .dpw>input{position:absolute!important;width:0!important;height:0!important;padding:0!important;border:0!important;visibility:hidden!important}
+  .top .nav .dpw>.dpb{position:static!important;margin:0!important;width:32px!important;height:32px!important;border:1px solid var(--line)!important;background:var(--surface)!important;border-radius:8px;color:var(--ink)}
+  .top .nav .dpw>.dpb svg{width:18px;height:18px}
+}
 </style>
 </head>
 <body>
