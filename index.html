@@ -5982,8 +5982,10 @@ function cycleFixedSort(kind, key){
   saveUI(); render();
 }
 function fixedWhen(ev, vs, room = true){
-  const skip = [...(ev.skip||[])].sort();
-  const range = ev.until ? `Từ ${dmy(ev.date)} - ${dmy(ev.until)}` : `Từ ${dmy(ev.date)}`;
+  const all = (vs && vs.length) ? vs : [ev];
+  const skip = [...new Set(all.flatMap(v => [...(v.skip || []), ...(v.skipSlots || []), ...(v.cancelledSlots || [])].map(x => String(x).slice(0, 10))))].filter(d => /^\d{4}-\d{2}-\d{2}$/.test(d)).sort();   // gộp buổi nghỉ (cả nghỉ theo khung giờ) của MỌI phiên bản
+  const start = all.reduce((m, v) => v.date < m ? v.date : m, all[0].date);   // ngày bắt đầu gốc
+  const range = ev.until ? `Từ ${dmy(start)} - ${dmy(ev.until)}` : `Từ ${dmy(start)}`;
   return `<div class="when">${esc(schedText(ev, room))}</div>${repeatBadge(ev)}
     <div class="sub">${range}</div>${skip.length ? absBtn(ev, skip) : ''}`;
 }
