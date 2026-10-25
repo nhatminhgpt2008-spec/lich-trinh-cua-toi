@@ -634,6 +634,8 @@ dialog h2{margin:0 0 14px;font-size:17px}
 .fgrid input[readonly]{opacity:.45;cursor:not-allowed}.fgrid .dpw:has(input[readonly])>.dpb{pointer-events:none}   /* ô Ngày tạo/Giờ tạo: không sửa được nên làm mờ giống ô Hạn chót khi bật "Không thời hạn" */
 .syncinfo{white-space:pre-line;margin-top:4px;padding:8px 10px 4px;border-top:1px solid var(--line);font-size:11.5px;line-height:1.4;color:var(--muted)}
 .fgrid .full{grid-column:1/-1}
+/* Lớp: nhấn ô không co lại / không giật */
+.fx .fx-row:active,.fx .fx-row:not(.dragging){transform:none;scale:none;transition:none}
 #gcStatus{margin-top:14px}
 .gcGuide{margin-top:14px;border-top:1px solid var(--line);padding-top:10px;font-size:12.5px}
 .gcGuide>summary{cursor:pointer;font-weight:600;font-size:13px}
@@ -7840,7 +7842,7 @@ $('#sched').addEventListener('click', e => {
   if(pn){ clearTimeout(clickTimer); togglePin(pn.dataset.pin); return; }
   const t = e.target;
   clearTimeout(clickTimer);
-  if(t.closest('#stackToggle') || t.closest('[data-edit]') || t.closest('[data-id],[data-todo]')?.querySelector(':scope>.editb') || t.closest('.sheet .dn th[data-col]') || ((t.closest('td.day-stack') || t.closest('.ad[data-date]')) && !t.closest('[data-id],[data-todo]'))){ onSchedClick(t); return; }   // chọn ô / bấm ✎: phản hồi tức thì
+  if(t.closest('#stackToggle') || t.closest('[data-edit]') || t.closest('[data-id],[data-todo]')?.querySelector(':scope>.editb') || t.closest('.sheet .dn th[data-col]') || ((t.closest('td.day-stack') || t.closest('.ad[data-date]')) && !t.closest('[data-id],[data-todo]')) || t.closest('table.fx') || t.closest('#addFixed,#addOther')){ onSchedClick(t); return; }   // chọn ô / bấm ✎ / mọi thao tác ở mục Lớp: phản hồi ngay, không chờ tức thì
   clickTimer = setTimeout(() => onSchedClick(t), 230);
 });
 let toastEl = null, toastT = 0;
