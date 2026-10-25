@@ -634,6 +634,15 @@ dialog h2{margin:0 0 14px;font-size:17px}
 .fgrid input[readonly]{opacity:.45;cursor:not-allowed}.fgrid .dpw:has(input[readonly])>.dpb{pointer-events:none}   /* ô Ngày tạo/Giờ tạo: không sửa được nên làm mờ giống ô Hạn chót khi bật "Không thời hạn" */
 .syncinfo{white-space:pre-line;margin-top:4px;padding:8px 10px 4px;border-top:1px solid var(--line);font-size:11.5px;line-height:1.4;color:var(--muted)}
 .fgrid .full{grid-column:1/-1}
+#gcStatus{margin-top:14px}
+.gcGuide{margin-top:14px;border-top:1px solid var(--line);padding-top:10px;font-size:12.5px}
+.gcGuide>summary{cursor:pointer;font-weight:600;font-size:13px}
+.gcGuide ol{margin:10px 0 0;padding-left:20px;color:var(--muted);line-height:1.55}
+.gcGuide li{margin:0 0 9px}
+.gcGuide li b,.gcGuide li code{color:var(--ink)}
+.gcGuide code{font:600 12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;word-break:break-all}
+.gcGuide h5{margin:14px 0 4px;font-size:12.5px;color:var(--ink)}
+.gcGuide ul{margin:4px 0 0;padding-left:20px;color:var(--muted);line-height:1.55}
 .hint{grid-column:1/-1;font-size:12.5px;color:var(--muted);background:var(--line-soft);padding:6px 10px;border-radius:8px;margin:0}
 .err{color:var(--danger);min-height:18px;margin:8px 0 0;font-size:13px}
 .actions{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
@@ -4148,7 +4157,7 @@ body[data-view="cal"] #sched .mchip.ce .t{align-self:center;line-height:1.3;marg
         </div>
       </fieldset>
       <div class="full rtf" data-k="event"><span>Nội dung</span><textarea name="body" rows="4" data-rte hidden></textarea></div>
-      <div class="full lkbox" data-k="event"><span class="lkt">Liên kết</span><div class="lkrows" id="evLinks"></div><button type="button" class="btn lkadd" id="evLinkAdd">+ Thêm liên kết</button></div>
+      <div class="full lkbox" data-k="event"><span class="lkt">Liên kết</span><div class="lkrows" id="evLinks"></div><button type="button" class="btn lkadd" id="evLinkAdd">+ Thêm liên kết</button><button type="button" class="btn lkadd" id="evMeetBtn">+ Tạo Google Meet</button><p class="hint" id="evMeetHint"></p></div>
     </div>
     <p class="err" id="err" role="alert"></p>
     <div class="actions">
@@ -4345,8 +4354,31 @@ body[data-view="cal"] #sched .mchip.ce .t{align-self:center;line-height:1.3;marg
       <button type="button" class="acctSectionSummary" aria-expanded="false">Google Calendar<span class="acctArrow" aria-hidden="true"></span></button>
       <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
         <div class="fgrid"><label class="full">OAuth Client ID (Web)<input id="gcCid" placeholder="xxxx.apps.googleusercontent.com" autocomplete="off" spellcheck="false"></label></div>
-        <p class="hint" id="gcStatus">Chưa kết nối. Lịch trong app sẽ được đẩy sang Google Calendar (chỉ tên + thời gian). Sự kiện có sẵn trên Google khớp tên + giờ bắt đầu sẽ được liên kết, giữ nguyên mô tả/địa điểm/khách mời.</p>
+        <p class="hint" id="gcStatus">Chưa kết nối. Sau khi kết nối, mỗi lần mở trang app tự đồng bộ lại. Lịch trong app sẽ được đẩy sang Google Calendar (tên + thời gian + nhắc trước 1 giờ, và Google Meet nếu bạn bật). Sự kiện có sẵn trên Google khớp tên + giờ bắt đầu sẽ được liên kết, giữ nguyên mô tả/địa điểm/khách mời.</p>
         <div class="actions"><button type="button" class="btn" id="gcOff">Ngắt kết nối</button><span class="grow"></span><button type="button" class="btn primary" id="gcOn">Kết nối &amp; đồng bộ</button></div>
+        <details class="gcGuide"><summary>Hướng dẫn lấy OAuth Client ID (chi tiết)</summary>
+          <p style="margin:8px 0 0;color:var(--muted)">Làm một lần, khoảng 5–10 phút, hoàn toàn miễn phí. Đăng nhập Google Cloud bằng chính tài khoản Google bạn dùng cho lịch.</p>
+          <ol>
+            <li><b>Tạo project.</b> Mở <code>console.cloud.google.com</code> → bấm ô chọn project ở thanh trên cùng → <b>New project</b> → đặt tên (ví dụ “Lich trinh”) → <b>Create</b>. Đợi vài giây rồi chắc chắn project này đang được chọn ở thanh trên cùng.</li>
+            <li><b>Bật Google Calendar API.</b> Menu ☰ → <b>APIs &amp; Services</b> → <b>Library</b> → gõ “Google Calendar API” → mở kết quả → bấm <b>Enable</b>. Google Meet dùng chung API này nên không cần bật thêm gì.</li>
+            <li><b>Cấu hình màn hình đồng ý.</b> Menu ☰ → <b>APIs &amp; Services</b> → <b>OAuth consent screen</b> (giao diện mới tên là <b>Google Auth Platform</b>; nếu thấy nút <b>Get started</b> thì bấm). Điền: <b>App name</b> (tên bất kỳ), <b>User support email</b> (email của bạn). Ở <b>Audience</b> chọn <b>External</b>. Điền email liên hệ, tích đồng ý chính sách rồi <b>Create</b>.</li>
+            <li><b>Thêm tài khoản được phép (rất quan trọng).</b> Vào <b>Audience</b> (hoặc <b>Test users</b>) → <b>Add users</b> → nhập <b>đúng email Google đang đăng nhập trong app này</b> → <b>Save</b>. Để trạng thái <b>Testing</b>, không cần bấm Publish. Nếu bỏ bước này, Google báo lỗi <code>access_denied</code>.</li>
+            <li><b>Thêm quyền Calendar (nếu giao diện có mục này).</b> Vào <b>Data Access</b> → <b>Add or remove scopes</b> → tìm và tích <code>.../auth/calendar.events</code> → <b>Update</b> → <b>Save</b>. Nếu không thấy mục này thì bỏ qua, app sẽ tự xin quyền khi bạn đăng nhập.</li>
+            <li><b>Tạo OAuth client.</b> Vào <b>Credentials</b> (hoặc <b>Clients</b>) → <b>Create credentials</b> / <b>Create client</b> → <b>OAuth client ID</b>. <b>Application type</b> chọn <b>Web application</b>, đặt tên bất kỳ.</li>
+            <li><b>Điền Authorized JavaScript origins.</b> Bấm <b>Add URI</b> và dán đúng chuỗi sau, <b>không có dấu / ở cuối và không có đường dẫn phía sau</b>: <code id="gcOrigin">https://nhatminhgpt2008-spec.github.io</code><br>Nếu mở app trên máy bạn qua server cục bộ, thêm một dòng nữa, ví dụ <code>http://localhost:5500</code> (thay 5500 bằng cổng thật). Ô <b>Authorized redirect URIs</b> để trống. Bấm <b>Create</b>.</li>
+            <li><b>Sao chép Client ID.</b> Hộp thoại “OAuth client created” hiện <b>Client ID</b> dạng <code>xxxx.apps.googleusercontent.com</code>, bấm biểu tượng copy. Không cần Client secret. Lỡ đóng hộp thoại thì mở lại <b>Credentials</b> → bấm tên client để xem.</li>
+            <li><b>Kết nối trong app.</b> Dán Client ID vào ô <b>OAuth Client ID (Web)</b> ở trên → bấm <b>Kết nối &amp; đồng bộ</b> → chọn đúng tài khoản Google. Google sẽ báo “Google hasn’t verified this app”: bấm <b>Advanced</b> → <b>Go to … (unsafe)</b> (bình thường với app cá nhân ở chế độ Testing) → tích quyền xem/sửa lịch → <b>Continue</b>.</li>
+          </ol>
+          <h5>Lỗi thường gặp</h5>
+          <ul>
+            <li><code>Invalid Origin</code> khi lưu: origin còn dấu <code>/</code> ở cuối hoặc còn đường dẫn <code>/lich-trinh-cua-toi</code>. Chỉ giữ giao thức + tên miền.</li>
+            <li><code>origin_mismatch</code> khi đăng nhập: địa chỉ bạn đang mở app không khớp origin đã khai (sai <code>http</code>/<code>https</code>, thừa/thiếu <code>www.</code>, hoặc khác cổng). Sửa origin rồi đợi vài phút cho Google cập nhật.</li>
+            <li><code>access_denied</code> hoặc “app chưa được phê duyệt”: email chưa nằm trong <b>Test users</b> (bước 4).</li>
+            <li>Báo khác tài khoản: Google phải trùng với email đang đăng nhập trong app, chọn đúng tài khoản đó.</li>
+            <li>Không hiện cửa sổ đăng nhập: trình duyệt đang chặn popup, hãy cho phép popup cho trang này.</li>
+            <li>Đang ở chế độ Testing, Google có thể bắt đăng nhập lại sau một thời gian; chỉ cần bấm <b>Kết nối &amp; đồng bộ</b> lần nữa.</li>
+          </ul>
+        </details>
       </div></div></div>
     </div>
 
@@ -5579,7 +5611,7 @@ function truncateFrom(ev, occDate){
 }
 const EDIT_KEYS = ['kind','title','code','type','status','date','start','end','room','teacher','body','repeat','until','sv','svMax'];
 const sameDays = (a,b) => JSON.stringify([...a].sort((x,y) => x-y)) === JSON.stringify([...b].sort((x,y) => x-y));
-const editChanged = (ev,d) => EDIT_KEYS.some(k => String(ev[k] ?? '') !== String(d[k] ?? '')) || JSON.stringify(getLinks(ev)) !== JSON.stringify(d.links || []) || !sameDays(evDays(ev), d.days || []) ||
+const editChanged = (ev,d) => EDIT_KEYS.some(k => String(ev[k] ?? '') !== String(d[k] ?? '')) || JSON.stringify(getLinks(ev)) !== JSON.stringify(d.links || []) || !!ev.meet !== !!d.meet || !sameDays(evDays(ev), d.days || []) ||
   JSON.stringify(ev.times || null) !== JSON.stringify(d.times || null);
 
 /* ---------- tính lịch của tuần ---------- */
@@ -7009,6 +7041,23 @@ let tmWk = true;   // lần vẽ trước đang ở kiểu lặp theo tuần (ch
 const FIELDS = ['title','code','type','date','start','end','room','teacher','body','repeat','until','status'];
 const daysBoxes = () => [...document.querySelectorAll('#daysWrap input')];
 const evLinks = linkEditor($('#evLinks'), $('#evLinkAdd'));
+/* Google Meet cho cả lớp: bật cờ ev.meet; khi đồng bộ, app tạo MỘT link Meet rồi gắn cùng link đó vào mọi buổi (mọi tuần, mọi thứ) của lớp */
+let formMeet = false, formMeetCode = '';
+function drawMeet(){
+  const b = $('#evMeetBtn'), h = $('#evMeetHint'); if(!b) return;
+  b.textContent = formMeet ? '✓ Có Google Meet (bấm để bỏ)' : '+ Tạo Google Meet';
+  h.style.color = '';
+  h.textContent = formMeet ? (formMeetCode ? 'Mọi buổi của lịch này dùng chung một link Meet.' : 'Link Meet được tạo ngay sau khi bấm Lưu; mọi buổi lặp dùng chung một link.') : '';
+}
+const meetMsg = (t, bad) => { const h = $('#evMeetHint'); h.textContent = t; h.style.color = bad ? 'var(--danger)' : ''; };   // báo ngay dưới nút (toast nằm sau hộp thoại nên không thấy)
+$('#evMeetBtn').addEventListener('click', async () => {
+  if(formMeet){ formMeet = false; drawMeet(); return; }
+  const g = window.gcalApi;
+  if(!g || !g.connected()){ meetMsg('Hãy kết nối Google Calendar trước: mở Tài khoản › Google Calendar, dán Client ID rồi bấm “Kết nối & đồng bộ”.', true); return; }
+  meetMsg('Đang mở cửa sổ đăng nhập Google…');
+  try{ await g.auth(); }catch(e){ meetMsg('Chưa đăng nhập được Google: ' + e.message, true); return; }
+  formMeet = true; drawMeet();
+});
 
 function openModal(id, date, defaults, slot){
   const ev = id ? state.events.find(e => e.id === id) : null;
@@ -7022,6 +7071,7 @@ function openModal(id, date, defaults, slot){
     f.elements.status.value = occurrenceCancelled(ev, editing.date, editing.slot.start, editing.slot.end) ? 'cancelled' : 'normal';
   }
   evLinks.set(getLinks(v));
+  formMeet = !!(ev && ev.meet); formMeetCode = (ev && ev.meetCode) || ''; drawMeet();
   f.elements.untilMode.value = v.until ? 'date' : 'inf';
   f.elements.type.value = tagOf(v.type).id;   // danh sách Tag đã có đủ mọi tag, gồm cả "Lớp chính thức"
   f.elements.repeat.value = isRec(v) ? v.repeat : 'none';
@@ -7232,6 +7282,8 @@ function buildData(){
   d.body = String(d.body || '').trim();
   delete d.days;
   { const r = evLinks.read(); if(r.error) return err(r.error); d.links = r.list; }
+  d.meet = formMeet ? true : undefined;   // undefined = không có khóa → không lưu
+  { const cur = editing && editing.id ? state.events.find(x => x.id === editing.id) : null; d.meetCode = (cur && cur.meetCode) || undefined; }
   d.link = d.links[0] ? d.links[0].url : ''; d.linkName = d.links[0] ? d.links[0].name : '';   // giữ 2 trường cũ = liên kết đầu tiên (tương thích)
   const useUntil = d.repeat !== 'none' && d.untilMode === 'date'; delete d.untilMode;
   if(useUntil){
@@ -7365,6 +7417,7 @@ f.addEventListener('submit', async e => {
   weekStart = mondayOf(editing.id && d.repeat !== 'none' ? weekStart : d.date);
   if(tagSelActive() && d.type !== undefined && !tagSel.has(d.type)){ tagSel.add(d.type); saveUI(); }   // đang lọc theo tag: tag của lịch vừa lưu phải hiện, kẻo lịch có trong Lớp mà không thấy trong Bảng
   save(); closeDialog(dlg); render();
+  if(d.meet && window.gcalApi) window.gcalApi.now();   // tạo link Meet ngay, không đợi 4 giây
 });
 $('#closeBtn').onclick = () => closeDialog(dlg);
 $('#dlgCloseX').onclick = () => closeDialog(dlg);
@@ -9948,7 +10001,7 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
         try{ const u=await (await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+r.access_token}})).json(), got=String(u.email||'').toLowerCase();
           if(got!==me){ try{ google.accounts.oauth2.revoke(r.access_token); }catch(e){} return no(new Error('Tài khoản Google ('+(got||'?')+') khác tài khoản đang dùng trong app ('+me+'). Hãy chọn đúng '+me)); }
         }catch(e){ return no(new Error('không xác minh được tài khoản Google')); }
-        tok=r.access_token; exp=Date.now()+(+r.expires_in||3600)*1000; ok(tok); }, error_callback:e=>no(new Error(e.type||'popup')) }); tc.requestAccessToken({prompt:''}); });
+        tok=r.access_token; exp=Date.now()+(+r.expires_in||3600)*1000; ok(tok); }, error_callback:e=>no(new Error(e.type||'popup')) }); tc.requestAccessToken({prompt:interactive==='auto'?'none':''}); });
   }
   async function api(m,url,body){
     let r; for(let n=0;;n++){ r=await fetch(url,{method:m,headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
@@ -9965,7 +10018,7 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
     for(let w=mondayOf(from); w<=to; w=addDays(w,7)) weekOccs(w).forEach(o=>{
       if(o.cancelled||o.date<from||o.date>to||!o.ev.start||!o.ev.end) return;
       let ed=o.date; if(o.ev.end<=o.ev.start) ed=addDays(o.date,1);
-      m.set(o.ev.id+'|'+o.date+'|'+o.ev.start,{key:o.ev.id+'|'+o.date+'|'+o.ev.start,pre:o.ev.id+'|'+o.date+'|',sum:o.ev.title||'(Không tiêu đề)',s:iso(o.date,o.ev.start),e:iso(ed,o.ev.end)});
+      m.set(o.ev.id+'|'+o.date+'|'+o.ev.start,{cid:o.ev.id,key:o.ev.id+'|'+o.date+'|'+o.ev.start,pre:o.ev.id+'|'+o.date+'|',sum:o.ev.title||'(Không tiêu đề)',s:iso(o.date,o.ev.start),e:iso(ed,o.ev.end)});
     });
     return m;
   }
@@ -9976,49 +10029,107 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
     return out.filter(g=>{ if(g.status==='cancelled'||!g.start||!g.start.dateTime) return false; const d=fmt(new Date(g.start.dateTime)); return d>=from&&d<=to; });   // chỉ xét sự kiện nằm trong phạm vi đã tính (tránh xoá nhầm ở rìa)
   }
   const gid=k=>Array.from(new TextEncoder().encode(k)).map(b=>b.toString(16).padStart(2,'0')).join('');   // id cố định theo khoá → hai thiết bị cùng đồng bộ không tạo trùng
-  const body=d=>({summary:d.sum,start:{dateTime:d.s,timeZone:TZ},end:{dateTime:d.e,timeZone:TZ},extendedProperties:{private:{lichKey:d.key}}});
-  const same=(g,d)=>g.summary===d.sum&&ms(g.start.dateTime)===ms(d.s+offs(d.s))&&ms(g.end.dateTime)===ms(d.e+offs(d.e));
+  const REMIND=60;   // mọi sự kiện đẩy sang Google đều nhắc trước 60 phút (popup)
+  const CQ='conferenceDataVersion=1';
+  const sleep=t=>new Promise(k=>setTimeout(k,t));
+  const evOf=d=>state.events.find(e=>e.id===d.cid);
+  const mcode=d=>{ const e=evOf(d); return e&&e.meet&&e.meetCode?e.meetCode:''; };   // mã Meet của lớp (nếu lớp bật Meet và đã có mã)
+  const gconf=g=>String((g.conferenceData&&g.conferenceData.conferenceId)||String(g.hangoutLink||'').split('/').pop()||'');
+  const lk=g=>g.extendedProperties&&g.extendedProperties.private&&g.extendedProperties.private.lichKey;
+  const noCopy=()=>LS.getItem('gcal_noconf')==='1';   // Google từ chối gắn lại cùng một Meet → ngừng thử để khỏi sửa lại mãi
+  let meetFail=0;
+  const body=(d,mode,extra)=>{
+    const b={summary:d.sum,start:{dateTime:d.s,timeZone:TZ},end:{dateTime:d.e,timeZone:TZ},extendedProperties:{private:{lichKey:d.key}},reminders:{useDefault:false,overrides:[{method:'popup',minutes:REMIND}]},...extra};
+    if(mode==='seed') b.conferenceData={createRequest:{requestId:'lich'+Date.now().toString(36)+Math.random().toString(36).slice(2,8),conferenceSolutionKey:{type:'hangoutsMeet'}}};
+    else if(mode==='copy'){ const c=mcode(d); b.conferenceData={conferenceId:c,conferenceSolution:{key:{type:'hangoutsMeet'}},entryPoints:[{entryPointType:'video',uri:'https://meet.google.com/'+c,label:'meet.google.com/'+c}]}; }
+    return b;
+  };
+  async function send(m,url,d,seed,extra){
+    const c=seed?'seed':(mcode(d)&&!noCopy()?'copy':'');
+    try{ return await api(m,url+(c?(url.includes('?')?'&':'?')+CQ:''),body(d,c,extra)); }
+    catch(e){ if(c==='copy'&&/Google 400/.test(e.message)){ LS.setItem('gcal_noconf','1'); meetFail++; return api(m,url,body(d,'',extra)); } throw e; }
+  }
+  const remOk=g=>{ const r=g.reminders||{}, o=r.overrides||[]; return r.useDefault===false&&o.length===1&&o[0].method==='popup'&&+o[0].minutes===REMIND; };
+  const confOk=(g,d)=>{ const c=mcode(d); return !c||noCopy()||gconf(g)===c; };
+  const same=(g,d)=>g.summary===d.sum&&ms(g.start.dateTime)===ms(d.s+offs(d.s))&&ms(g.end.dateTime)===ms(d.e+offs(d.e))&&remOk(g)&&confOk(g,d);
   const offs=x=>{ const o=-new Date(x).getTimezoneOffset(), a=Math.abs(o); return (o<0?'-':'+')+String(Math.floor(a/60)).padStart(2,'0')+':'+String(a%60).padStart(2,'0'); };
   async function run(interactive){
     if(busy){ again=true; return; } busy=true;
     try{
-      if(!await auth(interactive)){ say('Cần đăng nhập Google lại — bấm “Kết nối & đồng bộ”.'); return; }
+      if(!await auth(interactive)){ say('Cần đăng nhập Google lại — chạm vào trang một lần hoặc bấm “Kết nối & đồng bộ”.'); armGesture(); return; }
       say('Đang đồng bộ…');
       const from=addDays(todayStr(),-14), to=addDays(todayStr(),120), want=desired(from,to), gs=await list(from,to);
-      const linked=new Map(), free=[];
-      gs.forEach(g=>{ const k=g.extendedProperties&&g.extendedProperties.private&&g.extendedProperties.private.lichKey; k?linked.set(k,g):free.push(g); });
-      const meet=new Map(), mt=g=>g.hangoutLink||(((g.conferenceData||{}).entryPoints||[]).find(e=>e.entryPointType==='video')||{}).uri||'', note=(g,key)=>{ const u=mt(g), id=key.split('|')[0]; if(u&&!meet.has(id)) meet.set(id,u); };
-      const jobs=[]; let ins=0,upd=0,lnk=0,del=0; const todo=[];
-      want.forEach((d,k)=>{ const g=linked.get(k); if(g){ linked.delete(k); note(g,k); if(!same(g,d)){ upd++; jobs.push(()=>api('PATCH',API+'/'+g.id,body(d))); } } else todo.push(d); });
-      const stale=[...linked.values()];
-      todo.forEach(d=>{
-        let i=stale.findIndex(g=>g.extendedProperties.private.lichKey.startsWith(d.pre));            // cùng lớp + cùng ngày nhưng đổi giờ/tên → sửa chính sự kiện đó
-        if(i>=0){ const g=stale.splice(i,1)[0]; note(g,d.key); upd++; jobs.push(()=>api('PATCH',API+'/'+g.id,body(d))); return; }
-        const ds=ms(d.s+offs(d.s)), de=ms(d.e+offs(d.e)), nd=nm(d.sum), st=g=>ms(g.start.dateTime)===ds, en=g=>ms(g.end.dateTime)===de, nt=g=>{ const x=nm(g.summary); return x&&nd&&(x===nd||(Math.min(x.length,nd.length)>=3&&(x.includes(nd)||nd.includes(x)))); };
-        i=free.findIndex(g=>st(g)&&nm(g.summary)===nd);                      // trùng tên + giờ bắt đầu
-        if(i<0) i=free.findIndex(g=>st(g)&&en(g)&&nt(g));                    // trùng khung giờ, tên giống (không phân biệt hoa/thường, dấu, chứa nhau)
-        if(i<0) i=free.findIndex(g=>st(g)&&nt(g));                           // trùng giờ bắt đầu, tên giống
-        if(i>=0){ const g=free.splice(i,1)[0]; note(g,d.key); lnk++; jobs.push(()=>api('PATCH',API+'/'+g.id,body(d))); return; }   // liên kết + đồng bộ tên/giờ theo app; chỉ gửi tên, giờ, khoá nên mô tả/địa điểm/khách mời giữ nguyên
-        ins++; jobs.push(()=>api('POST',API,{id:gid(d.key),...body(d)}).catch(e=>{ if(/409/.test(e.message)) return api('PATCH',API+'/'+gid(d.key),{...body(d),status:'confirmed'}); throw e; }));
-      });
-      const nLinked=stale.length+[...want.keys()].filter(k=>gs.some(g=>g.extendedProperties&&g.extendedProperties.private&&g.extendedProperties.private.lichKey===k)).length;
-      let skipDel=0; if(stale.length>5&&(want.size===0||stale.length>nLinked*0.5)){ skipDel=stale.length; stale.length=0; }   // an toàn: dữ liệu app trống/lệch bất thường thì KHÔNG xoá hàng loạt trên Google
-      stale.forEach(g=>{ del++; jobs.push(()=>api('DELETE',API+'/'+g.id)); });
-      let fail=0, fatal=null; const safe=f=>f().catch(e=>{ if(/hết hạn/.test(e.message)) fatal=e; else fail++; });   // một sự kiện lỗi (vd. sự kiện của người khác, không có quyền sửa) không làm dừng cả lượt
-      for(let i=0;i<jobs.length&&!fatal;i+=5) await Promise.all(jobs.slice(i,i+5).map(safe));
+      const meet=new Map(), mcodes=new Map(), mt=g=>g.hangoutLink||(((g.conferenceData||{}).entryPoints||[]).find(e=>e.entryPointType==='video')||{}).uri||'';
+      const note=(g,key)=>{ const u=mt(g), id=key.split('|')[0]; if(u&&!meet.has(id)) meet.set(id,u); const c=(g.conferenceData||g.hangoutLink)?gconf(g):''; if(c&&!mcodes.has(id)) mcodes.set(id,c); };
+      let fail=0, fatal=null, created=0, changed=false; meetFail=0;
+      const safe=f=>f().catch(e=>{ if(/hết hạn/.test(e.message)) fatal=e; else fail++; });   // một sự kiện lỗi (vd. sự kiện của người khác, không có quyền sửa) không làm dừng cả lượt
+      const setGs=r=>{ if(!r||!r.id) return; const ix=gs.findIndex(x=>x.id===r.id); if(ix>=0) gs[ix]=r; else gs.push(r); };
+      const plan=()=>{
+        const linked=new Map(), free=[]; gs.forEach(g=>{ const k=lk(g); k?linked.set(k,g):free.push(g); });
+        const jobs=[]; let ins=0,upd=0,lnk=0,del=0; const todo=[], add=(d,f)=>jobs.push({d,f});
+        want.forEach((d,k)=>{ const g=linked.get(k); if(g){ linked.delete(k); note(g,k); if(!same(g,d)){ upd++; add(d,s=>send('PATCH',API+'/'+g.id,d,s)); } } else todo.push(d); });
+        const stale=[...linked.values()];
+        todo.forEach(d=>{
+          let i=stale.findIndex(g=>lk(g).startsWith(d.pre));            // cùng lớp + cùng ngày nhưng đổi giờ/tên → sửa chính sự kiện đó
+          if(i>=0){ const g=stale.splice(i,1)[0]; note(g,d.key); upd++; add(d,s=>send('PATCH',API+'/'+g.id,d,s)); return; }
+          const ds=ms(d.s+offs(d.s)), de=ms(d.e+offs(d.e)), nd=nm(d.sum), st=g=>ms(g.start.dateTime)===ds, en=g=>ms(g.end.dateTime)===de, nt=g=>{ const x=nm(g.summary); return x&&nd&&(x===nd||(Math.min(x.length,nd.length)>=3&&(x.includes(nd)||nd.includes(x)))); };
+          i=free.findIndex(g=>st(g)&&nm(g.summary)===nd);                      // trùng tên + giờ bắt đầu
+          if(i<0) i=free.findIndex(g=>st(g)&&en(g)&&nt(g));                    // trùng khung giờ, tên giống (không phân biệt hoa/thường, dấu, chứa nhau)
+          if(i<0) i=free.findIndex(g=>st(g)&&nt(g));                           // trùng giờ bắt đầu, tên giống
+          if(i>=0){ const g=free.splice(i,1)[0]; note(g,d.key); lnk++; add(d,s=>send('PATCH',API+'/'+g.id,d,s)); return; }   // liên kết + đồng bộ tên/giờ theo app; mô tả/địa điểm/khách mời giữ nguyên
+          ins++; add(d,s=>send('POST',API,d,s,{id:gid(d.key)}).catch(e=>{ if(/409/.test(e.message)) return send('PATCH',API+'/'+gid(d.key),d,s,{status:'confirmed'}); throw e; }));
+        });
+        const nLinked=stale.length+[...want.keys()].filter(k=>gs.some(g=>lk(g)===k)).length;
+        let skipDel=0; if(stale.length>5&&(want.size===0||stale.length>nLinked*0.5)){ skipDel=stale.length; stale.length=0; }   // an toàn: dữ liệu app trống/lệch bất thường thì KHÔNG xoá hàng loạt trên Google
+        stale.forEach(g=>{ del++; add({cid:''},()=>api('DELETE',API+'/'+g.id)); });
+        return {jobs,ins,upd,lnk,del,skipDel};
+      };
+      let P=plan(), replan=false;
+      /* Google Meet: lớp nào bật Meet mà chưa có mã → dùng lại Meet đã có trên Google (nếu có), không thì tạo MỘT link ở buổi đầu tiên; các buổi còn lại gắn cùng mã đó */
+      for(const ev of state.events.filter(e=>e.meet&&!e.meetCode)){
+        if(ev.meetCode) continue;   // vừa được gán cùng mã với phiên bản khác của lớp
+        const give=code=>{ (isRec(ev)?versionsOf(ev):[ev]).forEach(v=>{ if(v.meet&&!v.meetCode) v.meetCode=code; }); ev.meetCode=ev.meetCode||code; changed=true; replan=true; };
+        if(mcodes.has(ev.id)){ give(mcodes.get(ev.id)); continue; }
+        const first=[...want.values()].filter(d=>d.cid===ev.id).sort((a,b)=>a.s<b.s?-1:a.s>b.s?1:0)[0];
+        if(!first) continue;   // chưa có buổi nào trong khoảng 14 ngày trước → 120 ngày sau
+        const job=P.jobs.find(j=>j.d===first); let f=job&&job.f;
+        if(!f){ const g=gs.find(x=>lk(x)===first.key); if(!g) continue; f=s=>send('PATCH',API+'/'+g.id,first,s); }
+        let r=null; try{ r=await f(true); }catch(e){ if(/hết hạn/.test(e.message)) throw e; meetFail++; continue; }
+        setGs(r); replan=true;
+        let code=r?gconf(r):'';
+        for(let n=0;n<3&&r&&r.id&&!code;n++){ await sleep(900); try{ r=await api('GET',API+'/'+r.id); }catch(e){ break; } setGs(r); code=r?gconf(r):''; }   // Google đôi khi tạo Meet chậm vài giây
+        if(code){ give(code); meet.set(ev.id,'https://meet.google.com/'+code); created++; } else meetFail++;
+      }
+      if(replan) P=plan();
+      const {jobs,ins,upd,lnk,del,skipDel}=P;
+      for(let i=0;i<jobs.length&&!fatal;i+=5) await Promise.all(jobs.slice(i,i+5).map(j=>safe(()=>j.f(false))));
       if(fatal) throw fatal;
-      let nm2=0; meet.forEach((u,id)=>{ const ev=state.events.find(e=>e.id===id); if(ev&&!getLinks(ev).some(l=>l.url===safeUrl(u))){ const a=getLinks(ev); a.push({url:u,name:'Google Meet'}); ev.links=a; ev.link=a[0].url; ev.linkName=a[0].name; nm2++; } });   // kéo link Google Meet từ Google về ô trong app (không ghi đè link đã có)
-      if(nm2){ save(); render(); }
-      say(`Đã đồng bộ ${new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})}: +${ins} mới, ${lnk} liên kết, ${upd} cập nhật, ${del} xoá${nm2?', '+nm2+' link Meet':''}${fail?'; '+fail+' sự kiện không sửa được (không có quyền)':''}${skipDel?'; bỏ qua xoá '+skipDel+' sự kiện cho an toàn':''}.`);
-      if(interactive) toast('Đã đồng bộ Google Calendar');
-    }catch(e){ say('Lỗi đồng bộ: '+e.message); if(interactive) toast('Lỗi: '+e.message,3000); }
+      let nm2=0;
+      const addMeetLink=(ev,u)=>{ if(ev&&!getLinks(ev).some(l=>l.url===safeUrl(u))){ const a=getLinks(ev); a.push({url:u,name:'Google Meet'}); ev.links=a; ev.link=a[0].url; ev.linkName=a[0].name; nm2++; } };
+      meet.forEach((u,id)=>addMeetLink(state.events.find(e=>e.id===id),u));   // kéo link Google Meet từ Google về ô trong app (không ghi đè link đã có)
+      state.events.forEach(ev=>{ if(ev.meet&&ev.meetCode) addMeetLink(ev,'https://meet.google.com/'+ev.meetCode); });
+      if(nm2||changed){ save(); render(); }
+      say(`Đã đồng bộ ${new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})}: +${ins} mới, ${lnk} liên kết, ${upd} cập nhật, ${del} xoá${created?', '+created+' Google Meet mới':''}${fail?'; '+fail+' sự kiện không sửa được (không có quyền)':''}${meetFail?'; '+meetFail+' lần chưa gắn được Meet':''}${skipDel?'; bỏ qua xoá '+skipDel+' sự kiện cho an toàn':''}.`);
+      if(created) toast('Đã tạo Google Meet', 2500); else if(interactive===true) toast('Đã đồng bộ Google Calendar');
+    }catch(e){ if(interactive==='auto'){ say('Chưa tự kết nối được Google ('+e.message+'). Chạm vào trang một lần hoặc bấm “Kết nối & đồng bộ”.'); if(!/khác tài khoản/.test(e.message)) armGesture(); } else { say('Lỗi đồng bộ: '+e.message); if(interactive===true) toast('Lỗi: '+e.message,3000); else if(/hết hạn/.test(e.message)) armGesture(); } }
     finally{ busy=false; if(again){ again=false; sched(); } }
   }
+  /* Tự kết nối khi vào trang: thử lặng lẽ trước; trình duyệt chặn popup nếu không có thao tác của người dùng nên nếu chưa được, lần chạm/bấm đầu tiên sẽ thử lại (tối đa 2 lần mỗi lần mở trang để không làm phiền) */
+  let armed=false, armN=0;
+  function armGesture(){
+    if(armed||armN>=2||!on()) return; armed=true; armN++;
+    const go=()=>{ document.removeEventListener('click',go,true); document.removeEventListener('keydown',go,true); armed=false; run('auto'); };
+    document.addEventListener('click',go,true); document.addEventListener('keydown',go,true);
+  }
+  function autoStart(){ let n=0; const t=setInterval(()=>{ n++; const cloudOk=typeof sync==='undefined'||sync.ready||n>25; if(appEmail()&&cloudOk){ clearInterval(t); run('auto'); } else if(n>60) clearInterval(t); },1000); }   // đợi app đăng nhập VÀ dữ liệu đám mây tải xong (tối đa ~25 giây) rồi mới đồng bộ, tránh dùng bản dữ liệu cũ trên máy
   const sched=()=>{ if(!on()) return; clearTimeout(timer); timer=setTimeout(()=>run(false),4000); };
   const _save=save; save=function(){ const r=_save.apply(this,arguments); sched(); return r; };
   const _sd=saveDebounced; saveDebounced=function(){ const r=_sd.apply(this,arguments); sched(); return r; };   // mọi thay đổi lịch đều đi qua save()
+  if(on()){ loadGIS().catch(()=>{}); autoStart(); }   // tải sẵn thư viện đăng nhập: bấm nút sẽ mở cửa sổ ngay, ít bị trình duyệt chặn popup
+  window.gcalApi={connected:()=>!!on(), auth:()=>auth(true), now:()=>run(false)};   // dùng cho nút “Tạo Google Meet” trong form lịch
+  { const o=$g('gcOrigin'); if(o&&/^https?:$/.test(location.protocol)) o.textContent=location.origin; }   // hiện đúng origin của trang đang mở để dán
   const cid=$g('gcCid'); if(cid){ cid.value=LS.getItem('gcal_cid')||''; if(on()) say('Đã bật đồng bộ. Bấm “Kết nối & đồng bộ” để đăng nhập lại khi cần.'); }
-  $g('gcOn')&&($g('gcOn').onclick=()=>{ const v=cid.value.trim(); if(!/\.apps\.googleusercontent\.com$/.test(v)){ say('Client ID chưa đúng định dạng (…apps.googleusercontent.com).'); return; } LS.setItem('gcal_cid',v); LS.setItem('gcal_on','1'); tok=null; run(true); });
+  $g('gcOn')&&($g('gcOn').onclick=()=>{ const v=cid.value.trim(); if(!/\.apps\.googleusercontent\.com$/.test(v)){ say('Client ID chưa đúng định dạng (…apps.googleusercontent.com).'); return; } LS.setItem('gcal_cid',v); LS.setItem('gcal_on','1'); LS.removeItem('gcal_noconf'); tok=null; run(true); });
   $g('gcOff')&&($g('gcOff').onclick=()=>{ LS.removeItem('gcal_on'); if(tok&&window.google&&google.accounts) try{ google.accounts.oauth2.revoke(tok); }catch(e){} tok=null; say('Đã ngắt kết nối. Sự kiện đã tạo trên Google được giữ nguyên.'); });
 }catch(e){ console.error('gcal',e); }})();
 </script>
