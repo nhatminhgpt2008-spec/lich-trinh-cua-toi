@@ -99,8 +99,7 @@ body.gate #authGate{display:flex}
 .brand::after{content:"00/00/0000 - 00/00/0000";grid-row:1;grid-column:1;height:0;overflow:hidden;visibility:hidden;white-space:nowrap;font-size:13px;font-variant-numeric:tabular-nums}   /* "khuôn" ẩn = chuỗi ngày dài nhất (mọi chữ số cùng bề rộng) -> khung tiêu đề luôn vừa khít, cố định qua các tuần, không cắt mất chữ */
 .top .brand{display:none!important}   /* bỏ tiêu đề + ngày ở góc trái; nút "Hôm nay" và ô chọn ngày đã đủ để biết đang xem tuần nào. !important vì có 1 khối @media mobile cũ (dòng ~920) còn set lại display:flex cho .brand */
 .nav,.tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.top>.navIcon{display:none;width:36px;height:36px;flex:none;border-radius:8px;object-fit:cover;user-select:none;-webkit-user-drag:none}
-@media (min-width:701px){.top>.navIcon{display:block}}   /* chỉ hiện trên máy tính; điện thoại (≤700px) giữ nguyên giao diện cũ */
+.top>.navIcon{display:none!important}
 .tools{flex:1 1 auto}
 .tools button:disabled{cursor:not-allowed}
 .btn,.nav button,.tools button{height:36px;padding:0 12px;border:1px solid var(--line);background:var(--surface);border-radius:8px;display:inline-flex;align-items:center;gap:6px}
@@ -2202,8 +2201,8 @@ input,select,textarea,#dlg input,#dlg select,#dlg textarea{transition:border-col
 .ci-pop .ci-body{flex:0 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}
 .ci-pop .ci-body.swap{animation:ciSwap var(--mo-in) ease both}
 @keyframes ciSwap{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-.ci-pop .ci-bar{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin:0 -8px 6px;flex:none;min-height:30px}
-.ci-pop .ci-tag-slot{display:flex;align-items:flex-start;flex:1 1 auto;min-width:0;min-height:30px;overflow:hidden}
+.ci-pop .ci-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 -8px 6px;flex:none;min-height:30px}
+.ci-pop .ci-tag-slot{display:flex;align-items:center;flex:1 1 auto;min-width:0;min-height:30px;overflow:hidden}
 .ci-pop .ci-actions{display:flex;align-items:center;justify-content:flex-end;gap:2px;flex:0 0 auto;margin-left:auto}
 .ci-pop .ci-bar button{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--muted);cursor:pointer;transition:background-color var(--mo),color var(--mo)}
 .ci-pop .ci-bar button:hover{background:var(--line-soft);color:var(--ink)}
@@ -2216,7 +2215,7 @@ input,select,textarea,#dlg input,#dlg select,#dlg textarea{transition:border-col
 .ci-pop .ci-head{display:flex;gap:0;align-items:flex-start}
 .ci-pop .ci-title{margin:0;font-size:18px;line-height:1.3;font-weight:600;overflow-wrap:anywhere}
 /* Tag nằm độc lập ở góc trên bên trái hộp thông tin, cùng hàng với các nút thao tác và không thuộc hàng tiêu đề. */
-.ci-pop .ci-tag-badge{position:static;z-index:1;display:inline-flex;align-items:center;align-self:flex-start;max-width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:3px 9px;border-radius:999px;background:var(--cc,var(--accent));color:var(--ci,#fff);font-size:11px;line-height:1.25;font-weight:700;margin-top:1px}
+.ci-pop .ci-tag-badge{position:static;z-index:1;display:inline-flex;align-items:center;align-self:center;max-width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:3px 9px;border-radius:999px;background:var(--cc,var(--accent));color:var(--ci,#fff);font-size:11px;line-height:1.25;font-weight:700;margin-top:1px}
 .ci-pop .ci-row{margin-top:8px;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
 .ci-pop .ci-row .k{color:var(--muted)}
 .ci-pop .ci-row.ci-links-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
@@ -3129,6 +3128,8 @@ body[data-view="cal"] #sched .mgrid{grid-template-rows:max-content;grid-auto-row
     display:inline;
     flex:none;
     font-size:10.5px;
+    line-height:15.6px;   /* = 12px × 1.3 của tiêu đề → giờ nằm thẳng hàng với dòng đầu của tiêu đề */
+    padding-top:.5px;
   }
   body[data-view="cal"] #sched .mchip .t{
     display:-webkit-box;
@@ -3621,7 +3622,7 @@ body.searching #sched .fx .fx-row:not(.dim):hover td{
 /* ===== Mobile: nút ‹ › nhỏ lại; icon lịch trong chip canh cân hai bên (trái = phải) và thẳng hàng giữa ===== */
 @media screen and (max-width:700px){
   .top .nav{align-items:center}
-  .top .nav #prev,.top .nav #next{width:28px!important;min-width:28px!important;height:28px!important;font-size:0!important;line-height:0!important}
+  .top .nav #prev,.top .nav #next{width:36px!important;min-width:36px!important;height:28px!important;font-size:0!important;line-height:0!important}
   .top .nav .wkchip::before{margin-left:8px;align-self:center}
   .top .nav .wkchip .wc-t{padding:0 10px 0 5px;display:flex;align-items:center}
   .top .nav .wkchip .wc-t>b:not(.g){width:auto;line-height:1;display:block}
@@ -3669,6 +3670,24 @@ body.searching #sched .fx .fx-row:not(.dim):hover td{
   .top .wkchip{height:36px!important;box-sizing:border-box}
   #mbar .mbtn,#mbar #tagToggle{width:36px!important;min-width:36px!important;height:36px!important}
   .top .tools #addBtn,.top .tools #undoBtn,.top .tools #redoBtn,.top .tools #qToggle,.top .tools .acct{height:36px!important;min-height:36px!important;box-sizing:border-box}
+}
+/* Máy tính: nút ‹ › nhỏ lại (28px) và icon SVG canh đúng tâm nút (thay ký tự ‹ › bị lệch theo font) */
+@media screen and (min-width:701px){
+  .top .nav #prev,.top .nav #next{width:36px!important;min-width:36px!important;height:36px!important;min-height:36px!important;padding:0!important;font-size:0!important;line-height:0!important;gap:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;position:relative}
+  .top .nav #prev::before,.top .nav #next::before{content:"";position:absolute;inset:0;width:100%;height:100%;margin:0;transform:none;background:currentColor;-webkit-mask:var(--ic) center/16px 16px no-repeat;mask:var(--ic) center/16px 16px no-repeat}
+  .top .nav{gap:5px!important}
+  .top .tools{gap:5px!important}
+  .top .nav #prev{order:1!important;margin:0!important}
+  .top .nav #todayBtn{order:2!important;margin:0!important}
+  .top .nav #next{order:3!important;margin:0!important}
+}
+/* Mobile: thứ tự ‹ Hôm nay › (Hôm nay nằm giữa hai nút), nút vuông cao bằng nút Hôm nay */
+@media screen and (max-width:700px){
+  .top .nav #prev{order:1!important;margin:0!important}
+  .top .nav #todayBtn{order:2!important;margin:0!important}
+  .top .nav #next{order:3!important;margin:0!important}
+  .top .nav #wkChip:not([hidden]){order:4!important}
+  .top .nav #prev,.top .nav #next{width:32px!important;min-width:32px!important;height:32px!important;min-height:32px!important}
 }
 
 /* ===== Điện thoại: 3 nút (Tuần/Tháng · Bảng/Danh sách · Tag) cùng kiểu với máy tính: ô bo 8px cao 32px (bằng các nút trên thanh đầu), Tag xám khi chưa lọc, nút không dùng được thì xám mờ nhưng vẫn hiện ===== */
@@ -3730,6 +3749,327 @@ body[data-view="table"] #sched .sheet thead tr.dd>th.today{
   font-size:12px!important;font-weight:600!important;padding-top:1px!important;
 }
 
+/* ==========================================================================
+   GIAO DIỆN MỚI 2026 (lớp ghi đè cuối cùng — chỉ đổi giao diện, không đụng logic)
+   Hướng thiết kế: nền có chiều sâu nhẹ, bo góc lớn, đổ bóng nhiều lớp, kính mờ ở lớp nổi,
+   chuyển động ngắn có mục đích (đồng bộ 1 đường cong + 3 mốc thời gian), tôn trọng giảm chuyển động.
+   ========================================================================== */
+:root{
+  --mo:.18s; --mo-slow:.34s; --mo-in:.22s;
+  --ease:cubic-bezier(.2,.8,.2,1); --ease-std:cubic-bezier(.3,0,.2,1); --spring:cubic-bezier(.34,1.4,.5,1);
+  --r-card:18px; --r-ctl:11px; --r-cell:12px;
+  --bg:#f1f4f2; --surface:#ffffff; --ink:#0a1410; --muted:#566860; --line:#dae2dd; --line-soft:#eaf0ec;
+  --accent:#0a7a50; --accent-soft:#e1f4ea;
+  --sh-1:0 1px 2px rgba(14,38,28,.06),0 1px 1px rgba(14,38,28,.03);
+  --sh-2:0 2px 4px rgba(14,38,28,.05),0 10px 24px -10px rgba(14,38,28,.2);
+  --sh-3:0 4px 10px rgba(14,38,28,.08),0 28px 56px -18px rgba(14,38,28,.35);
+  --glow:color-mix(in srgb,var(--accent) 22%,transparent);
+}
+[data-theme=dark]{
+  --bg:#0a0f0d; --surface:#131a17; --ink:#e9f0ec; --muted:#97a69f; --line:#25312c; --line-soft:#1c2622;
+  --accent:#47d197; --accent-soft:#143528;
+  --sh-1:0 1px 2px rgba(0,0,0,.4);
+  --sh-2:0 2px 4px rgba(0,0,0,.3),0 12px 28px -12px rgba(0,0,0,.65);
+  --sh-3:0 6px 14px rgba(0,0,0,.4),0 32px 64px -20px rgba(0,0,0,.8);
+}
+body{
+  background:
+    radial-gradient(900px 420px at 8% -8%,color-mix(in srgb,var(--accent) 10%,transparent),transparent 70%),
+    radial-gradient(700px 380px at 100% 0,color-mix(in srgb,var(--soon-color) 7%,transparent),transparent 70%),
+    var(--bg);
+  background-attachment:fixed;
+  letter-spacing:-.003em;
+}
+::selection{background:color-mix(in srgb,var(--accent) 28%,transparent)}
+*{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--muted) 38%,transparent) transparent}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--muted) 34%,transparent);border-radius:99px;border:3px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:color-mix(in srgb,var(--muted) 55%,transparent);background-clip:content-box;border:3px solid transparent}
+:focus-visible{outline:none;box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--accent)}
+
+/* ----- nút: cùng một nhịp hover/nhấn ở mọi nơi ----- */
+.btn,.nav button,.tools button,.seg,.mbar button,#legend .mbtn,#legend #tagToggle,.top .nav .dpw>.dpb{
+  border-radius:var(--r-ctl);border-color:var(--line);box-shadow:var(--sh-1);
+  transition:background-color var(--mo) var(--ease),border-color var(--mo) var(--ease),box-shadow var(--mo) var(--ease),transform var(--mo) var(--ease),color var(--mo) var(--ease);
+}
+.btn:hover,.nav button:hover,.tools button:hover,.mbar button:hover{border-color:color-mix(in srgb,var(--accent) 55%,var(--line));box-shadow:var(--sh-2);transform:translateY(-1px)}
+.btn:active,.nav button:active,.tools button:active,.mbar button:active,.top .nav .dpw>.dpb:active{transform:translateY(0) scale(.95);box-shadow:var(--sh-1);transition-duration:.08s}
+.tools .primary,.btn.primary,button.primary{
+  background:var(--accent);color:var(--accent-ink);border-color:transparent;box-shadow:var(--sh-1);
+}
+.tools .primary:hover,.btn.primary:hover,button.primary:hover{filter:brightness(1.08);box-shadow:var(--sh-2)}
+#todayBtn{font-weight:600;letter-spacing:.005em}
+#todayBtn:hover{background:var(--accent-soft);color:var(--accent)}
+
+/* ----- ô chọn Lịch / Deadline / Lớp: viên thuốc, thanh trượt có viền sáng ----- */
+.seg{padding:0;overflow:hidden;background:color-mix(in srgb,var(--surface) 88%,var(--line-soft))}
+.seg-ind{border-radius:inherit;background:var(--surface);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--accent) 55%,transparent),0 4px 12px -4px var(--glow)}
+.seg button{transition:color var(--mo) var(--ease)}
+.seg button.on{color:var(--accent)}
+
+/* ----- ô nhập ----- */
+input,select,textarea{border-radius:var(--r-ctl);transition:border-color var(--mo) var(--ease),box-shadow var(--mo) var(--ease),background-color var(--mo) var(--ease)}
+input:not([type=checkbox]):not([type=radio]):not([type=range]):focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--glow)}
+input[type=checkbox],input[type=radio]{accent-color:var(--accent)}
+
+/* ----- thẻ, ô lịch, dòng danh sách ----- */
+.card{border-radius:var(--r-card);box-shadow:var(--sh-2);border-color:color-mix(in srgb,var(--line) 70%,transparent)}
+.cell,.ag{border-radius:var(--r-cell)}
+.cell:not(.live):not(.next):not(.jump-highlight),.ag:not(.live):not(.next):not(.jump-highlight){
+  transition:transform var(--mo) var(--ease),box-shadow var(--mo) var(--ease),background-color var(--mo) var(--ease),border-color var(--mo) var(--ease),filter var(--mo) var(--ease);
+}
+.cell:not(.live):not(.next):hover,.ag:not(.live):not(.next):hover{transform:translateY(-1px);box-shadow:var(--sh-2)}
+.cell:not(.live):not(.next):active,.ag:not(.live):not(.next):active{transform:translateY(0) scale(.992);transition-duration:.08s}
+.tag,.chip{border-radius:999px}
+
+/* ----- lớp nổi: menu, hộp thoại — kính mờ, bóng sâu, vào/ra mượt ----- */
+.addmenu{border-radius:16px;box-shadow:var(--sh-3);background:color-mix(in srgb,var(--surface) 86%,transparent);-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);border-color:color-mix(in srgb,var(--line) 80%,transparent);transform-origin:top right}
+.addmenu button{border-radius:10px;transition:background-color var(--mo) var(--ease),transform var(--mo) var(--ease)}
+.addmenu button:hover{transform:translateX(2px)}
+dialog{border-radius:22px;box-shadow:var(--sh-3);border-color:color-mix(in srgb,var(--line) 70%,transparent)}
+dialog::backdrop{background:rgba(6,12,9,.46);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px)}
+#dlgFallbackBackdrop{background:rgba(6,12,9,.46);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px)}
+dialog[open]{animation:dlgIn var(--mo-in) var(--ease) both}
+dialog.closing{animation:dlgOut .16s var(--ease-std) forwards}
+@keyframes dlgIn{from{opacity:0;transform:translateY(14px) scale(.965)}to{opacity:1;transform:none}}
+@keyframes dlgOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(8px) scale(.975)}}
+@keyframes popIn{from{opacity:0;transform:translateY(-6px) scale(.95)}to{opacity:1;transform:none}}
+dialog[open]::backdrop{animation:pageFade var(--mo-in) ease both}
+
+/* ----- điện thoại: chạm to hơn, bóng nhẹ hơn, hộp thoại trượt từ dưới lên ----- */
+@media (max-width:700px){
+  :root{--r-card:16px;--r-cell:11px}
+  .tools #viewSeg{border-radius:0;box-shadow:none;-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5)}   /* thanh Lịch/Deadline/Lớp dưới đáy: vuông sát mép, kính mờ */
+  .btn:hover,.nav button:hover,.tools button:hover,.mbar button:hover,.cell:not(.live):not(.next):hover,.ag:not(.live):not(.next):hover{transform:none}
+  dialog{border-radius:24px 24px 0 0}
+  dialog[open]{top:auto;bottom:0;margin:0 auto;width:min(560px,100vw);max-height:92vh;animation:sheetUp .3s var(--ease) both}
+  dialog.closing{animation:sheetDown .2s var(--ease-std) forwards}
+  @keyframes sheetUp{from{opacity:.4;transform:translateY(40px)}to{opacity:1;transform:none}}
+  @keyframes sheetDown{to{opacity:0;transform:translateY(32px)}}
+}
+@media (hover:none){.btn:hover,.nav button:hover,.tools button:hover{transform:none}}
+
+/* ----- người dùng chọn giảm chuyển động: tắt mọi dịch chuyển, giữ đổi màu ----- */
+@media (prefers-reduced-motion:reduce){
+  .btn,.nav button,.tools button,.cell,.ag,.addmenu button{transition-property:background-color,border-color,color!important}
+  .btn:hover,.nav button:hover,.tools button:hover,.cell:hover,.ag:hover,.addmenu button:hover{transform:none!important}
+  dialog[open],dialog.closing,.addmenu{animation-duration:.01s!important}
+}
+
+/* ===== Đợt 2: phủ hiệu ứng cho các chỗ còn thiếu (chọn ngày, menu chuột phải, soạn thảo, toast, thẻ Việc, thanh tìm kiếm…) ===== */
+:where(button,summary,[role=button],[role=menuitem],a,label,.chip,.tag){
+  transition:background-color var(--mo) var(--ease),border-color var(--mo) var(--ease),color var(--mo) var(--ease),box-shadow var(--mo) var(--ease),transform var(--mo) var(--ease),opacity var(--mo) var(--ease)
+}
+:where(button,[role=button]):active:not(:disabled){transform:scale(.96);transition-duration:.08s}
+:where(.addmenu,.ctxm) :where(button,[role=menuitem]):active{transform:scale(.98)}
+
+/* lớp nổi nhỏ: bật lên từ đúng góc kích hoạt */
+.dp:not([hidden]),.ctxm:not([hidden]),.rtpop:not([hidden]){animation:popIn var(--mo-in) var(--ease) both;transform-origin:top left}
+.dp,.ctxm,.rtpop{border-radius:16px;box-shadow:var(--sh-3);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4)}
+.ctxm :where(button,[role=menuitem]){border-radius:9px}
+.ctxm :where(button,[role=menuitem]):hover{transform:translateX(2px)}
+.dp{--dp-acc:var(--accent);--dp-on:var(--accent-ink)}
+.dp-grid :where(button,td,span,div){transition:background-color var(--mo) var(--ease),color var(--mo) var(--ease),transform var(--mo) var(--ease),box-shadow var(--mo) var(--ease)}
+.dp-grid button:hover{transform:scale(1.1)}
+.dp-grid button:active{transform:scale(.9)}
+.dp-arrows button:hover{background:var(--accent-soft);color:var(--accent)}
+
+/* toast: trượt lên + mờ dần, không đụng transform căn giữa */
+.toast{opacity:0;translate:0 12px;transition:opacity .28s var(--ease),translate .32s var(--spring);border-radius:14px;box-shadow:var(--sh-3);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.toast.on{translate:0 0}
+
+/* ô tìm kiếm: sáng viền khi đang nhập */
+.searchbox{transition:box-shadow var(--mo) var(--ease),border-color var(--mo) var(--ease),background-color var(--mo) var(--ease)}
+.searchbox:focus-within{box-shadow:0 0 0 4px var(--glow);border-color:var(--accent)}
+
+/* thẻ ở mục Việc / Deadline: nhấc nhẹ khi rê chuột (chỉ thiết bị có chuột) */
+.np-tile,.np-dl,.np-tabs button{transition:transform var(--mo) var(--ease),box-shadow var(--mo) var(--ease),background-color var(--mo) var(--ease),border-color var(--mo) var(--ease),color var(--mo) var(--ease)}
+.np-list,.np-empty,.np-tabs{border-radius:18px}
+@media (hover:hover){.np-tile:hover,.np-dl:hover{transform:translateY(-2px);box-shadow:var(--sh-2)}}
+.np-tile:active,.np-dl:active{transform:scale(.99);transition-duration:.08s}
+
+/* mục gập (details): nội dung bung ra mượt */
+details[open]>:not(summary){animation:uiRise var(--mo-slow) var(--ease) both}
+summary{border-radius:var(--r-ctl)}
+@keyframes uiRise{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+
+/* chip, tag, nhãn trạng thái: đổi màu mượt khi cập nhật (đếm ngược, hoàn thành…) */
+.chip,.tag,.np-when,.ag-time small{transition:background-color .4s var(--ease),color .4s var(--ease),border-color .4s var(--ease)}
+
+/* tiêu điểm bàn phím đồng bộ với ô nhập */
+:where(button,summary,[role=button],a):focus-visible{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--accent);transition-duration:.12s}
+
+/* thanh cuộn ngang/dọc tự vẽ của lịch (sbar): mượt khi rê chuột */
+.sbar-x,.sbar-y{transition:opacity var(--mo) var(--ease),background-color var(--mo) var(--ease),transform var(--mo) var(--ease)}
+
+@media (prefers-reduced-motion:reduce){
+  .dp,.ctxm,.rtpop,details[open]>:not(summary){animation-duration:.01s!important}
+  .toast{translate:none;transition:opacity .01s}
+  .np-tile:hover,.np-dl:hover,.dp-grid button:hover{transform:none!important}
+}
+
+/* ===== Đợt 3: chuyển cảnh toàn trang, đăng nhập, vi tương tác, hoàn thiện cảm giác chạm ===== */
+html{-webkit-tap-highlight-color:transparent}
+:where(button,[role=button],summary,select,label,a,input[type=checkbox],input[type=radio]){touch-action:manipulation}
+body{overscroll-behavior-y:none}
+:where(h1,h2,h3,.dlgHead h2){text-wrap:balance}
+:where(p,.det,.authGateNote){text-wrap:pretty}
+:where(.ag-time,.chip,.np-when,.cc,time){font-variant-numeric:tabular-nums}
+
+/* đổi giao diện sáng/tối và nền các bề mặt: đổi màu mượt thay vì nháy */
+body,.card,dialog,.addmenu,.ctxm,.dp,input,select,textarea,.seg,.searchbox,.authGateCard{
+  transition-property:background-color,border-color,color,box-shadow,transform,opacity;
+  transition-duration:.28s;transition-timing-function:var(--ease)
+}
+
+/* màn hình chờ mờ dần thay vì biến mất đột ngột */
+body.authed #bootScreen,body.gate #bootScreen{display:flex;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .45s var(--ease),visibility 0s .45s}
+/* vào app / vào màn đăng nhập: nội dung nổi lên nhẹ */
+body.authed .app{animation:appIn .6s var(--ease) both}
+@keyframes appIn{from{opacity:0}to{opacity:1}}   /* chỉ mờ dần, không dùng transform: tránh làm thanh đáy/hộp thoại (position:fixed) nhảy vị trí trong lúc chạy */
+.authGateCard{border-radius:24px;box-shadow:var(--sh-3);animation:authIn .6s var(--ease) both;
+  -webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4)}
+#authGate{background:
+  radial-gradient(700px 420px at 15% 10%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 70%),
+  radial-gradient(600px 400px at 90% 90%,color-mix(in srgb,var(--soon-color) 12%,transparent),transparent 70%),var(--bg)}
+@keyframes authIn{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+.authGateCard>*{animation:uiRise .5s var(--ease) both}
+.authGateCard>*:nth-child(2){animation-delay:.04s}.authGateCard>*:nth-child(3){animation-delay:.08s}
+.authGateCard>*:nth-child(4){animation-delay:.12s}.authGateCard>*:nth-child(5){animation-delay:.16s}
+.authGateCard>*:nth-child(n+6){animation-delay:.2s}
+
+/* nút nguy hiểm: rê chuột ngả sang đỏ, nhấn mạnh hành động xóa */
+.btn.danger,button.danger{color:var(--danger);border-color:color-mix(in srgb,var(--danger) 45%,var(--line))}
+.btn.danger:hover,button.danger:hover{background:color-mix(in srgb,var(--danger) 12%,var(--surface));border-color:var(--danger);box-shadow:0 6px 16px -8px color-mix(in srgb,var(--danger) 70%,transparent)}
+.delConfirmRow{animation:uiRise .3s var(--ease) both}
+
+/* tag trong hàng legend và các nhãn lọc */
+.lg{transition:background-color var(--mo) var(--ease),border-color var(--mo) var(--ease),color var(--mo) var(--ease),transform var(--mo) var(--ease),box-shadow var(--mo) var(--ease)}
+@media (hover:hover){.lg:hover{transform:translateY(-1px);box-shadow:var(--sh-1)}}
+.lg:active{transform:scale(.95);transition-duration:.08s}
+
+/* ô lịch có thể nhận tiêu điểm bàn phím */
+.cell:focus-visible,.ag:focus-visible{outline:none;box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--accent)}
+
+/* trạng thái trống và dòng mới: hiện dần */
+.np-empty,.lkempty{animation:uiRise .4s var(--ease) both}
+/* nút bị vô hiệu: mờ đi mượt, không còn nhấc/lún */
+:where(button,input,select,textarea):disabled{cursor:not-allowed}
+.btn:disabled,.nav button:disabled,.tools button:disabled{transform:none!important;box-shadow:none!important}
+
+/* thanh đáy trên điện thoại: mục đang chọn sáng lên */
+@media (max-width:700px){
+  .tools #viewSeg button{transition:color var(--mo) var(--ease),transform var(--mo) var(--ease)}
+  .tools #viewSeg button:active{transform:scale(.92)}
+  .tools #viewSeg button.on{transform:translateY(-1px)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  body.authed .app,.authGateCard,.authGateCard>*,.delConfirmRow,.np-empty,.lkempty{animation-duration:.01s!important;animation-delay:0s!important}
+}
+
+/* ===== Đợt 4: giao diện Tháng + Tuần (tham khảo Google/Fantastical/Notion Calendar: nhấn cột/ô hôm nay, lưới mảnh, cuối tuần dịu, chip sự kiện mềm) ===== */
+/* --- Tháng --- */
+.mgrid{background:color-mix(in srgb,var(--line) 78%,transparent)}
+.mh{font-weight:600;letter-spacing:.07em;text-transform:uppercase;background:color-mix(in srgb,var(--line-soft) 55%,var(--surface))}
+.mc{transition:background-color var(--mo-slow) var(--ease)}
+.mc:nth-child(7n+6),.mc:nth-child(7n){background:color-mix(in srgb,var(--line-soft) 38%,var(--surface))}   /* T7, CN dịu hơn (7 ô tiêu đề đứng đầu lưới nên vị trí cột không đổi) */
+.mc.oth{background:color-mix(in srgb,var(--line-soft) 70%,var(--surface))}
+.mc.today{background:color-mix(in srgb,var(--accent) 7%,var(--surface))}
+@media (hover:hover){.mc:hover{background:color-mix(in srgb,var(--accent) 6%,var(--surface))}.mc.today:hover{background:color-mix(in srgb,var(--accent) 10%,var(--surface))}}
+.mnum{transition:background-color var(--mo) var(--ease),color var(--mo) var(--ease),transform var(--mo) var(--spring)}
+.mnum:hover{transform:scale(1.08)}
+.mnum:active{transform:scale(.92);transition-duration:.08s}
+.mc.today .mnum{box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.mchip{border-radius:7px;transition:filter var(--mo) var(--ease),transform var(--mo) var(--ease),box-shadow var(--mo) var(--ease)}
+@media (hover:hover){.mchip:hover{filter:brightness(1.07);transform:translateX(1px);box-shadow:var(--sh-1)}}
+.mchip:active{transform:scale(.98);transition-duration:.08s}
+.mmore{border-radius:7px;transition:background-color var(--mo) var(--ease),color var(--mo) var(--ease)}
+.mmore:hover{color:var(--accent)}
+
+/* --- Tuần (Bảng) --- */
+.sheet th,.sheet td{border-color:color-mix(in srgb,var(--line) 72%,transparent)}
+:root:not([data-theme=dark]) .sheet .wk th{background:linear-gradient(90deg,#0f6b43,#0b7f56)}
+[data-theme=dark] .sheet .wk th{background:linear-gradient(90deg,#1b8a57,#17a06a)}
+.sheet .wk th{letter-spacing:.02em}
+.sheet .dn th{font-weight:600;letter-spacing:.02em}
+.sheet .dd th{font-variant-numeric:tabular-nums}
+/* cột hôm nay: vạch nhấn ở đầu + chữ đậm, nền dịu hơn */
+.sheet th.today{box-shadow:inset 0 3px 0 var(--accent);font-weight:700}
+.sheet .dn th.today{background:color-mix(in srgb,var(--accent) 14%,var(--surface))!important}
+.sheet .dd th.today{background:color-mix(in srgb,var(--accent) 14%,var(--surface))!important}
+.sheet td.today{background:color-mix(in srgb,var(--accent) 5%,transparent)!important}
+.sheet .tl{color:var(--muted);font-weight:500;transition:color var(--mo) var(--ease)}
+.sheet tr:hover>.tl{color:var(--ink)}
+/* ô trống: gợi ý "bấm để thêm" khi rê chuột */
+.sheet td.empty-c,.sheet td.slot,.sheet td.day-stack{transition:background-color var(--mo) var(--ease),outline-color var(--mo) var(--ease)}
+@media (hover:hover){.sheet td.empty-c:hover{background:color-mix(in srgb,var(--accent) 9%,transparent)}}
+.sheet.stack-mode .stack-empty{border-radius:12px;transition:border-color var(--mo) var(--ease),background-color var(--mo) var(--ease),color var(--mo) var(--ease)}
+@media (hover:hover){.sheet.stack-mode .stack-empty:hover{border-color:var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 5%,transparent)}}
+/* chuyển tuần/tháng: tiêu đề tuần đổi mượt */
+#range,.wkchip{transition:color var(--mo) var(--ease),background-color var(--mo) var(--ease),border-color var(--mo) var(--ease),transform var(--mo) var(--ease)}
+.wkchip:active{transform:scale(.97)}
+
+@media (prefers-reduced-motion:reduce){
+  .mnum:hover,.mchip:hover{transform:none!important}
+}
+
+/* ===== Sửa: hiệu ứng 3 nút W / lịch / Tag bị các ô lịch phía dưới đè lên ===== */
+@media screen and (min-width:701px){
+  .top{position:relative;z-index:40}   /* thanh đầu nổi trên vùng lịch (dưới menu 1000 và hộp thoại 5000), nên bóng/viền sáng của nút không bị ô đè */
+  #mbar .mbtn:hover,#mbar #tagToggle:hover{box-shadow:var(--sh-2);transform:translateY(-1px)}
+  #mbar .mbtn:active,#mbar #tagToggle:active{transform:scale(.95);box-shadow:var(--sh-1)}
+}
+
+/* ===== Sửa lần 2: hiệu ứng rê chuột của 3 nút W / lịch / Tag không được bị ô nào đè (cả hàng .top, hàng #legend trên điện thoại, và các nút kề nhau) ===== */
+#legend{position:relative;z-index:40}
+#mbar .mbtn,#mbar #tagToggle,#legend .mbtn,#legend #tagToggle{position:relative;z-index:0}
+#mbar .mbtn:hover,#mbar #tagToggle:hover,#mbar .mbtn:focus-visible,#mbar #tagToggle:focus-visible,
+#legend .mbtn:hover,#legend #tagToggle:hover,#legend .mbtn:focus-visible,#legend #tagToggle:focus-visible{z-index:5}
+@media (max-width:700px){
+  #legend .mbtn:hover,#legend #tagToggle:hover{box-shadow:var(--sh-2);transform:translateY(-1px)}
+  #legend .mbtn:active,#legend #tagToggle:active{transform:scale(.95)}
+}
+@media (hover:none){
+  #legend .mbtn:hover,#legend #tagToggle:hover,#mbar .mbtn:hover,#mbar #tagToggle:hover{transform:none}
+}
+
+/* điện thoại: bấm nhanh liên tiếp 2 mũi tên ▲▼ của bộ chọn ngày bị trình duyệt hiểu là chạm đúp → phóng to nhẹ cả trang, khung lịch trông như bị dịch sang trái/xuống. manipulation = tắt chạm đúp để phóng to nhưng vẫn cho cuộn và chụm 2 ngón */
+html,body,button,[role=button],.dp,.dp *{touch-action:manipulation}
+/* bộ chọn ngày: hiệu ứng mở chỉ mờ dần (không trượt/phóng nhỏ), để khung không bao giờ nhích trái/xuống khi mở hoặc khi đổi tháng */
+@keyframes dpFade{from{opacity:0}to{opacity:1}}
+.dp:not([hidden]){animation:dpFade var(--mo-in) ease both;transform:none}
+/* chip Tuần/Tháng là mốc để đặt bộ chọn ngày: không co/phóng khi nhấn (trước đây :active thu còn 97% làm khung lúc mở lệch ~2px so với sau khi bấm ▲▼) */
+.wkchip,.wkchip:active{transform:none!important}
+/* ===== Tinh chỉnh giao diện theo các app lịch được đánh giá cao (Notion Calendar/Cron, Fantastical, Google Calendar): chữ số đều nét, lưới dịu để thẻ lịch nổi bật, thẻ bo mềm + phản hồi khi rê chuột, ngày phụ nhạt hơn, nút đồng nhất ===== */
+body{font-variant-numeric:tabular-nums;text-rendering:optimizeLegibility}
+#sched .sheet td,#sched .mc{border-color:var(--line-soft)}
+#sched .cell{border-radius:10px;transition:box-shadow var(--mo) var(--ease),filter var(--mo) var(--ease)}
+@media (hover:hover){#sched .cell:hover{box-shadow:0 6px 16px -8px rgba(0,0,0,.45);filter:brightness(1.07)}}
+#sched .sheet tr.dn th{letter-spacing:.01em}
+#sched .sheet tr.dd th:not(.today){color:var(--muted);font-weight:500}
+.btn,.nav button,.tools button,.mbar button{border-radius:10px}
+@media (prefers-reduced-motion:reduce){#sched .cell{transition:none}}
+
+/* ===== Tháng: làm dịu giao diện theo hướng Notion Calendar / Google Calendar / Fantastical =====
+   chip khối màu đặc, bỏ vạch trái, lưới mảnh hơn, tiêu đề thứ nhỏ và mờ, T7/CN không tô nền, số ngày nhẹ hơn. Deadline giữ khối đặc để dễ nhận ra. */
+#sched .mchip.ce:not(.dl):not(.cx){background:color-mix(in srgb,var(--cc) 22%,var(--surface));color:var(--ink);font-weight:600;font-size:12px;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cc) 60%,transparent)}   /* cùng kiểu ô ở dạng Tuần (.cell): nền nhạt trong, viền mảnh cùng màu tag */
+:root:not([data-theme=dark]) #sched .mchip.ce:not(.dl):not(.cx):not(.live):not(.next){background:color-mix(in srgb,var(--cc) 46%,var(--surface));box-shadow:inset 0 0 0 1px var(--cc)}
+#sched .mchip.ce:not(.dl):not(.cx).live{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cc) 60%,transparent),0 0 0 2px var(--live-color)}
+#sched .mchip.ce:not(.dl):not(.cx).next{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cc) 60%,transparent),0 0 0 2px var(--next-color)}
+#sched .mchip.ce.cx{background:var(--cell-cancel);color:var(--cell-cancel-ink)}
+#sched .mchip.ce:not(.dl) b{color:inherit;font-size:10.5px;font-weight:700;opacity:.9;line-height:15.6px}
+#sched .mchip{border-radius:6px}
+#sched .mgrid{background:color-mix(in srgb,var(--line) 55%,transparent)}
+#sched .mh{font-size:10.5px;font-weight:600;letter-spacing:.06em;color:var(--muted);background:var(--surface)}
+#sched .mc:nth-child(7n+6),#sched .mc:nth-child(7n){background:var(--surface)}
+#sched .mc.oth{background:color-mix(in srgb,var(--line-soft) 45%,var(--surface))}
+#sched .mc.today{background:color-mix(in srgb,var(--accent) 7%,var(--surface))}
+#sched .mnum{font-size:12.5px;font-weight:600}
+#sched .mc.today .mnum{box-shadow:none;font-weight:700}
+body[data-view="cal"] #sched .mchip.ce{align-items:center;padding-top:2px;padding-bottom:2px}   /* giờ + tiêu đề cùng hàng, nằm giữa viền trên và dưới */
+body[data-view="cal"] #sched .mchip.ce b{align-self:center;font-size:inherit;line-height:1.3;padding:0;margin:0}   /* cùng cỡ chữ + cùng chiều cao dòng với tiêu đề → hai chữ chung một đường cơ sở */
+body[data-view="cal"] #sched .mchip.ce .t{align-self:center;line-height:1.3;margin:0}
 </style>
 </head>
 <body>
@@ -3737,7 +4077,6 @@ body[data-view="table"] #sched .sheet thead tr.dd>th.today{
 <div class="app">
   <header class="top">
     <div class="brand"><h1>Lịch trình của tôi</h1><p id="range"></p></div>
-    <img class="navIcon" src="icon-192.png" alt="" width="36" height="36" draggable="false">
     <div class="nav">
       <button id="prev" title="Tuần trước (←)" aria-label="Tuần trước">‹</button>
       <button id="todayBtn" title="Về tuần này">Hôm nay</button>
@@ -3999,6 +4338,15 @@ body[data-view="table"] #sched .sheet thead tr.dd>th.today{
         </div>
         <p class="err" id="pwErr"></p>
         <div class="actions"><span class="grow"></span><button type="button" class="btn" id="pwSave">Đổi mật khẩu</button></div>
+      </div></div></div>
+    </div>
+
+    <div class="acctSection">
+      <button type="button" class="acctSectionSummary" aria-expanded="false">Google Calendar<span class="acctArrow" aria-hidden="true"></span></button>
+      <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
+        <div class="fgrid"><label class="full">OAuth Client ID (Web)<input id="gcCid" placeholder="xxxx.apps.googleusercontent.com" autocomplete="off" spellcheck="false"></label></div>
+        <p class="hint" id="gcStatus">Chưa kết nối. Lịch trong app sẽ được đẩy sang Google Calendar (chỉ tên + thời gian). Sự kiện có sẵn trên Google khớp tên + giờ bắt đầu sẽ được liên kết, giữ nguyên mô tả/địa điểm/khách mời.</p>
+        <div class="actions"><button type="button" class="btn" id="gcOff">Ngắt kết nối</button><span class="grow"></span><button type="button" class="btn primary" id="gcOn">Kết nối &amp; đồng bộ</button></div>
       </div></div></div>
     </div>
 
@@ -5469,11 +5817,11 @@ const calInk = c => { try{ return /^#[0-9a-f]{6}$/i.test(c) ? inkOn(c) : '#fffff
 const calEvStyle = tag => `--cc:${esc(tag.color)};--ci:${calInk(tag.color)}`;
 const calEvCls = (o, tag) => 'ce' + (tag.fill ? '' : ' soft') + (o.cancelled ? ' cx' : '') + (o.conflict ? ' cf' : '') + liveCls(o);
 const calEvAttrs = o => `data-id="${esc(o.ev.id)}" data-date="${o.date}" data-s="${esc(o.ev.start)}" data-e="${esc(o.ev.end)}" tabindex="0" role="button" title="${esc(o.ev.title + ' · ' + o.ev.start + ' - ' + o.ev.end)}"`;
-const calDlAttr = t => `data-todo="${esc(t.id)}" tabindex="0" role="button" title="${esc('Deadline: ' + t.text + (t.dueTime ? ' · ' + t.dueTime : ''))}"`;
+const calDlAttr = t => `data-todo="${esc(t.id)}" tabindex="0" role="button" title="${esc('Deadline: ' + t.text + ' · ' + (t.dueTime || '23:59'))}"`;
 const calMin = x => { const v = x ? toMin(x) : -1; return Number.isFinite(v) ? v : -1; };
 function calMonthChip(it){
-  // Deadline ở Tháng hiển thị giờ (nếu có) và tiêu đề, không thêm icon đồng hồ ở đầu.
-  if(it.t) return `<div class="ce dl mchip${it.t.done ? ' done' : ''}" ${calDlAttr(it.t)}>${it.t.dueTime ? '<b>' + esc(it.t.dueTime) + '</b>' : ''}<span class="t">${esc(it.t.text)}</span></div>`;
+  // Deadline ở Tháng luôn hiển thị giờ (không đặt giờ thì là 23:59) và tiêu đề, không thêm icon đồng hồ ở đầu.
+  if(it.t) return `<div class="ce dl mchip${it.t.done ? ' done' : ''}" ${calDlAttr(it.t)}><b>${esc(it.t.dueTime || '23:59')}</b><span class="t">${esc(it.t.text)}</span></div>`;   // không đặt giờ hạn chót → hạn là hết ngày (23:59), giống cách app tính quá hạn
   const o = it.o, ev = o.ev, tag = tagOf(ev.type);
   return `<div class="${calEvCls(o, tag)} mchip" style="${calEvStyle(tag)}" ${calEvAttrs(o)}><b>${esc(ev.start)}</b><span class="t">${esc(ev.title)}</span></div>`;
 }
@@ -5621,7 +5969,12 @@ function scrollToNow(smooth = true, flash = false){
   if(state.view === 'cal'){   /* mục Tháng: cuộn tới ô ngày hôm nay và (khi bấm nút Hôm nay) cho ô đó sáng viền giống mục Tuần */
     const td = box.querySelector('.mc.today');
     if(!td) return;
-    td.scrollIntoView({block:'center', behavior: smooth ? 'smooth' : 'auto'});
+    {   // chỉ cuộn khi ô hôm nay chưa nằm trọn trong khung nhìn; đã thấy rồi thì đứng yên, không chạy lại hiệu ứng di chuyển
+      const sc = box.querySelector('.calv') || box, c = sc.getBoundingClientRect(), r = td.getBoundingClientRect();
+      const hd = box.querySelector('.mh'), top = c.top + (hd ? hd.getBoundingClientRect().height : 0);
+      const inView = r.left >= c.left - 1 && r.right <= c.right + 1 && r.top >= top - 1 && r.bottom <= c.bottom + 1;
+      if(!inView) td.scrollIntoView({block:'center', behavior: smooth ? 'smooth' : 'auto'});
+    }
     if(flash){
       clearTimeout(scrollToNow.timer); clearTimeout(scrollToNow.timer2);
       scrollToNow.timer = setTimeout(() => {
@@ -5634,7 +5987,14 @@ function scrollToNow(smooth = true, flash = false){
   }
   const live = box.querySelector('.ag.live, .cell.live, .ce.live') || box.querySelector('.ag.next, .cell.next, .ce.next');   // ô đang / sắp diễn ra
   const el = live || box.querySelector('.ad h3 .tdy')?.closest('.ad');
-  if(el) el.scrollIntoView({block:'center', behavior: smooth ? 'smooth' : 'auto'});
+  if(el){
+    /* cột của ô đã nằm trọn trong khung nhìn ngang (trừ cột giờ ghim 58px) → chỉ cuộn dọc, không cuộn ngang nữa
+       (trước đây luôn scrollIntoView cả hai chiều nên bảng chạy lại từ cột 2 tới cột hôm nay dù đã đứng đúng chỗ) */
+    const sc = el.closest('.scroller');
+    let hOk = false;
+    if(sc){ const c = sc.getBoundingClientRect(), r = el.getBoundingClientRect(); hOk = r.left >= c.left + 58 - 1 && r.right <= c.right + 1; }
+    el.scrollIntoView({block:'center', inline: hOk ? 'nearest' : 'center', behavior: smooth ? 'smooth' : 'auto'});
+  }
   /* bấm nút Hôm nay: dùng lại hiệu ứng viền sáng của banner (highlightSchedElement) để chỉ ra ô đang / sắp diễn ra nằm đâu; đợi cuộn xong một chút cho dễ thấy */
   if(flash && live){   // sáng TẤT CẢ ô đang / sắp diễn ra (có thể nhiều ô cùng lúc), không chỉ ô đầu tiên
     const all = [...box.querySelectorAll('.ag.live, .cell.live, .ag.next, .cell.next, .ce.live, .ce.next')];
@@ -6655,7 +7015,7 @@ function openModal(id, date, defaults, slot){
   editing = {id, date, slot: slot || null, fixed: state.view === 'fixed'};
   f.reset(); $('#err').textContent = '';
   fillRepeatSelect('none');
-  f.elements.type.innerHTML = '<option value="" aria-label="Không có tag">—</option>' + state.tags.map(t => `<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('');
+  f.elements.type.innerHTML = '<option value="" aria-label="Không có tag">&nbsp;</option>' + state.tags.map(t => `<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('');
   const v = ev || {title:'',code:'',type:(state.tags.some(t => t.id === 'class') ? 'class' : ''),date:date||todayStr(),start:'',end:'',room:'',teacher:'',link:'',body:'',repeat:'none',until:'',status:'normal',kind:'event',sv:'',svMax:'',...defaults};
   FIELDS.forEach(k => f.elements[k].value = v[k] ?? '');
   if(ev && isRec(ev) && editing.slot && (ev.times?.[wd(editing.date)]||[]).length > 1){
@@ -7064,7 +7424,14 @@ const go = n => { closeCalInfo(); return state.view === 'cal' ? calGo(n) : setWe
 const defDate = () => todayStr();   // ngày mặc định khi thêm lịch = ngày thực
 $('#prev').onclick = () => go(-1);
 $('#next').onclick = () => go(1);
-$('#todayBtn').onclick = () => { if(state.view === 'cal'){ setCal(todayStr()); scrollToNow(true, true); return; } setWeek(mondayOf(todayStr())); scrollToNow(true, true); };
+$('#todayBtn').onclick = () => { closeCalInfo(); if(state.view === 'cal'){
+    /* Tháng trên mobile: lưới rộng ~233% nên cuộn ngang; render() dựng lại .calv → scrollLeft về 0 (cột Thứ Hai) rồi mới trượt tới ngày hôm nay.
+       Cùng tháng: giữ nguyên vị trí cuộn cũ ngay sau khi dựng lại để ô hôm nay vẫn đang trong khung → scrollToNow đứng yên. */
+    const c0 = $('#sched .calv'), k = c0 ? {x: c0.scrollLeft, y: c0.scrollTop} : null, same = calDate.slice(0,7) === todayStr().slice(0,7);
+    setCal(todayStr());
+    const c1 = $('#sched .calv'); if(k && same && c1){ c1.scrollLeft = k.x; c1.scrollTop = k.y; }
+    scrollToNow(false, false); return;
+  } setWeek(mondayOf(todayStr())); scrollToNow(false, false); };   // Tháng: về tháng hiện tại; Tuần: về tuần hiện tại, chỉ cuộn tới ô đang/sắp diễn ra, không nháy viền sáng
 $('#jump').onchange = e => {
   const v = e.target.value, y = +v.slice(0,4);
   if(v && /^\d{4}-\d{2}-\d{2}$/.test(v) && y >= 1000){ state.view === 'cal' ? setCal(v) : setWeek(mondayOf(v)); }   /* bỏ qua giá trị năm đang gõ dở (0002, 0020, 0202…) */
@@ -8174,7 +8541,7 @@ function hubManageHTML(st){
       const others = state.tags.filter(x => x.id !== t.id);
       const mv = s.total && others.length;
       return `<div class="hubDel"><div>${s.total ? (others.length ? `Có <b>${s.total}</b> lịch đang dùng tag này. Chọn tag nhận các lịch đó, hoặc bỏ tag khỏi các lịch:` : `Có <b>${s.total}</b> lịch đang dùng tag này; sau khi xóa các lịch đó sẽ không còn tag.`) : 'Chưa có lịch nào dùng tag này.'}</div>
-        <div class="rw">${mv ? `<select id="hubMerge" aria-label="Chuyển lịch sang tag"><option value="" aria-label="Không có tag">—</option>${others.map(o => `<option value="${esc(o.id)}">${esc(o.name)}</option>`).join('')}</select>` : ''}
+        <div class="rw">${mv ? `<select id="hubMerge" aria-label="Chuyển lịch sang tag"><option value="" aria-label="Không có tag">&nbsp;</option>${others.map(o => `<option value="${esc(o.id)}">${esc(o.name)}</option>`).join('')}</select>` : ''}
         <button type="button" class="btn" data-act="delno" data-k="delno">Hủy</button>
         <button type="button" class="btn danger" data-act="delok" data-id="${esc(t.id)}" data-k="delok">${mv ? 'Gộp &amp; xóa tag' : 'Xóa tag'}</button></div></div>`;
     })() : '';
@@ -8235,13 +8602,13 @@ function randomTagColor(){
   return hslHex(best, 55 + Math.random() * 20, 36 + Math.random() * 12);
 }
 const normalizeTagName = value => String(value ?? '').normalize('NFC').trim().replace(/\s+/g, ' ');
-const NO_TAG_LABEL = '—'; // dấu gạch dài dành riêng cho lựa chọn không có tag
+const NO_TAG_LABEL = ''; // lựa chọn không có tag hiển thị ô trống (option dùng &nbsp; để giữ chiều cao dòng)
 const isReservedTagName = name => name === NO_TAG_LABEL;
 function hubTagNameCheck(raw, excludeId = ''){
   const name = normalizeTagName(raw);
   if(!name) return {name, error:'Nhập tên tag (1–40 ký tự).'};
   if(name.length > 40) return {name, error:'Tên tag tối đa 40 ký tự.'};
-  if(isReservedTagName(name)) return {name, error:'Dấu — dành riêng cho lựa chọn không có tag.'};
+  if(isReservedTagName(name)) return {name, error:'Tên này dành riêng cho lựa chọn không có tag.'};
   if(!/^[\p{L}\p{N} _+#().\-]+$/u.test(name)) return {name, error:'Chỉ dùng chữ, số, dấu cách và - _ + # . ( )'};
   const key = name.toLocaleLowerCase('vi-VN');
   if(state.tags.some(t => t.id !== excludeId && normalizeTagName(t.name).toLocaleLowerCase('vi-VN') === key)) return {name, error:'Tên tag đã tồn tại.'};
@@ -8542,7 +8909,7 @@ document.addEventListener('keydown', e => {
     pop.innerHTML = h;
   }
   function place(){
-    const r = anchor.getBoundingClientRect(), w = pop.offsetWidth, ph = pop.offsetHeight;
+    const r = (() => { const ts = anchor.style.transition, tf = anchor.style.transform; anchor.style.transition = 'none'; anchor.style.transform = 'none'; const q = anchor.getBoundingClientRect(); anchor.style.transform = tf; anchor.style.transition = ts; return q; })(), w = pop.offsetWidth, ph = pop.offsetHeight;   // đo mốc khi chưa bị transform (nhấn/hover) tác động → khung luôn nằm đúng một chỗ
     let top = r.bottom + 6; if(top + ph > innerHeight - 8) top = Math.max(8, r.top - ph - 6);
     pop.style.top = top + 'px';
     pop.style.left = Math.max(8, Math.min(r.left, innerWidth - w - 8)) + 'px';
@@ -9525,25 +9892,135 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
 })();
 </script>
 <script>
-/* Lưới tuần trên điện thoại: mỗi ngày 1 màn hình -> khi dựng lại thì cuộn tới cột hôm nay (giữ cột đang xem nếu vẫn cùng tuần) */
+/* Lưới tuần trên điện thoại: mỗi lần dựng lại thì cuộn tới cột hôm nay (tuần hiện tại) hoặc về Thứ Hai (tuần khác); giữ cột đang xem nếu vẫn cùng tuần.
+   Sửa lỗi lệch ô khi đổi tuần:
+   - Nhận diện "cùng tuần" bằng weekStart (trước đây đọc hàng "Tuần" tr.wk đã bị xóa nên khóa luôn rỗng → tuần nào cũng bị coi là cùng tuần, mang vị trí cuộn của tuần hiện tại sang tuần khác).
+   - Tính theo bề rộng THẬT của một cột ngày (mobile hiện 3 ngày/màn hình), không giả định 1 ngày = 1 màn hình nên không còn nhảy sai cột.
+   - Bấm "Hôm nay" luôn đưa cột hôm nay vào khung nhìn, kể cả khi đang ở đúng tuần hiện tại. */
 (()=>{try{
   const host=document.getElementById('sched'); if(!host||!window.MutationObserver) return;
-  let wkKey='', col=null, busy=false;
+  let wkKey='', col=null, busy=false, forceToday=false;
   const mq=matchMedia('(max-width:700px)');
   const sc=()=>host.querySelector('.scroller');
+  const dayTh=s=>[...s.querySelectorAll('tr.dn th')].slice(1);
+  const colW=s=>{ const th=dayTh(s); if(th.length>1){ const w=th[1].getBoundingClientRect().left-th[0].getBoundingClientRect().left; if(w>1) return w; } return Math.max(1,(s.clientWidth-58)/3); };
+  const weekKey=s=>{ try{ if(typeof weekStart!=='undefined' && weekStart) return String(weekStart); }catch(e){} return ((s.querySelector('tr.dd th:nth-child(2)')||{}).textContent||'').trim(); };
+  document.addEventListener('click',e=>{ if(e.target.closest&&e.target.closest('#todayBtn')){ forceToday=true; setTimeout(()=>{forceToday=false;},400); } },true);
   host.addEventListener('scroll',e=>{ if(busy||!mq.matches) return; const s=e.target; if(!s.classList||!s.classList.contains('scroller')) return;
-    const d=s.clientWidth-58; if(d>0) col=Math.round(s.scrollLeft/d); },true);
+    col=Math.round(s.scrollLeft/colW(s)); },true);
   new MutationObserver(()=>{
     if(!mq.matches) return; const s=sc(); if(!s||!s.querySelector('.sheet')) return;
-    const k=(s.querySelector('tr.wk th:last-child')||{}).textContent||''; 
-    const th=[...s.querySelectorAll('tr.dn th')].slice(1); const t=th.findIndex(x=>x.classList.contains('today'));
-    const idx = k===wkKey && col!=null ? col : Math.max(t,0);
-    wkKey=k; busy=true;
+    const k=weekKey(s);
+    const th=dayTh(s); const t=th.findIndex(x=>x.classList.contains('today'));
+    const sameWeek = k===wkKey && col!=null;
+    const idx = (forceToday && t>=0) ? t : sameWeek ? col : Math.max(t,0);
+    forceToday=false; wkKey=k; busy=true;
     const keep = window.__stKeep; window.__stKeep = null;   // vừa bấm nút thu gọn/mở rộng: giữ nguyên vị trí cuộn thay vì nhảy về cột đã làm tròn
     if(keep){ s.scrollLeft = keep.x; s.scrollTop = keep.y; }
-    requestAnimationFrame(()=>{ const d=s.clientWidth-58; if(keep){ s.scrollLeft = keep.x; s.scrollTop = keep.y; if(d>0) col = Math.round(keep.x/d); } else { s.scrollLeft=idx*d; col=idx; } setTimeout(()=>busy=false,80); });
+    else s.scrollLeft = idx*colW(s);   // đặt NGAY (trước khi trình duyệt vẽ) để không thấy bảng bắt đầu từ cột 2 rồi mới trượt tới cột hôm nay
+    requestAnimationFrame(()=>{ const w=colW(s);
+      if(keep){ s.scrollLeft = keep.x; s.scrollTop = keep.y; col = Math.round(keep.x/w); }
+      else { s.scrollLeft = idx*w; col = Math.round(s.scrollLeft/w); }
+      setTimeout(()=>busy=false,80); });
   }).observe(host,{childList:true});
 }catch(e){}})();
+</script>
+<script>
+/* ===== Đồng bộ app → Google Calendar (một chiều, mức từng buổi) =====
+   - Chỉ gửi tên + thời gian. Mỗi buổi gắn extendedProperties.private.lichKey = "idLớp|ngày|giờ" để nhận ra lần sau.
+   - Sự kiện đã có trên Google (chưa gắn khoá) mà trùng tên + giờ bắt đầu → chỉ GẮN KHOÁ (PATCH), không tạo mới, không đụng mô tả/địa điểm/khách mời/nhắc.
+   - Chỉ xoá những sự kiện CÓ lichKey mà app không còn; sự kiện riêng trên Google không bao giờ bị xoá.
+   - Phạm vi: 14 ngày trước → 120 ngày sau. Cần Client ID (Google Cloud: bật Calendar API, OAuth Web, thêm địa chỉ trang web vào Authorized JavaScript origins). */
+(()=>{try{
+  const $g=i=>document.getElementById(i), LS=localStorage, TZ=Intl.DateTimeFormat().resolvedOptions().timeZone, API='https://www.googleapis.com/calendar/v3/calendars/primary/events';
+  let tok=null, exp=0, tc=null, busy=false, again=false, timer=0;
+  const say=t=>{ const e=$g('gcStatus'); if(e) e.textContent=t; };
+  const on=()=>LS.getItem('gcal_on')==='1' && LS.getItem('gcal_cid');
+  const appEmail=()=>{ try{ return String((fb&&fb.user&&fb.user.email)||'').toLowerCase(); }catch(e){ return ''; } };   // chỉ cho liên kết đúng tài khoản Google trùng email đang đăng nhập trong app
+  const loadGIS=()=>window.google&&google.accounts&&google.accounts.oauth2?Promise.resolve():new Promise((ok,no)=>{ const s=document.createElement('script'); s.src='https://accounts.google.com/gsi/client'; s.onload=ok; s.onerror=()=>no(new Error('Không tải được Google Identity')); document.head.appendChild(s); });
+  async function auth(interactive){
+    if(tok && Date.now()<exp-60000) return tok;
+    if(!interactive) return null;
+    const me=appEmail(); if(!me) throw new Error('chưa đăng nhập app bằng email');
+    await loadGIS();
+    return new Promise((ok,no)=>{ tc=google.accounts.oauth2.initTokenClient({client_id:LS.getItem('gcal_cid'), hint:me, scope:'openid email https://www.googleapis.com/auth/calendar.events',
+      callback:async r=>{ if(r.error) return no(new Error(r.error));
+        try{ const u=await (await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+r.access_token}})).json(), got=String(u.email||'').toLowerCase();
+          if(got!==me){ try{ google.accounts.oauth2.revoke(r.access_token); }catch(e){} return no(new Error('Tài khoản Google ('+(got||'?')+') khác tài khoản đang dùng trong app ('+me+'). Hãy chọn đúng '+me)); }
+        }catch(e){ return no(new Error('không xác minh được tài khoản Google')); }
+        tok=r.access_token; exp=Date.now()+(+r.expires_in||3600)*1000; ok(tok); }, error_callback:e=>no(new Error(e.type||'popup')) }); tc.requestAccessToken({prompt:''}); });
+  }
+  async function api(m,url,body){
+    let r; for(let n=0;;n++){ r=await fetch(url,{method:m,headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
+      let rl=r.status===429||r.status>=500; if(r.status===403){ try{ rl=/ateLimit/i.test(JSON.stringify(await r.clone().json())); }catch(e){} }   // 403 vì quá tốc độ thì thử lại; 403 vì không có quyền thì thôi
+      if(rl&&n<4){ await new Promise(k=>setTimeout(k,600*2**n)); continue; } break; }   // quá tốc độ / lỗi tạm: thử lại, giãn dần
+    if(r.status===401){ tok=null; throw new Error('Phiên Google hết hạn — bấm “Kết nối & đồng bộ”'); }
+    if(!r.ok && !(m==='DELETE'&&(r.status===404||r.status===410))) throw new Error('Google '+r.status);
+    return r.status===204?null:r.json().catch(()=>null);
+  }
+  const nm=x=>String(x||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase().replace(/[^a-z0-9]/g,'');
+  const iso=(d,t)=>d+'T'+t+':00', ms=x=>new Date(x).getTime(), nz=x=>String(x||'').trim().toLowerCase();
+  function desired(from,to){
+    const m=new Map();
+    for(let w=mondayOf(from); w<=to; w=addDays(w,7)) weekOccs(w).forEach(o=>{
+      if(o.cancelled||o.date<from||o.date>to||!o.ev.start||!o.ev.end) return;
+      let ed=o.date; if(o.ev.end<=o.ev.start) ed=addDays(o.date,1);
+      m.set(o.ev.id+'|'+o.date+'|'+o.ev.start,{key:o.ev.id+'|'+o.date+'|'+o.ev.start,pre:o.ev.id+'|'+o.date+'|',sum:o.ev.title||'(Không tiêu đề)',s:iso(o.date,o.ev.start),e:iso(ed,o.ev.end)});
+    });
+    return m;
+  }
+  async function list(from,to){
+    let out=[],pt='';
+    do{ const q=new URLSearchParams({timeMin:new Date(from+'T00:00:00').toISOString(),timeMax:new Date(addDays(to,2)+'T00:00:00').toISOString(),singleEvents:'true',maxResults:'2500',showDeleted:'false'}); if(pt) q.set('pageToken',pt);
+      const r=await api('GET',API+'?'+q); out=out.concat((r&&r.items)||[]); pt=r&&r.nextPageToken; }while(pt);
+    return out.filter(g=>{ if(g.status==='cancelled'||!g.start||!g.start.dateTime) return false; const d=fmt(new Date(g.start.dateTime)); return d>=from&&d<=to; });   // chỉ xét sự kiện nằm trong phạm vi đã tính (tránh xoá nhầm ở rìa)
+  }
+  const gid=k=>Array.from(new TextEncoder().encode(k)).map(b=>b.toString(16).padStart(2,'0')).join('');   // id cố định theo khoá → hai thiết bị cùng đồng bộ không tạo trùng
+  const body=d=>({summary:d.sum,start:{dateTime:d.s,timeZone:TZ},end:{dateTime:d.e,timeZone:TZ},extendedProperties:{private:{lichKey:d.key}}});
+  const same=(g,d)=>g.summary===d.sum&&ms(g.start.dateTime)===ms(d.s+offs(d.s))&&ms(g.end.dateTime)===ms(d.e+offs(d.e));
+  const offs=x=>{ const o=-new Date(x).getTimezoneOffset(), a=Math.abs(o); return (o<0?'-':'+')+String(Math.floor(a/60)).padStart(2,'0')+':'+String(a%60).padStart(2,'0'); };
+  async function run(interactive){
+    if(busy){ again=true; return; } busy=true;
+    try{
+      if(!await auth(interactive)){ say('Cần đăng nhập Google lại — bấm “Kết nối & đồng bộ”.'); return; }
+      say('Đang đồng bộ…');
+      const from=addDays(todayStr(),-14), to=addDays(todayStr(),120), want=desired(from,to), gs=await list(from,to);
+      const linked=new Map(), free=[];
+      gs.forEach(g=>{ const k=g.extendedProperties&&g.extendedProperties.private&&g.extendedProperties.private.lichKey; k?linked.set(k,g):free.push(g); });
+      const meet=new Map(), mt=g=>g.hangoutLink||(((g.conferenceData||{}).entryPoints||[]).find(e=>e.entryPointType==='video')||{}).uri||'', note=(g,key)=>{ const u=mt(g), id=key.split('|')[0]; if(u&&!meet.has(id)) meet.set(id,u); };
+      const jobs=[]; let ins=0,upd=0,lnk=0,del=0; const todo=[];
+      want.forEach((d,k)=>{ const g=linked.get(k); if(g){ linked.delete(k); note(g,k); if(!same(g,d)){ upd++; jobs.push(()=>api('PATCH',API+'/'+g.id,body(d))); } } else todo.push(d); });
+      const stale=[...linked.values()];
+      todo.forEach(d=>{
+        let i=stale.findIndex(g=>g.extendedProperties.private.lichKey.startsWith(d.pre));            // cùng lớp + cùng ngày nhưng đổi giờ/tên → sửa chính sự kiện đó
+        if(i>=0){ const g=stale.splice(i,1)[0]; note(g,d.key); upd++; jobs.push(()=>api('PATCH',API+'/'+g.id,body(d))); return; }
+        const ds=ms(d.s+offs(d.s)), de=ms(d.e+offs(d.e)), nd=nm(d.sum), st=g=>ms(g.start.dateTime)===ds, en=g=>ms(g.end.dateTime)===de, nt=g=>{ const x=nm(g.summary); return x&&nd&&(x===nd||(Math.min(x.length,nd.length)>=3&&(x.includes(nd)||nd.includes(x)))); };
+        i=free.findIndex(g=>st(g)&&nm(g.summary)===nd);                      // trùng tên + giờ bắt đầu
+        if(i<0) i=free.findIndex(g=>st(g)&&en(g)&&nt(g));                    // trùng khung giờ, tên giống (không phân biệt hoa/thường, dấu, chứa nhau)
+        if(i<0) i=free.findIndex(g=>st(g)&&nt(g));                           // trùng giờ bắt đầu, tên giống
+        if(i>=0){ const g=free.splice(i,1)[0]; note(g,d.key); lnk++; jobs.push(()=>api('PATCH',API+'/'+g.id,body(d))); return; }   // liên kết + đồng bộ tên/giờ theo app; chỉ gửi tên, giờ, khoá nên mô tả/địa điểm/khách mời giữ nguyên
+        ins++; jobs.push(()=>api('POST',API,{id:gid(d.key),...body(d)}).catch(e=>{ if(/409/.test(e.message)) return api('PATCH',API+'/'+gid(d.key),{...body(d),status:'confirmed'}); throw e; }));
+      });
+      const nLinked=stale.length+[...want.keys()].filter(k=>gs.some(g=>g.extendedProperties&&g.extendedProperties.private&&g.extendedProperties.private.lichKey===k)).length;
+      let skipDel=0; if(stale.length>5&&(want.size===0||stale.length>nLinked*0.5)){ skipDel=stale.length; stale.length=0; }   // an toàn: dữ liệu app trống/lệch bất thường thì KHÔNG xoá hàng loạt trên Google
+      stale.forEach(g=>{ del++; jobs.push(()=>api('DELETE',API+'/'+g.id)); });
+      let fail=0, fatal=null; const safe=f=>f().catch(e=>{ if(/hết hạn/.test(e.message)) fatal=e; else fail++; });   // một sự kiện lỗi (vd. sự kiện của người khác, không có quyền sửa) không làm dừng cả lượt
+      for(let i=0;i<jobs.length&&!fatal;i+=5) await Promise.all(jobs.slice(i,i+5).map(safe));
+      if(fatal) throw fatal;
+      let nm2=0; meet.forEach((u,id)=>{ const ev=state.events.find(e=>e.id===id); if(ev&&!getLinks(ev).some(l=>l.url===safeUrl(u))){ const a=getLinks(ev); a.push({url:u,name:'Google Meet'}); ev.links=a; ev.link=a[0].url; ev.linkName=a[0].name; nm2++; } });   // kéo link Google Meet từ Google về ô trong app (không ghi đè link đã có)
+      if(nm2){ save(); render(); }
+      say(`Đã đồng bộ ${new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})}: +${ins} mới, ${lnk} liên kết, ${upd} cập nhật, ${del} xoá${nm2?', '+nm2+' link Meet':''}${fail?'; '+fail+' sự kiện không sửa được (không có quyền)':''}${skipDel?'; bỏ qua xoá '+skipDel+' sự kiện cho an toàn':''}.`);
+      if(interactive) toast('Đã đồng bộ Google Calendar');
+    }catch(e){ say('Lỗi đồng bộ: '+e.message); if(interactive) toast('Lỗi: '+e.message,3000); }
+    finally{ busy=false; if(again){ again=false; sched(); } }
+  }
+  const sched=()=>{ if(!on()) return; clearTimeout(timer); timer=setTimeout(()=>run(false),4000); };
+  const _save=save; save=function(){ const r=_save.apply(this,arguments); sched(); return r; };
+  const _sd=saveDebounced; saveDebounced=function(){ const r=_sd.apply(this,arguments); sched(); return r; };   // mọi thay đổi lịch đều đi qua save()
+  const cid=$g('gcCid'); if(cid){ cid.value=LS.getItem('gcal_cid')||''; if(on()) say('Đã bật đồng bộ. Bấm “Kết nối & đồng bộ” để đăng nhập lại khi cần.'); }
+  $g('gcOn')&&($g('gcOn').onclick=()=>{ const v=cid.value.trim(); if(!/\.apps\.googleusercontent\.com$/.test(v)){ say('Client ID chưa đúng định dạng (…apps.googleusercontent.com).'); return; } LS.setItem('gcal_cid',v); LS.setItem('gcal_on','1'); tok=null; run(true); });
+  $g('gcOff')&&($g('gcOff').onclick=()=>{ LS.removeItem('gcal_on'); if(tok&&window.google&&google.accounts) try{ google.accounts.oauth2.revoke(tok); }catch(e){} tok=null; say('Đã ngắt kết nối. Sự kiện đã tạo trên Google được giữ nguyên.'); });
+}catch(e){ console.error('gcal',e); }})();
 </script>
 </body>
 </html>
