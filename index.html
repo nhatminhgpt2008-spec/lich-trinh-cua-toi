@@ -7003,6 +7003,7 @@ f.addEventListener('submit', async e => {
   }
   extra.forEach(x => state.events.push({id:uid(), skip:[], ...x}));
   weekStart = mondayOf(editing.id && d.repeat !== 'none' ? weekStart : d.date);
+  if(tagSelActive() && d.type !== undefined && !tagSel.has(d.type)){ tagSel.add(d.type); saveUI(); }   // đang lọc theo tag: tag của lịch vừa lưu phải hiện, kẻo lịch có trong Lớp mà không thấy trong Bảng
   save(); closeDialog(dlg); render();
 });
 $('#closeBtn').onclick = () => closeDialog(dlg);
