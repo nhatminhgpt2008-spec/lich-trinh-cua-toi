@@ -4640,7 +4640,7 @@ body:has(.ci-pop) #selBar{display:none!important}   /* hộp thông tin Tháng �
         <div class="fgrid"><label class="full">OAuth Client ID (Web)<input id="gcCid" placeholder="xxxx.apps.googleusercontent.com" autocomplete="off" spellcheck="false"></label>
           <label class="cust"><input type="checkbox" id="gcColor" checked><span>Đồng bộ tag</span></label>
           <label class="cust"><input type="checkbox" id="gcDl" checked><span>Đồng bộ deadline</span></label></div>
-        <p class="hint" id="gcStatus">Chưa kết nối. Sau khi kết nối, mỗi lần mở trang app tự đồng bộ lại. Lịch trong app sẽ được đẩy sang Google Calendar (tên + thời gian + tag + nhắc trước 1 giờ, và Google Meet nếu bạn bật); deadline cũng được đẩy sang nếu bạn bật. Sự kiện có sẵn trên Google khớp tên + giờ bắt đầu sẽ được liên kết, giữ nguyên mô tả/địa điểm/khách mời.</p>
+        <p class="hint" id="gcStatus">Chưa kết nối. Cài đặt được lưu theo TÀI KHOẢN: kết nối một lần thì mọi thiết bị đăng nhập cùng tài khoản đều tự đồng bộ (thiết bị mới có thể cần chạm vào trang một lần để Google cấp phiên đăng nhập). Sau khi kết nối, mỗi lần mở trang app tự đồng bộ lại. Lịch trong app sẽ được đẩy sang Google Calendar (tên + thời gian + tag + nhắc trước 1 giờ, và Google Meet nếu bạn bật); deadline cũng được đẩy sang nếu bạn bật. Sự kiện có sẵn trên Google khớp tên + giờ bắt đầu sẽ được liên kết, giữ nguyên mô tả/địa điểm/khách mời.</p>
         <div class="actions"><button type="button" class="btn" id="gcOff">Ngắt kết nối</button><span class="grow"></span><button type="button" class="btn primary" id="gcOn">Kết nối &amp; đồng bộ</button></div>
         <details class="gcGuide"><summary>Hướng dẫn lấy OAuth Client ID (chi tiết)</summary>
           <p style="margin:8px 0 0;color:var(--muted)">Làm một lần, khoảng 5–10 phút, hoàn toàn miễn phí. Đăng nhập Google Cloud bằng chính tài khoản Google bạn dùng cho lịch.</p>
@@ -5185,7 +5185,7 @@ let hist = [];
 let histIndex = -1;
 let histSuppressed = false;
 let histTimer = null;
-function snapshotState(){ const {view, ...rest} = state; return JSON.stringify(rest); }   // chế độ xem không thuộc lịch sử hoàn tác
+function snapshotState(){ const {view, gcal, ...rest} = state; return JSON.stringify(rest); }   // chế độ xem (riêng từng máy) và cài đặt Google Calendar (riêng tài khoản) không thuộc lịch sử hoàn tác   // chế độ xem không thuộc lịch sử hoàn tác
 function initHistory(){ hist = [snapshotState()]; histIndex = 0; updateHistBtns(); }
 function commitHistory(){
   if(histSuppressed) return;
@@ -5206,7 +5206,7 @@ function commitHistoryDebounced(){
 function restoreSnapshot(snap){
   histSuppressed = true;
   try{
-    const keep = {view:state.view};
+    const keep = {view:state.view}; if(state.gcal) keep.gcal = state.gcal;   // hoàn tác không làm mất kết nối Google Calendar
     state = {...JSON.parse(snap), ...keep};   // giữ nguyên chế độ xem hiện tại
     mirror();
     syncTs = nowTs(); saveTs();
@@ -5410,6 +5410,7 @@ function applyRemote(){
   if(r.ts <= syncTs && !r.force) return;
   let st; try{ st = norm(JSON.parse(r.json)); }catch(e){ return; }
   if(!Array.isArray(st.events) || !Array.isArray(st.todos)) return;
+  if(!st.gcal && state.gcal) st.gcal = state.gcal;   // bản đám mây cũ (từ phiên bản trước) chưa có cài đặt Google Calendar: không để mất cài đặt đang có
   if(hasData(state)) safeSnap('bản trên máy trước khi nhận bản từ đám mây', state);   // giữ lại bản cũ của thiết bị này trước khi bị bản đám mây thay thế
   st.view = state.view;   // chế độ xem là của riêng từng thiết bị
   state = st; syncTs = r.ts; sync.sawData = hasData(state);
@@ -10514,22 +10515,28 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
    - Phạm vi: 14 ngày trước → 120 ngày sau. Cần Client ID (Google Cloud: bật Calendar API, OAuth Web, thêm địa chỉ trang web vào Authorized JavaScript origins). */
 (()=>{try{
   const $g=i=>document.getElementById(i), LS=localStorage, TZ=Intl.DateTimeFormat().resolvedOptions().timeZone, API='https://www.googleapis.com/calendar/v3/calendars/primary/events';
-  let tok=null, exp=0, tc=null, busy=false, again=false, timer=0;
+  let tok=null, tokMe='', exp=0, tc=null, busy=false, again=false, timer=0;
   const say=t=>{ const e=$g('gcStatus'); if(e) e.textContent=t; };
-  const on=()=>LS.getItem('gcal_on')==='1' && LS.getItem('gcal_cid');
+  /* Cài đặt kết nối nằm trong state.gcal = {cid, on, color, dl} → đi theo TÀI KHOẢN qua đồng bộ đám mây (không còn lưu riêng từng thiết bị).
+     Kết nối ở một máy thì mọi máy đăng nhập cùng tài khoản đều tự đồng bộ; ngắt kết nối cũng áp dụng cho mọi máy. */
+  const G=()=>{ const g=state&&state.gcal; return g&&typeof g==='object'?g:null; };
+  const setG=p=>{ state.gcal={...(G()||{}),...p}; persistLocal(); };   // persistLocal: lưu máy + đẩy lên đám mây (không ghi vào lịch sử hoàn tác)
+  const on=()=>{ const g=G(); return !!(g&&g.on&&g.cid); };
+  const cidOf=()=>{ const g=G(); return (g&&g.cid)||''; };
   const appEmail=()=>{ try{ return String((fb&&fb.user&&fb.user.email)||'').toLowerCase(); }catch(e){ return ''; } };   // chỉ cho liên kết đúng tài khoản Google trùng email đang đăng nhập trong app
   const loadGIS=()=>window.google&&google.accounts&&google.accounts.oauth2?Promise.resolve():new Promise((ok,no)=>{ const s=document.createElement('script'); s.src='https://accounts.google.com/gsi/client'; s.onload=ok; s.onerror=()=>no(new Error('Không tải được Google Identity')); document.head.appendChild(s); });
   async function auth(interactive){
+    if(tok&&tokMe&&tokMe!==appEmail()){ tok=null; exp=0; }   // đổi tài khoản trong cùng một phiên: không dùng lại phiên Google của tài khoản trước
     if(tok && Date.now()<exp-60000) return tok;
     if(!interactive) return null;
     const me=appEmail(); if(!me) throw new Error('chưa đăng nhập app bằng email');
     await loadGIS();
-    return new Promise((ok,no)=>{ tc=google.accounts.oauth2.initTokenClient({client_id:LS.getItem('gcal_cid'), hint:me, scope:'openid email https://www.googleapis.com/auth/calendar.events',
+    return new Promise((ok,no)=>{ tc=google.accounts.oauth2.initTokenClient({client_id:cidOf(), hint:me, scope:'openid email https://www.googleapis.com/auth/calendar.events',
       callback:async r=>{ if(r.error) return no(new Error(r.error));
         try{ const u=await (await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+r.access_token}})).json(), got=String(u.email||'').toLowerCase();
           if(got!==me){ try{ google.accounts.oauth2.revoke(r.access_token); }catch(e){} return no(new Error('Tài khoản Google ('+(got||'?')+') khác tài khoản đang dùng trong app ('+me+'). Hãy chọn đúng '+me)); }
         }catch(e){ return no(new Error('không xác minh được tài khoản Google')); }
-        tok=r.access_token; exp=Date.now()+(+r.expires_in||3600)*1000; ok(tok); }, error_callback:e=>no(new Error(e.type||'popup')) }); tc.requestAccessToken({prompt:interactive==='auto'?'none':''}); });
+        tok=r.access_token; tokMe=me; exp=Date.now()+(+r.expires_in||3600)*1000; ok(tok); }, error_callback:e=>no(new Error(e.type||'popup')) }); tc.requestAccessToken({prompt:interactive==='auto'?'none':''}); });
   }
   async function api(m,url,body){
     let r; for(let n=0;;n++){ r=await fetch(url,{method:m,headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
@@ -10546,7 +10553,7 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
   const rgb=h=>{ const n=parseInt(String(h).slice(1),16); return [n>>16&255,n>>8&255,n&255]; };
   const colorOf=h=>{ if(!/^#[0-9a-f]{6}$/i.test(h||'')) return ''; const c=rgb(h); if(Math.max(...c)-Math.min(...c)<22) return '8';
     let best='', bd=1e9; GC.forEach(([id,x])=>{ const q=rgb(x), dd=.3*(c[0]-q[0])**2+.59*(c[1]-q[1])**2+.11*(c[2]-q[2])**2; if(dd<bd){ bd=dd; best=String(id); } }); return best; };
-  const COLOR_ON=()=>LS.getItem('gcal_color')!=='0', DL_ON=()=>LS.getItem('gcal_dl')!=='0';
+  const COLOR_ON=()=>{ const g=G(); return !g||g.color!==false; }, DL_ON=()=>{ const g=G(); return !g||g.dl!==false; };
   const REMIND_DL=900;   // deadline cả ngày: nhắc lúc 9:00 sáng hôm trước
   function desired(from,to){
     const m=new Map(), cOn=COLOR_ON();
@@ -10606,6 +10613,7 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
   const same=(g,d)=>g.summary===d.sum&&(d.allDay?(g.start.date===d.s&&g.end.date===d.e):(ms(g.start.dateTime)===ms(d.s+offs(d.s))&&ms(g.end.dateTime)===ms(d.e+offs(d.e))))&&remOk(g,d)&&confOk(g,d)&&colOk(g,d);
   const offs=x=>{ const o=-new Date(x).getTimezoneOffset(), a=Math.abs(o); return (o<0?'-':'+')+String(Math.floor(a/60)).padStart(2,'0')+':'+String(a%60).padStart(2,'0'); };
   async function run(interactive){
+    if(!on()) return;   // tài khoản này chưa bật (hoặc đã ngắt) đồng bộ Google Calendar
     if(busy){ again=true; return; } busy=true;
     try{
       if(!await auth(interactive)){ say('Cần đăng nhập Google lại — chạm vào trang một lần hoặc bấm “Kết nối & đồng bộ”.'); armGesture(); return; }
@@ -10674,20 +10682,42 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
     const go=()=>{ document.removeEventListener('click',go,true); document.removeEventListener('keydown',go,true); armed=false; run('auto'); };
     document.addEventListener('click',go,true); document.addEventListener('keydown',go,true);
   }
-  function autoStart(){ let n=0; const t=setInterval(()=>{ n++; const cloudOk=typeof sync==='undefined'||sync.ready||n>25; if(appEmail()&&cloudOk){ clearInterval(t); run('auto'); } else if(n>60) clearInterval(t); },1000); }   // đợi app đăng nhập VÀ dữ liệu đám mây tải xong (tối đa ~25 giây) rồi mới đồng bộ, tránh dùng bản dữ liệu cũ trên máy
+  /* (autoStart cũ đã thay bằng boot() ở dưới: chạy cho MỌI tài khoản đã đăng nhập, không chỉ máy đã tự bật) */
   const sched=ms=>{ if(!on()) return; if(!(tok&&Date.now()<exp-60000)) armN=0; clearTimeout(timer); timer=setTimeout(()=>run(false),typeof ms==='number'?ms:4000); };   // token hết hạn: cho phép lần chạm kế tiếp tự kết nối lại để đẩy thay đổi sang Google
   const _save=save; save=function(){ const r=_save.apply(this,arguments); sched(); return r; };
   const _sd=saveDebounced; saveDebounced=function(){ const r=_sd.apply(this,arguments); sched(); return r; };   // mọi thay đổi lịch đều đi qua save()
   const _rs=restoreSnapshot; restoreSnapshot=function(){ const r=_rs.apply(this,arguments); if(on()){ clearTimeout(timer); if(tok&&Date.now()<exp-60000) run(false); else run('auto'); } return r; };   // undo/redo: đồng bộ NGAY (không chờ); token hết hạn thì tự kết nối lại ngay trong cú bấm để trình duyệt không chặn   // Hoàn tác / Làm lại cũng đồng bộ sang Google (xoá rồi hoàn tác → sự kiện được tạo lại)
-  if(on()){ loadGIS().catch(()=>{}); autoStart(); }   // tải sẵn thư viện đăng nhập: bấm nút sẽ mở cửa sổ ngay, ít bị trình duyệt chặn popup
   window.gcalApi={connected:()=>!!on(), auth:()=>auth(true), now:()=>run(false)};   // dùng cho nút “Tạo Google Meet” trong form lịch
   { const o=$g('gcOrigin'); if(o&&/^https?:$/.test(location.protocol)) o.textContent=location.origin; }   // hiện đúng origin của trang đang mở để dán
+  function fillUI(){
+    const c=$g('gcCid'), cc=$g('gcColor'), cd=$g('gcDl');
+    if(c&&document.activeElement!==c) c.value=cidOf();
+    if(cc) cc.checked=COLOR_ON(); if(cd) cd.checked=DL_ON();
+  }
+  /* Máy đã từng kết nối theo kiểu cũ (lưu trong localStorage) → chuyển MỘT lần lên tài khoản, chỉ khi tài khoản chưa có cài đặt nào */
+  function adoptLegacy(){ try{
+    if(LS.getItem('gcal_migrated')==='1') return; LS.setItem('gcal_migrated','1');
+    if(G()||LS.getItem('gcal_on')!=='1'||!LS.getItem('gcal_cid')) return;
+    setG({cid:LS.getItem('gcal_cid'),on:true,color:LS.getItem('gcal_color')!=='0',dl:LS.getItem('gcal_dl')!=='0'});
+  }catch(e){} }
+  /* Cài đặt vừa đổi từ máy khác (đến qua đồng bộ đám mây): cập nhật giao diện và bật/tắt đồng bộ ngay trên máy này */
+  function kick(){
+    fillUI();
+    if(on()){ say('Tài khoản này đã bật đồng bộ Google Calendar (áp dụng cho mọi thiết bị). Đang kết nối trên thiết bị này…'); loadGIS().catch(()=>{}); armN=0; run('auto'); }
+    else{ if(tok&&window.google&&google.accounts) try{ google.accounts.oauth2.revoke(tok); }catch(e){} tok=null; exp=0; say('Đã ngắt kết nối Google Calendar (cài đặt theo tài khoản). Sự kiện đã tạo trên Google được giữ nguyên.'); }
+  }
+  const _ar=applyRemote; applyRemote=function(){ const before=JSON.stringify(G()||null); const r=_ar.apply(this,arguments); if(JSON.stringify(G()||null)!==before) kick(); return r; };
+  /* Khi vào trang: đợi đăng nhập + dữ liệu đám mây tải xong (tối đa ~25 giây), rồi mới đọc cài đặt của TÀI KHOẢN và đồng bộ — không phụ thuộc thiết bị */
+  (function boot(){ let n=0; const t=setInterval(()=>{ n++;
+    if(appEmail()&&(typeof sync==='undefined'||sync.ready||n>25)){ clearInterval(t); adoptLegacy(); fillUI(); if(on()){ loadGIS().catch(()=>{}); run('auto'); } }
+    else if(n>60) clearInterval(t); },1000); })();
   { const cc=$g('gcColor'), cd=$g('gcDl');
-    if(cc){ cc.checked=COLOR_ON(); cc.onchange=()=>{ LS.setItem('gcal_color',cc.checked?'1':'0'); sched(); }; }
-    if(cd){ cd.checked=DL_ON(); cd.onchange=()=>{ LS.setItem('gcal_dl',cd.checked?'1':'0'); sched(); }; } }
-  const cid=$g('gcCid'); if(cid){ cid.value=LS.getItem('gcal_cid')||''; if(on()) say('Đã bật đồng bộ. Bấm “Kết nối & đồng bộ” để đăng nhập lại khi cần.'); }
-  $g('gcOn')&&($g('gcOn').onclick=()=>{ const v=cid.value.trim(); if(!/\.apps\.googleusercontent\.com$/.test(v)){ say('Client ID chưa đúng định dạng (…apps.googleusercontent.com).'); return; } LS.setItem('gcal_cid',v); LS.setItem('gcal_on','1'); LS.removeItem('gcal_noconf'); tok=null; run(true); });
-  $g('gcOff')&&($g('gcOff').onclick=()=>{ LS.removeItem('gcal_on'); if(tok&&window.google&&google.accounts) try{ google.accounts.oauth2.revoke(tok); }catch(e){} tok=null; say('Đã ngắt kết nối. Sự kiện đã tạo trên Google được giữ nguyên.'); });
+    if(cc) cc.onchange=()=>{ setG({color:cc.checked}); sched(); };
+    if(cd) cd.onchange=()=>{ setG({dl:cd.checked}); sched(); }; }
+  fillUI();
+  $g('gcOn')&&($g('gcOn').onclick=()=>{ const c=$g('gcCid'), v=c.value.trim(); if(!/\.apps\.googleusercontent\.com$/.test(v)){ say('Client ID chưa đúng định dạng (…apps.googleusercontent.com).'); return; }
+    const cc=$g('gcColor'), cd=$g('gcDl'); setG({cid:v,on:true,color:cc?cc.checked:true,dl:cd?cd.checked:true}); LS.removeItem('gcal_noconf'); tok=null; run(true); });
+  $g('gcOff')&&($g('gcOff').onclick=()=>{ setG({on:false}); if(tok&&window.google&&google.accounts) try{ google.accounts.oauth2.revoke(tok); }catch(e){} tok=null; exp=0; say('Đã ngắt kết nối cho tài khoản này (mọi thiết bị). Sự kiện đã tạo trên Google được giữ nguyên.'); });
 }catch(e){ console.error('gcal',e); }})();
 </script>
 <script>
