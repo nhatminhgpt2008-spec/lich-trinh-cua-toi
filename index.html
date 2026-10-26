@@ -3834,12 +3834,12 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent)}
 .tag,.chip{border-radius:999px}
 
 /* ----- lớp nổi: menu, hộp thoại — kính mờ, bóng sâu, vào/ra mượt ----- */
-.addmenu{border-radius:16px;box-shadow:var(--sh-3);background:color-mix(in srgb,var(--surface) 86%,transparent);-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);border-color:color-mix(in srgb,var(--line) 80%,transparent);transform-origin:top right}
+.addmenu{border-radius:16px;box-shadow:var(--sh-3);background:color-mix(in srgb,var(--surface) 97%,transparent);border-color:color-mix(in srgb,var(--line) 80%,transparent);transform-origin:top right}
 .addmenu button{border-radius:10px;transition:background-color var(--mo) var(--ease),transform var(--mo) var(--ease)}
 .addmenu button:hover{transform:translateX(2px)}
 dialog{border-radius:22px;box-shadow:var(--sh-3);border-color:color-mix(in srgb,var(--line) 70%,transparent)}
-dialog::backdrop{background:rgba(6,12,9,.46);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px)}
-#dlgFallbackBackdrop{background:rgba(6,12,9,.46);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px)}
+dialog::backdrop{background:rgba(6,12,9,.46)}
+#dlgFallbackBackdrop{background:rgba(6,12,9,.46)}
 dialog[open]{animation:dlgIn var(--mo-in) var(--ease) both}
 dialog.closing{animation:dlgOut .16s var(--ease-std) forwards}
 @keyframes dlgIn{from{opacity:0;transform:translateY(14px) scale(.965)}to{opacity:1;transform:none}}
@@ -3850,7 +3850,7 @@ dialog[open]::backdrop{animation:pageFade var(--mo-in) ease both}
 /* ----- điện thoại: chạm to hơn, bóng nhẹ hơn, hộp thoại trượt từ dưới lên ----- */
 @media (max-width:700px){
   :root{--r-card:16px;--r-cell:11px}
-  .tools #viewSeg{border-radius:0;box-shadow:none;-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5)}   /* thanh Lịch/Deadline/Lớp dưới đáy: vuông sát mép, kính mờ */
+  .tools #viewSeg{border-radius:0;box-shadow:none}   /* thanh Lịch/Deadline/Lớp dưới đáy: vuông sát mép, kính mờ */
   .btn:hover,.nav button:hover,.tools button:hover,.mbar button:hover,.cell:not(.live):not(.next):hover,.ag:not(.live):not(.next):hover{transform:none}
   dialog{border-radius:24px 24px 0 0}
   dialog[open]{top:auto;bottom:0;margin:0 auto;width:min(560px,100vw);max-height:92vh;animation:sheetUp .3s var(--ease) both}
@@ -3876,7 +3876,7 @@ dialog[open]::backdrop{animation:pageFade var(--mo-in) ease both}
 
 /* lớp nổi nhỏ: bật lên từ đúng góc kích hoạt */
 .dp:not([hidden]),.ctxm:not([hidden]),.rtpop:not([hidden]){animation:popIn var(--mo-in) var(--ease) both;transform-origin:top left}
-.dp,.ctxm,.rtpop{border-radius:16px;box-shadow:var(--sh-3);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4)}
+.dp,.ctxm,.rtpop{border-radius:16px;box-shadow:var(--sh-3)}
 .ctxm :where(button,[role=menuitem]){border-radius:9px}
 .ctxm :where(button,[role=menuitem]):hover{transform:translateX(2px)}
 .dp{--dp-acc:var(--accent);--dp-on:var(--accent-ink)}
@@ -3886,7 +3886,7 @@ dialog[open]::backdrop{animation:pageFade var(--mo-in) ease both}
 .dp-arrows button:hover{background:var(--accent-soft);color:var(--accent)}
 
 /* toast: trượt lên + mờ dần, không đụng transform căn giữa */
-.toast{opacity:0;translate:0 12px;transition:opacity .28s var(--ease),translate .32s var(--spring);border-radius:14px;box-shadow:var(--sh-3);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.toast{opacity:0;translate:0 12px;transition:opacity .28s var(--ease),translate .32s var(--spring);border-radius:14px;box-shadow:var(--sh-3)}
 .toast.on{translate:0 0}
 
 /* ô tìm kiếm: sáng viền khi đang nhập */
@@ -3938,8 +3938,7 @@ body.authed #bootScreen,body.gate #bootScreen{display:flex;opacity:0;visibility:
 /* vào app / vào màn đăng nhập: nội dung nổi lên nhẹ */
 body.authed .app{animation:appIn .6s var(--ease) both}
 @keyframes appIn{from{opacity:0}to{opacity:1}}   /* chỉ mờ dần, không dùng transform: tránh làm thanh đáy/hộp thoại (position:fixed) nhảy vị trí trong lúc chạy */
-.authGateCard{border-radius:24px;box-shadow:var(--sh-3);animation:authIn .6s var(--ease) both;
-  -webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4)}
+.authGateCard{border-radius:24px;box-shadow:var(--sh-3);animation:authIn .6s var(--ease) both}
 #authGate{background:
   radial-gradient(700px 420px at 15% 10%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 70%),
   radial-gradient(600px 400px at 90% 90%,color-mix(in srgb,var(--soon-color) 12%,transparent),transparent 70%),var(--bg)}
@@ -4081,6 +4080,24 @@ body{font-variant-numeric:tabular-nums;text-rendering:optimizeLegibility}
 body[data-view="cal"] #sched .mchip.ce{align-items:center;padding-top:2px;padding-bottom:2px}   /* giờ + tiêu đề cùng hàng, nằm giữa viền trên và dưới */
 body[data-view="cal"] #sched .mchip.ce b{align-self:center;font-size:inherit;line-height:1.3;padding:0;margin:0}   /* cùng cỡ chữ + cùng chiều cao dòng với tiêu đề → hai chữ chung một đường cơ sở */
 body[data-view="cal"] #sched .mchip.ce .t{align-self:center;line-height:1.3;margin:0}
+
+/* ===== Tối ưu hiệu năng ===== */
+/* Khi có hộp thoại mở, trang phía sau bị che mờ nên tạm dừng các hiệu ứng nhấp nháy vô hạn (ô Đang/Sắp diễn ra):
+   trình duyệt khỏi phải vẽ lại liên tục phần nền bị che, hộp thoại (vd: Tài khoản) mượt hẳn. */
+html.dlg-open :is(.cell,.ag)::before,html.dlg-open :is(.cell,.ag)::after{animation-play-state:paused!important}
+/* mỗi mục của hộp thoại Tài khoản là một vùng bố cục độc lập: mở/đóng một mục không buộc tính lại cả hộp */
+.acctSection{contain:layout paint}
+/* mục đang đóng không cần tô vẽ nội dung bên trong */
+.acctSection:not(.open) .acctSectionBody{visibility:hidden;transition:visibility 0s linear var(--mo)}
+.acctSection.open .acctSectionBody{visibility:visible;transition:none}
+@media (prefers-reduced-motion:reduce){html.dlg-open :is(.cell,.ag)::before,html.dlg-open :is(.cell,.ag)::after{animation:none!important}}
+.meetlinks{display:grid;gap:6px}
+.meetlinks[hidden]{display:none}
+.meetlnk{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;color:var(--accent);text-decoration:none;font-size:13px;overflow-wrap:anywhere}
+.meetlnk span{flex:1;min-width:0}
+.meetlnk em{font-style:normal;color:var(--muted);flex:none}
+.meetlnk:hover,.meetlnk:focus-visible{background:var(--accent-soft)}
+#dlgLinks #lkList,#dlgLinks #lkEmptyLk{margin-bottom:16px}
 </style>
 </head>
 <body>
@@ -4159,7 +4176,8 @@ body[data-view="cal"] #sched .mchip.ce .t{align-self:center;line-height:1.3;marg
         </div>
       </fieldset>
       <div class="full rtf" data-k="event"><span>Nội dung</span><textarea name="body" rows="4" data-rte hidden></textarea></div>
-      <div class="full lkbox" data-k="event"><span class="lkt">Liên kết</span><div class="lkrows" id="evLinks"></div><button type="button" class="btn lkadd" id="evLinkAdd">+ Thêm liên kết</button><button type="button" class="btn lkadd" id="evMeetBtn">+ Tạo Google Meet</button><p class="hint" id="evMeetHint"></p></div>
+      <div class="full lkbox" data-k="event"><span class="lkt">Liên kết</span><div class="lkrows" id="evLinks"></div><button type="button" class="btn lkadd" id="evLinkAdd">+ Thêm liên kết</button></div>
+      <div class="full lkbox" data-k="event" id="evMeetBox"><span class="lkt">Google Meet</span><div class="meetlinks" id="evMeetLinks" hidden></div><button type="button" class="btn lkadd" id="evMeetBtn">+ Tạo Google Meet</button><p class="hint" id="evMeetHint"></p></div>
     </div>
     <p class="err" id="err" role="alert"></p>
     <div class="actions">
@@ -4249,6 +4267,9 @@ body[data-view="cal"] #sched .mchip.ce .t{align-self:center;line-height:1.3;marg
       <div class="lksec" id="lkSecLk" hidden>Liên kết</div>
       <div class="lkl" id="lkList"></div>
       <p class="lkempty" id="lkEmptyLk" hidden>Chưa có liên kết nào.</p>
+      <div class="lksec" id="lkSecMeet" hidden>Google Meet</div>
+      <div class="lkl" id="lkMeetList"></div>
+      <p class="lkempty" id="lkEmptyMeet" hidden>Chưa có Google Meet nào.</p>
     </div>
     <div class="actions"><span class="grow"></span><button type="button" class="btn" id="lkClose">Đóng</button></div>
   </form>
@@ -4355,8 +4376,10 @@ body[data-view="cal"] #sched .mchip.ce .t{align-self:center;line-height:1.3;marg
     <div class="acctSection">
       <button type="button" class="acctSectionSummary" aria-expanded="false">Google Calendar<span class="acctArrow" aria-hidden="true"></span></button>
       <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
-        <div class="fgrid"><label class="full">OAuth Client ID (Web)<input id="gcCid" placeholder="xxxx.apps.googleusercontent.com" autocomplete="off" spellcheck="false"></label></div>
-        <p class="hint" id="gcStatus">Chưa kết nối. Sau khi kết nối, mỗi lần mở trang app tự đồng bộ lại. Lịch trong app sẽ được đẩy sang Google Calendar (tên + thời gian + nhắc trước 1 giờ, và Google Meet nếu bạn bật). Sự kiện có sẵn trên Google khớp tên + giờ bắt đầu sẽ được liên kết, giữ nguyên mô tả/địa điểm/khách mời.</p>
+        <div class="fgrid"><label class="full">OAuth Client ID (Web)<input id="gcCid" placeholder="xxxx.apps.googleusercontent.com" autocomplete="off" spellcheck="false"></label>
+          <label class="cust"><input type="checkbox" id="gcColor" checked><span>Đồng bộ màu tag (Google chỉ có 11 màu nên app chọn màu gần nhất)</span></label>
+          <label class="cust"><input type="checkbox" id="gcDl" checked><span>Đồng bộ deadline (có hạn chót; tick xong thì đổi sang màu xám)</span></label></div>
+        <p class="hint" id="gcStatus">Chưa kết nối. Sau khi kết nối, mỗi lần mở trang app tự đồng bộ lại. Lịch trong app sẽ được đẩy sang Google Calendar (tên + thời gian + màu tag + nhắc trước 1 giờ, và Google Meet nếu bạn bật); deadline cũng được đẩy sang nếu bạn bật. Sự kiện có sẵn trên Google khớp tên + giờ bắt đầu sẽ được liên kết, giữ nguyên mô tả/địa điểm/khách mời.</p>
         <div class="actions"><button type="button" class="btn" id="gcOff">Ngắt kết nối</button><span class="grow"></span><button type="button" class="btn primary" id="gcOn">Kết nối &amp; đồng bộ</button></div>
         <details class="gcGuide"><summary>Hướng dẫn lấy OAuth Client ID (chi tiết)</summary>
           <p style="margin:8px 0 0;color:var(--muted)">Làm một lần, khoảng 5–10 phút, hoàn toàn miễn phí. Đăng nhập Google Cloud bằng chính tài khoản Google bạn dùng cho lịch.</p>
@@ -4449,7 +4472,7 @@ const $ = s => document.querySelector(s);
   const bd = document.createElement('div');
   bd.id = 'dlgFallbackBackdrop';
   document.body.appendChild(bd);
-  const sync = () => bd.classList.toggle('on', !!document.querySelector('dialog[open]'));
+  const sync = () => { const on = !!document.querySelector('dialog[open]'); bd.classList.toggle('on', on); document.documentElement.classList.toggle('dlg-open', on); };
   new MutationObserver(sync).observe(document.body, {subtree:true, attributes:true, attributeFilter:['open']});
   sync();
 })();
@@ -4564,8 +4587,12 @@ const STATUS_DEF = {light:{dl:'#cf4137', cancel:'#e04a42', conflict:'#ffe680'}, 
 const themeNow = () => document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
 const statusColor = k => (state.status && state.status[k]) || STATUS_DEF[themeNow()][k];
 function inkOn(h){ const n = parseInt(h.slice(1),16); return (0.299*(n>>16&255) + 0.587*(n>>8&255) + 0.114*(n&255)) > 150 ? '#1d1a10' : '#ffffff'; }
+let _scKey = null;
 function applyStatusColors(){
   const st = state.status || {}, r = document.documentElement.style;
+  const k0 = (st.dl || '') + '|' + (st.cancel || '') + '|' + (st.conflict || '');
+  if(k0 === _scKey) return;   // màu trạng thái không đổi: không đụng vào style của <html> (tránh tính lại style cả trang mỗi lần render)
+  _scKey = k0;
   for(const [k,v] of [['dl','--dl'],['cancel','--cell-cancel'],['conflict','--cell-conflict']]){
     if(st[k]){ r.setProperty(v, st[k]); r.setProperty(v+'-ink', inkOn(st[k])); }
     else { r.removeProperty(v); r.removeProperty(v+'-ink'); }
@@ -4906,6 +4933,7 @@ function commitHistory(){
   if(histIndex >= 0 && hist[histIndex] === snap) return;   // không có gì thay đổi thật sự
   hist = hist.slice(0, histIndex + 1);
   hist.push(snap);
+  if(hist.length > 150) hist.splice(0, hist.length - 150);   // giới hạn lịch sử hoàn tác: trước đây tăng vô hạn theo số lần sửa, ngốn bộ nhớ
   histIndex = hist.length - 1;
   updateHistBtns();
 }
@@ -5002,8 +5030,10 @@ const localKeyFor = uid => uid ? (KEY + ':u:' + uid) : GUEST_KEY;
 let memOwner = ''; try{ memOwner = localStorage.getItem(OWNER_KEY) || ''; }catch(e){}
 function mirror(){
   dropUpcoming();   // mọi chỗ đổi/nạp dữ liệu (hoàn tác, đổi tài khoản, đồng bộ đám mây) đều đi qua đây
-  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
-  try{ if(memOwner) localStorage.setItem(localKeyFor(memOwner), JSON.stringify(state)); }catch(e){}   // luôn giữ ô nhớ riêng của chủ sở hữu luôn mới nhất
+  let j = ''; try{ j = JSON.stringify(state); }catch(e){}   // tuần tự hóa MỘT lần (trước đây làm 2 lần cho mỗi lần lưu)
+  if(!j) return;
+  try{ localStorage.setItem(KEY, j); }catch(e){}
+  try{ if(memOwner) localStorage.setItem(localKeyFor(memOwner), j); }catch(e){}   // luôn giữ ô nhớ riêng của chủ sở hữu luôn mới nhất
 }
 function readOwnerLocal(uid){
   try{ const s = JSON.parse(localStorage.getItem(localKeyFor(uid))); if(s && Array.isArray(s.events) && Array.isArray(s.todos)) return norm(s); }catch(e){}
@@ -5509,7 +5539,8 @@ let lastQView = null;
 let qScope = 'lich';     // phạm vi tìm: lịch | deadline | tất cả
 const qRaw = {lich:'', dl:'', all:''};
 /* Chuẩn hóa để tìm kiếm tiếng Việt: bỏ dấu, đ→d, không phân biệt hoa/thường. Nhờ vậy chữ gõ bằng Telex/VNI (tổ hợp dấu khác nhau) vẫn khớp với dữ liệu đã lưu, và gõ "giai tich" cũng tìm được "Giải tích". */
-const fold = s => String(s == null ? '' : s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'d').toLowerCase();
+const fold0 = s => String(s == null ? '' : s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'d').toLowerCase();
+const fold = (() => { const c = new Map(); return s => { const k = s == null ? '' : String(s); let v = c.get(k); if(v === undefined){ v = fold0(k); if(k.length < 20000){ if(c.size > 6000) c.clear(); c.set(k, v); } } return v; }; })();   // bỏ dấu là hàm thuần: nhớ kết quả để mỗi phím gõ trong ô tìm không phải chuẩn hóa lại toàn bộ chữ của mọi ô lịch
 /* Bộ lọc theo cột của tab Lớp (bấm biểu tượng phễu ở tiêu đề cột). fxFilter[bảng][cột] = danh sách giá trị BỊ BỎ TICK; chỉ lưu tạm theo phiên, không đồng bộ lên đám mây */
 const fxFilter = {school:{}, other:{}};
 const fxCache = {school:new Map(), other:new Map()};
@@ -5903,7 +5934,7 @@ function render(){
   dropUpcoming();
   fixView();
   if(state.view === 'cal') weekStart = mondayOf(calDate);
-  document.documentElement.dataset.theme = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';   // giao diện sáng/tối theo hệ thống (đã bỏ nút đổi tay)
+  { const th0 = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light'; if(document.documentElement.dataset.theme !== th0) document.documentElement.dataset.theme = th0; }   // giao diện sáng/tối theo hệ thống (đã bỏ nút đổi tay)
   applyStatusColors();
   const end = addDays(weekStart,6);
   const fx = state.view === 'fixed';
@@ -5996,7 +6027,8 @@ const updateSegIndicator = makeSegIndicator('viewSeg', 'viewSegInd');
 const updateAuthSegIndicator = makeSegIndicator('authSeg', 'authSegInd');
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { document.querySelectorAll('.tabInd').forEach(i => { delete i.dataset.r; }); updateSegIndicator.snap(); updateAuthSegIndicator.snap(); positionNpTabInd(null); });
 addEventListener('load', () => { updateSegIndicator.snap(); updateAuthSegIndicator.snap(); }, {once:true});   // font tải xong làm đổi bề rộng nút: đặt lại vị trí không hiệu ứng
-addEventListener('resize', () => { if(state.view === 'deadline' && innerWidth > 700){ render(); } updateSegIndicator(); updateAuthSegIndicator(); positionNpTabInd(null); });
+let _rzRaf = 0;
+addEventListener('resize', () => { if(_rzRaf) return; _rzRaf = requestAnimationFrame(() => { _rzRaf = 0; if(state.view === 'deadline' && innerWidth > 700){ render(); } updateSegIndicator(); updateAuthSegIndicator(); positionNpTabInd(null); }); });   // gộp: resize bắn rất dày khi kéo cửa sổ / thanh địa chỉ điện thoại co giãn
 /* cuộn tới sự kiện đang diễn ra (hoặc sắp diễn ra, hoặc tiêu đề hôm nay) */
 function scrollToNow(smooth = true, flash = false){
   const box = $('#sched');
@@ -7044,8 +7076,18 @@ const FIELDS = ['title','code','type','date','start','end','room','teacher','bod
 const daysBoxes = () => [...document.querySelectorAll('#daysWrap input')];
 const evLinks = linkEditor($('#evLinks'), $('#evLinkAdd'));
 /* Google Meet cho cả lớp: bật cờ ev.meet; khi đồng bộ, app tạo MỘT link Meet rồi gắn cùng link đó vào mọi buổi (mọi tuần, mọi thứ) của lớp */
-let formMeet = false, formMeetCode = '';
+let formMeet = false, formMeetCode = '', formMeetLinks = [];
+const isMeetUrl = u => /^https?:\/\/meet\.google\.com\//i.test(u || '');
+/* link Meet nằm ở mục Google Meet riêng (không lẫn trong danh sách Liên kết). Tắt Meet của lịch đã bật thì bỏ luôn link Meet khi lưu */
+const meetKeep = () => formMeet || !(editing && editing.id && (state.events.find(x => x.id === editing.id) || {}).meet);
+function drawMeetLinks(){
+  const box = $('#evMeetLinks'); if(!box) return;
+  const list = meetKeep() ? formMeetLinks : [];
+  box.hidden = !list.length;
+  box.innerHTML = list.map(l => `<a class="meetlnk" href="${esc(l.url)}" target="_blank" rel="noopener" title="${esc(l.url)}"><span>${esc(l.url.replace(/^https?:\/\//i, ''))}</span><em>↗</em></a>`).join('');
+}
 function drawMeet(){
+  drawMeetLinks();
   const b = $('#evMeetBtn'), h = $('#evMeetHint'); if(!b) return;
   b.textContent = formMeet ? '✓ Có Google Meet (bấm để bỏ)' : '+ Tạo Google Meet';
   h.style.color = '';
@@ -7072,7 +7114,7 @@ function openModal(id, date, defaults, slot){
   if(ev && isRec(ev) && editing.slot && (ev.times?.[wd(editing.date)]||[]).length > 1){
     f.elements.status.value = occurrenceCancelled(ev, editing.date, editing.slot.start, editing.slot.end) ? 'cancelled' : 'normal';
   }
-  evLinks.set(getLinks(v));
+  { const all = getLinks(v); formMeetLinks = all.filter(l => isMeetUrl(l.url)); evLinks.set(all.filter(l => !isMeetUrl(l.url))); }
   formMeet = !!(ev && ev.meet); formMeetCode = (ev && ev.meetCode) || ''; drawMeet();
   f.elements.untilMode.value = v.until ? 'date' : 'inf';
   f.elements.type.value = tagOf(v.type).id;   // danh sách Tag đã có đủ mọi tag, gồm cả "Lớp chính thức"
@@ -7283,7 +7325,7 @@ function buildData(){
   d.title = (d.title||'').trim(); if(!d.title) return err('Hãy nhập tên lịch.');
   d.body = String(d.body || '').trim();
   delete d.days;
-  { const r = evLinks.read(); if(r.error) return err(r.error); d.links = r.list; }
+  { const r = evLinks.read(); if(r.error) return err(r.error); d.links = r.list.concat(meetKeep() ? formMeetLinks : []); }
   d.meet = formMeet ? true : undefined;   // undefined = không có khóa → không lưu
   { const cur = editing && editing.id ? state.events.find(x => x.id === editing.id) : null; d.meetCode = (cur && cur.meetCode) || undefined; }
   d.link = d.links[0] ? d.links[0].url : ''; d.linkName = d.links[0] ? d.links[0].name : '';   // giữ 2 trường cũ = liên kết đầu tiên (tương thích)
@@ -7560,7 +7602,10 @@ function applyQ(){
   query = qScope === 'dl' ? '' : q;
   dquery = qScope === 'lich' ? '' : q;
 }
-$('#q').oninput = e => { qResultsSuppressed = false; qRaw[qScope] = e.target.value; applyQ(); $('#qWrap').classList.toggle('has-val', !!e.target.value); render(); };
+let qRenderT = 0;
+const flushQRender = () => { if(qRenderT){ clearTimeout(qRenderT); qRenderT = 0; render(); } };
+$('#q').oninput = e => { qResultsSuppressed = false; qRaw[qScope] = e.target.value; applyQ(); $('#qWrap').classList.toggle('has-val', !!e.target.value); clearTimeout(qRenderT); qRenderT = setTimeout(() => { qRenderT = 0; render(); }, 100); };   // gõ nhanh: dựng lại lịch một lần sau khi ngừng gõ ~0,1s thay vì mỗi phím
+$('#qResults').addEventListener('pointerdown', flushQRender, true);
 $('#q').addEventListener('focus', () => { qResultsSuppressed = false; renderSearchResults(); });
 $('#qResults').addEventListener('pointerdown', e => { if(e.target.closest('[data-q-result]')) e.preventDefault(); });
 $('#qResults').addEventListener('click', e => {
@@ -7570,6 +7615,7 @@ $('#qResults').addEventListener('click', e => {
   const item=qResultItems[Number(btn.dataset.qResult)]; if(item) jumpToSearchResult(item);
 });
 $('#q').addEventListener('keydown', e => {
+  if(e.key === 'Enter') flushQRender();
   if(e.key === 'Enter' && !$('#qResults').hidden && qResultItems.length){ const first=$('#qResults').querySelector('[data-q-result="0"]'); if(first){ e.preventDefault(); first.click(); } }
 });
 document.addEventListener('pointerdown', e => { const box=$('#qResults'); if(box && !box.hidden && !box.contains(e.target) && !$('#qWrap').contains(e.target) && !$('#qToggle').contains(e.target)){ qResultsSuppressed=true; box.hidden=true; } }, true);
@@ -8256,11 +8302,12 @@ function selStyle(){   // giữ viền ô đang chọn và cập nhật khung c�
   const q = v => String(v).replace(/["\\]/g, '');
   const css = 'outline:2px solid var(--accent)!important;outline-offset:-2px';
   const col = selCell && selCell.col ? q(selCell.col) : '';
-  st.textContent = !selCell ? '' : selCell.col
+  const selCss = !selCell ? '' : selCell.col
     ? `#sched .ad[data-date="${col}"]{outline:2px solid var(--accent);outline-offset:6px;border-radius:8px}`
     : selCell.todo
       ? `#sched [data-todo="${q(selCell.todo)}"]{${css}}`
       : `#sched [data-id="${q(selCell.id)}"][data-date="${q(selCell.date)}"][data-s="${q(selCell.s)}"]{${css}}`;
+  if(st.textContent !== selCss) st.textContent = selCss;   // chỉ ghi khi đổi: ghi lại cùng nội dung vẫn làm trình duyệt tính lại style toàn trang
   positionColSelection();
 }
 function selectCell(el){
@@ -8856,6 +8903,8 @@ document.addEventListener('click', e => {
   e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
   let list = []; try{ list = JSON.parse(b.dataset.lk || '[]'); }catch(_){}
   list = list.filter(x => x && safeUrl(x.u));
+  const meetL = list.filter(x => /^https?:\/\/meet\.google\.com\//i.test(x.u));   // Google Meet có mục riêng
+  list = list.filter(x => !meetL.includes(x));
   const bd = String(b.dataset.bd || '').trim();
   const bdPresent = !!bd;
   const bdHeading = 'Nội dung';
@@ -8869,6 +8918,9 @@ document.addEventListener('click', e => {
   $('#lkSecLk').hidden = false; $('#lkSecLk').textContent = 'Liên kết (' + list.length + ')';
   $('#lkEmptyBd').hidden = bdPresent;      // chưa có nội dung -> "Chưa có nội dung nào."
   $('#lkEmptyLk').hidden = !!list.length;  // chưa có liên kết -> "Chưa có liên kết nào."
+  $('#lkSecMeet').hidden = false;   // luôn hiện mục Google Meet, kể cả khi chưa có link
+  $('#lkEmptyMeet').hidden = !!meetL.length;
+  $('#lkMeetList').innerHTML = meetL.map(x => `<a href="${esc(x.u)}" target="_blank" rel="noopener" title="${esc(x.u)}"><span class="t"><span class="n">${esc(String(x.n || '').trim() || 'Google Meet')}</span><span class="h">${esc(x.u.replace(/^https?:\/\//i, ''))}</span></span><em>↗</em></a>`).join('');
   $('#lkList').innerHTML = list.map(x => {
     const name = String(x.n || '').trim();
     return `<a href="${esc(x.u)}" target="_blank" rel="noopener" title="${esc(x.u)}"><i>🔗</i><span class="t">${name ? `<span class="n">${esc(name)}</span>` : ''}<span class="h">${esc(hostOf(x.u))}</span></span><em>↗</em></a>`;
@@ -9159,9 +9211,17 @@ document.addEventListener('keydown', e => {
   document.querySelectorAll('select').forEach(enhance);
   document.addEventListener('close', () => { if(cur) close(cur, true); }, true);   // hộp thoại đóng thì đóng luôn danh sách
   /* ô chọn sinh ra sau này (ví dụ ô "Chuyển lịch sang tag" trong bảng Tag) cũng được thay tự động; ô bị gỡ khỏi trang thì đóng danh sách */
-  new MutationObserver(() => {
-    document.querySelectorAll('select').forEach(enhance);
-    if(cur && !document.contains(cur.btn)) close(cur, true);
+  new MutationObserver(ms => {
+    /* chỉ làm việc khi có phần tử MỚI được thêm vào (có thể chứa <select>) hoặc có phần tử bị gỡ khi đang mở danh sách;
+       thay đổi chữ (đồng hồ đếm ngược mỗi giây) bỏ qua hoàn toàn */
+    let added = false, removed = false;
+    for(const m of ms){
+      for(const n of m.addedNodes){ if(n.nodeType === 1 && (n.tagName === 'SELECT' || n.querySelector('select'))){ added = true; break; } }
+      if(!removed && cur && m.removedNodes.length) removed = true;
+      if(added && (removed || !cur)) break;
+    }
+    if(added) document.querySelectorAll('select').forEach(enhance);
+    if(removed && cur && !document.contains(cur.btn)) close(cur, true);
   }).observe(document.body, {childList:true, subtree:true});
 })();
 /* ---------- giữ nguyên trang / thao tác khi bấm F5 ---------- */
@@ -9328,7 +9388,7 @@ function dlActBtns(t){   // 5 nút hành động của một deadline: xem trong
 function renderDlPanel(){
   const el = document.getElementById('dlPanel'); if(!el) return;
   const wrap = document.getElementById('dlNew'), show = state.view === 'agenda' || state.view === 'deadline';
-  if(wrap) wrap.hidden = !show;
+  if(wrap && wrap.hidden === show) wrap.hidden = !show;   // chỉ ghi khi đổi (ghi lại cùng giá trị vẫn tạo bản ghi thay đổi cho các bộ quan sát DOM)
   if(!show) return;   // chỉ hiện ở Lịch › Danh sách
   const today = todayStr(), now = Date.now();
   const wkEnd = addDays(weekStart, 6);
@@ -9383,12 +9443,13 @@ function renderDlPanel(){
   const html = `<div class="np-grid"><section class="np-col np-dlcol"><h2 class="np-h"><span>Deadline</span>${tiles}</h2>
         <div class="np-list">${dlHTML}</div></section>
     </div>`;
-  el.hidden = false;
+  if(el.hidden) el.hidden = false;
   /* Đồng hồ đếm ngược đổi mỗi giây: nếu cấu trúc không đổi thì chỉ cập nhật chữ tại chỗ, không dựng lại cả mục (tránh mất hover/khựng). */
   const sig = html.replace(/<b class="cd[^"]*"( data-[^>]*)>[^<]*<\/b>/g, '<b$1></b>');
   if(el._sig === sig && el.firstChild){
+    const byId0 = new Map(state.todos.map(x => [x.id, x]));
     el.querySelectorAll('b.cd').forEach(b => {
-      const t = state.todos.find(x => x.id === b.dataset.v); if(!t) return;
+      const t = byId0.get(b.dataset.v); if(!t) return;
       const txt = dueTxt(t);
       if(b.textContent !== txt) b.textContent = txt;
       b.classList.toggle('late', dueLate(t));
@@ -9509,7 +9570,7 @@ async function enableScheduleNotifications(){
   }
 }
 async function updateScheduleNotification(force = false){
-  if(!scheduleNotifyEnabled() || !('Notification' in window) || Notification.permission !== 'granted') return;
+  if(!('Notification' in window) || Notification.permission !== 'granted' || !scheduleNotifyEnabled()) return;
   const {live, next, now} = upcoming(2);
   const l = live[0], n = next[0];
   if(!l && !n){ if(notifyLastSig){ notifyLastSig = ''; closeScheduleNotification(); } return; }   // hết lịch: gỡ thông báo cũ thay vì để nó treo
@@ -9612,10 +9673,38 @@ function tickTableCountdowns(){
   });
 }
 /* MỘT nhịp 1 giây cho mọi bộ đếm. Tab ẩn: bỏ qua việc cập nhật giao diện (đỡ tốn CPU/pin, quay lại sẽ cập nhật ngay); thông báo lịch vẫn chạy */
+/* Nhịp mỗi giây nhẹ: chỉ dựng lại cả danh sách Deadline khi PHÂN LOẠI theo thời gian đổi (quá hạn, còn dưới 24h, qua ngày…)
+   hoặc dữ liệu deadline đổi; còn lại chỉ cập nhật chữ đếm ngược. Trước đây mỗi giây đều dựng toàn bộ HTML + sắp xếp chỉ để so sánh.
+   Có hộp thoại mở thì tạm dừng (trang phía sau đang bị che); đóng hộp thoại sẽ cập nhật lại ngay. */
+function dlTimeSig(){
+  let s = todayStr() + '|' + state.view + '|' + weekStart + '|' + state.todos.length + '|';
+  for(const t of state.todos) s += (t.done ? 'd' : !t.due ? 'n' : dueLate(t) ? 'l' : dueSoon24(t) ? 's' : 'o') + (t.pin ? 'p' : '') + '~' + t.id + '~' + t.text + '~' + (t.due || '') + '~' + (t.dueTime || '') + ';';
+  return s;
+}
+function tickDlPanel(){
+  const el = document.getElementById('dlPanel');
+  if(!el) return;
+  const sig = dlTimeSig();
+  if(el._tsig === sig && el.firstChild && !el.hidden){
+    const cds = el.querySelectorAll('b.cd');
+    if(cds.length){
+      const byId = new Map(state.todos.map(x => [x.id, x]));   // tra cứu một lần, không find() từng ô (O(n²))
+      cds.forEach(b => {
+        const t = byId.get(b.dataset.v); if(!t) return;
+        const txt = dueTxt(t);
+        if(b.textContent !== txt) b.textContent = txt;
+      });
+    }
+    return;
+  }
+  renderDlPanel();
+  el._tsig = sig;
+}
 setInterval(() => {
-  if(document.visibilityState === 'visible'){ renderDlPanel(); tickTableCountdowns(); }
+  if(document.visibilityState === 'visible' && !document.documentElement.classList.contains('dlg-open')){ tickDlPanel(); tickTableCountdowns(); }
   updateScheduleNotification();
 }, 1000);
+document.addEventListener('close', () => { setTimeout(() => { if(document.visibilityState === 'visible' && !document.querySelector('dialog[open]')){ tickDlPanel(); tickTableCountdowns(); } }, 60); }, true);
 document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible'){ renderDlPanel(); tickTableCountdowns(); updateScheduleNotification(); } });
 
 initHistory();
@@ -9793,7 +9882,7 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
   function add(el, win){
     if(recs.has(el)) return;
     const host = win ? layer : (el.closest('dialog, #authGate') || layer);
-    const rec = {el, win:!!win, host, y:null, x:null, m:{}};
+    const rec = {el, win:!!win, host, y:null, x:null, m:{}, dlg: win ? null : el.closest('dialog'), stale:true, oy:false, ox:false, pr:0, canXPrev:undefined};
     if(!win){
       el.classList.add('sb-hide');
       if(typeof ResizeObserver !== 'undefined') ro.observe(el);
@@ -9809,7 +9898,21 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
     recs.delete(el);
   }
 
-  function place(rec){
+  /* Tối ưu: tách thành 2 pha — pha ĐỌC (đo toàn bộ layout một lượt) rồi pha GHI (cập nhật style một lượt),
+     tránh ép trình duyệt tính lại layout xen kẽ cho từng vùng cuộn (layout thrashing). */
+  const mqTouch = matchMedia('(hover:none)'), mqWide = matchMedia('(min-width:701px)');
+  const hostAnimCache = new Map();
+  function hostAnimating(h){
+    let v = hostAnimCache.get(h);
+    if(v === undefined){
+      v = h.classList.contains('closing') || (h.getAnimations && h.getAnimations().some(a => a.playState === 'running'));
+      hostAnimCache.set(h, v);
+    }
+    return v;
+  }
+
+  /* pha đọc: trả về "kế hoạch" cập nhật (không ghi gì vào DOM) */
+  function measure(rec){
     const el = rec.el, doc = document.documentElement;
     const vw = doc.clientWidth, vh = innerHeight;
     let sy, sx, sh, sw, ch, cw, rect, canY, canX, animating = false;
@@ -9819,130 +9922,199 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
       rect = {left:0, top:0, right:vw, bottom:vh};
       canY = sh - ch > 1 && getComputedStyle(doc).overflowY !== 'hidden'; canX = false;
     }else{
-      const cs = getComputedStyle(el);
-      if(cs.display === 'none' || (el.tagName === 'DIALOG' && !el.open)){ canY = canX = false; rect = {left:0,top:0,right:0,bottom:0}; sy=sx=sh=sw=ch=cw=0; }
+      if(rec.stale){   // cờ overflow chỉ cần đọc lại khi cấu trúc trang đổi (đã đánh dấu ở lượt quét), không đọc getComputedStyle mỗi lần cuộn
+        const cs = getComputedStyle(el);
+        rec.oy = /(auto|scroll)/.test(cs.overflowY); rec.ox = /(auto|scroll)/.test(cs.overflowX);
+        rec.pr = parseFloat(cs.paddingRight) || 0;
+        rec.stale = false;
+      }
+      const hidden = (rec.dlg && !rec.dlg.open) || !el.getClientRects().length;
+      if(hidden){ canY = canX = false; rect = {left:0,top:0,right:0,bottom:0}; sy=sx=sh=sw=ch=cw=0; }
       else{
         rect = el.getBoundingClientRect();
         sy = el.scrollTop; sx = el.scrollLeft; sh = el.scrollHeight; sw = el.scrollWidth; ch = el.clientHeight; cw = el.clientWidth;
-        canY = /(auto|scroll)/.test(cs.overflowY) && sh - ch > 1;
-        canX = /(auto|scroll)/.test(cs.overflowX) && sw - cw > 1;
+        canY = rec.oy && sh - ch > 1;
+        canX = rec.ox && sw - cw > 1;
       }
-      if(rec.host !== layer){
-        animating = rec.host.classList.contains('closing') || (rec.host.getAnimations && rec.host.getAnimations().some(a => a.playState === 'running'));
-      }
+      if(rec.host !== layer) animating = hostAnimating(rec.host);
     }
     let topPad = 0;
     if(!rec.win && el.parentElement && el.parentElement.id === 'sched'){   // khung lịch có hàng tiêu đề ghim: thanh cuộn dọc chỉ chạy bên phải phần nội dung, bắt đầu dưới hàng tiêu đề
       const hd = el.querySelector('thead, .mh'); if(hd) topPad = Math.min(hd.getBoundingClientRect().height, Math.max(0, rect.bottom - rect.top - 80));
     }
     const L = Math.max(rect.left, 0), T = Math.max(rect.top, 0) + topPad, R = Math.min(rect.right, vw), B = Math.min(rect.bottom, vh);
-    const wide = !rec.win && matchMedia('(min-width:701px)').matches;
+    const wide = !rec.win && mqWide.matches;
     const out = false;   // khung lịch: thanh cuộn nằm ngay ngoài mép khung, trong lề trang (không đè nội dung, không chừa thêm khoảng trống trong khung)
     let R2 = R, B2 = B;
     if(wide && el.classList.contains('np-list')){   // Deadline: thanh cuộn bám mép phải/đáy của thẻ (giống thanh cuộn của Danh sách)
       const cd = el.closest('#dlNew'); if(cd){ const cr = cd.getBoundingClientRect(); R2 = Math.min(cr.right, vw); B2 = Math.min(cr.bottom, vh); }
     }
-    const visW = R - L, visH = B - T, RW = touch() ? 18 : 14, gap = 8;
+    const visW = R - L, visH = B - T, RW = mqTouch.matches ? 18 : 14, gap = 8;
     const showY = !animating && canY && visH >= 56 && visW >= 24;
     const showX = !animating && canX && visW >= 56 && visH >= 24;
-    if(!rec.win) el.classList.toggle('sb-has-x', !!canX);
+    const plan = {rec, canX:!!canX, showY, showX, y:null, x:null};
 
-    // dọc
     if(showY){
       const len = Math.max(20, (B2 - T) - gap * 2 - (showX ? RW : 0));
       const range = sh - ch, thumb = Math.max(36, Math.min(len, len * ch / sh));
       const pos = Math.max(0, Math.min(1, sy / range)) * (len - thumb);
+      let left = out ? rect.right + 1 - RW / 2 : R2 - RW - 1;
+      if(!out && R2 !== R){ left = (rect.right - rec.pr + R2) / 2 - RW / 2; }   // Deadline: căn giữa thanh cuộn giữa mép phải của các mục và viền phải của thẻ
+      plan.y = {left, top:T + gap, len, thumb, pos, m:{track:len, thumb, pos:sy, off:pos, scroll:sh, client:ch}};
+    }
+    if(rec.x && showX){
+      const len = Math.max(20, visW - gap * 2 - (showY ? RW : 0));
+      const range = sw - cw, thumb = Math.max(36, Math.min(len, len * cw / sw));
+      const pos = Math.max(0, Math.min(1, sx / range)) * (len - thumb);
+      plan.x = {left:L + gap, top:(out ? rect.bottom + 1 - RW / 2 : B - RW - 1), len, thumb, pos, m:{track:len, thumb, pos:sx, off:pos, scroll:sw, client:cw}};
+    }
+    return plan;
+  }
+
+  /* pha ghi: chỉ đổi style/class khi giá trị thật sự khác (tránh đánh dấu bẩn style vô ích) */
+  const setPx = (s, k, v) => { const t = v + 'px'; if(s[k] !== t) s[k] = t; };
+  const setTf = (st, v) => { if(st.transform !== v) st.transform = v; };
+  function apply(p){
+    const rec = p.rec;
+    if(!rec.win && rec.canXPrev !== p.canX){ rec.canXPrev = p.canX; rec.el.classList.toggle('sb-has-x', p.canX); }
+    if(p.y){
       const s = rec.y.rail.style;
-      s.left = (out ? rect.right + 1 - RW / 2 : R2 - RW - 1) + 'px';
-      if(!out && R2 !== R){ const pr = parseFloat(getComputedStyle(el).paddingRight) || 0; s.left = ((rect.right - pr + R2) / 2 - RW / 2) + 'px'; }   // Deadline: căn giữa thanh cuộn giữa mép phải của các mục và viền phải của thẻ   // dạng Bảng: thanh cuộn nằm đè lên đúng đường viền phải của khung
-       s.top = (T + gap) + 'px'; s.height = len + 'px';
-      rec.y.thumb.style.height = thumb + 'px'; rec.y.thumb.style.transform = `translateY(${pos}px)`;
-      rec.m.y = {track:len, thumb, pos:sy, off:pos, scroll:sh, client:ch};
+      setPx(s, 'left', p.y.left); setPx(s, 'top', p.y.top); setPx(s, 'height', p.y.len);
+      setPx(rec.y.thumb.style, 'height', p.y.thumb); setTf(rec.y.thumb.style, `translateY(${p.y.pos}px)`);
+      rec.m.y = p.y.m;
     }else rec.m.y = null;
-    rec.y.rail.classList.toggle('on', showY); rec.y.rail.classList.toggle('stay', out);
-    // ngang
+    rec.y.rail.classList.toggle('on', p.showY); rec.y.rail.classList.remove('stay');
     if(rec.x){
-      if(showX){
-        const len = Math.max(20, visW - gap * 2 - (showY ? RW : 0));
-        const range = sw - cw, thumb = Math.max(36, Math.min(len, len * cw / sw));
-        const pos = Math.max(0, Math.min(1, sx / range)) * (len - thumb);
+      if(p.x){
         const s = rec.x.rail.style;
-        s.left = (L + gap) + 'px'; s.top = (out ? rect.bottom + 1 - RW / 2 : B - RW - 1) + 'px'; s.width = len + 'px';
-        rec.x.thumb.style.width = thumb + 'px'; rec.x.thumb.style.transform = `translateX(${pos}px)`;
-        rec.m.x = {track:len, thumb, pos:sx, off:pos, scroll:sw, client:cw};
+        setPx(s, 'left', p.x.left); setPx(s, 'top', p.x.top); setPx(s, 'width', p.x.len);
+        setPx(rec.x.thumb.style, 'width', p.x.thumb); setTf(rec.x.thumb.style, `translateX(${p.x.pos}px)`);
+        rec.m.x = p.x.m;
       }else rec.m.x = null;
-      rec.x.rail.classList.toggle('on', showX); rec.x.rail.classList.toggle('stay', out);
+      rec.x.rail.classList.toggle('on', p.showX); rec.x.rail.classList.remove('stay');
     }
   }
 
-  /* tự phát hiện MỌI vùng cuộn được (kể cả vùng mới thêm sau này) để toàn trang dùng chung một kiểu thanh cuộn;
-     giới hạn tối đa 1 lần quét/400ms để không tốn CPU khi đồng hồ đếm ngược đổi chữ mỗi giây */
-  let lastDisc = 0;
+  /* tự phát hiện vùng cuộn được: CHỈ quét phần DOM vừa thêm/đổi (không quét lại cả trang mỗi lần như trước),
+     đọc hết rồi mới thêm thanh cuộn một lượt */
+  const roots = new Set();
+  let fullScan = true, lastDisc = 0, scanT = 0, allDirty = true;
+  const dirty = new Set();
   function discover(){
-    const now = performance.now(); if(now - lastDisc < 400) return; lastDisc = now;
-    document.body.querySelectorAll('*').forEach(el => {
-      if(recs.has(el) || el.closest('.sbLayer')) return;
+    let list;
+    if(fullScan || roots.size > 40){ list = [document.body]; }
+    else{
+      const arr = [...roots].filter(r => r.isConnected && !r.closest('.sbLayer'));
+      list = arr.filter(r => !arr.some(o => o !== r && o.contains(r)));
+    }
+    fullScan = false; roots.clear();
+    const found = [];
+    const test = el => {
+      if(recs.has(el)) return;
       if(el.scrollHeight <= el.clientHeight + 1 && el.scrollWidth <= el.clientWidth + 1) return;   // đọc layout rẻ trước, getComputedStyle sau
       const cs = getComputedStyle(el);
-      if(/(auto|scroll)/.test(cs.overflowY) || /(auto|scroll)/.test(cs.overflowX)) add(el, false);
+      if(/(auto|scroll)/.test(cs.overflowY) || /(auto|scroll)/.test(cs.overflowX)) found.push(el);
+    };
+    list.forEach(r => {
+      if(r !== document.body) test(r);
+      r.querySelectorAll('*').forEach(el => { if(!el.closest('.sbLayer')) test(el); });
     });
+    return found;
+  }
+  function doScan(){
+    const found = discover();
+    const fixed = document.querySelectorAll(SEL);
+    fixed.forEach(el => add(el, false));
+    found.forEach(el => add(el, false));
+    recs.forEach((r, el) => { if(!r.win && !el.isConnected) drop(el); else r.stale = true; });
+    allDirty = true;
   }
   let raf = 0, needScan = false;
   function frame(){
     raf = 0;
     if(needScan){
-      needScan = false;
-      document.querySelectorAll(SEL).forEach(el => add(el, false));
-      discover();
-      recs.forEach((r, el) => { if(!r.win && !el.isConnected) drop(el); });
+      const now = performance.now();
+      if(now - lastDisc >= 120){ needScan = false; lastDisc = now; doScan(); }
+      else if(!scanT){ scanT = setTimeout(() => { scanT = 0; schedule(false); }, 125 - (now - lastDisc)); }   // gộp các đợt thay đổi dồn dập; needScan vẫn giữ nguyên để lượt sau quét
     }
-    recs.forEach(place);
+    const todo = [];
+    recs.forEach(r => { if(allDirty || dirty.has(r)) todo.push(r); });
+    allDirty = false; dirty.clear(); hostAnimCache.clear();
+    const plans = [];
+    for(const r of todo){ const p = measure(r); if(p) plans.push(p); }   // pha đọc
+    for(const p of plans) apply(p);                                         // pha ghi
   }
   function schedule(scan){ if(scan) needScan = true; if(!raf) raf = requestAnimationFrame(frame); }
 
-  const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => schedule(false)) : null;
+  const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => { allDirty = true; schedule(false); }) : null;
   add(document.documentElement, true);
   if(ro){ ro.observe(document.documentElement); ro.observe(document.body); }
 
   // sáng thanh trượt lên một lúc khi đang cuộn
+  const wake = (b, ms) => { b.rail.classList.add('scrolling'); clearTimeout(b.t); b.t = setTimeout(() => b.rail.classList.remove('scrolling'), ms); };
   addEventListener('scroll', e => {
-    schedule(false);
     const t = e.target === document ? document.documentElement : e.target;
-    const rec = recs.get(t); if(!rec) return;
-    [rec.y, rec.x].forEach(b => {
-      if(!b) return;
-      wake(b, 900);
-    });
+    const rec = recs.get(t);
+    if(t === document.documentElement) allDirty = true;   // cuộn cả trang: mọi thanh (đang cố định theo khung nhìn) phải đặt lại
+    else{
+      if(rec) dirty.add(rec);
+      if(t.nodeType === 1) recs.forEach(r => { if(r !== rec && !r.win && t.contains(r.el)) dirty.add(r); });   // vùng cuộn lồng bên trong cũng đổi vị trí
+    }
+    if(allDirty || dirty.size) schedule(false);   // cuộn ở vùng không có thanh cuộn riêng (ô nhập, v.v.) thì không cần tính gì
+    if(!rec) return;
+    [rec.y, rec.x].forEach(b => { if(b) wake(b, 900); });
   }, {capture:true, passive:true});
   // rê chuột sát mép vùng cuộn thì thanh hiện lên; rời đi thì tự ẩn
-  const wake = (b, ms) => { b.rail.classList.add('scrolling'); clearTimeout(b.t); b.t = setTimeout(() => b.rail.classList.remove('scrolling'), ms); };
-  /* pointermove có thể bắn hàng trăm lần/giây: gộp lại tối đa 1 lần mỗi khung hình */
+  /* pointermove có thể bắn hàng trăm lần/giây: gộp lại tối đa 1 lần mỗi khung hình; đọc hết rồi mới ghi */
   let pmX = 0, pmY = 0, pmRaf = 0;
   const pmCheck = () => {
     pmRaf = 0;
+    const hits = [];
     recs.forEach(rec => [rec.y, rec.x].forEach(b => {
       if(!b || !b.rail.classList.contains('on')) return;
       const r = b.rail.getBoundingClientRect();
       const near = b.axis === 'y'
         ? pmX >= r.left - 22 && pmX <= r.right + 6 && pmY >= r.top && pmY <= r.bottom
         : pmY >= r.top - 22 && pmY <= r.bottom + 6 && pmX >= r.left && pmX <= r.right;
-      if(near) wake(b, 900);
+      if(near) hits.push(b);
     }));
+    hits.forEach(b => wake(b, 900));
   };
   addEventListener('pointermove', e => {
     if(e.pointerType === 'touch') return;
     pmX = e.clientX; pmY = e.clientY;
     if(!pmRaf) pmRaf = requestAnimationFrame(pmCheck);
   }, {passive:true});
-  addEventListener('resize', () => schedule(true));
-  document.addEventListener('animationend', () => schedule(false), true);
-  document.addEventListener('animationcancel', () => schedule(false), true);
+  addEventListener('resize', () => { fullScan = true; schedule(true); });
+  /* chỉ cần đặt lại khi hoạt ảnh của chính hộp thoại / màn đăng nhập kết thúc (lúc đó thanh cuộn mới được hiện lại);
+     trước đây MỌI hoạt ảnh trong trang (ô đang diễn ra, nút bấm...) đều kích hoạt tính lại toàn bộ */
+  const onHostAnim = e => { const t = e.target; if(t && t.nodeType === 1 && (t.tagName === 'DIALOG' || t.id === 'authGate')){ allDirty = true; schedule(false); } };
+  document.addEventListener('transitionend', e => { const t = e.target; if(t && t.classList && t.classList.contains('acctSectionCollapse')){ allDirty = true; schedule(false); } }, true);   // mục Tài khoản mở/đóng xong: cập nhật độ dài thanh cuộn ngay
+  document.addEventListener('animationend', onHostAnim, true);
+  document.addEventListener('animationcancel', onHostAnim, true);
   new MutationObserver(ms => {
-    const own = n => n.nodeType === 1 && (n.classList.contains('sbar') || n.classList.contains('sbLayer'));
-    if(ms.every(m => m.type === 'childList' && [...m.addedNodes, ...m.removedNodes].every(own))) return;
-    schedule(true);
+    let any = false;
+    for(const m of ms){
+      if(m.type === 'attributes'){ const t = m.target; if(t.nodeType === 1 && !t.closest('.sbLayer')){ roots.add(t); any = true; } continue; }
+      for(const n of m.addedNodes){
+        if(n.nodeType !== 1 || n.classList.contains('sbar') || n.classList.contains('sbLayer')) continue;   // bỏ qua nút văn bản (đồng hồ đếm ngược đổi chữ mỗi giây) và thanh cuộn do chính script này thêm
+        roots.add(n); any = true;
+      }
+      for(const n of m.removedNodes){
+        if(n.nodeType !== 1 || n.classList.contains('sbar') || n.classList.contains('sbLayer')) continue;
+        any = true;
+      }
+    }
+    if(any) schedule(true);
   }).observe(document.body, {subtree:true, childList:true, attributes:true, attributeFilter:['open','hidden']});
-  setInterval(() => { if(document.visibilityState === 'visible') schedule(true); }, 6000);       // phòng khi nội dung đổi kích thước mà không có sự kiện nào báo
+  /* phòng khi nội dung đổi kích thước mà không có sự kiện nào báo: chỉ đo lại (rẻ), KHÔNG quét lại cả trang */
+  let tick6 = 0;
+  setInterval(() => {
+    if(document.visibilityState !== 'visible') return;
+    recs.forEach(r => { r.stale = true; }); allDirty = true;
+    if(++tick6 % 5 === 0){ fullScan = true; schedule(true); }   // 30 giây một lần quét lại toàn trang (lưới an toàn); các lần còn lại chỉ đo lại
+    else schedule(false);
+  }, 6000);
   schedule(true);
 })();
 </script>
@@ -9961,10 +10133,13 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
   const colW=s=>{ const th=dayTh(s); if(th.length>1){ const w=th[1].getBoundingClientRect().left-th[0].getBoundingClientRect().left; if(w>1) return w; } return Math.max(1,(s.clientWidth-58)/3); };
   const weekKey=s=>{ try{ if(typeof weekStart!=='undefined' && weekStart) return String(weekStart); }catch(e){} return ((s.querySelector('tr.dd th:nth-child(2)')||{}).textContent||'').trim(); };
   document.addEventListener('click',e=>{ if(e.target.closest&&e.target.closest('#todayBtn')){ forceToday=true; setTimeout(()=>{forceToday=false;},400); } },true);
+  let colRaf=0, colEl=null, colX=0, colPending=false;
   host.addEventListener('scroll',e=>{ if(busy||!mq.matches) return; const s=e.target; if(!s.classList||!s.classList.contains('scroller')) return;
-    col=Math.round(s.scrollLeft/colW(s)); },true);
+    colEl=s; colX=s.scrollLeft; colPending=true; if(colRaf) return;   // đo bề rộng cột (ép tính layout) tối đa 1 lần mỗi khung hình thay vì mỗi sự kiện cuộn
+    colRaf=requestAnimationFrame(()=>{ colRaf=0; if(!colPending) return; colPending=false; const t=colEl; if(busy||!t||!t.isConnected) return; col=Math.round(colX/colW(t)); }); },true);
   new MutationObserver(()=>{
     if(!mq.matches) return; const s=sc(); if(!s||!s.querySelector('.sheet')) return;
+    if(colPending){ colPending=false; if(colRaf){ cancelAnimationFrame(colRaf); colRaf=0; } col=Math.round(colX/colW(s)); }   // có lần cuộn chưa kịp ghi nhận: chốt ngay trước khi dùng vị trí cột
     const k=weekKey(s);
     const th=dayTh(s); const t=th.findIndex(x=>x.classList.contains('today'));
     const sameWeek = k===wkKey && col!=null;
@@ -9982,7 +10157,7 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
 </script>
 <script>
 /* ===== Đồng bộ app → Google Calendar (một chiều, mức từng buổi) =====
-   - Chỉ gửi tên + thời gian. Mỗi buổi gắn extendedProperties.private.lichKey = "idLớp|ngày|giờ" để nhận ra lần sau.
+   - Gửi tên + thời gian + màu tag (colorId gần nhất) và deadline (khoá lichKey bắt đầu bằng 'dl|'). Mỗi buổi gắn extendedProperties.private.lichKey = "idLớp|ngày|giờ" để nhận ra lần sau.
    - Sự kiện đã có trên Google (chưa gắn khoá) mà trùng tên + giờ bắt đầu → chỉ GẮN KHOÁ (PATCH), không tạo mới, không đụng mô tả/địa điểm/khách mời/nhắc.
    - Chỉ xoá những sự kiện CÓ lichKey mà app không còn; sự kiện riêng trên Google không bao giờ bị xoá.
    - Phạm vi: 14 ngày trước → 120 ngày sau. Cần Client ID (Google Cloud: bật Calendar API, OAuth Web, thêm địa chỉ trang web vào Authorized JavaScript origins). */
@@ -10015,20 +10190,42 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
   }
   const nm=x=>String(x||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase().replace(/[^a-z0-9]/g,'');
   const iso=(d,t)=>d+'T'+t+':00', ms=x=>new Date(x).getTime(), nz=x=>String(x||'').trim().toLowerCase();
+  /* màu tag → colorId của Google (sự kiện chỉ có 11 màu cố định): chọn màu gần nhất; màu gần như xám → Graphite */
+  const GC=[[1,'#a4bdfc'],[2,'#7ae7bf'],[3,'#dbadff'],[4,'#ff887c'],[5,'#fbd75b'],[6,'#ffb878'],[7,'#46d6db'],[8,'#e1e1e1'],[9,'#5484ed'],[10,'#51b749'],[11,'#dc2127']];
+  const rgb=h=>{ const n=parseInt(String(h).slice(1),16); return [n>>16&255,n>>8&255,n&255]; };
+  const colorOf=h=>{ if(!/^#[0-9a-f]{6}$/i.test(h||'')) return ''; const c=rgb(h); if(Math.max(...c)-Math.min(...c)<22) return '8';
+    let best='', bd=1e9; GC.forEach(([id,x])=>{ const q=rgb(x), dd=.3*(c[0]-q[0])**2+.59*(c[1]-q[1])**2+.11*(c[2]-q[2])**2; if(dd<bd){ bd=dd; best=String(id); } }); return best; };
+  const COLOR_ON=()=>LS.getItem('gcal_color')!=='0', DL_ON=()=>LS.getItem('gcal_dl')!=='0';
+  const REMIND_DL=900;   // deadline cả ngày: nhắc lúc 9:00 sáng hôm trước
   function desired(from,to){
-    const m=new Map();
+    const m=new Map(), cOn=COLOR_ON();
     for(let w=mondayOf(from); w<=to; w=addDays(w,7)) weekOccs(w).forEach(o=>{
       if(o.cancelled||o.date<from||o.date>to||!o.ev.start||!o.ev.end) return;
       let ed=o.date; if(o.ev.end<=o.ev.start) ed=addDays(o.date,1);
-      m.set(o.ev.id+'|'+o.date+'|'+o.ev.start,{cid:o.ev.id,key:o.ev.id+'|'+o.date+'|'+o.ev.start,pre:o.ev.id+'|'+o.date+'|',sum:o.ev.title||'(Không tiêu đề)',s:iso(o.date,o.ev.start),e:iso(ed,o.ev.end)});
+      m.set(o.ev.id+'|'+o.date+'|'+o.ev.start,{cid:o.ev.id,key:o.ev.id+'|'+o.date+'|'+o.ev.start,pre:o.ev.id+'|'+o.date+'|',sum:o.ev.title||'(Không tiêu đề)',s:iso(o.date,o.ev.start),e:iso(ed,o.ev.end),col:cOn&&o.ev.type?colorOf(tagOf(o.ev.type).color):''});
     });
+    /* Deadline → sự kiện riêng. Khoá 'dl|id|d' (cả ngày, không có giờ hạn) hoặc 'dl|id|t' (có giờ: khung 30 phút KẾT THÚC đúng hạn chót).
+       Đổi giữa hai kiểu = khoá khác → xoá cái cũ, tạo cái mới (không phải đổi ngày/giờ thành ngày cả ngày trên cùng một sự kiện). */
+    if(DL_ON()){
+      const dlc=cOn?colorOf((state.status&&state.status.dl)||'#cf4137'):'';
+      (state.todos||[]).forEach(t=>{
+        if(!t||!t.due||!/^\d{4}-\d{2}-\d{2}$/.test(t.due)||t.due<from||t.due>to) return;
+        const ad=!/^\d{2}:\d{2}$/.test(t.dueTime||''), txt=String(t.text||'').trim()||'(Không tiêu đề)', key='dl|'+t.id+'|'+(ad?'d':'t');
+        const d={cid:'',key,pre:key+'|',dl:true,allDay:ad,sum:txt,col:cOn?(t.done?'8':dlc):''};
+        if(ad){ d.s=t.due; d.e=addDays(t.due,1); d.rm=REMIND_DL; }
+        else{ const en=new Date(t.due+'T'+t.dueTime+':00'), st=new Date(en.getTime()-30*60000); d.s=iso(fmt(st),pad(st.getHours())+':'+pad(st.getMinutes())); d.e=iso(t.due,t.dueTime); }
+        m.set(key,d);
+      });
+    }
     return m;
   }
   async function list(from,to){
     let out=[],pt='';
     do{ const q=new URLSearchParams({timeMin:new Date(from+'T00:00:00').toISOString(),timeMax:new Date(addDays(to,2)+'T00:00:00').toISOString(),singleEvents:'true',maxResults:'2500',showDeleted:'false'}); if(pt) q.set('pageToken',pt);
       const r=await api('GET',API+'?'+q); out=out.concat((r&&r.items)||[]); pt=r&&r.nextPageToken; }while(pt);
-    return out.filter(g=>{ if(g.status==='cancelled'||!g.start||!g.start.dateTime) return false; const d=fmt(new Date(g.start.dateTime)); return d>=from&&d<=to; });   // chỉ xét sự kiện nằm trong phạm vi đã tính (tránh xoá nhầm ở rìa)
+    return out.filter(g=>{ if(g.status==='cancelled'||!g.start) return false;
+      if(!g.start.dateTime){ const k=lk(g); return !!(k&&String(k).startsWith('dl|')&&g.start.date&&g.start.date>=from&&g.start.date<=to); }   // sự kiện cả ngày: chỉ lấy loại deadline do app tạo, không đụng sự kiện cả ngày của bạn
+      const d=fmt(new Date(g.start.dateTime)); return d>=from&&d<=to; });   // chỉ xét sự kiện nằm trong phạm vi đã tính (tránh xoá nhầm ở rìa)
   }
   const gid=k=>Array.from(new TextEncoder().encode(k)).map(b=>b.toString(16).padStart(2,'0')).join('');   // id cố định theo khoá → hai thiết bị cùng đồng bộ không tạo trùng
   const REMIND=60;   // mọi sự kiện đẩy sang Google đều nhắc trước 60 phút (popup)
@@ -10041,7 +10238,8 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
   const noCopy=()=>LS.getItem('gcal_noconf')==='1';   // Google từ chối gắn lại cùng một Meet → ngừng thử để khỏi sửa lại mãi
   let meetFail=0;
   const body=(d,mode,extra)=>{
-    const b={summary:d.sum,start:{dateTime:d.s,timeZone:TZ},end:{dateTime:d.e,timeZone:TZ},extendedProperties:{private:{lichKey:d.key}},reminders:{useDefault:false,overrides:[{method:'popup',minutes:REMIND}]},...extra};
+    const b={summary:d.sum,...(d.allDay?{start:{date:d.s},end:{date:d.e}}:{start:{dateTime:d.s,timeZone:TZ},end:{dateTime:d.e,timeZone:TZ}}),extendedProperties:{private:{lichKey:d.key}},reminders:{useDefault:false,overrides:[{method:'popup',minutes:d.rm||REMIND}]},...extra};
+    if(d.col) b.colorId=d.col;   // không có màu (tag trống / tắt đồng bộ màu): không đụng tới màu đang có trên Google
     if(mode==='seed') b.conferenceData={createRequest:{requestId:'lich'+Date.now().toString(36)+Math.random().toString(36).slice(2,8),conferenceSolutionKey:{type:'hangoutsMeet'}}};
     else if(mode==='copy'){ const c=mcode(d); b.conferenceData={conferenceId:c,conferenceSolution:{key:{type:'hangoutsMeet'}},entryPoints:[{entryPointType:'video',uri:'https://meet.google.com/'+c,label:'meet.google.com/'+c}]}; }
     return b;
@@ -10051,9 +10249,10 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
     try{ return await api(m,url+(c?(url.includes('?')?'&':'?')+CQ:''),body(d,c,extra)); }
     catch(e){ if(c==='copy'&&/Google 400/.test(e.message)){ LS.setItem('gcal_noconf','1'); meetFail++; return api(m,url,body(d,'',extra)); } throw e; }
   }
-  const remOk=g=>{ const r=g.reminders||{}, o=r.overrides||[]; return r.useDefault===false&&o.length===1&&o[0].method==='popup'&&+o[0].minutes===REMIND; };
+  const remOk=(g,d)=>{ const r=g.reminders||{}, o=r.overrides||[]; return r.useDefault===false&&o.length===1&&o[0].method==='popup'&&+o[0].minutes===(d.rm||REMIND); };
+  const colOk=(g,d)=>!d.col||(g.colorId||'')===d.col;
   const confOk=(g,d)=>{ const c=mcode(d); return !c||noCopy()||gconf(g)===c; };
-  const same=(g,d)=>g.summary===d.sum&&ms(g.start.dateTime)===ms(d.s+offs(d.s))&&ms(g.end.dateTime)===ms(d.e+offs(d.e))&&remOk(g)&&confOk(g,d);
+  const same=(g,d)=>g.summary===d.sum&&(d.allDay?(g.start.date===d.s&&g.end.date===d.e):(ms(g.start.dateTime)===ms(d.s+offs(d.s))&&ms(g.end.dateTime)===ms(d.e+offs(d.e))))&&remOk(g,d)&&confOk(g,d)&&colOk(g,d);
   const offs=x=>{ const o=-new Date(x).getTimezoneOffset(), a=Math.abs(o); return (o<0?'-':'+')+String(Math.floor(a/60)).padStart(2,'0')+':'+String(a%60).padStart(2,'0'); };
   async function run(interactive){
     if(busy){ again=true; return; } busy=true;
@@ -10067,11 +10266,12 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
       const safe=f=>f().catch(e=>{ if(/hết hạn/.test(e.message)) fatal=e; else fail++; });   // một sự kiện lỗi (vd. sự kiện của người khác, không có quyền sửa) không làm dừng cả lượt
       const setGs=r=>{ if(!r||!r.id) return; const ix=gs.findIndex(x=>x.id===r.id); if(ix>=0) gs[ix]=r; else gs.push(r); };
       const plan=()=>{
-        const linked=new Map(), free=[]; gs.forEach(g=>{ const k=lk(g); k?linked.set(k,g):free.push(g); });
+        const linked=new Map(), free=[]; gs.forEach(g=>{ const k=lk(g); if(k&&String(k).startsWith('dl|')&&!DL_ON()) return; k?linked.set(k,g):free.push(g); });   // tắt đồng bộ deadline: giữ nguyên những gì đã có trên Google, không xoá
         const jobs=[]; let ins=0,upd=0,lnk=0,del=0; const todo=[], add=(d,f)=>jobs.push({d,f});
         want.forEach((d,k)=>{ const g=linked.get(k); if(g){ linked.delete(k); note(g,k); if(!same(g,d)){ upd++; add(d,s=>send('PATCH',API+'/'+g.id,d,s)); } } else todo.push(d); });
         const stale=[...linked.values()];
         todo.forEach(d=>{
+          if(d.dl){ ins++; add(d,s=>send('POST',API,d,s,{id:gid(d.key)}).catch(e=>{ if(/409/.test(e.message)) return send('PATCH',API+'/'+gid(d.key),d,s,{status:'confirmed'}); throw e; })); return; }   // deadline luôn tạo mới theo khoá, không ghép với sự kiện có sẵn trên Google
           let i=stale.findIndex(g=>lk(g).startsWith(d.pre));            // cùng lớp + cùng ngày nhưng đổi giờ/tên → sửa chính sự kiện đó
           if(i>=0){ const g=stale.splice(i,1)[0]; note(g,d.key); upd++; add(d,s=>send('PATCH',API+'/'+g.id,d,s)); return; }
           const ds=ms(d.s+offs(d.s)), de=ms(d.e+offs(d.e)), nd=nm(d.sum), st=g=>ms(g.start.dateTime)===ds, en=g=>ms(g.end.dateTime)===de, nt=g=>{ const x=nm(g.summary); return x&&nd&&(x===nd||(Math.min(x.length,nd.length)>=3&&(x.includes(nd)||nd.includes(x)))); };
@@ -10130,6 +10330,9 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
   if(on()){ loadGIS().catch(()=>{}); autoStart(); }   // tải sẵn thư viện đăng nhập: bấm nút sẽ mở cửa sổ ngay, ít bị trình duyệt chặn popup
   window.gcalApi={connected:()=>!!on(), auth:()=>auth(true), now:()=>run(false)};   // dùng cho nút “Tạo Google Meet” trong form lịch
   { const o=$g('gcOrigin'); if(o&&/^https?:$/.test(location.protocol)) o.textContent=location.origin; }   // hiện đúng origin của trang đang mở để dán
+  { const cc=$g('gcColor'), cd=$g('gcDl');
+    if(cc){ cc.checked=COLOR_ON(); cc.onchange=()=>{ LS.setItem('gcal_color',cc.checked?'1':'0'); sched(); }; }
+    if(cd){ cd.checked=DL_ON(); cd.onchange=()=>{ LS.setItem('gcal_dl',cd.checked?'1':'0'); sched(); }; } }
   const cid=$g('gcCid'); if(cid){ cid.value=LS.getItem('gcal_cid')||''; if(on()) say('Đã bật đồng bộ. Bấm “Kết nối & đồng bộ” để đăng nhập lại khi cần.'); }
   $g('gcOn')&&($g('gcOn').onclick=()=>{ const v=cid.value.trim(); if(!/\.apps\.googleusercontent\.com$/.test(v)){ say('Client ID chưa đúng định dạng (…apps.googleusercontent.com).'); return; } LS.setItem('gcal_cid',v); LS.setItem('gcal_on','1'); LS.removeItem('gcal_noconf'); tok=null; run(true); });
   $g('gcOff')&&($g('gcOff').onclick=()=>{ LS.removeItem('gcal_on'); if(tok&&window.google&&google.accounts) try{ google.accounts.oauth2.revoke(tok); }catch(e){} tok=null; say('Đã ngắt kết nối. Sự kiện đã tạo trên Google được giữ nguyên.'); });
