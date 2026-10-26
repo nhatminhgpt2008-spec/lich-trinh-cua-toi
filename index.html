@@ -4098,6 +4098,206 @@ html.dlg-open :is(.cell,.ag)::before,html.dlg-open :is(.cell,.ag)::after{animati
 .meetlnk em{font-style:normal;color:var(--muted);flex:none}
 .meetlnk:hover,.meetlnk:focus-visible{background:var(--accent-soft)}
 #dlgLinks #lkList,#dlgLinks #lkEmptyLk{margin-bottom:16px}
+
+/* ===================================================================
+   GCAL MOBILE v1 (≤700px): giao diện điện thoại theo phong cách Google Calendar
+   thanh đầu phẳng + nút tròn không viền · ô tìm kiếm dạng viên thuốc · ngày dạng vòng tròn
+   sự kiện bo nhỏ có vạch màu bên trái · lịch tràn mép · FAB vuông bo · thanh tab dưới phẳng
+   =================================================================== */
+@media screen and (max-width:700px){
+  body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--surface);z-index:60}
+  body{background:var(--surface)}
+  .app{padding:0!important}
+  .below{padding:0 10px}
+  /* thanh đầu: dính trên cùng, phẳng, nút không viền */
+  .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;margin:0!important;padding:6px 8px!important;background:var(--surface);border-bottom:1px solid var(--line-soft)}
+  .top .nav{gap:2px!important}
+  .top .nav button,.top .nav .dpw>.dpb,.top .tools #notifyTop{border:0!important;background:transparent!important;box-shadow:none!important;border-radius:50%!important;transform:none!important}
+  .top .nav button:active,.top .tools #notifyTop:active{background:var(--accent-soft)!important}
+  .top .nav #todayBtn{flex:0 0 auto!important;min-width:0!important;border:1px solid var(--line)!important;border-radius:18px!important;padding:0 14px!important;height:34px!important;font-weight:600;margin-right:4px!important}
+  .top .nav #wkChip:not([hidden]){flex:1 1 auto!important;height:34px;font-size:16px;font-weight:600}
+  .top .nav .wkchip .wc-t{min-width:0}
+  /* ô tìm kiếm: viên thuốc xám nhạt như thanh tìm kiếm của Google */
+  .searchbox{background:var(--line-soft)!important;border:0!important;border-radius:24px!important;box-shadow:none!important;height:44px!important}
+  .searchbox input#q{background:transparent!important;border:0!important;box-shadow:none!important;height:44px!important}
+  /* hàng nút chế độ xem: nút tròn nhẹ */
+  #legend{padding:4px 12px 8px!important;margin:0!important}
+  #legend .mbtn,#legend #tagToggle{border-radius:18px!important;height:34px!important;border:0!important}
+  #legend .mbtn{background:var(--line-soft)!important}
+  /* lịch tuần: tràn mép, không khung */
+  #sched.card,main>.card{border:0!important;border-radius:0!important;box-shadow:none!important;background:var(--surface)!important;padding:0!important}
+  .sheet .dn th:not(.week-label){font-size:11px!important;font-weight:600!important;letter-spacing:.04em;color:var(--muted)!important;background:var(--surface)!important;border:0!important;box-shadow:none!important;padding:8px 0 2px!important}
+  .sheet .dn th.today{color:var(--accent)!important}
+  .sheet .dd th:not(.week-label){background:var(--surface)!important;border:0!important;box-shadow:none!important;padding:0 0 8px!important;color:var(--ink)!important}
+  .sheet .dd th>.gd{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:28px;padding:0 7px;border-radius:14px;font-size:12.5px;font-weight:600;font-variant-numeric:tabular-nums}
+  .sheet .dd th.today>.gd{background:var(--accent);color:var(--accent-ink)}
+  .sheet th.today{box-shadow:none!important}
+  .sheet .tl{font-size:11px;color:var(--muted);font-weight:500}
+  .sheet td.slot,.sheet td.dls,.sheet td.dlc{border-color:var(--line-soft)!important}
+  /* sự kiện: bo nhỏ, nền nhạt theo màu tag + vạch màu bên trái, chữ căn trái */
+  .cell,.dlcell{text-align:left!important}
+  .cell{border-radius:6px!important}
+  .cell:not(.live):not(.next):not(.c-cancel):not(.conflict):not(.nofill){background:color-mix(in srgb,var(--cc) 20%,var(--surface))!important;box-shadow:none!important;border-left:4px solid var(--cc)!important;padding-left:6px}
+  .mchip{border-radius:4px!important}
+  /* nút + dạng vuông bo (FAB của Google), thanh tab dưới phẳng */
+  .tools #addBtn{width:56px!important;height:56px!important;border-radius:18px!important;right:16px!important;box-shadow:0 1px 3px rgba(60,64,67,.3),0 4px 8px 3px rgba(60,64,67,.15)!important}
+  .tools #viewSeg{border-top:1px solid var(--line-soft)!important;box-shadow:none!important}
+  .tools #viewSeg button{font-size:11.5px;letter-spacing:.01em}
+  /* hộp thoại: bảng trượt bo lớn có thanh nắm kéo */
+  dialog{border-radius:28px 28px 0 0!important}
+  dialog[open]::before{content:"";display:block;width:32px;height:4px;border-radius:2px;background:var(--line);margin:10px auto 0}
+}
+
+/* ===================================================================
+   GCAL MOBILE v2 (≤700px): menu ☰ kiểu Google thay thanh tab dưới (thêm chỗ xem lịch), ô ngày chỉ hiện số hôm nay
+   =================================================================== */
+#gdMenu,#gdTitle,#gDrawer,#gScrim{display:none}
+@media screen and (max-width:700px){
+  /* nút ☰ + tiêu đề trang (chỉ hiện ở Deadline/Lớp vì không có thanh điều hướng tuần) */
+  #gdMenu{display:inline-flex;order:0;flex:0 0 auto;align-items:center;justify-content:center;width:40px;height:40px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--ink)}
+  #gdMenu:active{background:var(--accent-soft)}
+  #gdTitle{display:none;order:0;flex:1 1 auto;font-size:20px;font-weight:700;letter-spacing:-.01em}
+  body[data-view="fixed"] #gdTitle,body[data-view="deadline"] #gdTitle{display:block}
+  /* ô ngày: chỉ số ngày hôm nay, không biểu tượng */
+  /* ô ngày kiểu biểu tượng "hôm nay" của Google Calendar: khung vuông bo viền đậm, hai chấu nhỏ phía trên, số ngày ở giữa */
+  .top .nav .wkchip::before,.top .nav .wkchip::after{content:""!important;display:block!important;position:absolute!important;top:-5px!important;width:3px!important;height:7px!important;margin:0!important;border-radius:2px!important;background:currentColor!important;-webkit-mask:none!important;mask:none!important;box-shadow:none!important}
+  .top .nav .wkchip::before{left:8px!important}
+  .top .nav .wkchip::after{right:8px!important}
+  .top .nav #wkChip:not([hidden]){position:relative;flex:0 0 auto!important;box-sizing:border-box;width:34px;min-width:34px!important;height:34px!important;margin:0 6px;padding:0!important;border:2px solid var(--ink)!important;border-radius:9px!important;background:transparent!important;color:var(--ink)!important;justify-content:center;align-items:center}
+  .top .nav .wkchip .wc-t{min-width:0!important;padding:0 4px!important;box-sizing:border-box}
+  .wkchip .wd{font-size:16px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .wkchip .wd{color:inherit}
+  .top .nav{justify-content:flex-start}
+  /* bỏ thanh tab dưới đáy: nút + hạ thấp xuống */
+  .tools #viewSeg{display:none!important}
+  .app{padding-bottom:0!important}   /* trang là khung cao cố định: padding dưới của .app chính là dải trống cuối màn hình, bỏ hẳn; nút + nổi đè lên nội dung nên chừa chỗ cuối trong từng vùng cuộn */
+  body[data-view="table"] #sched>.scroller,body[data-view="cal"] #sched>.calv{padding-bottom:84px}
+  body[data-view="agenda"] #sched,body[data-view="fixed"] #sched,body[data-view="deadline"] .layout .below{padding-bottom:84px!important}
+  .tools #addBtn{bottom:calc(20px + env(safe-area-inset-bottom,0px))!important}
+  .toast{bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+  .pwaBar{bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+  /* ngăn kéo bên trái */
+  #gScrim{display:block;position:fixed;inset:0;z-index:1190;background:rgba(0,0,0,.45);opacity:0;visibility:hidden;transition:opacity var(--mo-slow) var(--ease-std),visibility 0s linear var(--mo-slow)}
+  #gDrawer{display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:1200;width:min(86vw,340px);padding:calc(18px + env(safe-area-inset-top,0px)) 12px calc(16px + env(safe-area-inset-bottom,0px));background:var(--surface);color:var(--ink);border-radius:0 24px 24px 0;box-shadow:0 8px 32px rgba(0,0,0,.35);overflow:auto;transform:translateX(-102%);visibility:hidden;transition:transform var(--mo-slow) var(--ease),visibility 0s linear var(--mo-slow)}
+  body.gd-open #gScrim{opacity:1;visibility:visible;transition:opacity var(--mo-slow) var(--ease-std)}
+  body.gd-open #gDrawer{transform:none;visibility:visible;transition:transform var(--mo-slow) var(--ease)}
+  body.gd-open{overflow:hidden}
+  #gDrawer h2{margin:0 0 14px;padding:0 12px;font-size:22px;font-weight:700;letter-spacing:-.01em}
+  #gDrawer .gdi{display:flex;align-items:center;gap:18px;width:100%;height:52px;padding:0 16px;border:0;border-radius:26px;background:transparent;color:var(--ink);font-size:15px;font-weight:600;text-align:left}
+  #gDrawer .gdi svg{width:24px;height:24px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  #gDrawer .gdi:active{background:var(--line-soft)}
+  #gDrawer .gdi.on{background:var(--accent-soft);color:var(--accent)}
+  #gDrawer .gdi:disabled{opacity:.4}
+  #gDrawer hr{border:0;border-top:1px solid var(--line-soft);margin:8px 0}
+}
+@media (prefers-reduced-motion:reduce){#gDrawer,#gScrim{transition:none!important}}
+
+/* GCAL MOBILE v3 (≤700px): bỏ ‹ › (chuyển tuần bằng vuốt ngang), mọi nút trên thanh đầu cùng cỡ 36px */
+@media screen and (max-width:700px){
+  .top .nav #prev,.top .nav #next{display:none!important}
+  #gdMenu{width:36px!important;height:36px!important}
+  .top .nav #todayBtn{height:36px!important;min-width:0!important;padding:0 14px!important}
+  .top .nav #wkChip:not([hidden]){width:36px!important;min-width:36px!important;height:36px!important;margin:0 2px 0 6px}
+  .top .tools #notifyTop,.top .tools #qToggle{width:36px!important;min-width:36px!important;height:36px!important;padding:0!important;border:0!important;border-radius:50%!important;background:transparent!important;color:var(--ink)!important;justify-content:center}
+  .top .tools #acctChip{width:36px!important;min-width:36px!important;max-width:36px!important;height:36px!important;padding:0!important;border:0!important;border-radius:50%!important;background:transparent!important;justify-content:center;overflow:visible}
+  .top .tools #qToggle.on,.top.q-open .tools #qToggle{color:var(--accent)!important;background:var(--accent-soft)!important}
+  #legend .mbtn,#legend #tagToggle{width:36px!important;min-width:36px!important;height:36px!important}
+}
+
+/* GCAL MOBILE v4 (≤700px): nút tài khoản chuyển vào ngăn kéo ☰ */
+@media screen and (max-width:700px){
+  .top .tools #acctChip{display:none!important}
+  #gDrawer hr.gd-push{margin-top:auto}
+  #gDrawer .gd-acct{height:64px;gap:14px;padding:0 12px}
+  #gDrawer .gd-acct .av{width:36px;height:36px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex:none}
+  #gDrawer .gd-acct .tx{display:flex;flex-direction:column;min-width:0;line-height:1.3}
+  #gDrawer .gd-acct .tx b{font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #gDrawer .gd-acct .tx small{font-size:12px;font-weight:500;color:var(--muted)}
+}
+
+/* GCAL MOBILE v5 (≤700px): trả lại ‹ ›; mọi nút trên thanh đầu và hàng chế độ xem cùng một kiểu: cao/rộng 36px, viền 1px, bo 12px, chữ 14px đậm vừa */
+@media screen and (max-width:700px){
+  .top .nav,.top{gap:6px!important}
+  .top .nav #prev,.top .nav #next{display:inline-flex!important}
+  .top .nav #prev{order:1!important}
+  .top .nav #wkChip:not([hidden]){order:2!important}
+  .top .nav #next{order:3!important}
+  .top .nav #todayBtn{order:4!important}
+  #gdMenu,.top .nav #prev,.top .nav #next,.top .tools #qToggle,.top .tools #notifyTop,.top .nav #wkChip:not([hidden]),#legend .mbtn,#legend #tagToggle{
+    box-sizing:border-box!important;width:36px!important;min-width:36px!important;height:36px!important;min-height:36px!important;margin:0!important;padding:0!important;
+    border:1px solid var(--line)!important;border-radius:12px!important;color:var(--ink)!important;font-size:14px!important;font-weight:600}
+  #gdMenu,.top .nav #prev,.top .nav #next,.top .tools #qToggle,.top .tools #notifyTop,.top .nav #wkChip:not([hidden]),#legend .mbtn{background:var(--surface)!important}
+  .top .nav #todayBtn{box-sizing:border-box!important;height:36px!important;min-height:36px!important;margin:0!important;padding:0 14px!important;border:1px solid var(--line)!important;border-radius:12px!important;background:var(--surface)!important;color:var(--ink)!important;font-size:14px!important;font-weight:600}
+  .top.q-open .tools #qToggle{border-color:var(--accent)!important;color:var(--accent)!important}
+  .top .nav #prev::before,.top .nav #next::before{width:20px!important;height:20px!important;margin:-10px 0 0 -10px!important}
+  .wkchip .wd{font-size:14px;font-weight:700}
+  .top .nav .wkchip::before,.top .nav .wkchip::after{background:var(--ink)!important;top:-4px!important}
+  .top .nav .wkchip::before{left:9px!important}
+  .top .nav .wkchip::after{right:9px!important}
+  #legend .mbtn .wm-l{font-size:14px}
+}
+
+/* GCAL MOBILE v6 (≤700px): ‹ Hôm nay › · ngày · tìm kiếm · Bảng/Danh sách · Tag · chuông cùng một hàng; bỏ nút Tuần/Tháng; ô ngày không còn "răng" */
+@media screen and (max-width:700px){
+  .top,.top .nav{gap:4px!important}
+  .top .nav{flex:0 0 auto!important;justify-content:flex-start}
+  .top .nav #prev{order:1!important}
+  .top .nav #todayBtn{order:2!important}
+  .top .nav #next{order:3!important}
+  .top .nav #wkChip:not([hidden]){order:4!important}
+  .top .tools #qToggle{order:2!important}
+  .top #mbar{display:contents!important}
+  .top #taBtn,.top #tagToggle{order:3!important}
+  .top .tools #notifyTop{order:4!important}
+  body[data-view="fixed"] .top #mbar,body[data-view="deadline"] .top #mbar{display:none!important}
+  #wmBtn{display:none!important}
+  .top .nav .wkchip::before,.top .nav .wkchip::after{display:none!important}
+  /* cùng cỡ 34px để vừa một hàng; hàng nào chật thì nút cuối tự xuống dòng */
+  #gdMenu,.top .nav #prev,.top .nav #next,.top .tools #qToggle,.top .tools #notifyTop,.top .nav #wkChip:not([hidden]),.top #taBtn,.top #tagToggle{
+    box-sizing:border-box!important;width:34px!important;min-width:34px!important;height:34px!important;min-height:34px!important;margin:0!important;padding:0!important;
+    border:1px solid var(--line)!important;border-radius:12px!important;color:var(--ink)!important;font-size:14px!important;font-weight:600;
+    display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .top .nav #prev,.top .nav #next{display:inline-flex!important}
+  .top .nav #wkChip:not([hidden]){display:inline-flex!important}
+  .top #taBtn,.top #tagToggle:not(.on){background:var(--surface)!important}
+  .top .nav #todayBtn{height:34px!important;min-height:34px!important;padding:0 10px!important}
+  .top #taBtn svg{width:17px;height:17px}
+}
+
+/* GCAL MOBILE v7 (≤700px): tất cả nút trên thanh đầu chia đều và phủ hết bề rộng hàng, luôn nằm trên một hàng; tìm kiếm ở cuối */
+@media screen and (max-width:700px){
+  .top{display:flex!important;flex-wrap:wrap!important;align-items:center;gap:4px!important;padding:6px!important}
+  .top .nav:not([hidden]){display:contents!important}   /* các nút ‹ Hôm nay › ngày thành phần tử trực tiếp của hàng để chia đều chung với các nút khác */
+  /* thứ tự: ☰ · ‹ · Hôm nay · › · ngày · Bảng/Danh sách · Tag · chuông · tìm kiếm */
+  .top #gdMenu{order:0!important}
+  .top .nav #prev{order:1!important}
+  .top .nav #todayBtn{order:2!important}
+  .top .nav #next{order:3!important}
+  .top .nav #wkChip:not([hidden]){order:4!important}
+  .top #taBtn,.top #tagToggle{order:5!important}
+  .top .tools #notifyTop{order:6!important}
+  .top .tools #qToggle{order:7!important}
+  .top.q-open .tools #qWrap{order:8!important;flex:1 0 100%!important}
+  /* nút biểu tượng: bằng nhau, giãn đều (nền 0 để không bao giờ bị đẩy xuống hàng khi chật) */
+  .top #gdMenu,.top .nav #prev,.top .nav #next,.top .nav #wkChip:not([hidden]),.top .tools #qToggle,.top .tools #notifyTop,.top #taBtn,.top #tagToggle{
+    flex:1 1 0!important;width:auto!important;min-width:26px!important;max-width:48px!important}
+  /* "Hôm nay" rộng gấp ~2 lần để vừa chữ */
+  .top .nav #todayBtn{flex:2.2 1 0!important;min-width:58px!important;max-width:110px!important;padding:0 4px!important;white-space:nowrap;overflow:hidden;text-overflow:clip;justify-content:center}
+  .top #gdTitle{order:1}
+}
+
+/* GCAL MOBILE v8 (≤700px): viền trên bảng Tuần rõ hơn; Tuần › Danh sách sát thanh công cụ (bỏ hàng trống của legend) */
+@media screen and (max-width:700px){
+  :root{--gc-line:var(--line-soft)}   /* viền dưới thanh công cụ: cùng màu với các đường kẻ ô và viền khác */
+  body[data-view="table"] .top,body[data-view="cal"] .top{border-bottom:1px solid var(--gc-line)!important}
+  body[data-view="table"] #sched .sheet thead{box-shadow:0 1px 0 var(--line-soft)!important}   /* viền dưới hàng thứ: mờ như các đường kẻ ô */
+  /* hàng legend chỉ còn chỗ cho tag đang lọc: không có thì ẩn hẳn, có thì thu gọn */
+  #legend:not(:has(#lgroup>*)){display:none!important}
+  #legend{padding:4px 8px!important;margin:0!important;min-height:0!important}
+  .layout{row-gap:0!important}
+  body[data-view="agenda"] .agenda{padding-top:0!important}
+  body[data-view="agenda"] #sched{padding-top:0!important;margin-top:0!important}
+}
 </style>
 </head>
 <body>
@@ -4377,9 +4577,9 @@ html.dlg-open :is(.cell,.ag)::before,html.dlg-open :is(.cell,.ag)::after{animati
       <button type="button" class="acctSectionSummary" aria-expanded="false">Google Calendar<span class="acctArrow" aria-hidden="true"></span></button>
       <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
         <div class="fgrid"><label class="full">OAuth Client ID (Web)<input id="gcCid" placeholder="xxxx.apps.googleusercontent.com" autocomplete="off" spellcheck="false"></label>
-          <label class="cust"><input type="checkbox" id="gcColor" checked><span>Đồng bộ màu tag (Google chỉ có 11 màu nên app chọn màu gần nhất)</span></label>
-          <label class="cust"><input type="checkbox" id="gcDl" checked><span>Đồng bộ deadline (có hạn chót; tick xong thì đổi sang màu xám)</span></label></div>
-        <p class="hint" id="gcStatus">Chưa kết nối. Sau khi kết nối, mỗi lần mở trang app tự đồng bộ lại. Lịch trong app sẽ được đẩy sang Google Calendar (tên + thời gian + màu tag + nhắc trước 1 giờ, và Google Meet nếu bạn bật); deadline cũng được đẩy sang nếu bạn bật. Sự kiện có sẵn trên Google khớp tên + giờ bắt đầu sẽ được liên kết, giữ nguyên mô tả/địa điểm/khách mời.</p>
+          <label class="cust"><input type="checkbox" id="gcColor" checked><span>Đồng bộ tag</span></label>
+          <label class="cust"><input type="checkbox" id="gcDl" checked><span>Đồng bộ deadline</span></label></div>
+        <p class="hint" id="gcStatus">Chưa kết nối. Sau khi kết nối, mỗi lần mở trang app tự đồng bộ lại. Lịch trong app sẽ được đẩy sang Google Calendar (tên + thời gian + tag + nhắc trước 1 giờ, và Google Meet nếu bạn bật); deadline cũng được đẩy sang nếu bạn bật. Sự kiện có sẵn trên Google khớp tên + giờ bắt đầu sẽ được liên kết, giữ nguyên mô tả/địa điểm/khách mời.</p>
         <div class="actions"><button type="button" class="btn" id="gcOff">Ngắt kết nối</button><span class="grow"></span><button type="button" class="btn primary" id="gcOn">Kết nối &amp; đồng bộ</button></div>
         <details class="gcGuide"><summary>Hướng dẫn lấy OAuth Client ID (chi tiết)</summary>
           <p style="margin:8px 0 0;color:var(--muted)">Làm một lần, khoảng 5–10 phút, hoàn toàn miễn phí. Đăng nhập Google Cloud bằng chính tài khoản Google bạn dùng cho lịch.</p>
@@ -10324,9 +10524,10 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
     document.addEventListener('click',go,true); document.addEventListener('keydown',go,true);
   }
   function autoStart(){ let n=0; const t=setInterval(()=>{ n++; const cloudOk=typeof sync==='undefined'||sync.ready||n>25; if(appEmail()&&cloudOk){ clearInterval(t); run('auto'); } else if(n>60) clearInterval(t); },1000); }   // đợi app đăng nhập VÀ dữ liệu đám mây tải xong (tối đa ~25 giây) rồi mới đồng bộ, tránh dùng bản dữ liệu cũ trên máy
-  const sched=()=>{ if(!on()) return; clearTimeout(timer); timer=setTimeout(()=>run(false),4000); };
+  const sched=ms=>{ if(!on()) return; if(!(tok&&Date.now()<exp-60000)) armN=0; clearTimeout(timer); timer=setTimeout(()=>run(false),typeof ms==='number'?ms:4000); };   // token hết hạn: cho phép lần chạm kế tiếp tự kết nối lại để đẩy thay đổi sang Google
   const _save=save; save=function(){ const r=_save.apply(this,arguments); sched(); return r; };
   const _sd=saveDebounced; saveDebounced=function(){ const r=_sd.apply(this,arguments); sched(); return r; };   // mọi thay đổi lịch đều đi qua save()
+  const _rs=restoreSnapshot; restoreSnapshot=function(){ const r=_rs.apply(this,arguments); sched(1200); return r; };   // Hoàn tác / Làm lại cũng đồng bộ sang Google (xoá rồi hoàn tác → sự kiện được tạo lại)
   if(on()){ loadGIS().catch(()=>{}); autoStart(); }   // tải sẵn thư viện đăng nhập: bấm nút sẽ mở cửa sổ ngay, ít bị trình duyệt chặn popup
   window.gcalApi={connected:()=>!!on(), auth:()=>auth(true), now:()=>run(false)};   // dùng cho nút “Tạo Google Meet” trong form lịch
   { const o=$g('gcOrigin'); if(o&&/^https?:$/.test(location.protocol)) o.textContent=location.origin; }   // hiện đúng origin của trang đang mở để dán
@@ -10337,6 +10538,108 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
   $g('gcOn')&&($g('gcOn').onclick=()=>{ const v=cid.value.trim(); if(!/\.apps\.googleusercontent\.com$/.test(v)){ say('Client ID chưa đúng định dạng (…apps.googleusercontent.com).'); return; } LS.setItem('gcal_cid',v); LS.setItem('gcal_on','1'); LS.removeItem('gcal_noconf'); tok=null; run(true); });
   $g('gcOff')&&($g('gcOff').onclick=()=>{ LS.removeItem('gcal_on'); if(tok&&window.google&&google.accounts) try{ google.accounts.oauth2.revoke(tok); }catch(e){} tok=null; say('Đã ngắt kết nối. Sự kiện đã tạo trên Google được giữ nguyên.'); });
 }catch(e){ console.error('gcal',e); }})();
+</script>
+<script>
+/* GCAL MOBILE v1: bọc ngày trong hàng tiêu đề tuần bằng <span class="gd"> để vẽ vòng tròn/viên thuốc (hôm nay tô màu nhấn) */
+(function(){var root=document.getElementById('sched');if(!root)return;
+var wrap=function(){root.querySelectorAll('.sheet .dd th:not(.week-label)').forEach(function(th){
+if(th.children.length)return;var t=th.textContent;if(!t.trim())return;
+var s=document.createElement('span');s.className='gd';s.textContent=t;th.textContent='';th.appendChild(s);});};
+new MutationObserver(wrap).observe(root,{childList:true,subtree:true});wrap();})();
+</script>
+<script>
+/* GCAL MOBILE v2: ngăn kéo ☰ (Lịch / Deadline / Lớp, Tuần / Tháng) + ô ngày chỉ hiện số ngày hôm nay */
+(function(){
+var mq=window.matchMedia('(max-width:700px)'), $=function(s){return document.querySelector(s);};
+/* 1) ô ngày (#wkChip): chỉ số ngày hôm nay; thông tin tuần/tháng vẫn còn trong tooltip/aria-label */
+var chip=$('#wkChip');
+function setDay(){ if(!chip||!mq.matches||chip.querySelector('.wd'))return; chip.innerHTML='<span class="wd">'+new Date().getDate()+'</span>'; }
+if(chip){ new MutationObserver(setDay).observe(chip,{childList:true}); setDay(); }
+(mq.addEventListener?mq.addEventListener.bind(mq,'change'):mq.addListener.bind(mq))(function(){ if(typeof updateWkChip==='function')updateWkChip(); setDay(); });
+/* 2) ngăn kéo */
+var top=$('.top'); if(!top)return;
+var ic={
+ table:'<svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>',
+ deadline:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg>',
+ fixed:'<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M4 9.5h16M4 14.5h16M12 4v16"/></svg>',
+ week:'<svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M8 4v16M12 4v16M16 4v16"/></svg>',
+ month:'<svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M3.5 9.3h17M3.5 14.6h17M9.2 4v16M14.8 4v16"/></svg>'};
+var items=[['week','Tuần'],['month','Tháng'],'-',['table','Lịch'],['deadline','Deadline'],['fixed','Lớp']];
+var d=document.createElement('nav'); d.id='gDrawer'; d.setAttribute('aria-label','Menu'); d.setAttribute('role','dialog');
+d.innerHTML='<h2>Lịch trình</h2>'+items.map(function(i){return i==='-'?'<hr>':'<button type="button" class="gdi" data-g="'+i[0]+'">'+ic[i[0]]+'<span>'+i[1]+'</span></button>';}).join('');
+var sc=document.createElement('div'); sc.id='gScrim';
+document.body.appendChild(sc); document.body.appendChild(d);
+var wm=function(){return $('#wmBtn');};
+function sync(){
+ var on=$('#viewSeg button.on'), v=on?on.dataset.v:'table', cal=document.body.dataset.view==='cal', tbl=v==='table';
+ d.querySelectorAll('.gdi').forEach(function(b){var g=b.dataset.g,a=false;
+  if(g==='table'||g==='deadline'||g==='fixed')a=(g===v);
+  else a=tbl&&(g==='month'?cal:!cal);
+  b.classList.toggle('on',a); b.setAttribute('aria-current',a?'true':'false');});
+ var t=$('#gdTitle'); if(t)t.textContent=v==='deadline'?'Deadline':v==='fixed'?'Lớp':'';
+}
+function open(on){ if(on)sync(); document.body.classList.toggle('gd-open',!!on); }
+var m=$('#gdMenu'); if(!m){ m=document.createElement('button'); m.type='button'; m.id='gdMenu'; m.setAttribute('aria-label','Menu'); m.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>'; top.insertBefore(m,top.firstChild); }
+if(!$('#gdTitle')){ var tt=document.createElement('span'); tt.id='gdTitle'; top.insertBefore(tt,m.nextSibling); }
+m.addEventListener('click',function(){open(true);});
+sc.addEventListener('click',function(){open(false);});
+document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&document.body.classList.contains('gd-open'))open(false); });
+d.addEventListener('click',function(e){
+ var b=e.target.closest('.gdi'); if(!b)return; var g=b.dataset.g;
+ if(g==='table'||g==='deadline'||g==='fixed'){ var s=$('#viewSeg button[data-v="'+g+'"]'); if(s)s.click(); }
+ else{ var cur=$('#viewSeg button.on'); if(!cur||cur.dataset.v!=='table'){ var s2=$('#viewSeg button[data-v="table"]'); if(s2)s2.click(); }
+  var w=wm(), isM=document.body.dataset.view==='cal'; if(w&&!w.disabled&&((g==='month')!==isM))w.click(); }
+ open(false);
+});
+new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:['data-view']}); sync();
+})();
+</script>
+<script>
+/* GCAL MOBILE v3: vuốt ngang trên lịch để sang tuần/tháng sau (vuốt trái) hoặc trước (vuốt phải), thay cho hai nút ‹ › */
+(function(){
+var mq=window.matchMedia('(max-width:700px)'), box=document.getElementById('sched'); if(!box)return;
+var t0=null;
+function sl(){var s=box.querySelector('.scroller,.calv');return s?s.scrollLeft:0;}
+box.addEventListener('touchstart',function(e){
+ if(!mq.matches||e.touches.length!==1||document.querySelector('dialog[open]')){t0=null;return;}
+ var t=e.touches[0]; t0={x:t.clientX,y:t.clientY,t:Date.now(),sl:sl()};
+},{passive:true});
+box.addEventListener('touchend',function(e){
+ if(!t0)return; var t=e.changedTouches[0], dx=t.clientX-t0.x, dy=t.clientY-t0.y, ok=Date.now()-t0.t<700&&Math.abs(dx)>=70&&Math.abs(dy)<45&&Math.abs(dx)>Math.abs(dy)*2&&sl()===t0.sl;
+ t0=null; if(!ok)return;
+ var b=document.getElementById(dx<0?'next':'prev'); if(b&&!b.disabled&&!document.querySelector('.nav').hidden)b.click();
+},{passive:true});
+box.addEventListener('touchcancel',function(){t0=null;},{passive:true});
+})();
+</script>
+<script>
+/* GCAL MOBILE v4: mục "Tài khoản" cuối ngăn kéo ☰ — bấm vào sẽ mở đúng hộp thoại của nút tài khoản cũ */
+(function(){
+var d=document.getElementById('gDrawer'), chip=document.getElementById('acctChip'); if(!d||!chip)return;
+var hr=document.createElement('hr'); hr.className='gd-push';
+var b=document.createElement('button'); b.type='button'; b.className='gdi gd-acct';
+b.innerHTML='<span class="av"></span><span class="tx"><b></b><small>Tài khoản & đồng bộ</small></span>';
+d.appendChild(hr); d.appendChild(b);
+var av=b.querySelector('.av'), nm=b.querySelector('b');
+function sync(){
+ var a=document.getElementById('acctAv'), n=document.getElementById('acctNm');
+ av.textContent=a?a.textContent:'?'; nm.textContent=n?n.textContent:'';
+ var off=chip.hidden; b.hidden=off; hr.hidden=off;
+}
+b.addEventListener('click',function(){ document.body.classList.remove('gd-open'); chip.click(); });
+new MutationObserver(function(){ if(document.body.classList.contains('gd-open'))sync(); }).observe(document.body,{attributes:true,attributeFilter:['class']});
+sync();
+})();
+</script>
+<script>
+/* GCAL MOBILE v6: đưa nút Bảng/Danh sách và nút lọc Tag lên thanh trên cùng (vào #mbar) khi ở điện thoại */
+(function(){
+var bar=document.getElementById('mbar'), ta=document.getElementById('taBtn'), tg=document.getElementById('tagToggle'); if(!bar||!ta||!tg)return;
+var mq=window.matchMedia('(max-width:700px)');
+function place(){ if(mq.matches){ bar.appendChild(ta); bar.appendChild(tg); } }
+place();
+(mq.addEventListener?mq.addEventListener.bind(mq,'change'):mq.addListener.bind(mq))(function(){ setTimeout(place,0); });   // chạy sau đoạn đặt lại vị trí gốc của trang
+})();
 </script>
 </body>
 </html>
