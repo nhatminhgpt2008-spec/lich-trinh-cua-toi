@@ -2424,7 +2424,7 @@ input,select,textarea,#dlg input,#dlg select,#dlg textarea{transition:border-col
 .tools #viewSeg button[data-v=deadline]{display:none}
 @media (max-width:700px){
   .tools #viewSeg button[data-v=deadline]{display:flex}
-  body[data-view=agenda] .layout #dlNew{display:none}
+  body[data-view=agenda] .layout #dlNew,body[data-view=monthAgenda] .layout #dlNew{display:none}
   body[data-view=deadline] #sched,
 body[data-view=deadline] #legend,
 body[data-view=deadline] .top .nav,
@@ -2872,26 +2872,26 @@ body .layout.ag-on .below #dlNew.card:not([hidden]){padding-top:10px}   /* PC: 1
 }
 @media screen and (max-width:359px){.top .nav .dpw{min-width:116px;width:auto}}
 @media screen and (max-width:700px){
-  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top .tools #qToggle{display:none}
-  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top .tools #qWrap,
-  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top .tools #qWrap:focus-within,
-  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top .tools #qWrap.has-val{display:inline-flex;order:3;height:32px;margin-left:auto;border-radius:16px;animation:none;transition:width var(--mo) ease,border-color var(--mo) ease}
-  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top .tools #qWrap{width:32px}
-  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top .tools #qWrap:focus-within,
-  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top .tools #qWrap.has-val{border-color:var(--accent)}
-  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top .tools #qWrap .q-ic,
-  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top .tools #qWrap:focus-within .q-ic,
-  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top .tools #qWrap.has-val .q-ic{width:30px;height:30px}
-  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top .tools #qWrap input{height:30px!important}
+  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top .tools #qToggle{display:none}
+  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top .tools #qWrap,
+  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top .tools #qWrap:focus-within,
+  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top .tools #qWrap.has-val{display:inline-flex;order:3;height:32px;margin-left:auto;border-radius:16px;animation:none;transition:width var(--mo) ease,border-color var(--mo) ease}
+  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top .tools #qWrap{width:32px}
+  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top .tools #qWrap:focus-within,
+  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top .tools #qWrap.has-val{border-color:var(--accent)}
+  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top .tools #qWrap .q-ic,
+  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top .tools #qWrap:focus-within .q-ic,
+  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top .tools #qWrap.has-val .q-ic{width:30px;height:30px}
+  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top .tools #qWrap input{height:30px!important}
 }
 
 /* v3: ở trang Deadline/Lớp, ô tìm kéo ra thì co các phần khác lại, không bao giờ đẩy nút tài khoản xuống hàng dưới */
 @media screen and (max-width:700px){
-  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top{flex-wrap:nowrap}
-  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top .tools #acctChip{flex:none}
-  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top .tools #qWrap,body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top .tools #qWrap:focus-within,body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top .tools #qWrap.has-val{flex:0 1 auto;min-width:32px}
-  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top .nav{flex:1 1 0!important;min-width:0;overflow:hidden}
-  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top .nav .dpw{min-width:0;flex:1 1 96px}
+  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top{flex-wrap:nowrap}
+  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top .tools #acctChip{flex:none}
+  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top .tools #qWrap,body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top .tools #qWrap:focus-within,body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top .tools #qWrap.has-val{flex:0 1 auto;min-width:32px}
+  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top .nav{flex:1 1 0!important;min-width:0;overflow:hidden}
+  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top .nav .dpw{min-width:0;flex:1 1 96px}
 }
 
 /* v4: hàng đầu ở trang Lịch: nav co giãn từ 0 để nút tìm + tài khoản không bao giờ bị đẩy xuống */
@@ -2909,9 +2909,9 @@ body .layout.ag-on .below #dlNew.card:not([hidden]){padding-top:10px}   /* PC: 1
 
 /* v7: trang Deadline/Lớp — ô tìm kéo ra rộng hết hàng (các nút điều hướng co về 0, avatar giữ nguyên) */
 @media screen and (max-width:700px){
-  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top .tools #qWrap:focus-within,body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top .tools #qWrap.has-val{width:100%;max-width:none}
-  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top .nav{transition:opacity var(--mo) ease}
-  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top:has(#qWrap:focus-within) .nav,body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]) .top:has(#qWrap.has-val) .nav{opacity:0;pointer-events:none}
+  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top .tools #qWrap:focus-within,body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top .tools #qWrap.has-val{width:100%;max-width:none}
+  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top .nav{transition:opacity var(--mo) ease}
+  body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top:has(#qWrap:focus-within) .nav,body:not([data-view=table]):not([data-view=agenda]):not([data-view=cal]):not([data-view=monthAgenda]) .top:has(#qWrap.has-val) .nav{opacity:0;pointer-events:none}
 }
 
 /* v13: hộp "Liên kết" — giữ kiểu hiển thị gốc (biểu tượng · tên + tên miền cùng dòng · mũi tên), ô to hơn, tên dài xuống dòng chứ không bị cắt */
@@ -3073,7 +3073,7 @@ body[data-view="table"] #sched{overflow:clip;overflow-clip-margin:1px}
   body[data-view="cal"] #sched>.calv{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
   body[data-view="cal"] #sched .mgrid{min-height:100%;grid-template-rows:auto;grid-auto-rows:minmax(min-content,1fr)}
   body[data-view="cal"] #sched .mh{position:sticky;top:0;z-index:3}
-  body[data-view="agenda"] #sched,body[data-view="fixed"] #sched{overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+  body[data-view="agenda"] #sched,body[data-view="monthAgenda"] #sched,body[data-view="fixed"] #sched{overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
   body[data-view="fixed"] .layout.fx-on #sched{align-content:start}
   body[data-view="deadline"] .layout .below{flex:1 1 auto;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
   body[data-view="deadline"] .layout.ag-on .below #dlNew{min-height:0}
@@ -3202,7 +3202,7 @@ body[data-view="table"] #sched .sheet thead{
 .sheet.stack-mode .cell>.lkchips{ display:flex; align-items:center; justify-content:center; margin-top:5px; }
 /* Tuần › Danh sách: Lịch và Deadline luôn chia đều chiều ngang trên màn hình rộng. */
 @media (min-width:821px){
-  body[data-view="agenda"] .layout.ag-on{grid-template-columns:repeat(2,minmax(0,1fr))}
+  body[data-view="agenda"] .layout.ag-on,body[data-view="monthAgenda"] .layout.ag-on{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 
 /* ===== Tuần → Bảng: ô Tuần xanh lá, chữ trắng lớn và căn giữa; đầu hàng ngày bo góc, không bo ô Tuần ===== */
@@ -3561,6 +3561,7 @@ body.searching #sched .fx .fx-row:not(.dim):hover td{
 
   /* 4) chừa chỗ cho nút "+" nổi để cuộn tới dòng cuối không bị che */
   body[data-view="agenda"] .agenda,
+  body[data-view="monthAgenda"] .agenda,
   body[data-view="fixed"] .fxblk,
   body[data-view="deadline"] #dlNew{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))!important;box-sizing:border-box}
 }
@@ -4172,7 +4173,7 @@ html.dlg-open :is(.cell,.ag)::before,html.dlg-open :is(.cell,.ag)::after{animati
   .tools #viewSeg{display:none!important}
   .app{padding-bottom:0!important}   /* trang là khung cao cố định: padding dưới của .app chính là dải trống cuối màn hình, bỏ hẳn; nút + nổi đè lên nội dung nên chừa chỗ cuối trong từng vùng cuộn */
   body[data-view="table"] #sched>.scroller,body[data-view="cal"] #sched>.calv{padding-bottom:84px}
-  body[data-view="agenda"] #sched,body[data-view="fixed"] #sched,body[data-view="deadline"] .layout .below{padding-bottom:84px!important}
+  body[data-view="agenda"] #sched,body[data-view="monthAgenda"] #sched,body[data-view="fixed"] #sched,body[data-view="deadline"] .layout .below{padding-bottom:84px!important}
   .tools #addBtn{bottom:calc(20px + env(safe-area-inset-bottom,0px))!important}
   .toast{bottom:calc(88px + env(safe-area-inset-bottom,0px))}
   .pwaBar{bottom:calc(16px + env(safe-area-inset-bottom,0px))}
@@ -4295,8 +4296,8 @@ html.dlg-open :is(.cell,.ag)::before,html.dlg-open :is(.cell,.ag)::after{animati
   #legend:not(:has(#lgroup>*)){display:none!important}
   #legend{padding:4px 8px!important;margin:0!important;min-height:0!important}
   .layout{row-gap:0!important}
-  body[data-view="agenda"] .agenda{padding-top:0!important}
-  body[data-view="agenda"] #sched{padding-top:0!important;margin-top:0!important}
+  body[data-view="agenda"] .agenda,body[data-view="monthAgenda"] .agenda{padding-top:0!important}
+  body[data-view="agenda"] #sched,body[data-view="monthAgenda"] #sched{padding-top:0!important;margin-top:0!important}
 }
 
 /* Tháng: ô ngày bo tròn như thẻ (không còn lưới vuông kẻ 1px), thẻ lịch bo tròn hơn */
@@ -4359,6 +4360,28 @@ body[data-view="cal"] #sched .mc.selday{outline:2px solid var(--accent);outline-
 /* Bảng: ô ngày Thứ Hai ở hàng ngày bị ép position:static nên lớp phủ bấm-chọn-cột (::after, inset:0) của nó bám theo thead và phủ kín cả hàng tiêu đề (837×64px): mọi lần bấm / nhấn giữ trên tiêu đề đều trúng Thứ Hai. relative = vẫn không ghim nhưng lớp phủ chỉ phủ đúng ô của nó. */
 body[data-view="table"] #sched .sheet tr.dd>th:first-child:not(.week-label){position:relative!important;left:auto!important;z-index:auto!important}
 body:has(.ci-pop) #selBar{display:none!important}   /* hộp thông tin Tháng đã có nút Sao chép; không để thanh nổi đè lên hộp */
+
+/* ===== OAuth Client ID: chế độ chỉ đọc mặc định, thao tác chỉnh sửa có chủ đích ===== */
+.gc-idbar{box-sizing:border-box;margin:0 0 12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--accent-soft) 35%,var(--surface));min-width:0}
+.gc-id-head{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;margin:0 0 9px}
+.gc-id-head>label{display:block;margin:0;font-size:12.5px;font-weight:700;color:var(--ink);line-height:1.3}
+.gc-id-actions{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex:0 0 auto}
+.gc-id-actions .btn{height:32px;padding:0 10px;justify-content:center;white-space:nowrap;font-size:12px}
+.gc-id-row{display:flex;align-items:center;gap:7px;min-width:0}
+.gc-id-row input{flex:1 1 240px;width:100%;min-width:0;height:38px!important;font:500 12.5px/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.01em}
+.gc-id-row input[readonly]{background:var(--line-soft);cursor:default;border-color:var(--line)}
+.gc-id-row input:not([readonly]){background:var(--surface);border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.gc-id-row .btn{flex:0 0 auto;height:38px;justify-content:center;white-space:nowrap}
+@media screen and (max-width:700px){
+  .gc-idbar{margin-bottom:10px;padding:10px;border-radius:10px}
+  .gc-id-head{align-items:center;gap:6px}
+  .gc-id-actions{gap:5px}
+  .gc-id-actions .btn{height:31px;padding:0 8px;font-size:11.5px}
+  .gc-id-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:7px}
+  .gc-id-row input{grid-column:1/-1;width:100%;font-size:16px!important}
+  .gc-id-row .btn{width:100%;padding:0 8px}
+}
+
 </style>
 </head>
 <body>
@@ -4637,8 +4660,21 @@ body:has(.ci-pop) #selBar{display:none!important}   /* hộp thông tin Tháng �
     <div class="acctSection">
       <button type="button" class="acctSectionSummary" aria-expanded="false">Google Calendar<span class="acctArrow" aria-hidden="true"></span></button>
       <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
-        <div class="fgrid"><label class="full">OAuth Client ID (Web)<input id="gcCid" placeholder="xxxx.apps.googleusercontent.com" autocomplete="off" spellcheck="false"></label>
-          <label class="cust"><input type="checkbox" id="gcColor" checked><span>Đồng bộ tag</span></label>
+        <div class="gc-idbar full">
+          <div class="gc-id-head">
+            <label for="gcCid">OAuth Client ID</label>
+            <div class="gc-id-actions">
+              <button type="button" class="btn" id="gcCidCopy" title="Sao chép Client ID">Sao chép</button>
+              <button type="button" class="btn" id="gcCidEdit" title="Cho phép chỉnh sửa Client ID">Chỉnh sửa</button>
+            </div>
+          </div>
+          <div class="gc-id-row">
+            <input id="gcCid" aria-label="OAuth Client ID" placeholder="xxxx.apps.googleusercontent.com" autocomplete="off" spellcheck="false" readonly aria-readonly="true">
+            <button type="button" class="btn primary" id="gcCidSave" title="Lưu Client ID lên tài khoản" hidden>Lưu</button>
+            <button type="button" class="btn" id="gcCidCancel" title="Hủy chỉnh sửa Client ID" hidden>Hủy</button>
+          </div>
+        </div>
+        <div class="fgrid"><label class="cust"><input type="checkbox" id="gcColor" checked><span>Đồng bộ tag</span></label>
           <label class="cust"><input type="checkbox" id="gcDl" checked><span>Đồng bộ deadline</span></label></div>
         <p class="hint" id="gcStatus">Chưa kết nối. Cài đặt được lưu theo TÀI KHOẢN: kết nối một lần thì mọi thiết bị đăng nhập cùng tài khoản đều tự đồng bộ (thiết bị mới có thể cần chạm vào trang một lần để Google cấp phiên đăng nhập). Sau khi kết nối, mỗi lần mở trang app tự đồng bộ lại. Lịch trong app sẽ được đẩy sang Google Calendar (tên + thời gian + tag + nhắc trước 1 giờ, và Google Meet nếu bạn bật); deadline cũng được đẩy sang nếu bạn bật. Sự kiện có sẵn trên Google khớp tên + giờ bắt đầu sẽ được liên kết, giữ nguyên mô tả/địa điểm/khách mời.</p>
         <div class="actions"><button type="button" class="btn" id="gcOff">Ngắt kết nối</button><span class="grow"></span><button type="button" class="btn primary" id="gcOn">Kết nối &amp; đồng bộ</button></div>
@@ -4653,7 +4689,7 @@ body:has(.ci-pop) #selBar{display:none!important}   /* hộp thông tin Tháng �
             <li><b>Tạo OAuth client.</b> Vào <b>Credentials</b> (hoặc <b>Clients</b>) → <b>Create credentials</b> / <b>Create client</b> → <b>OAuth client ID</b>. <b>Application type</b> chọn <b>Web application</b>, đặt tên bất kỳ.</li>
             <li><b>Điền Authorized JavaScript origins.</b> Bấm <b>Add URI</b> và dán đúng chuỗi sau, <b>không có dấu / ở cuối và không có đường dẫn phía sau</b>: <code id="gcOrigin">https://nhatminhgpt2008-spec.github.io</code><br>Nếu mở app trên máy bạn qua server cục bộ, thêm một dòng nữa, ví dụ <code>http://localhost:5500</code> (thay 5500 bằng cổng thật). Ô <b>Authorized redirect URIs</b> để trống. Bấm <b>Create</b>.</li>
             <li><b>Sao chép Client ID.</b> Hộp thoại “OAuth client created” hiện <b>Client ID</b> dạng <code>xxxx.apps.googleusercontent.com</code>, bấm biểu tượng copy. Không cần Client secret. Lỡ đóng hộp thoại thì mở lại <b>Credentials</b> → bấm tên client để xem.</li>
-            <li><b>Kết nối trong app.</b> Dán Client ID vào ô <b>OAuth Client ID (Web)</b> ở trên → bấm <b>Kết nối &amp; đồng bộ</b> → chọn đúng tài khoản Google. Google sẽ báo “Google hasn’t verified this app”: bấm <b>Advanced</b> → <b>Go to … (unsafe)</b> (bình thường với app cá nhân ở chế độ Testing) → tích quyền xem/sửa lịch → <b>Continue</b>.</li>
+            <li><b>Kết nối trong app.</b> Dán Client ID vào ô <b>OAuth Client ID</b> ở trên → bấm <b>Kết nối &amp; đồng bộ</b> → chọn đúng tài khoản Google. Google sẽ báo “Google hasn’t verified this app”: bấm <b>Advanced</b> → <b>Go to … (unsafe)</b> (bình thường với app cá nhân ở chế độ Testing) → tích quyền xem/sửa lịch → <b>Continue</b>.</li>
           </ol>
           <h5>Lỗi thường gặp</h5>
           <ul>
@@ -5841,8 +5877,8 @@ const FX_LBL = {
 const FX_SES = [['s','Sáng (00:00 - 11:29)'], ['r','Trưa (11:30 - 12:59)'], ['c','Chiều (13:00 - 17:59)'], ['t','Tối (18:00 - 23:59)'], ['x','Chưa có giờ']];
 let fxPop = null;
 let guideOpen = false;       // “Cách đọc thời khoá biểu”: mặc định đóng
-const VIEWS = ['table','agenda','cal','fixed','deadline'];   // 'deadline': trang Deadline riêng, chỉ có trên điện thoại (≤700px)
-const segKey = v => (v === 'agenda' || v === 'cal') ? 'table' : v;   // Bảng + Danh sách dùng chung một nút trên thanh chuyển trang
+const VIEWS = ['table','agenda','cal','monthAgenda','fixed','deadline'];   // 'deadline': trang Deadline riêng, chỉ có trên điện thoại (≤700px)
+const segKey = v => (v === 'agenda' || v === 'cal' || v === 'monthAgenda') ? 'table' : v;   // Bảng + Danh sách dùng chung một nút trên thanh chuyển trang
 let lastSched = null;   // chế độ lịch dùng gần nhất ('table' | 'agenda')
 const fixView = () => { if(state.view === 'now') state.view = 'agenda'; /* trang Công việc đã bỏ: dữ liệu giao diện cũ chuyển về Danh sách */ if(state.view === 'deadline' && innerWidth > 700) state.view = lastSched || ('table'); /* trang Deadline riêng chỉ dành cho điện thoại */ if(!VIEWS.includes(state.view)) state.view = 'table'; };
 
@@ -5967,8 +6003,8 @@ function weekOccs(ws){
 }
 /* deadline chưa hoàn thành có hạn chót rơi vào tuần đang xem */
 function weekDeadlines(){
-  const end = addDays(weekStart,6);
-  return state.todos.filter(t => t.due && t.due >= weekStart && t.due <= end)   /* gồm cả deadline đã hoàn thành */
+  const range = state.view === 'monthAgenda' ? calMonthBounds() : {from:weekStart, to:addDays(weekStart,6)};
+  return state.todos.filter(t => t.due && t.due >= range.from && t.due <= range.to)   /* gồm cả deadline đã hoàn thành; Tháng · Danh sách lấy toàn tháng */
     .sort((a,b) => (b.pin ? 1 : 0) - (a.pin ? 1 : 0) || (a.dueTime||'99:99').localeCompare(b.dueTime||'99:99') || String(a.text).localeCompare(String(b.text)));   // deadline ghim lên đầu trong ngày
 }
 const searchTextActive = () => !!String(qRaw[qScope] || '').trim();
@@ -6124,9 +6160,9 @@ function jumpToSearchResult(item){
     return;
   }
   tagSel.clear(); hiddenTypes.delete('__cancel'); hiddenTypes.delete('__conflict');
-  const keepCal=state.view==='cal';
-  state.view=keepCal?'cal':((state.view==='agenda'||state.view==='table')?state.view:(lastSched==='agenda'?'agenda':'table'));
-  if(keepCal) calDate=item.date; else weekStart=mondayOf(item.date);
+  const keepMonth=isMonthView(), priorView=state.view;
+  state.view=keepMonth?priorView:((state.view==='agenda'||state.view==='table')?state.view:(lastSched==='agenda'||lastSched==='monthAgenda'?'agenda':'table'));
+  if(keepMonth) calDate=item.date; else weekStart=mondayOf(item.date);
   saveUI(); render();
   requestAnimationFrame(()=>{ let el=$('#sched')?.querySelector(`[data-id="${CSS.escape(String(ev.id))}"][data-date="${CSS.escape(String(item.date))}"]`); if(!el) el=$('#sched')?.querySelector(`[data-id="${CSS.escape(String(ev.id))}"]`); if(el) qResultHighlight(el); else toast('Đã chuyển đến thời điểm của lịch, nhưng lịch có thể đang bị ẩn bởi điều kiện lặp hoặc trạng thái.'); });
 }
@@ -6140,6 +6176,8 @@ function calRange(){
   return {from, to, days:Array.from({length:n}, (_,i) => addDays(from,i))};
 }
 const calTitle = () => `Tháng ${+calDate.slice(5,7)}, ${calDate.slice(0,4)}`;
+const isMonthView = () => state.view === 'cal' || state.view === 'monthAgenda';
+function calMonthBounds(){ const first = calDate.slice(0,7) + '-01', d = parse(first); return {from:first, to:fmt(new Date(d.getFullYear(), d.getMonth()+1, 0))}; }
 function calShift(date, n){
   const d = parse(date), day = d.getDate();
   d.setDate(1); d.setMonth(d.getMonth() + n);
@@ -6150,13 +6188,22 @@ function setCal(date){ calDate = date; weekStart = mondayOf(date); render(); }
 function calGo(n){ setCal(calShift(calDate, n)); }
 function calGoWeek(date){ weekStart = mondayOf(date); if(state.view === 'table') render(); else switchView('table'); }   // bấm số ngày: sang Tuần (dạng Bảng) chứa ngày đó
 function setCalMode(m){
-  if(m === 'week'){ if(state.view === 'cal') weekStart = mondayOf(calDate); const back = (lastTA === 'agenda' || lastTA === 'table') ? lastTA : ('table'); if(state.view !== back) switchView(back); return; }   // từ Tháng về Tuần: quay lại đúng dạng đang dùng trước đó (Danh sách hoặc Bảng)
-  if(m !== 'month' || state.view === 'cal') return;
+  /* Trên PC, đổi phạm vi Tuần/Tháng luôn mở ở dạng Bảng.
+     Trên mobile giữ hành vi hiện tại để không làm thay đổi luồng menu đã có. */
+  const desktopDefaultTable = window.innerWidth > 700;
+  if(m === 'week'){
+    if(isMonthView()) weekStart = mondayOf(calDate);
+    const back = desktopDefaultTable ? 'table' : ((lastTA === 'agenda' || lastTA === 'table') ? lastTA : (state.view === 'monthAgenda' ? 'agenda' : 'table'));
+    if(state.view !== back) switchView(back);
+    return;
+  }
+  if(m !== 'month' || isMonthView()) return;
   calDate = mondayOf(todayStr()) === weekStart ? todayStr() : weekStart;
-  switchView('cal');
+  const target = desktopDefaultTable ? 'cal' : (state.view === 'agenda' ? 'monthAgenda' : 'cal');
+  switchView(target);
 }
 function syncCalUI(){
-  const isCal = state.view === 'cal';
+  const isCal = isMonthView();
   const L = isCal ? ['Tháng trước','Tháng sau','Về tháng này'] : ['Tuần trước','Tuần sau','Về tuần này'];
   const set = (el, t, k) => { el.title = t + (k ? ' (' + k + ')' : ''); el.setAttribute('aria-label', t); };
   set($('#prev'), L[0], '←'); set($('#next'), L[1], '→'); $('#todayBtn').title = L[2];
@@ -6202,7 +6249,7 @@ function updateWkChip(){
   if(v === 'fixed' || v === 'deadline'){ el.hidden = true; return; }   // 2 mục này không có điều hướng tuần
   const t0 = todayStr(), DAY = 864e5;
   let main, sub, off, unit, tip;
-  if(v === 'cal'){
+  if(v === 'cal' || v === 'monthAgenda'){
     const y = +calDate.slice(0,4), m = +calDate.slice(5,7), ty = +t0.slice(0,4), tm = +t0.slice(5,7);
     main = `<span class="wc-p">Tháng </span>${String(m).padStart(2,'0')}, ${y}`; sub = ''; unit = 'tháng'; off = (y*12 + m) - (ty*12 + tm);
     tip = `Tháng ${m}/${y}`;
@@ -6222,29 +6269,29 @@ function updateWkChip(){
 function render(){
   dropUpcoming();
   fixView();
-  if(state.view === 'cal') weekStart = mondayOf(calDate);
+  if(isMonthView()) weekStart = mondayOf(calDate);
   { const th0 = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light'; if(document.documentElement.dataset.theme !== th0) document.documentElement.dataset.theme = th0; }   // giao diện sáng/tối theo hệ thống (đã bỏ nút đổi tay)
   applyStatusColors();
   const end = addDays(weekStart,6);
   const fx = state.view === 'fixed';
   document.querySelector('.layout').classList.toggle('fx-on', fx);
-  document.querySelector('.layout').classList.toggle('ag-on', state.view === 'agenda' || state.view === 'deadline');   // Danh sách: mục Deadline kiểu mới thay thẻ Deadline cũ
+  document.querySelector('.layout').classList.toggle('ag-on', state.view === 'agenda' || state.view === 'monthAgenda' || state.view === 'deadline');   // Danh sách: mục Deadline kiểu mới thay thẻ Deadline cũ
   if(fx){
     $('#range').textContent = `${fixedSeries('other').length} lịch`;
   } else if(state.view === 'deadline'){ const n = state.todos.filter(t => !t.done).length; $('#range').textContent = n ? `${n} deadline chưa hoàn thành` : 'Không còn deadline nào'; }
-  else $('#range').textContent = state.view === 'cal' ? calTitle() : `${dmy(weekStart)}\u00a0–\u00a0${dmy(end)}`;
+  else $('#range').textContent = isMonthView() ? calTitle() : `${dmy(weekStart)}\u00a0–\u00a0${dmy(end)}`;
   document.querySelector('.nav').hidden = fx;
   if(state.view !== lastQView) lastQView = state.view;   // giữ nguyên phạm vi và từ khóa tìm kiếm khi chuyển Bảng / Danh sách / Lớp / Deadline
   document.body.dataset.view = state.view;
   document.body.classList.toggle('searching', searchTextActive());   // đang tìm: tắt kéo-thả đổi vị trí ở tab Lớp (thứ tự hiển thị lúc này là theo độ liên quan, không được lưu)   // để CSS biết đang ở mục nào (mobile ẩn chuông/giao diện/tài khoản ở mục Công việc, Lớp)
   updateWkChip();
-  if(document.activeElement !== $('#jump')) $('#jump').value = state.view === 'cal' ? calDate : weekStart;   /* đang gõ ngày bằng bàn phím thì không ghi đè giá trị */
+  if(document.activeElement !== $('#jump')) $('#jump').value = isMonthView() ? calDate : weekStart;   /* đang gõ ngày bằng bàn phím thì không ghi đè giá trị */
   document.querySelectorAll('#viewSeg button').forEach(b => b.classList.toggle('on', b.dataset.v === segKey(state.view)));
   syncModeBtn();
   updateSegIndicator();
 
   tagSelMigrate();
-  const all = state.view === 'cal' ? calRangeOccs() : weekOccs(weekStart);
+  const all = state.view === 'cal' ? calRangeOccs() : state.view === 'monthAgenda' ? calRangeOccs().filter(o => { const r = calMonthBounds(); return o.date >= r.from && o.date <= r.to; }) : weekOccs(weekStart);
   const occs0 = all.filter(o => {
     if(!tagOk(o)) return false;
     if(o.cancelled && hiddenTypes.has('__cancel')) return false;
@@ -6255,7 +6302,7 @@ function render(){
   const occs = !qActive ? occs0 : scopeHidesSchedule ? [] : occs0.filter(matches);   // Lịch = chỉ lịch; Deadline = chỉ deadline; Tất cả = cả hai
   renderLegend(all);
   $('#legend').hidden = fx;
-  $('#sched').innerHTML = scopeHidesSchedule ? `<div class="q-scope-empty"><b>Đang lọc Deadline</b><span>Mục này không nằm trong phạm vi tìm kiếm.</span></div>` : fx ? fixedHTML() : state.view === 'cal' ? calHTML(occs) : (state.view === 'agenda' || state.view === 'deadline') ? agendaHTML(occs) : tableHTML(occs);
+  $('#sched').innerHTML = scopeHidesSchedule ? `<div class="q-scope-empty"><b>Đang lọc Deadline</b><span>Mục này không nằm trong phạm vi tìm kiếm.</span></div>` : fx ? fixedHTML() : state.view === 'cal' ? calHTML(occs) : (state.view === 'agenda' || state.view === 'monthAgenda' || state.view === 'deadline') ? agendaHTML(occs) : tableHTML(occs);
   syncModeBtn();   // nút thu gọn/mở rộng được dựng bên trong ô góc trái của bảng tuần
   if(fx){ applyFxFilter('school'); applyFxFilter('other'); fxPopPlace(); } else closeFxPop();
   renderDlPanel();
@@ -6593,18 +6640,19 @@ function emHTML(o, parts){
   return seg.join('<span class="sp"> · </span>');
 }
 function agendaHTML(occs){
-  const today = todayStr();
+  const today = todayStr(), monthMode = state.view === 'monthAgenda';
+  const range = monthMode ? calMonthBounds() : {from:weekStart, to:addDays(weekStart,6)};
   calcNext();
   let html = '<div class="agenda">', shownDays = 0;
-  for(let i=0;i<7;i++){
-    const date = addDays(weekStart,i);
+  for(let date = range.from; date <= range.to; date = addDays(date,1)){
     const list = occs.filter(o => o.date === date).sort((a,b) => toMin(a.ev.start)-toMin(b.ev.start));
     if(query && !list.length && !shownDeadlines().some(t => t.due === date)) continue;   // đang tìm: bỏ hẳn ngày không có kết quả
     shownDays++;
-    html += `<div class="ad" data-date="${date}"><h3 title="Bấm để chọn cả ngày (rồi Ctrl+V để dán)">${DOW[i]}, ${dm(date)}${date===today?'<span class="tdy">Hôm nay</span>':''}</h3>`;
+    const weekday = DOW[wd(date)];
+    html += `<div class="ad" data-date="${date}"><h3 title="Bấm để chọn cả ngày (rồi Ctrl+V để dán)">${weekday}, ${dm(date)}${date===today?'<span class="tdy">Hôm nay</span>':''}</h3>`;
     const dls = shownDeadlines().filter(t => t.due === date);
     if(!list.length && !dls.length) html += '<div class="none">Không có lịch</div>';
-    const items = [...list.map(o => ({o, m:toMin(o.ev.start)})), ...dls.map(t => ({t, m:t.pin ? -1 : t.dueTime ? toMin(t.dueTime) : 1440}))].sort((a,b) => (query ? (b.t ? 0 : evScore(b.o.ev)) - (a.t ? 0 : evScore(a.o.ev)) : 0) || a.m - b.m);   // đang tìm: khớp nhất lên đầu ngày; deadline ghim lên đầu ngày;   // trùng giờ thì sự kiện đứng trước deadline
+    const items = [...list.map(o => ({o, m:toMin(o.ev.start)})), ...dls.map(t => ({t, m:t.pin ? -1 : t.dueTime ? toMin(t.dueTime) : 1440}))].sort((a,b) => (query ? (b.t ? 0 : evScore(b.o.ev)) - (a.t ? 0 : evScore(a.o.ev)) : 0) || a.m - b.m);   // đang tìm: khớp nhất lên đầu ngày; deadline ghim lên đầu ngày; trùng giờ thì sự kiện đứng trước deadline
     for(const it of items){
       if(it.t){ html += dlArticleHTML(it.t); continue; }
       const o = it.o, ev = o.ev;
@@ -6616,7 +6664,7 @@ function agendaHTML(occs){
     }
     html += '</div>';
   }
-  if(query && !shownDays) html += `<div class="none">Không có kết quả cho “${esc(rawQuery())}” trong tuần này</div>`;
+  if(query && !shownDays) html += `<div class="none">Không có kết quả cho “${esc(rawQuery())}” trong ${monthMode?'tháng này':'tuần này'}</div>`;
   return html + '</div>';
 }
 
@@ -7807,24 +7855,25 @@ function setWeek(ns){
   const dir = ns > weekStart ? 1 : ns < weekStart ? -1 : 0;   // ngày dạng YYYY-MM-DD nên so sánh chuỗi là đúng thứ tự thời gian
   weekStart = ns; render(); weekAnim(dir);
 }
-const go = n => { closeCalInfo(); return state.view === 'cal' ? calGo(n) : setWeek(addDays(weekStart, n*7)); };
+const go = n => { closeCalInfo(); return isMonthView() ? calGo(n) : setWeek(addDays(weekStart, n*7)); };
 const defDate = () => todayStr();   // ngày mặc định khi thêm lịch = ngày thực
 $('#prev').onclick = () => go(-1);
 $('#next').onclick = () => go(1);
-$('#todayBtn').onclick = () => { closeCalInfo(); if(state.view === 'cal'){
+$('#todayBtn').onclick = () => { closeCalInfo(); if(isMonthView()){
     /* Tháng trên mobile: lưới rộng ~233% nên cuộn ngang; render() dựng lại .calv → scrollLeft về 0 (cột Thứ Hai) rồi mới trượt tới ngày hôm nay.
        Cùng tháng: giữ nguyên vị trí cuộn cũ ngay sau khi dựng lại để ô hôm nay vẫn đang trong khung → scrollToNow đứng yên. */
-    const c0 = $('#sched .calv'), k = c0 ? {x: c0.scrollLeft, y: c0.scrollTop} : null, same = calDate.slice(0,7) === todayStr().slice(0,7);
+    const c0 = $('#sched .calv'), k = c0 ? {x: c0.scrollLeft, y: c0.scrollTop} : null, same = calDate.slice(0,7) === todayStr().slice(0,7), monthList = state.view === 'monthAgenda';
     setCal(todayStr());
     const c1 = $('#sched .calv'); if(k && same && c1){ c1.scrollLeft = k.x; c1.scrollTop = k.y; }
-    scrollToNow(false, false); return;
+    if(monthList) requestAnimationFrame(() => $('#sched .ad[data-date="' + todayStr() + '"]')?.scrollIntoView({block:'start',behavior:'smooth'})); else scrollToNow(false, false);
+    return;
   } setWeek(mondayOf(todayStr())); scrollToNow(false, false); };   // Tháng: về tháng hiện tại; Tuần: về tuần hiện tại, chỉ cuộn tới ô đang/sắp diễn ra, không nháy viền sáng
 $('#jump').onchange = e => {
   const v = e.target.value, y = +v.slice(0,4);
-  if(v && /^\d{4}-\d{2}-\d{2}$/.test(v) && y >= 1000){ state.view === 'cal' ? setCal(v) : setWeek(mondayOf(v)); }   /* bỏ qua giá trị năm đang gõ dở (0002, 0020, 0202…) */
+  if(v && /^\d{4}-\d{2}-\d{2}$/.test(v) && y >= 1000){ isMonthView() ? setCal(v) : setWeek(mondayOf(v)); }   /* bỏ qua giá trị năm đang gõ dở (0002, 0020, 0202…) */
 };
 /* (đã bỏ) vuốt ngang để đổi tuần/tháng: kéo mạnh tay dễ bị nhảy sang tuần/tháng khác — chỉ đổi bằng nút ‹ › */
-$('#jump').onblur = () => { $('#jump').value = state.view === 'cal' ? calDate : weekStart; };   /* rời ô thì đồng bộ lại về đầu tuần đang xem */
+$('#jump').onblur = () => { $('#jump').value = isMonthView() ? calDate : weekStart; };   /* rời ô thì đồng bộ lại về đầu tuần đang xem */
 /* Nút "Thêm" gộp: bấm mở menu nhỏ chọn Thêm lịch / Thêm deadline */
 const addMenu = $('#addMenu');
 document.body.appendChild(addMenu);   /* đưa ra ngoài thanh công cụ để không bị ràng buộc bởi bố cục/cuộn của header */
@@ -7946,7 +7995,7 @@ function switchView(target){
   if(target === state.view) return;
   const prevView = state.view;
   state.view = target; saveUI();
-  if(target === 'table' || target === 'agenda'){ lastSched = target; lastTA = target; } else if(target === 'cal') lastSched = 'cal';
+  if(target === 'table' || target === 'agenda'){ lastSched = target; lastTA = target; } else if(target === 'cal') lastSched = 'cal'; else if(target === 'monthAgenda'){ lastSched = 'monthAgenda'; lastTA = 'agenda'; }
   document.querySelectorAll('#viewSeg button').forEach(x => x.classList.toggle('on', x.dataset.v === segKey(target)));
   syncModeBtn();
   updateSegIndicator();   // trượt tab ngay lập tức, mượt, không chờ dựng lại nội dung
@@ -7965,15 +8014,15 @@ $('#viewSeg').onclick = e => {
   switchView(target);
 };
 function syncModeBtn(){   // W/M hiển thị chế độ hiện tại; bấm chuột để chuyển chế độ
-  const isCal = state.view === 'cal', cur = state.view === 'agenda' ? 'agenda' : 'table';
+  const isCal = isMonthView(), cur = (state.view === 'agenda' || state.view === 'monthAgenda') ? 'agenda' : 'table';
   const wm = $('#wmBtn'), ta = $('#taBtn'); if(!wm || !ta) return;
   wm.dataset.cur = isCal ? 'month' : 'week';
   wm.querySelector('.wm-l').textContent = isCal ? 'M' : 'W';
   const t1 = isCal ? 'Đang xem Tháng — bấm để sang Tuần' : 'Đang xem Tuần — bấm để sang Tháng';
   wm.title = t1; wm.setAttribute('aria-label', isCal ? 'Đang xem Tháng' : 'Đang xem Tuần');
   const noCal = state.view === 'deadline' || state.view === 'fixed';   // Deadline / Lớp: không có dạng Tuần/Tháng, Bảng/Danh sách
-  ta.dataset.cur = cur; ta.hidden = false; ta.disabled = isCal || noCal; wm.disabled = noCal;   // luôn hiện; dạng Tháng thì nút Bảng/Danh sách bị vô hiệu
-  const t2 = cur === 'table' ? 'Đang xem Bảng — bấm để sang Danh sách' : 'Đang xem Danh sách — bấm để sang Bảng';
+  ta.dataset.cur = cur; ta.hidden = false; ta.disabled = noCal; wm.disabled = noCal;   // tháng cũng cho đổi giữa Bảng lưới và Danh sách toàn tháng
+  const t2 = isCal ? (cur === 'table' ? 'Đang xem Tháng · Bảng — bấm để sang Tháng · Danh sách' : 'Đang xem Tháng · Danh sách — bấm để sang Tháng · Bảng') : (cur === 'table' ? 'Đang xem Bảng — bấm để sang Danh sách' : 'Đang xem Danh sách — bấm để sang Bảng');
   ta.title = t2; ta.setAttribute('aria-label', t2);
   const st = $('#stackToggle');
   if(st){ st.hidden = state.view !== 'table'; const on = !!state.tableStacked; st.setAttribute('aria-pressed', on);
@@ -7982,8 +8031,8 @@ function syncModeBtn(){   // W/M hiển thị chế độ hiện tại; bấm ch
     const t3 = on ? 'Đang thu gọn lịch — bấm để xếp theo khung giờ' : 'Đang xếp theo khung giờ — bấm để thu gọn lịch'; st.title = t3; st.setAttribute('aria-label', t3); }
   syncCalUI();
 }
-$('#wmBtn').onclick = () => setCalMode(state.view === 'cal' ? 'week' : 'month');
-$('#taBtn').onclick = () => { if(state.view !== 'cal') switchView(state.view === 'table' ? 'agenda' : 'table'); };
+$('#wmBtn').onclick = () => setCalMode(isMonthView() ? 'week' : 'month');
+$('#taBtn').onclick = () => { if(state.view === 'cal') switchView('monthAgenda'); else if(state.view === 'monthAgenda') switchView('cal'); else switchView(state.view === 'table' ? 'agenda' : 'table'); };
 
 $('#legend').onclick = e => {
   if(e.target.closest('#stackToggle')){ state.tableStacked = !state.tableStacked; saveUI(); render(); return; }
@@ -9421,7 +9470,7 @@ document.addEventListener('keydown', e => {
   } }
 { const chip=$('#wkChip'), j=$('#jump');   /* chip Tuần/Tháng = nút chọn ngày (đã gộp nút lịch) */
   if(chip && j){
-    const openJump = e => { e.preventDefault(); e.stopPropagation(); j.value = state.view === 'cal' ? calDate : weekStart; window.openDatePicker && window.openDatePicker(j, chip); };
+    const openJump = e => { e.preventDefault(); e.stopPropagation(); j.value = isMonthView() ? calDate : weekStart; window.openDatePicker && window.openDatePicker(j, chip); };
     const nav0 = document.querySelector('.top .nav'), mq = matchMedia('(max-width:700px)');   /* điện thoại: đưa chip vào hàng nav (thay chỗ nút lịch); máy tính: về lại vị trí cũ */
     const place = () => { const w = j.closest('.dpw'); if(!nav0 || !w) return; if(mq.matches){ if(chip.parentNode !== nav0) nav0.insertBefore(chip, w); } else if(chip.parentNode === nav0) nav0.after(chip); };
     place(); mq.addEventListener('change', place);
@@ -9613,10 +9662,11 @@ try{ if('scrollRestoration' in history) history.scrollRestoration = 'manual'; }c
 if(uiSaved){
   if(typeof uiSaved.view === 'string' && VIEWS.includes(uiSaved.view)) state.view = uiSaved.view;   // F5: giữ đúng dạng xem đang mở (Bảng / Danh sách / Tháng / Lớp / Deadline)
   else state.view = 'table';
-  if(state.view === 'table' || state.view === 'agenda' || state.view === 'cal') lastSched = state.view;
+  if(state.view === 'table' || state.view === 'agenda' || state.view === 'cal' || state.view === 'monthAgenda') lastSched = state.view;
   if(state.view === 'table' || state.view === 'agenda') lastTA = state.view;
-  if(['table','agenda','cal'].includes(uiSaved.ls)) lastSched = uiSaved.ls;
+  if(['table','agenda','cal','monthAgenda'].includes(uiSaved.ls)) lastSched = uiSaved.ls;
   if(['table','agenda'].includes(uiSaved.lta)) lastTA = uiSaved.lta;
+  if(state.view === 'monthAgenda' && !lastTA) lastTA = 'agenda';
   if(/^\d{4}-\d{2}-\d{2}$/.test(uiSaved.week)) weekStart = mondayOf(uiSaved.week);
   calDate = (/^\d{4}-\d{2}-\d{2}$/.test(uiSaved.cd) && mondayOf(uiSaved.cd) === weekStart) ? uiSaved.cd : weekStart;
   if(uiSaved.hv === 2 && Array.isArray(uiSaved.hid)){ hiddenTypes.clear(); uiSaved.hid.forEach(x => hiddenTypes.add(x)); }   // đã có trạng thái lưu: theo đúng lựa chọn lần trước (kể cả đã bật hiện Nghỉ)
@@ -9739,7 +9789,7 @@ function dlActBtns(t){   // 5 nút hành động của một deadline: xem trong
 }
 function renderDlPanel(){
   const el = document.getElementById('dlPanel'); if(!el) return;
-  const wrap = document.getElementById('dlNew'), show = state.view === 'agenda' || state.view === 'deadline';
+  const wrap = document.getElementById('dlNew'), show = state.view === 'agenda' || state.view === 'monthAgenda' || state.view === 'deadline';
   if(wrap && wrap.hidden === show) wrap.hidden = !show;   // chỉ ghi khi đổi (ghi lại cùng giá trị vẫn tạo bản ghi thay đổi cho các bộ quan sát DOM)
   if(!show) return;   // chỉ hiện ở Lịch › Danh sách
   const today = todayStr(), now = Date.now();
@@ -10683,17 +10733,61 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
     document.addEventListener('click',go,true); document.addEventListener('keydown',go,true);
   }
   /* (autoStart cũ đã thay bằng boot() ở dưới: chạy cho MỌI tài khoản đã đăng nhập, không chỉ máy đã tự bật) */
-  const sched=ms=>{ if(!on()) return; if(!(tok&&Date.now()<exp-60000)) armN=0; clearTimeout(timer); timer=setTimeout(()=>run(false),typeof ms==='number'?ms:4000); };   // token hết hạn: cho phép lần chạm kế tiếp tự kết nối lại để đẩy thay đổi sang Google
+  const sched=()=>{ if(!on()) return; if(!(tok&&Date.now()<exp-60000)) armN=0; clearTimeout(timer); timer=0; if(busy){ again=true; return; } void run(false); };   // đồng bộ ngay sau mỗi lần lưu; nếu đang chạy thì chạy lại ngay khi lượt hiện tại kết thúc
   const _save=save; save=function(){ const r=_save.apply(this,arguments); sched(); return r; };
   const _sd=saveDebounced; saveDebounced=function(){ const r=_sd.apply(this,arguments); sched(); return r; };   // mọi thay đổi lịch đều đi qua save()
   const _rs=restoreSnapshot; restoreSnapshot=function(){ const r=_rs.apply(this,arguments); if(on()){ clearTimeout(timer); if(tok&&Date.now()<exp-60000) run(false); else run('auto'); } return r; };   // undo/redo: đồng bộ NGAY (không chờ); token hết hạn thì tự kết nối lại ngay trong cú bấm để trình duyệt không chặn   // Hoàn tác / Làm lại cũng đồng bộ sang Google (xoá rồi hoàn tác → sự kiện được tạo lại)
   window.gcalApi={connected:()=>!!on(), auth:()=>auth(true), now:()=>run(false)};   // dùng cho nút “Tạo Google Meet” trong form lịch
   { const o=$g('gcOrigin'); if(o&&/^https?:$/.test(location.protocol)) o.textContent=location.origin; }   // hiện đúng origin của trang đang mở để dán
+  let cidEditing=false, cidBeforeEdit='';
+  const cidInput=$g('gcCid');
+  function setCidEditing(enabled){
+    cidEditing=!!enabled;
+    if(!cidInput) return;
+    if(cidEditing){ cidBeforeEdit=String(cidInput.value||''); }
+    cidInput.readOnly=!cidEditing;
+    cidInput.setAttribute('aria-readonly',String(!cidEditing));
+    const edit=$g('gcCidEdit'), save=$g('gcCidSave'), cancel=$g('gcCidCancel');
+    if(edit) edit.hidden=cidEditing;
+    if(save) save.hidden=!cidEditing;
+    if(cancel) cancel.hidden=!cidEditing;
+    if(cidEditing){ cidInput.focus(); cidInput.select(); }
+  }
   function fillUI(){
     const c=$g('gcCid'), cc=$g('gcColor'), cd=$g('gcDl');
-    if(c&&document.activeElement!==c) c.value=cidOf();
+    if(c&&!cidEditing&&document.activeElement!==c) c.value=cidOf();
     if(cc) cc.checked=COLOR_ON(); if(cd) cd.checked=DL_ON();
   }
+  function saveClientId(quiet){
+    const c=$g('gcCid'), v=String(c&&c.value||'').trim();
+    if(!v){ if(!quiet) say('Hãy dán OAuth Client ID trước khi lưu.'); return false; }
+    if(!/^[A-Za-z0-9_-]+\.apps\.googleusercontent\.com$/.test(v)){ say('Client ID chưa đúng định dạng (…apps.googleusercontent.com).'); return false; }
+    if(v!==cidOf()){
+      setG({cid:v});
+      tok=null; exp=0; tokMe='';
+      say(on() ? 'Đã lưu Client ID theo tài khoản. Bấm “Kết nối & đồng bộ” để cấp quyền lại bằng mã mới.' : 'Đã lưu Client ID theo tài khoản app; mã sẽ xuất hiện trên các thiết bị đăng nhập cùng tài khoản.');
+    } else if(!quiet) say('Client ID đã được lưu theo tài khoản app.');
+    return true;
+  }
+  $g('gcCidEdit')&&($g('gcCidEdit').onclick=()=>setCidEditing(true));
+  $g('gcCidSave')&&($g('gcCidSave').onclick=()=>{ if(saveClientId(false)) setCidEditing(false); });
+  $g('gcCidCancel')&&($g('gcCidCancel').onclick=()=>{ if(cidInput) cidInput.value=cidBeforeEdit; setCidEditing(false); });
+  if(cidInput){
+    cidInput.addEventListener('keydown',e=>{
+      if(e.key==='Enter'&&cidEditing){ e.preventDefault(); if(saveClientId(false)) setCidEditing(false); }
+      else if(e.key==='Escape'&&cidEditing){ e.preventDefault(); cidInput.value=cidBeforeEdit; setCidEditing(false); }
+    });
+  }
+  $g('gcCidCopy')&&($g('gcCidCopy').onclick=async()=>{
+    const c=$g('gcCid'), v=String(c&&c.value||cidOf()).trim();
+    if(!v){ say('Chưa có Client ID để sao chép.'); return; }
+    try{ if(navigator.clipboard&&navigator.clipboard.writeText) await navigator.clipboard.writeText(v); else throw new Error('clipboard unavailable'); }
+    catch(e){
+      const t=document.createElement('textarea'); t.value=v; t.setAttribute('readonly',''); t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select();
+      const ok=document.execCommand('copy'); t.remove(); if(!ok){ say('Không thể sao chép tự động. Hãy chọn và sao chép mã trong ô.'); return; }
+    }
+    say('Đã sao chép OAuth Client ID.');
+  });
   /* Máy đã từng kết nối theo kiểu cũ (lưu trong localStorage) → chuyển MỘT lần lên tài khoản, chỉ khi tài khoản chưa có cài đặt nào */
   function adoptLegacy(){ try{
     if(LS.getItem('gcal_migrated')==='1') return; LS.setItem('gcal_migrated','1');
@@ -10715,7 +10809,7 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
     if(cc) cc.onchange=()=>{ setG({color:cc.checked}); sched(); };
     if(cd) cd.onchange=()=>{ setG({dl:cd.checked}); sched(); }; }
   fillUI();
-  $g('gcOn')&&($g('gcOn').onclick=()=>{ const c=$g('gcCid'), v=c.value.trim(); if(!/\.apps\.googleusercontent\.com$/.test(v)){ say('Client ID chưa đúng định dạng (…apps.googleusercontent.com).'); return; }
+  $g('gcOn')&&($g('gcOn').onclick=()=>{ if(cidEditing){ if(!saveClientId(false)) return; setCidEditing(false); } const c=$g('gcCid'), v=c.value.trim(); if(!/\.apps\.googleusercontent\.com$/.test(v)){ say('Client ID chưa đúng định dạng (…apps.googleusercontent.com).'); return; }
     const cc=$g('gcColor'), cd=$g('gcDl'); setG({cid:v,on:true,color:cc?cc.checked:true,dl:cd?cd.checked:true}); LS.removeItem('gcal_noconf'); tok=null; run(true); });
   $g('gcOff')&&($g('gcOff').onclick=()=>{ setG({on:false}); if(tok&&window.google&&google.accounts) try{ google.accounts.oauth2.revoke(tok); }catch(e){} tok=null; exp=0; say('Đã ngắt kết nối cho tài khoản này (mọi thiết bị). Sự kiện đã tạo trên Google được giữ nguyên.'); });
 }catch(e){ console.error('gcal',e); }})();
@@ -10745,8 +10839,9 @@ var ic={
  fixed:'<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M4 9.5h16M4 14.5h16M12 4v16"/></svg>',
  week:'<svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M8 4v16M12 4v16M16 4v16"/></svg>',
  month:'<svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M3.5 9.3h17M3.5 14.6h17M9.2 4v16M14.8 4v16"/></svg>',
- agenda:'<svg viewBox="0 0 24 24"><path d="M9 6.5h11M9 12h11M9 17.5h11"/><path d="M4.5 6.5h.01M4.5 12h.01M4.5 17.5h.01"/></svg>'};
-var items=[['week','Tuần · Bảng'],['agenda','Tuần · Danh sách'],['month','Tháng'],'-',['table','Lịch'],['deadline','Deadline'],['fixed','Lớp']];   /* nút Bảng/Danh sách trên thanh trên cùng (điện thoại) đã chuyển vào đây */
+ agenda:'<svg viewBox="0 0 24 24"><path d="M9 6.5h11M9 12h11M9 17.5h11"/><path d="M4.5 6.5h.01M4.5 12h.01M4.5 17.5h.01"/></svg>',
+ monthAgenda:'<svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M3.5 9.3h17M8 4v5.3M9 13h10M9 16.5h7"/></svg>'};
+var items=[['week','Tuần · Bảng'],['agenda','Tuần · Danh sách'],['month','Tháng · Bảng'],['monthAgenda','Tháng · Danh sách'],'-',['table','Lịch'],['deadline','Deadline'],['fixed','Lớp']];   /* nút Bảng/Danh sách trên thanh trên cùng (điện thoại) đã chuyển vào đây */
 var d=document.createElement('nav'); d.id='gDrawer'; d.setAttribute('aria-label','Menu'); d.setAttribute('role','dialog');
 d.innerHTML='<h2>Lịch trình</h2>'+items.map(function(i){return i==='-'?'<hr>':'<button type="button" class="gdi" data-g="'+i[0]+'">'+ic[i[0]]+'<span>'+i[1]+'</span></button>';}).join('');
 var sc=document.createElement('div'); sc.id='gScrim';
@@ -10754,9 +10849,12 @@ document.body.appendChild(sc); document.body.appendChild(d);
 var wm=function(){return $('#wmBtn');};
 function sync(){
  var on=$('#viewSeg button.on'), v=on?on.dataset.v:'table', cal=document.body.dataset.view==='cal', tbl=v==='table';
- d.querySelectorAll('.gdi').forEach(function(b){var g=b.dataset.g,a=false;
-  if(g==='table'||g==='deadline'||g==='fixed')a=(g===v);
-  else{ var sv=(typeof state!=='undefined'&&state.view)||document.body.dataset.view; a=tbl&&(g==='month'?sv==='cal':g==='agenda'?sv==='agenda':(sv!=='cal'&&sv!=='agenda')); }
+ d.querySelectorAll('.gdi').forEach(function(b){var g=b.dataset.g,a=false,sv=(typeof state!=='undefined'&&state.view)||document.body.dataset.view;
+  if(g==='table'||g==='deadline'||g==='fixed') a=(g===v);
+  else if(g==='week') a=(sv==='table');
+  else if(g==='agenda') a=(sv==='agenda');
+  else if(g==='month') a=(sv==='cal');
+  else if(g==='monthAgenda') a=(sv==='monthAgenda');
   b.classList.toggle('on',a); b.setAttribute('aria-current',a?'true':'false');});
  var t=$('#gdTitle'); if(t)t.textContent=v==='deadline'?'Deadline':v==='fixed'?'Lớp':'';
 }
@@ -10769,12 +10867,16 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&document.b
 d.addEventListener('click',function(e){
  var b=e.target.closest('.gdi'); if(!b)return; var g=b.dataset.g;
  if(g==='table'||g==='deadline'||g==='fixed'){ var s=$('#viewSeg button[data-v="'+g+'"]'); if(s)s.click(); }
- else if(g==='week'||g==='agenda'){   /* Tuần · Bảng / Tuần · Danh sách (thay cho nút Bảng/Danh sách trên thanh trên) */
+ else if(g==='week'||g==='agenda'){   /* Chọn rõ kiểu hiển thị Tuần, kể cả khi đang ở một trong hai dạng Tháng */
   var want=g==='agenda'?'agenda':'table';
-  if(state.view==='cal')setCalMode('week');   /* từ Tháng về Tuần giữ đúng tuần đang xem */
+  if(state.view==='cal'||state.view==='monthAgenda') weekStart=mondayOf(calDate);
   if(state.view!==want)switchView(want); }
- else{ var cur=$('#viewSeg button.on'); if(!cur||cur.dataset.v!=='table'){ var s2=$('#viewSeg button[data-v="table"]'); if(s2)s2.click(); }
-  var w=wm(), isM=document.body.dataset.view==='cal'; if(w&&!w.disabled&&((g==='month')!==isM))w.click(); }
+ else if(g==='month'||g==='monthAgenda'){   /* Chọn rõ kiểu hiển thị Tháng */
+  if(state.view!=='cal'&&state.view!=='monthAgenda') calDate=mondayOf(todayStr())===weekStart?todayStr():weekStart;
+  var wantMonth=g==='monthAgenda'?'monthAgenda':'cal';
+  if(state.view!==wantMonth)switchView(wantMonth);
+ }
+ else { var cur=$('#viewSeg button.on'); if(!cur||cur.dataset.v!=='table'){ var s2=$('#viewSeg button[data-v="table"]'); if(s2)s2.click(); } }
  open(false);
 });
 new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:['data-view']}); sync();
