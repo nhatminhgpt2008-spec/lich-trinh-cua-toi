@@ -4135,7 +4135,7 @@ html.dlg-open :is(.cell,.ag)::before,html.dlg-open :is(.cell,.ag)::after{animati
   .sheet .tl{font-size:11px;color:var(--muted);font-weight:500}
   .sheet td.slot,.sheet td.dls,.sheet td.dlc{border-color:var(--line-soft)!important}
   /* sự kiện: bo nhỏ, nền nhạt theo màu tag + vạch màu bên trái, chữ căn trái */
-  .cell,.dlcell{text-align:left!important}
+  .cell,.dlcell{text-align:center!important}   /* ô lịch và ô Deadline: nội dung căn giữa (trước đây ô lịch bị căn trái trên điện thoại) */   /* ô Deadline: nội dung căn giữa (tiêu đề, giờ, nút liên kết) */
   .cell{border-radius:6px!important}
   .cell:not(.live):not(.next):not(.c-cancel):not(.conflict):not(.nofill){background:color-mix(in srgb,var(--cc) 20%,var(--surface))!important;box-shadow:none!important;border-left:4px solid var(--cc)!important;padding-left:6px}
   .mchip{border-radius:4px!important}
@@ -4309,6 +4309,56 @@ body[data-view="cal"] #sched .mchip{border-radius:9px!important}
   body[data-view="cal"] #sched .mgrid{gap:4px;padding:4px}
   body[data-view="cal"] #sched .mc{border-radius:12px}
 }
+
+/* Trang đăng nhập: mobile giống hệt PC — thẻ nổi (viền, bo 24px, đổ bóng) trên nền gradient, cùng hiệu ứng trượt/phóng khi vào (trước đây mobile là thẻ phủ kín màn hình nên hiệu ứng vào bị kéo cả màn hình).
+   Thẻ nằm GIỮA màn hình; chiều cao thẻ được giữ bằng nhau ở tab Đăng nhập và Đăng ký (JS đo) nên logo và nút Đăng nhập / Đăng ký vẫn đứng yên khi chuyển tab. */
+#authGate{align-items:flex-start!important;justify-content:center!important;padding:24px!important}
+.authGateCard{display:block!important;width:100%!important;max-width:400px!important;min-height:0!important;margin:auto!important;padding:26px 24px!important;border:1px solid var(--line-soft)!important;border-radius:24px!important;box-shadow:var(--sh-3)!important}
+.authBackBtn{top:16px!important}
+@media screen and (max-width:700px){
+  #authGate{padding:calc(12px + env(safe-area-inset-top,0px)) 14px calc(12px + env(safe-area-inset-bottom,0px))!important}
+  .authGateCard{padding:24px 20px!important}
+}
+/* viên nền của Đăng nhập / Đăng ký phủ trọn ô đang chọn */
+#authSeg{padding:0}
+#authSeg .seg-ind{top:0;bottom:0;height:auto;left:0;border-radius:calc(var(--r-ctl,10px) - 1px);box-shadow:none;background:color-mix(in srgb,var(--accent) 16%,var(--surface));outline:1.5px solid color-mix(in srgb,var(--accent) 55%,transparent);outline-offset:-1.5px}
+/* Điện thoại: bỏ nút chuyển Bảng/Danh sách khỏi thanh trên cùng — đã nằm trong menu ☰ (Tuần · Bảng / Tuần · Danh sách) */
+@media screen and (max-width:700px){ body .top #taBtn{display:none!important} }
+/* ===== Mobile: chọn ô / chọn cột / sao chép / dán ===== */
+@media (hover:none),(pointer:coarse){
+  #sched .cell,#sched .ag,#sched .ce,#sched .sheet th[data-col],#sched .ad>h3{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+}
+#selBar{position:fixed;z-index:910;left:12px;right:84px;bottom:calc(16px + env(safe-area-inset-bottom,0px));display:none;align-items:center;gap:6px;padding:6px 6px 6px 12px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);box-shadow:0 8px 24px rgba(0,0,0,.28);font-size:13px}
+#selBar.on{display:flex}
+#selBar .sbt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#selBar button{flex:none;height:36px;padding:0 12px;border:0;border-radius:10px;background:var(--accent-soft);color:var(--ink);font-weight:600;font-size:13px}
+#selBar button.pri{background:var(--accent);color:var(--accent-ink,#fff)}
+#selBar button.x{padding:0 10px;background:none;color:var(--muted)}
+#selBar button:disabled{opacity:.4}
+@media print{#selBar{display:none!important}}
+/* ===== Tháng (mobile): hàng Thứ ghim cố định, không dịch / không lộ ô khi cuộn; xoay ngang cuộn hết được ===== */
+body[data-view="cal"] #sched .mgrid{padding-top:0!important}
+body[data-view="cal"] #sched .mh{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--line-soft) 70%,var(--surface));background-clip:padding-box;border-top:5px solid var(--surface);box-shadow:0 0 0 5px var(--surface)!important}   /* viền trên thay cho lề trên của lưới (hàng ghim không còn nhích 5px); bóng đặc phủ kín khe giữa các ô tiêu đề và khe bên dưới → ô lịch cuộn qua không lòi ra */
+@media screen and (max-width:700px){
+  body[data-view="cal"] #sched .mh{border-top-width:4px;box-shadow:0 0 0 4px var(--surface)!important}
+}
+body[data-view="cal"] #sched .mc.selday{outline:2px solid var(--accent);outline-offset:-2px}
+@media (min-width:701px) and (max-height:520px) and (pointer:coarse){
+  /* điện thoại xoay ngang: trang đứng yên, chỉ khung lịch cuộn bên trong (trước đây .app cao tối thiểu 700px nên trang và khung lịch cuộn riêng, không kéo xuống hết được) */
+  html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+  body[data-view="table"] .app,body[data-view="cal"] .app{display:flex!important;flex-direction:column;height:100vh!important;height:100dvh!important;min-height:0!important;overflow:clip;padding-top:0;padding-bottom:0}
+  body[data-view="table"] .app>*,body[data-view="cal"] .app>*{flex:none}
+  body[data-view="table"] .app>.layout,body[data-view="cal"] .app>.layout{flex:1 1 auto;min-height:0;display:flex!important;flex-direction:column;overflow:clip}
+  body[data-view="table"] .layout main,body[data-view="cal"] .layout main{display:contents!important}
+  body[data-view="table"] .layout .legend,body[data-view="cal"] .layout .legend{flex:none}
+  body[data-view="table"] #sched,body[data-view="cal"] #sched{flex:1 1 auto;min-height:0;height:auto!important;display:flex;flex-direction:column;overflow:hidden}
+  body[data-view="table"] #sched>.scroller,body[data-view="cal"] #sched>.calv{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:84px}
+  body[data-view="table"] .layout .below,body[data-view="cal"] .layout .below{display:none}
+}
+.ci-actions [data-ci=copy][hidden]{display:none}
+/* Bảng: ô ngày Thứ Hai ở hàng ngày bị ép position:static nên lớp phủ bấm-chọn-cột (::after, inset:0) của nó bám theo thead và phủ kín cả hàng tiêu đề (837×64px): mọi lần bấm / nhấn giữ trên tiêu đề đều trúng Thứ Hai. relative = vẫn không ghim nhưng lớp phủ chỉ phủ đúng ô của nó. */
+body[data-view="table"] #sched .sheet tr.dd>th:first-child:not(.week-label){position:relative!important;left:auto!important;z-index:auto!important}
+body:has(.ci-pop) #selBar{display:none!important}   /* hộp thông tin Tháng đã có nút Sao chép; không để thanh nổi đè lên hộp */
 </style>
 </head>
 <body>
@@ -5544,6 +5594,33 @@ function setAuthMode(m){
   document.getElementById('authBrandRow').hidden = m === 'reset';
   document.getElementById('authResetHead').hidden = m !== 'reset';
 }
+/* Giữ chiều cao thẻ đăng nhập bằng nhau ở hai tab (lấy theo tab cao hơn) để thẻ nằm giữa màn hình mà logo và nút Đăng nhập / Đăng ký không dịch chuyển khi chuyển tab */
+const _setAuthModeRaw = setAuthMode;
+let authCardH = 0;
+function measureAuthCard(){
+  const card = document.querySelector('#authGate .authGateCard'), gate = document.getElementById('authGate');
+  if(!card || !gate || !gate.getClientRects().length || authMode === 'reset') return;
+  const prev = authMode, err = document.getElementById('authErr').textContent;
+  card.style.minHeight = '';
+  let h = 0;
+  ['login', 'register'].forEach(m => { _setAuthModeRaw(m); h = Math.max(h, card.offsetHeight); });
+  _setAuthModeRaw(prev);
+  document.getElementById('authErr').textContent = err;
+  authCardH = h;
+  card.style.minHeight = h + 'px';
+}
+setAuthMode = function(m){
+  _setAuthModeRaw(m);
+  const card = document.querySelector('#authGate .authGateCard');
+  if(card) card.style.minHeight = (m === 'reset' || !authCardH) ? '' : authCardH + 'px';
+};
+{
+  let t = 0; const later = () => { clearTimeout(t); t = setTimeout(measureAuthCard, 60); };
+  addEventListener('resize', later); addEventListener('load', later);
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(later);
+  new MutationObserver(later).observe(document.body, {attributes:true, attributeFilter:['class']});   // trang đăng nhập vừa hiện ra (body.gate)
+  later();
+}
 function authSwap(){ ['#authGate .fgrid', '#authBrandRow', '#authResetHead'].forEach(q => { const e = document.querySelector(q); if(!e) return; e.classList.remove('sched-swap'); void e.offsetWidth; e.classList.add('sched-swap'); }); }   // hiệu ứng đổi giữa Đăng nhập / Đăng ký / Quên mật khẩu
 document.getElementById('authBack').addEventListener('click', () => { setAuthMode('login'); authSwap(); });
 function openAuth(mode){
@@ -6218,7 +6295,7 @@ document.addEventListener('click', e => {
 /* trượt "viên nền" bên trong một nhóm nút kiểu .seg (Bảng/Danh sách/Lớp, hay Đăng nhập/Đăng ký)
    tới đúng nút đang chọn — dùng transform (translateX + scaleX) thay vì đổi width/left để
    trình duyệt chạy trên compositor, không phải tính lại layout mỗi khung hình -> hết khựng */
-function makeSegIndicator(segId, indId){
+function makeSegIndicator(segId, indId, exact){
   let ready = false;
   const fn = function(){
     const seg = document.getElementById(segId), ind = document.getElementById(indId);
@@ -6226,7 +6303,8 @@ function makeSegIndicator(segId, indId){
     if(!seg || !ind || !btn) return;
     if(!seg.getClientRects().length) return;   // ẩn thật (display:none) thì không đo; KHÔNG dùng offsetParent vì thanh tab dưới đáy trên mobile là position:fixed (offsetParent luôn null) → viên nền trượt không bao giờ chạy   // đang bị ẩn (vd: chưa đăng nhập xong / chưa đăng xuất xong) — chưa đo được kích thước thật, bỏ qua, đợi lần gọi sau khi đã hiện ra
     if(!ready){ ind.style.transition = 'none'; }   // lần đầu (khi đã hiện ra): đặt đúng vị trí ngay, không trượt từ góc trái
-    ind.style.transform = `translateX(${btn.offsetLeft}px) scaleX(${btn.offsetWidth})`;
+    if(exact){ ind.style.width = btn.offsetWidth + 'px'; ind.style.transform = `translateX(${btn.offsetLeft}px)`; }   // viên nền phủ ĐÚNG hết ô (scaleX làm méo viền/bóng nên trước đây nhìn như không phủ hết)
+    else ind.style.transform = `translateX(${btn.offsetLeft}px) scaleX(${btn.offsetWidth})`;
     if(!ready){ void ind.offsetWidth; ind.style.transition = ''; ready = true; }
   };
   fn.snap = () => { ready = false; fn(); };   // đặt lại đúng vị trí NGAY, không trượt (dùng khi font tải xong / bề rộng nút đổi)
@@ -6235,7 +6313,7 @@ function makeSegIndicator(segId, indId){
   return fn;
 }
 const updateSegIndicator = makeSegIndicator('viewSeg', 'viewSegInd');
-const updateAuthSegIndicator = makeSegIndicator('authSeg', 'authSegInd');
+const updateAuthSegIndicator = makeSegIndicator('authSeg', 'authSegInd', true);
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { document.querySelectorAll('.tabInd').forEach(i => { delete i.dataset.r; }); updateSegIndicator.snap(); updateAuthSegIndicator.snap(); positionNpTabInd(null); });
 addEventListener('load', () => { updateSegIndicator.snap(); updateAuthSegIndicator.snap(); }, {once:true});   // font tải xong làm đổi bề rộng nút: đặt lại vị trí không hiệu ứng
 let _rzRaf = 0;
@@ -8000,20 +8078,28 @@ function openCalInfo(chip){
     pop._ctx = built.ctx; calInfoKey = key; calInfoRef = calInfoRefOf(chip); calInfoSave();
     const tagSlot = pop.querySelector('.ci-tag-slot');
     if(tagSlot) tagSlot.innerHTML = built.badge || '';
+    const cpb = pop.querySelector('[data-ci=copy]'); if(cpb) cpb.hidden = !!built.ctx.todo;
     const bd = pop.querySelector('.ci-body');
     bd.innerHTML = built.body; bd.scrollTop = 0;
     bd.classList.remove('swap'); void bd.offsetWidth; bd.classList.add('swap');
     calInfoPlace(pop, chip);
     return;
   }
-  const ICO = {edit:ico('edit', 18), del:ico('trash', 18), x:'×'};   // dùng bộ icon có sẵn của trang (✎ / thùng rác) và dấu × như các hộp thoại
+  const ICO = {edit:ico('edit', 18), del:ico('trash', 18), x:'×', copy:'<svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6.5A2.5 2.5 0 0 1 7.5 4H15"/></svg>'};   // dùng bộ icon có sẵn của trang (✎ / thùng rác) và dấu × như các hộp thoại
   const pop = document.createElement('div');
   pop.className = 'ci-pop'; pop.setAttribute('role', 'dialog'); pop.setAttribute('aria-label', 'Thông tin');
   pop._ctx = built.ctx;
-  pop.innerHTML = `<div class="ci-bar"><div class="ci-tag-slot">${built.badge || ''}</div><div class="ci-actions"><button type="button" data-ci="edit" title="Chỉnh sửa" aria-label="Chỉnh sửa">${ICO.edit}</button><button type="button" class="danger" data-ci="del" title="Xóa" aria-label="Xóa">${ICO.del}</button><button type="button" data-ci="x" title="Đóng" aria-label="Đóng">${ICO.x}</button></div></div><div class="ci-body">${built.body}</div>`;
+  pop.innerHTML = `<div class="ci-bar"><div class="ci-tag-slot">${built.badge || ''}</div><div class="ci-actions"><button type="button" data-ci="copy" title="Sao chép" aria-label="Sao chép"${built.ctx.todo ? ' hidden' : ''}>${ICO.copy}</button><button type="button" data-ci="edit" title="Chỉnh sửa" aria-label="Chỉnh sửa">${ICO.edit}</button><button type="button" class="danger" data-ci="del" title="Xóa" aria-label="Xóa">${ICO.del}</button><button type="button" data-ci="x" title="Đóng" aria-label="Đóng">${ICO.x}</button></div></div><div class="ci-body">${built.body}</div>`;
   pop.addEventListener('click', async e => {
     const b = e.target.closest('button[data-ci]'); if(!b) return;
     const act = b.dataset.ci, ctx = pop._ctx;
+    if(act === 'copy'){   // sao chép ô đang xem (hộp giữ nguyên để còn đóng / sửa); dán bằng cách chọn ngày rồi bấm Dán
+      if(ctx.todo) return;
+      const q = v => String(v).replace(/["\\]/g, '');
+      const src = document.querySelector(`#sched [data-id="${q(ctx.id)}"][data-date="${q(ctx.date)}"]${ctx.slot ? `[data-s="${q(ctx.slot.start)}"]` : ''}`);
+      if(src) copyCellEl(src);
+      return;
+    }
     closeCalInfo(act !== 'x');
     if(act === 'edit'){ if(ctx.todo) openTodo(ctx.todo); else openModal(ctx.id, ctx.date, undefined, ctx.slot); }
     else if(act === 'del'){
@@ -8049,6 +8135,7 @@ function onSchedClick(target){
     return;
   }
   const eb = target.closest('[data-edit]'); if(eb && eb.parentElement) return editCell(eb.parentElement);
+  const ah = target.closest('.ad[data-date] > h3'); if(ah) return selectCol(ah.parentElement.dataset.date);   // Danh sách: bấm tiêu đề ngày để chọn cả ngày
   const ch = target.closest('.sheet .dn th[data-col]'); if(ch) return selectCol(ch.dataset.col);   // chỉ bấm ô thứ mới chọn cả cột
   const dl = target.closest('[data-todo]'); if(dl && state.view === 'cal' && dl.classList.contains('mchip')) return openCalInfo(dl);   // dạng Tháng: hiện hộp thông tin, sửa / xóa bằng biểu tượng
   if(dl) return dl.querySelector(':scope>.editb') ? clearSel() : openTodo(dl.dataset.todo);   // ô deadline ở Lịch: bấm vào không chọn ô (chỉ bấm ✎ để sửa)
@@ -8108,8 +8195,12 @@ $('#sched').addEventListener('click', e => {
   const t = e.target;
   const gd = t.closest('[data-goday]');
   if(gd){ calGoWeek(gd.dataset.goday); return; }   // bấm số ngày / "+N nữa" → sang Tuần (dạng Bảng) chứa ngày đó
-  if(state.view !== 'cal' || t.closest('[data-id],[data-todo],a')) return;
-  // dạng Tháng: bấm vào khoảng trống của ô ngày không làm gì (chỉ bấm số ngày hoặc ô lịch mới có tác dụng)
+  if(state.view !== 'cal' || t.closest('a')) return;
+  const chip = t.closest('.mchip[data-id]');
+  if(chip){ selectCell(chip); return; }   // dạng Tháng: bấm ô lịch vừa mở hộp thông tin vừa chọn ô → Sao chép / Dán dùng được ngay
+  if(t.closest('[data-id],[data-todo],button')) { if(t.closest('[data-todo]')) clearSel(); return; }
+  const mc = t.closest('.mc[data-date]');   // dạng Tháng: bấm khoảng trống của ô ngày để chọn cả ngày (bấm lại để bỏ chọn); số ngày vẫn là nút sang Tuần
+  if(mc) return (selCell && selCell.col === mc.dataset.date) ? clearSel() : selectCol(mc.dataset.date);
 });
 
 $('#sched').addEventListener('toggle', e => {
@@ -8409,7 +8500,8 @@ async function moveOcc(id, from, to, s, e, fs, fe){
    Chuột phải (hoặc chạm giữ trên điện thoại) vào ô → “Sao chép ô lịch”.
    Chuột phải vào ô trống / khung giờ / ngày → “Dán vào …”. Phím tắt: Ctrl+C / Ctrl+V chỉ hoạt động khi đã chọn một ô (bấm vào ô) hoặc một cột (Bảng: bấm ô thứ như Thứ Hai, Thứ Ba...); Ctrl+V dán vào ngày đó, giữ khung giờ gốc; chuột rê ở đâu cũng không ảnh hưởng.
    Bản dán luôn là lịch MỘT LẦN (không lặp) ở đúng ngày + khung giờ được chọn; ô gốc không bị đổi. Dùng “Bỏ sao chép” để hủy trạng thái sao chép. */
-let cellClip = null, ctxMenu = null, ctxSuppressUntil = 0;
+let cellClip = null, ctxMenu = null, ctxSuppressUntil = 0, ctxOpenedAt = 0, lpFired = false;
+const isCoarseUI = () => matchMedia('(hover:none),(pointer:coarse)').matches;   // điện thoại / máy tính bảng: không có Ctrl+C / Ctrl+V
 const CLIP_DROP = ['id','skip','skipSlots','cancelledSlots','gone','goneSlots','series','overrideOf','overrideDate','overrideStart','overrideEnd'];
 const CELL_SEL = '.cell[data-id], .ag[data-id], .ce[data-id]';
 function copyCellEl(el){
@@ -8420,14 +8512,16 @@ function copyCellEl(el){
   CLIP_DROP.forEach(k => delete data[k]);
   Object.assign(data, {repeat:'none', until:'', days:[], times:null, status:'normal', start:s, end:e});
   cellClip = {data, srcId:ev.id, srcDate:el.dataset.date};
+  updSelBar();
   toast(`Đã sao chép “${data.title || 'ô lịch'}”`);
   return true;
 }
-function clearClip(){ if(!cellClip) return; cellClip = null; toast('Đã bỏ sao chép'); }
+function clearClip(){ if(!cellClip) return; cellClip = null; toast('Đã bỏ sao chép'); updSelBar(); }
 function pasteTarget(t){   // xác định ngày + khung giờ nơi dán từ phần tử được chuột phải / trỏ tới
   if(!t || !t.closest) return null;
   const td = t.closest('td.slot');
   if(td && td.dataset.date) return td.classList.contains('day-stack') ? {date:td.dataset.date, s:'', e:''} : {date:td.dataset.date, s:td.dataset.s || '', e:td.dataset.e || ''};
+  const th = t.closest('.sheet th[data-col]'); if(th) return {date:th.dataset.col, s:'', e:''};
   const ad = t.closest('.ad[data-date], .mc[data-date]');
   return ad ? {date:ad.dataset.date, s:'', e:''} : null;
 }
@@ -8490,7 +8584,7 @@ function scheduleColSelectionUpdate(){
   selOverlayFrame = requestAnimationFrame(() => { selOverlayFrame = 0; positionColSelection(); });
 }
 document.addEventListener('scroll', e => {
-  if(e.target instanceof Element && e.target.matches('#sched .scroller')) scheduleColSelectionUpdate();
+  if(e.target instanceof Element && e.target.matches('#sched .scroller') && selCell && selCell.col) positionColSelection();
 }, true);
 addEventListener('resize', scheduleColSelectionUpdate, {passive:true});
 function selStyle(){   // giữ viền ô đang chọn và cập nhật khung cột riêng, không dùng box-shadow chồng lên viền bảng
@@ -8500,12 +8594,13 @@ function selStyle(){   // giữ viền ô đang chọn và cập nhật khung c�
   const css = 'outline:2px solid var(--accent)!important;outline-offset:-2px';
   const col = selCell && selCell.col ? q(selCell.col) : '';
   const selCss = !selCell ? '' : selCell.col
-    ? `#sched .ad[data-date="${col}"]{outline:2px solid var(--accent);outline-offset:6px;border-radius:8px}`
+    ? `#sched .ad[data-date="${col}"]{outline:2px solid var(--accent);outline-offset:6px;border-radius:8px}#sched .mc[data-date="${col}"]{outline:2px solid var(--accent);outline-offset:-2px}`
     : selCell.todo
       ? `#sched [data-todo="${q(selCell.todo)}"]{${css}}`
       : `#sched [data-id="${q(selCell.id)}"][data-date="${q(selCell.date)}"][data-s="${q(selCell.s)}"]{${css}}`;
   if(st.textContent !== selCss) st.textContent = selCss;   // chỉ ghi khi đổi: ghi lại cùng nội dung vẫn làm trình duyệt tính lại style toàn trang
   positionColSelection();
+  updSelBar();
 }
 function selectCell(el){
   selCell = el.dataset.todo ? {todo:el.dataset.todo} : {id:el.dataset.id, date:el.dataset.date, s:el.dataset.s || ''};
@@ -8513,6 +8608,52 @@ function selectCell(el){
 }
 function selectCol(d){ if(!d) return; selCell = {col:d}; selStyle(); }   // chọn cả cột ngày: Ctrl+V dán vào ngày này
 function clearSel(){ if(!selCell) return; selCell = null; selStyle(); }
+/* Thanh thao tác cho cảm ứng: chọn ô / chọn cột rồi bấm Sao chép / Dán (điện thoại không có Ctrl+C / Ctrl+V) */
+let selBar = null, selBarFrame = 0;
+function selTarget(){   // đích hiện tại của việc chọn; null nếu chưa chọn hoặc ô / cột không còn hiển thị
+  if(!selCell || selCell.todo) return null;
+  if(selCell.col){
+    const q = String(selCell.col).replace(/["\\]/g, '');
+    const el = [...document.querySelectorAll('#sched .sheet .dn th[data-col]')].find(x => x.dataset.col === selCell.col) || document.querySelector(`#sched .ad[data-date="${q}"], #sched .mc[data-date="${q}"]`);
+    return el && el.getClientRects().length ? {kind:'col', date:selCell.col} : null;
+  }
+  const src = selEl();
+  return src && src.getClientRects().length ? {kind:'cell', src} : null;
+}
+function selBarAct(a){
+  const tg = selTarget();
+  if(a === 'off'){ if(tg) clearSel(); else clearClip(); updSelBar(); return; }
+  if(!tg) return;
+  if(a === 'copy' && tg.kind === 'cell'){ const c = tg.src.closest(CELL_SEL); if(c) copyCellEl(c); }
+  else if(a === 'paste' && cellClip){
+    if(tg.kind === 'col') pasteClip({date:tg.date, s:'', e:''});
+    else { const p = pasteTarget(tg.src); if(p) pasteClip(p); }
+  }
+  updSelBar();
+}
+function updSelBar(){
+  if(!isCoarseUI()){ if(selBar) selBar.classList.remove('on'); return; }
+  const tg = selTarget();
+  if(!tg && !cellClip){ if(selBar) selBar.classList.remove('on'); return; }
+  if(!selBar){
+    selBar = document.createElement('div'); selBar.id = 'selBar'; selBar.setAttribute('role', 'toolbar'); selBar.setAttribute('aria-label', 'Chọn, sao chép, dán');
+    selBar.innerHTML = '<span class="sbt"></span><button type="button" data-a="copy">Sao chép</button><button type="button" data-a="paste" class="pri">Dán</button><button type="button" data-a="off" class="x" aria-label="Bỏ chọn">✕</button>';
+    selBar.addEventListener('click', e => { const b = e.target.closest('button[data-a]'); if(b && !b.disabled) selBarAct(b.dataset.a); });
+    document.body.appendChild(selBar);
+  }
+  const evOf = el => state.events.find(x => x.id === el.dataset.id);
+  const clipTitle = cellClip ? (cellClip.data.title || 'ô lịch') : '';
+  let txt;
+  if(!tg) txt = `Đã sao chép “${clipTitle}” · chọn cột hoặc ô để dán`;
+  else if(tg.kind === 'col') txt = `Ngày ${DOW[wd(tg.date)]}, ${dm(tg.date)}`;
+  else { const ev = evOf(tg.src.closest(CELL_SEL) || tg.src); txt = `Ô: ${(ev && ev.title) || 'ô lịch'}`; }
+  selBar.querySelector('.sbt').textContent = txt;
+  selBar.querySelector('[data-a=copy]').disabled = !(tg && tg.kind === 'cell');
+  selBar.querySelector('[data-a=paste]').disabled = !(tg && cellClip);
+  selBar.querySelector('[data-a=off]').setAttribute('aria-label', tg ? 'Bỏ chọn' : 'Bỏ sao chép');
+  selBar.classList.add('on');
+}
+new MutationObserver(() => { if(selBarFrame || !(selCell || cellClip)) return; selBarFrame = requestAnimationFrame(() => { selBarFrame = 0; updSelBar(); }); }).observe($('#sched'), {childList:true, subtree:true});   // đổi tuần / đổi chế độ xem / dựng lại bảng → cập nhật hoặc ẩn thanh
 function selEl(){
   if(!selCell || selCell.todo || selCell.col) return null;
   const q = v => String(v).replace(/["\\]/g, '');
@@ -8530,12 +8671,14 @@ function openCtx(x, y, items){
   m.innerHTML = items.map((it, i) => it.sep ? '<hr>' : it.head ? `<div class="ctxh">${it.html}</div>` : `<button type="button" role="menuitem" data-i="${i}"${it.off ? ' disabled' : ''}>${it.html}</button>`).join('');
   m.style.left = '0px'; m.style.top = '0px';
   document.body.appendChild(m);
-  const r = m.getBoundingClientRect();
-  m.style.left = Math.max(6, Math.min(x, innerWidth - r.width - 6)) + 'px';
-  m.style.top = Math.max(6, Math.min(y, innerHeight - r.height - 6)) + 'px';
+  const r = m.getBoundingClientRect(), tc = isCoarseUI();
+  let left = tc ? x - r.width / 2 : x, top = y;
+  if(tc){ top = y - r.height - 20; if(top < 6) top = y + 28; }   // cảm ứng: đặt menu cạnh ngón tay, không để ngón che mất menu
+  m.style.left = Math.max(6, Math.min(left, innerWidth - r.width - 6)) + 'px';
+  m.style.top = Math.max(6, Math.min(top, innerHeight - r.height - 6)) + 'px';
   m.addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if(!b || b.disabled) return; const it = items[+b.dataset.i]; closeCtx(); it.run(); });
-  ctxMenu = m;
-  const first = m.querySelector('button:not(:disabled)'); if(first) first.focus({preventScroll:true});
+  ctxMenu = m; ctxOpenedAt = performance.now();
+  const first = m.querySelector('button:not(:disabled)'); if(first && !isCoarseUI()) first.focus({preventScroll:true});
 }
 function schedMenu(t, x, y){
   const cell = t.closest(CELL_SEL), tg = pasteTarget(t), items = [];
@@ -8548,29 +8691,40 @@ function schedMenu(t, x, y){
 }
 $('#sched').addEventListener('contextmenu', e => {
   if(e.target.closest('a, input, textarea, select, .fx-grab')) return;   // giữ menu mặc định cho liên kết / ô nhập
-  if(schedMenu(e.target, e.clientX, e.clientY)){ e.preventDefault(); clearTimeout(clickTimer); if(e.pointerType === 'touch') ctxSuppressUntil = performance.now() + 700; }
+  if(schedMenu(e.target, e.clientX, e.clientY)){ e.preventDefault(); clearTimeout(clickTimer); clearTimeout(lpTimer); lpTimer = 0; if(e.pointerType === 'touch' || isCoarseUI()){ lpFired = true; ctxSuppressUntil = performance.now() + 4000; } }
 });
 /* màn hình cảm ứng: chạm giữ ~0,5 giây để mở cùng menu (iOS không tự bắn contextmenu) */
 let lpTimer = 0, lpX = 0, lpY = 0;
+const dragOff = new Set();
 $('#sched').addEventListener('pointerdown', e => {
-  clearTimeout(lpTimer);
-  if(e.pointerType !== 'touch' || e.target.closest('a, button, input, textarea, select, .fx-grab')) return;
+  clearTimeout(lpTimer); lpTimer = 0; ctxSuppressUntil = 0; lpFired = false;
+  if(e.pointerType !== 'touch') return;
+  /* ô lịch có draggable=true: trên cảm ứng trình duyệt bắt đầu kéo-thả khi chạm giữ → pointercancel → menu Sao chép/Dán không bao giờ mở. Tắt kéo cho lượt chạm này, bật lại sau khi nhả tay. */
+  const dc = e.target.closest('.cell[draggable="true"]');
+  if(dc){ dc.draggable = false; dragOff.add(dc); }
+  if(e.isPrimary === false || e.target.closest('a, button, input, textarea, select, .fx-grab')) return;
   lpX = e.clientX; lpY = e.clientY; const t = e.target;
-  lpTimer = setTimeout(() => { if(schedMenu(t, lpX, lpY)){ ctxSuppressUntil = performance.now() + 700; clearTimeout(clickTimer); } }, 520);
+  lpTimer = setTimeout(() => { lpTimer = 0; if(schedMenu(t, lpX, lpY)){ lpFired = true; ctxSuppressUntil = performance.now() + 4000; clearTimeout(clickTimer); try{ navigator.vibrate && navigator.vibrate(12); }catch(_){} } }, 480);
 });
 $('#sched').addEventListener('pointermove', e => { if(lpTimer && Math.hypot(e.clientX - lpX, e.clientY - lpY) > 10){ clearTimeout(lpTimer); lpTimer = 0; } });
-['pointerup', 'pointercancel'].forEach(n => $('#sched').addEventListener(n, () => { clearTimeout(lpTimer); lpTimer = 0; }));
+['pointerup', 'pointercancel'].forEach(n => $('#sched').addEventListener(n, () => {
+  clearTimeout(lpTimer); lpTimer = 0;
+  if(lpFired){ lpFired = false; ctxSuppressUntil = performance.now() + 450; }   // nhả tay sau khi menu đã mở (dù giữ bao lâu): chỉ chặn đúng cú click đi kèm
+  if(dragOff.size) setTimeout(() => { dragOff.forEach(c => { c.draggable = true; }); dragOff.clear(); }, 700);
+}));
 $('#sched').addEventListener('click', e => { if(performance.now() < ctxSuppressUntil){ e.stopImmediatePropagation(); e.preventDefault(); } }, true);   // nhả tay sau khi chạm giữ không được mở hộp thoại sửa
 document.addEventListener('pointerdown', e => { if(ctxMenu && !ctxMenu.contains(e.target)) closeCtx(); }, true);
 document.addEventListener('pointerdown', e => {   // bấm ra ngoài ô (khoảng trống, nút khác…) thì bỏ chọn ô
   if(!selCell) return;
+  if(e.target.closest && e.target.closest('#selBar, .ctxm, .sheet th[data-col], .ad>h3, .mc[data-date], .ci-pop')) return;
   const c = e.target.closest && e.target.closest('.cell[data-id], .ag[data-id]');
   if(c && c.querySelector(':scope>.editb')) return;
   clearSel();
 }, true);
 window.addEventListener('blur', closeCtx);
-window.addEventListener('resize', closeCtx);
-document.addEventListener('scroll', closeCtx, true);
+let ctxW = innerWidth;
+window.addEventListener('resize', () => { if(innerWidth !== ctxW){ ctxW = innerWidth; closeCtx(); } });   // điện thoại: thanh địa chỉ co/giãn cũng bắn resize (chỉ đổi chiều cao) → không đóng menu
+document.addEventListener('scroll', e => { if(ctxMenu && !ctxMenu.contains(e.target) && performance.now() - ctxOpenedAt > 350) closeCtx(); }, true);
 document.addEventListener('keydown', e => {
   if(e.key === 'Escape'){
     if(ctxMenu){ e.preventDefault(); e.stopPropagation(); closeCtx(); return; }
@@ -8589,7 +8743,7 @@ document.addEventListener('keydown', e => {
   if(a && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable)) return;
   /* Chỉ làm việc với ô ĐANG ĐƯỢC CHỌN (bấm vào ô). Rê chuột không chọn ô; chưa chọn ô nào thì Ctrl+C / Ctrl+V không làm gì. */
   if(selCell && selCell.col){   // đang chọn cả cột: Ctrl+V dán vào ngày của cột (giữ nguyên khung giờ của ô đã sao chép)
-    const colEl = [...document.querySelectorAll('#sched .sheet .dn th[data-col]')].find(x => (x.dataset.col || x.dataset.date) === selCell.col);
+    const colEl = [...document.querySelectorAll('#sched .sheet .dn th[data-col]')].find(x => (x.dataset.col || x.dataset.date) === selCell.col) || document.querySelector(`#sched .ad[data-date="${String(selCell.col).replace(/["\\]/g, '')}"], #sched .mc[data-date="${String(selCell.col).replace(/["\\]/g, '')}"]`);
     if(!colEl || !colEl.getClientRects().length){ clearSel(); return; }   // cột / ngày đã chọn không còn trên màn hình (đã đổi tuần / đổi chế độ xem / sang trang khác): bỏ chọn, không dán vào ngày đang ẩn
     if(k === 'v' && cellClip){ e.preventDefault(); pasteClip({date:selCell.col, s:'', e:''}); }
     return;
@@ -10511,7 +10665,7 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
       say(`Đã đồng bộ ${new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})}: +${ins} mới, ${lnk} liên kết, ${upd} cập nhật, ${del} xoá${created?', '+created+' Google Meet mới':''}${fail?'; '+fail+' sự kiện không sửa được (không có quyền)':''}${meetFail?'; '+meetFail+' lần chưa gắn được Meet':''}${skipDel?'; bỏ qua xoá '+skipDel+' sự kiện cho an toàn':''}.`);
       if(created) toast('Đã tạo Google Meet', 2500); else if(interactive===true) toast('Đã đồng bộ Google Calendar');
     }catch(e){ if(interactive==='auto'){ say('Chưa tự kết nối được Google ('+e.message+'). Chạm vào trang một lần hoặc bấm “Kết nối & đồng bộ”.'); if(!/khác tài khoản/.test(e.message)) armGesture(); } else { say('Lỗi đồng bộ: '+e.message); if(interactive===true) toast('Lỗi: '+e.message,3000); else if(/hết hạn/.test(e.message)) armGesture(); } }
-    finally{ busy=false; if(again){ again=false; sched(); } }
+    finally{ busy=false; if(again){ again=false; sched(0); } }   // có thay đổi mới trong lúc đang đồng bộ: chạy lại ngay
   }
   /* Tự kết nối khi vào trang: thử lặng lẽ trước; trình duyệt chặn popup nếu không có thao tác của người dùng nên nếu chưa được, lần chạm/bấm đầu tiên sẽ thử lại (tối đa 2 lần mỗi lần mở trang để không làm phiền) */
   let armed=false, armN=0;
@@ -10524,7 +10678,7 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
   const sched=ms=>{ if(!on()) return; if(!(tok&&Date.now()<exp-60000)) armN=0; clearTimeout(timer); timer=setTimeout(()=>run(false),typeof ms==='number'?ms:4000); };   // token hết hạn: cho phép lần chạm kế tiếp tự kết nối lại để đẩy thay đổi sang Google
   const _save=save; save=function(){ const r=_save.apply(this,arguments); sched(); return r; };
   const _sd=saveDebounced; saveDebounced=function(){ const r=_sd.apply(this,arguments); sched(); return r; };   // mọi thay đổi lịch đều đi qua save()
-  const _rs=restoreSnapshot; restoreSnapshot=function(){ const r=_rs.apply(this,arguments); sched(1200); return r; };   // Hoàn tác / Làm lại cũng đồng bộ sang Google (xoá rồi hoàn tác → sự kiện được tạo lại)
+  const _rs=restoreSnapshot; restoreSnapshot=function(){ const r=_rs.apply(this,arguments); if(on()){ clearTimeout(timer); if(tok&&Date.now()<exp-60000) run(false); else run('auto'); } return r; };   // undo/redo: đồng bộ NGAY (không chờ); token hết hạn thì tự kết nối lại ngay trong cú bấm để trình duyệt không chặn   // Hoàn tác / Làm lại cũng đồng bộ sang Google (xoá rồi hoàn tác → sự kiện được tạo lại)
   if(on()){ loadGIS().catch(()=>{}); autoStart(); }   // tải sẵn thư viện đăng nhập: bấm nút sẽ mở cửa sổ ngay, ít bị trình duyệt chặn popup
   window.gcalApi={connected:()=>!!on(), auth:()=>auth(true), now:()=>run(false)};   // dùng cho nút “Tạo Google Meet” trong form lịch
   { const o=$g('gcOrigin'); if(o&&/^https?:$/.test(location.protocol)) o.textContent=location.origin; }   // hiện đúng origin của trang đang mở để dán
@@ -10560,8 +10714,9 @@ var ic={
  deadline:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg>',
  fixed:'<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M4 9.5h16M4 14.5h16M12 4v16"/></svg>',
  week:'<svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M8 4v16M12 4v16M16 4v16"/></svg>',
- month:'<svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M3.5 9.3h17M3.5 14.6h17M9.2 4v16M14.8 4v16"/></svg>'};
-var items=[['week','Tuần'],['month','Tháng'],'-',['table','Lịch'],['deadline','Deadline'],['fixed','Lớp']];
+ month:'<svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M3.5 9.3h17M3.5 14.6h17M9.2 4v16M14.8 4v16"/></svg>',
+ agenda:'<svg viewBox="0 0 24 24"><path d="M9 6.5h11M9 12h11M9 17.5h11"/><path d="M4.5 6.5h.01M4.5 12h.01M4.5 17.5h.01"/></svg>'};
+var items=[['week','Tuần · Bảng'],['agenda','Tuần · Danh sách'],['month','Tháng'],'-',['table','Lịch'],['deadline','Deadline'],['fixed','Lớp']];   /* nút Bảng/Danh sách trên thanh trên cùng (điện thoại) đã chuyển vào đây */
 var d=document.createElement('nav'); d.id='gDrawer'; d.setAttribute('aria-label','Menu'); d.setAttribute('role','dialog');
 d.innerHTML='<h2>Lịch trình</h2>'+items.map(function(i){return i==='-'?'<hr>':'<button type="button" class="gdi" data-g="'+i[0]+'">'+ic[i[0]]+'<span>'+i[1]+'</span></button>';}).join('');
 var sc=document.createElement('div'); sc.id='gScrim';
@@ -10571,7 +10726,7 @@ function sync(){
  var on=$('#viewSeg button.on'), v=on?on.dataset.v:'table', cal=document.body.dataset.view==='cal', tbl=v==='table';
  d.querySelectorAll('.gdi').forEach(function(b){var g=b.dataset.g,a=false;
   if(g==='table'||g==='deadline'||g==='fixed')a=(g===v);
-  else a=tbl&&(g==='month'?cal:!cal);
+  else{ var sv=(typeof state!=='undefined'&&state.view)||document.body.dataset.view; a=tbl&&(g==='month'?sv==='cal':g==='agenda'?sv==='agenda':(sv!=='cal'&&sv!=='agenda')); }
   b.classList.toggle('on',a); b.setAttribute('aria-current',a?'true':'false');});
  var t=$('#gdTitle'); if(t)t.textContent=v==='deadline'?'Deadline':v==='fixed'?'Lớp':'';
 }
@@ -10584,6 +10739,10 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&document.b
 d.addEventListener('click',function(e){
  var b=e.target.closest('.gdi'); if(!b)return; var g=b.dataset.g;
  if(g==='table'||g==='deadline'||g==='fixed'){ var s=$('#viewSeg button[data-v="'+g+'"]'); if(s)s.click(); }
+ else if(g==='week'||g==='agenda'){   /* Tuần · Bảng / Tuần · Danh sách (thay cho nút Bảng/Danh sách trên thanh trên) */
+  var want=g==='agenda'?'agenda':'table';
+  if(state.view==='cal')setCalMode('week');   /* từ Tháng về Tuần giữ đúng tuần đang xem */
+  if(state.view!==want)switchView(want); }
  else{ var cur=$('#viewSeg button.on'); if(!cur||cur.dataset.v!=='table'){ var s2=$('#viewSeg button[data-v="table"]'); if(s2)s2.click(); }
   var w=wm(), isM=document.body.dataset.view==='cal'; if(w&&!w.disabled&&((g==='month')!==isM))w.click(); }
  open(false);
