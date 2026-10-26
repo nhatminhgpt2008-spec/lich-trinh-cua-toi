@@ -4210,7 +4210,12 @@ html.dlg-open :is(.cell,.ag)::before,html.dlg-open :is(.cell,.ag)::after{animati
   .top .tools #acctChip{display:none!important}
   #gDrawer hr.gd-push{margin-top:auto}
   #gDrawer .gd-acct{height:64px;gap:14px;padding:0 12px}
-  #gDrawer .gd-acct .av{width:36px;height:36px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex:none}
+  #gDrawer .gd-acct .av-wrap{position:relative;width:36px;height:36px;flex:none;display:block}
+  #gDrawer .gd-acct .av{width:36px;height:36px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700}
+  #gDrawer .gd-acct .sy{position:absolute;right:-2px;bottom:-2px;width:10px;height:10px;border:2px solid var(--surface);border-radius:50%;background:var(--muted);box-sizing:content-box;pointer-events:none}
+  #gDrawer .gd-acct .sy.ok{background:var(--accent)}
+  #gDrawer .gd-acct .sy.bad{background:var(--danger)}
+  #gDrawer .gd-acct .sy.busy{background:var(--warn)}
   #gDrawer .gd-acct .tx{display:flex;flex-direction:column;min-width:0;line-height:1.3}
   #gDrawer .gd-acct .tx b{font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   #gDrawer .gd-acct .tx small{font-size:12px;font-weight:500;color:var(--muted)}
@@ -4382,6 +4387,23 @@ body:has(.ci-pop) #selBar{display:none!important}   /* hộp thông tin Tháng �
   .gc-id-row .btn{width:100%;padding:0 8px}
 }
 
+
+/* ===== Mobile/narrow layout: thanh tìm kiếm khớp bề rộng cụm nút phía trên ===== */
+@media screen and (max-width:700px){
+  .top.q-open .tools #qWrap{
+    box-sizing:border-box!important;
+    flex:0 1 422px!important;
+    width:min(422px,100%)!important;
+    max-width:100%!important;
+    min-width:0!important;
+    margin-right:auto!important;
+  }
+  .top.q-open .tools #qWrap #q{min-width:0!important;width:100%!important}
+}
+/* Sửa mũi tên điều hướng mobile: ẩn ký tự ‹ › gốc để không chồng lên icon SVG-mask; chỉ giữ một icon */
+@media screen and (max-width:700px){
+  .top .nav #prev,.top .nav #next{font-size:0!important;line-height:0!important;}
+}
 </style>
 </head>
 <body>
@@ -10891,16 +10913,20 @@ new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilte
 var d=document.getElementById('gDrawer'), chip=document.getElementById('acctChip'); if(!d||!chip)return;
 var hr=document.createElement('hr'); hr.className='gd-push';
 var b=document.createElement('button'); b.type='button'; b.className='gdi gd-acct';
-b.innerHTML='<span class="av"></span><span class="tx"><b></b><small>Tài khoản & đồng bộ</small></span>';
+b.innerHTML='<span class="av-wrap"><span class="av"></span><span class="sy" aria-label="Trạng thái đồng bộ"></span></span><span class="tx"><b></b><small>Tài khoản</small></span>';
 d.appendChild(hr); d.appendChild(b);
-var av=b.querySelector('.av'), nm=b.querySelector('b');
+var av=b.querySelector('.av'), dot=b.querySelector('.sy'), nm=b.querySelector('b');
 function sync(){
- var a=document.getElementById('acctAv'), n=document.getElementById('acctNm');
+ var a=document.getElementById('acctAv'), n=document.getElementById('acctNm'), st=document.getElementById('acctSy');
  av.textContent=a?a.textContent:'?'; nm.textContent=n?n.textContent:'';
+ dot.className='sy'+(st&&/\b(ok|bad|busy)\b/.test(st.className)?' '+st.className.match(/\b(ok|bad|busy)\b/)[1]:'');
+ dot.title=st?(st.title||'Trạng thái tài khoản'):'Trạng thái tài khoản';
  var off=chip.hidden; b.hidden=off; hr.hidden=off;
 }
 b.addEventListener('click',function(){ document.body.classList.remove('gd-open'); chip.click(); });
 new MutationObserver(function(){ if(document.body.classList.contains('gd-open'))sync(); }).observe(document.body,{attributes:true,attributeFilter:['class']});
+var acctObserver=new MutationObserver(function(){ if(document.body.classList.contains('gd-open'))sync(); });
+['acctAv','acctNm','acctSy'].forEach(function(id){ var el=document.getElementById(id); if(el)acctObserver.observe(el,{attributes:true,childList:true,characterData:true,subtree:true}); });
 sync();
 })();
 </script>
