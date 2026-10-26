@@ -9454,7 +9454,7 @@ document.addEventListener('click', e => {
   $('#lkMeetList').innerHTML = meetL.map(x => `<a href="${esc(x.u)}" target="_blank" rel="noopener" title="${esc(x.u)}"><span class="t"><span class="n">${esc(String(x.n || '').trim() || 'Google Meet')}</span><span class="h">${esc(x.u.replace(/^https?:\/\//i, ''))}</span></span><em>↗</em></a>`).join('');
   $('#lkList').innerHTML = list.map(x => {
     const name = String(x.n || '').trim();
-    return `<a href="${esc(x.u)}" target="_blank" rel="noopener" title="${esc(x.u)}"><i>🔗</i><span class="t">${name ? `<span class="n">${esc(name)}</span>` : ''}<span class="h">${esc(hostOf(x.u))}</span></span><em>↗</em></a>`;
+    return `<a href="${esc(x.u)}" target="_blank" rel="noopener" title="${esc(x.u)}"><span class="t">${name ? `<span class="n">${esc(name)}</span>` : ''}<span class="h">${esc(hostOf(x.u))}</span></span><em>↗</em></a>`;
   }).join('');
   $('#lkScroll').scrollTop = 0;
   if(!dlgLinks.open) dlgLinks.showModal();
