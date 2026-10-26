@@ -6,7 +6,7 @@
 <meta name="description" content="Lịch trình cá nhân: thời khoá biểu, deadline và thông báo lịch học.">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#0d6b45">
+<meta name="theme-color" content="#131a17">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Lịch">
@@ -4298,6 +4298,17 @@ html.dlg-open :is(.cell,.ag)::before,html.dlg-open :is(.cell,.ag)::after{animati
   body[data-view="agenda"] .agenda{padding-top:0!important}
   body[data-view="agenda"] #sched{padding-top:0!important;margin-top:0!important}
 }
+
+/* Tháng: ô ngày bo tròn như thẻ (không còn lưới vuông kẻ 1px), thẻ lịch bo tròn hơn */
+body[data-view="cal"] #sched .mgrid{gap:5px;padding:5px;box-sizing:border-box;background:var(--surface)}
+body[data-view="cal"] #sched .mc{border:1px solid var(--line-soft);border-radius:14px}
+body[data-view="cal"] #sched .mh{border-radius:10px}
+body[data-view="cal"] #sched .mc.jump-highlight::before{border-radius:14px}
+body[data-view="cal"] #sched .mchip{border-radius:9px!important}
+@media screen and (max-width:700px){
+  body[data-view="cal"] #sched .mgrid{gap:4px;padding:4px}
+  body[data-view="cal"] #sched .mc{border-radius:12px}
+}
 </style>
 </head>
 <body>
@@ -7733,21 +7744,7 @@ $('#jump').onchange = e => {
   const v = e.target.value, y = +v.slice(0,4);
   if(v && /^\d{4}-\d{2}-\d{2}$/.test(v) && y >= 1000){ state.view === 'cal' ? setCal(v) : setWeek(mondayOf(v)); }   /* bỏ qua giá trị năm đang gõ dở (0002, 0020, 0202…) */
 };
-/* vuốt ngang để đổi tuần (chỉ ở chế độ Danh sách trên điện thoại; Bảng tự cuộn ngang nên không bắt cử chỉ) */
-(() => {
-  let sx = 0, sy = 0, t0 = 0, on = false;
-  const box = $('#sched');
-  box.addEventListener('touchstart', e => {
-    on = innerWidth <= 700 && (state.view === 'agenda' || state.view === 'cal') && e.touches.length === 1 && !e.target.closest('input,textarea,a');
-    if(!on) return;
-    sx = e.touches[0].clientX; sy = e.touches[0].clientY; t0 = Date.now();
-  }, {passive:true});
-  box.addEventListener('touchend', e => {
-    if(!on) return; on = false;
-    const c = e.changedTouches[0], dx = c.clientX - sx, dy = c.clientY - sy;
-    if(Date.now() - t0 < 600 && Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.8) go(dx < 0 ? 1 : -1);
-  }, {passive:true});
-})();
+/* (đã bỏ) vuốt ngang để đổi tuần/tháng: kéo mạnh tay dễ bị nhảy sang tuần/tháng khác — chỉ đổi bằng nút ‹ › */
 $('#jump').onblur = () => { $('#jump').value = state.view === 'cal' ? calDate : weekStart; };   /* rời ô thì đồng bộ lại về đầu tuần đang xem */
 /* Nút "Thêm" gộp: bấm mở menu nhỏ chọn Thêm lịch / Thêm deadline */
 const addMenu = $('#addMenu');
@@ -10595,22 +10592,7 @@ new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilte
 })();
 </script>
 <script>
-/* GCAL MOBILE v3: vuốt ngang trên lịch để sang tuần/tháng sau (vuốt trái) hoặc trước (vuốt phải), thay cho hai nút ‹ › */
-(function(){
-var mq=window.matchMedia('(max-width:700px)'), box=document.getElementById('sched'); if(!box)return;
-var t0=null;
-function sl(){var s=box.querySelector('.scroller,.calv');return s?s.scrollLeft:0;}
-box.addEventListener('touchstart',function(e){
- if(!mq.matches||e.touches.length!==1||document.querySelector('dialog[open]')){t0=null;return;}
- var t=e.touches[0]; t0={x:t.clientX,y:t.clientY,t:Date.now(),sl:sl()};
-},{passive:true});
-box.addEventListener('touchend',function(e){
- if(!t0)return; var t=e.changedTouches[0], dx=t.clientX-t0.x, dy=t.clientY-t0.y, ok=Date.now()-t0.t<700&&Math.abs(dx)>=70&&Math.abs(dy)<45&&Math.abs(dx)>Math.abs(dy)*2&&sl()===t0.sl;
- t0=null; if(!ok)return;
- var b=document.getElementById(dx<0?'next':'prev'); if(b&&!b.disabled&&!document.querySelector('.nav').hidden)b.click();
-},{passive:true});
-box.addEventListener('touchcancel',function(){t0=null;},{passive:true});
-})();
+/* GCAL MOBILE v3 (đã bỏ): không còn vuốt ngang để chuyển tuần/tháng; dùng nút ‹ › */
 </script>
 <script>
 /* GCAL MOBILE v4: mục "Tài khoản" cuối ngăn kéo ☰ — bấm vào sẽ mở đúng hộp thoại của nút tài khoản cũ */
@@ -10639,6 +10621,17 @@ var mq=window.matchMedia('(max-width:700px)');
 function place(){ if(mq.matches){ bar.appendChild(ta); bar.appendChild(tg); } }
 place();
 (mq.addEventListener?mq.addEventListener.bind(mq,'change'):mq.addListener.bind(mq))(function(){ setTimeout(place,0); });   // chạy sau đoạn đặt lại vị trí gốc của trang
+})();
+</script>
+<script>
+/* Thanh trạng thái điện thoại (hàng pin/giờ) lấy đúng màu nền của app thay vì màu xanh cố định; tự đổi theo giao diện sáng/tối */
+(function(){
+  var m=document.querySelector('meta[name="theme-color"]'); if(!m) return;
+  function apply(){ try{ var c=getComputedStyle(document.documentElement).getPropertyValue('--surface').trim(); if(c) m.setAttribute('content',c); }catch(e){} }
+  apply();
+  try{ new MutationObserver(apply).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','class','style']}); }catch(e){}
+  try{ var q=matchMedia('(prefers-color-scheme: dark)'); (q.addEventListener?q.addEventListener.bind(q,'change'):q.addListener.bind(q))(apply); }catch(e){}
+  window.addEventListener('load',apply);
 })();
 </script>
 </body>
