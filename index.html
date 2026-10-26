@@ -4094,10 +4094,12 @@ html.dlg-open :is(.cell,.ag)::before,html.dlg-open :is(.cell,.ag)::after{animati
 @media (prefers-reduced-motion:reduce){html.dlg-open :is(.cell,.ag)::before,html.dlg-open :is(.cell,.ag)::after{animation:none!important}}
 .meetlinks{display:grid;gap:6px}
 .meetlinks[hidden]{display:none}
-.meetlnk{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;color:var(--accent);text-decoration:none;font-size:13px;overflow-wrap:anywhere}
-.meetlnk span{flex:1;min-width:0}
-.meetlnk em{font-style:normal;color:var(--muted);flex:none}
-.meetlnk:hover,.meetlnk:focus-visible{background:var(--accent-soft)}
+.meetrow{display:grid;grid-template-columns:minmax(0,1fr) 36px;gap:6px;align-items:center}   /* cùng kiểu một hàng trong mục Liên kết: ô giống ô nhập + nút nhỏ bên phải */
+.meetlnk{display:flex;align-items:center;box-sizing:border-box;height:36px;min-width:0;padding:0 10px;border:1px solid var(--line);background:var(--surface);border-radius:var(--r-ctl,8px);color:var(--ink);text-decoration:none;font-size:14px}
+.meetlnk span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.meetrow .x{display:flex;align-items:center;justify-content:center;box-sizing:border-box;height:36px;border:1px solid var(--line);border-radius:var(--r-ctl,8px);color:var(--muted);text-decoration:none;font-size:15px;line-height:1}
+.meetlnk:hover,.meetlnk:focus-visible,.meetrow .x:hover,.meetrow .x:focus-visible{border-color:var(--accent);color:var(--accent)}
+#evMeetHint:empty,#evMeetHint[hidden]{display:none!important}
 #dlgLinks #lkList,#dlgLinks #lkEmptyLk{margin-bottom:16px}
 
 /* ===================================================================
@@ -4364,6 +4366,13 @@ body[data-view="cal"] #sched .mc.selday{outline:2px solid var(--accent);outline-
   body[data-view="table"] #sched>.scroller,body[data-view="cal"] #sched>.calv{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:84px}
   body[data-view="table"] .layout .below,body[data-view="cal"] .layout .below,body[data-view="agenda"] .layout .below,body[data-view="monthAgenda"] .layout .below,body[data-view="fixed"] .layout .below{display:none!important}   /* danh sách/lớp cố định: bỏ hẳn khối .below (rỗng) như Bảng, nếu không nó chiếm một dải đen ở đáy */
 }
+/* Hộp thoại chỉnh sửa: không bao giờ cuộn ngang. Nội dung rộng (bảng/pre dán vào ô Nội dung…) tự cuộn trong ô, không đẩy cả form rộng ra (trước đây các giới hạn này chỉ có ở ≤700px) */
+dialog{overflow-x:hidden}
+dialog form,dialog .fgrid,dialog .fgrid>*,dialog .rtf,dialog .rte{min-width:0;max-width:100%}
+dialog .rte .rtbar{max-width:100%}
+.rtbody{max-width:100%;box-sizing:border-box;overflow-x:auto}
+.rtbody pre,.rtbody table{display:block;max-width:100%;overflow-x:auto}
+.rtbody img{max-width:100%;height:auto}
 .ci-actions [data-ci=copy][hidden]{display:none}
 /* Bảng: ô ngày Thứ Hai ở hàng ngày bị ép position:static nên lớp phủ bấm-chọn-cột (::after, inset:0) của nó bám theo thead và phủ kín cả hàng tiêu đề (837×64px): mọi lần bấm / nhấn giữ trên tiêu đề đều trúng Thứ Hai. relative = vẫn không ghim nhưng lớp phủ chỉ phủ đúng ô của nó. */
 body[data-view="table"] #sched .sheet tr.dd>th:first-child:not(.week-label){position:relative!important;left:auto!important;z-index:auto!important}
@@ -4486,7 +4495,7 @@ body:has(.ci-pop) #selBar{display:none!important}   /* hộp thông tin Tháng �
       </fieldset>
       <div class="full rtf" data-k="event"><span>Nội dung</span><textarea name="body" rows="4" data-rte hidden></textarea></div>
       <div class="full lkbox" data-k="event"><span class="lkt">Liên kết</span><div class="lkrows" id="evLinks"></div><button type="button" class="btn lkadd" id="evLinkAdd">+ Thêm liên kết</button></div>
-      <div class="full lkbox" data-k="event" id="evMeetBox"><span class="lkt">Google Meet</span><div class="meetlinks" id="evMeetLinks" hidden></div><button type="button" class="btn lkadd" id="evMeetBtn">+ Tạo Google Meet</button><p class="hint" id="evMeetHint"></p></div>
+      <div class="full lkbox" data-k="event" id="evMeetBox"><span class="lkt">Google Meet</span><div class="meetlinks" id="evMeetLinks" hidden></div><button type="button" class="btn lkadd" id="evMeetBtn">+ Tạo Google Meet</button><p class="hint" id="evMeetHint" hidden></p></div>
     </div>
     <p class="err" id="err" role="alert"></p>
     <div class="actions">
@@ -7447,7 +7456,7 @@ function drawMeetLinks(){
   const box = $('#evMeetLinks'); if(!box) return;
   const list = meetKeep() ? formMeetLinks : [];
   box.hidden = !list.length;
-  box.innerHTML = list.map(l => `<a class="meetlnk" href="${esc(l.url)}" target="_blank" rel="noopener" title="${esc(l.url)}"><span>${esc(l.url.replace(/^https?:\/\//i, ''))}</span><em>↗</em></a>`).join('');
+  box.innerHTML = list.map(l => `<div class="meetrow"><a class="meetlnk" href="${esc(l.url)}" target="_blank" rel="noopener" title="${esc(l.url)}"><span>${esc(l.url.replace(/^https?:\/\//i, ''))}</span></a><a class="x" href="${esc(l.url)}" target="_blank" rel="noopener" title="Mở link" aria-label="Mở link Meet">↗</a></div>`).join('');
 }
 function drawMeet(){
   drawMeetLinks();
@@ -7455,8 +7464,9 @@ function drawMeet(){
   b.textContent = formMeet ? '✓ Có Google Meet (bấm để bỏ)' : '+ Tạo Google Meet';
   h.style.color = '';
   h.textContent = formMeet ? (formMeetCode ? 'Mọi buổi của lịch này dùng chung một link Meet.' : 'Link Meet được tạo ngay sau khi bấm Lưu; mọi buổi lặp dùng chung một link.') : '';
+  h.hidden = !h.textContent;
 }
-const meetMsg = (t, bad) => { const h = $('#evMeetHint'); h.textContent = t; h.style.color = bad ? 'var(--danger)' : ''; };   // báo ngay dưới nút (toast nằm sau hộp thoại nên không thấy)
+const meetMsg = (t, bad) => { const h = $('#evMeetHint'); h.textContent = t; h.hidden = !t; h.style.color = bad ? 'var(--danger)' : ''; };   // báo ngay dưới nút (toast nằm sau hộp thoại nên không thấy)
 $('#evMeetBtn').addEventListener('click', async () => {
   if(formMeet){ formMeet = false; drawMeet(); return; }
   const g = window.gcalApi;
