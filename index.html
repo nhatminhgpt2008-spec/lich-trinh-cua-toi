@@ -689,7 +689,7 @@ dialog h2{margin:0 0 14px;font-size:17px}
 /* Mật khẩu hiện tại: ô nhập + nút xem mật khẩu */
 .pwInputWrap{position:relative;display:flex}
 .pwInputWrap input{flex:1;min-width:0;padding-right:36px}
-.pwToggle{position:absolute;right:3px;top:50%;transform:translateY(-50%);width:28px;height:28px;border:0;background:none;cursor:pointer;font-size:15px;line-height:1;color:var(--muted);display:flex;align-items:center;justify-content:center;border-radius:6px}
+.pwToggle{position:absolute;right:3px;top:0;bottom:0;margin:auto 0;transform:none!important;scale:none!important;width:28px;height:28px;border:0;background:none;cursor:pointer;font-size:15px;line-height:1;color:var(--muted);display:flex;align-items:center;justify-content:center;border-radius:6px}
 .pwToggle:hover{color:var(--ink);background:var(--line-soft)}
 /* Xóa tài khoản: nhãn xác nhận + ô nhập nằm trong hai cột, tự xếp thành một cột trên màn hình hẹp */
 .fgrid label.delConfirmRow{display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,1fr);align-items:center;gap:8px;min-width:0;margin-top:10px}
@@ -2815,6 +2815,7 @@ body .layout.ag-on .below #dlNew.card:not([hidden]){padding-top:10px}   /* PC: 1
 
 /* ===== Mục Lớp: nút "Nghỉ N" + trang nhỏ thống kê buổi nghỉ ===== */
 .fx .lkchips.abschip{margin-top:4px}
+.lkchip.absopen{padding-left:9px}   /* nút “Nghỉ N” không còn icon nên chữ cân đều hai bên */
 .lkchip.absopen b{flex:none;font-size:12px;font-weight:700;line-height:1.5;font-variant-numeric:tabular-nums}
 #dlgAbs{width:min(420px,94vw)}
 #dlgAbs[open]{display:flex;flex-direction:column;max-height:min(560px,86vh)}
@@ -4376,7 +4377,7 @@ dialog .rte .rtbar{max-width:100%}
 .ci-actions [data-ci=copy][hidden]{display:none}
 /* Bảng: ô ngày Thứ Hai ở hàng ngày bị ép position:static nên lớp phủ bấm-chọn-cột (::after, inset:0) của nó bám theo thead và phủ kín cả hàng tiêu đề (837×64px): mọi lần bấm / nhấn giữ trên tiêu đề đều trúng Thứ Hai. relative = vẫn không ghim nhưng lớp phủ chỉ phủ đúng ô của nó. */
 body[data-view="table"] #sched .sheet tr.dd>th:first-child:not(.week-label){position:relative!important;left:auto!important;z-index:auto!important}
-body:has(.ci-pop) #selBar{display:none!important}   /* hộp thông tin Tháng đã có nút Sao chép; không để thanh nổi đè lên hộp */
+body.ci-open #selBar{display:none!important}   /* hộp thông tin Tháng đã có nút Sao chép; không để thanh nổi đè lên hộp */
 
 /* ===== OAuth Client ID: chế độ chỉ đọc mặc định, thao tác chỉnh sửa có chủ đích ===== */
 .gc-idbar{box-sizing:border-box;margin:0 0 12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--accent-soft) 35%,var(--surface));min-width:0}
@@ -4399,6 +4400,77 @@ body:has(.ci-pop) #selBar{display:none!important}   /* hộp thông tin Tháng �
   .gc-id-row .btn{width:100%;padding:0 8px}
 }
 
+/* ===== Tài khoản của tôi: nhịp khoảng cách đều (mọi giá trị lấy từ 3 biến) ===== */
+#profileDlg{--ap-x:14px;--ap-gap:12px;--ap-ctl:36px;height:min(640px,86dvh);overflow:hidden}   /* chỉ <form> bên trong cuộn; hộp không tự cuộn thêm nên không còn khoảng trống thừa dưới nút Đăng xuất */
+#profileDlg form{display:flex;flex-direction:column;gap:10px;padding:18px}
+/* đầu hộp: avatar – tên/email – nút đóng canh giữa cùng một trục */
+#profileDlg .acctModalHead{row-gap:2px;padding-bottom:16px;margin-bottom:6px}
+#profileDlg .iconbtn{grid-row:1/3;align-self:center;width:32px;height:32px}
+#profileDlg .verifyHint{margin:0}
+/* mỗi mục: viền đều, tiêu đề cao cố định, lề trái/phải bằng nhau */
+#profileDlg .acctSection{margin:0;border-radius:12px}
+#profileDlg .acctSectionSummary{min-height:40px;padding:0 var(--ap-x);font-size:13.5px}
+#profileDlg .acctSectionPad{display:flex;flex-direction:column;gap:var(--ap-gap);padding:4px var(--ap-x) var(--ap-x)}
+#profileDlg .acctSectionPad>*{margin:0}
+#profileDlg .acctSectionPad .err:empty,#profileDlg .acctSectionPad .syncinfo:empty{display:none}
+/* ô nhập + nhãn */
+#profileDlg .fgrid{gap:var(--ap-gap)}
+#profileDlg .fgrid label{gap:6px}
+#profileDlg .fgrid input:not([type=checkbox]),#profileDlg .fgrid select,#profileDlg .inline-input input{height:var(--ap-ctl)}
+#profileDlg .inline-input{gap:8px}
+#profileDlg .pwInputWrap input{padding-right:40px}
+#profileDlg .pwToggle{right:6px}
+#profileDlg .fgrid label.cust{min-height:24px;gap:10px;font-size:13.5px}
+#profileDlg .fgrid:has(.cust){row-gap:10px}
+#profileDlg .fgrid label.cust input{width:16px;height:16px;margin:0;flex:0 0 auto}
+/* chữ ghi chú / thông báo: cùng một kiểu khung */
+#profileDlg .hint,#profileDlg .syncinfo{margin:0;padding:10px 12px;border:0;border-radius:10px;font-size:12.5px;line-height:1.5}
+#profileDlg .syncinfo{background:var(--line-soft)}
+#profileDlg #gcStatus{margin:0}
+#profileDlg .err{margin:0;min-height:0;font-size:12.5px;line-height:1.4}
+#profileDlg #profileSyncInfo{margin:0;padding:6px 12px;line-height:1.4;border-radius:14px}
+#profileDlg #profileSyncInfo:not(:empty){margin-bottom:-4px}   /* trạng thái đồng bộ sát hàng nút bên dưới */
+/* hàng nút: mọi nút cùng cao, chia đều bề ngang; 1 nút thì tràn hết hàng */
+#profileDlg .actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0}
+#profileDlg .actions .grow{display:block;flex:1 1 0;min-width:0}   /* đẩy nút chính sang phải, như cài đặt của Google / Apple */
+#profileDlg .actions .btn,#profileDlg .inline-input .btn{flex:0 0 auto;width:auto;height:var(--ap-ctl);min-height:0;padding:0 14px;font-size:13px;font-weight:500;justify-content:center;white-space:nowrap}
+#profileDlg .actions .btn.primary,#profileDlg .inline-input .btn.primary{font-weight:600}
+/* ô Client ID Google */
+#profileDlg .gc-idbar{margin:0;padding:12px;border-radius:10px}
+#profileDlg .gc-id-head{margin:0 0 10px}
+#profileDlg .gc-id-actions .btn{flex:0 0 auto;min-height:0;height:32px;padding:0 10px;white-space:nowrap}
+#profileDlg .gc-id-row{gap:8px}
+#profileDlg .gc-id-row input{height:var(--ap-ctl)!important}
+#profileDlg .gc-id-row .btn{flex:0 0 auto;height:var(--ap-ctl);min-height:0;padding:0 14px;font-size:13px}
+/* hướng dẫn lấy Client ID: thành thẻ có viền như các mục khác */
+#profileDlg .gcGuide{margin:0;padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+#profileDlg .gcGuide>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:40px;padding:0 12px;list-style:none}
+#profileDlg .gcGuide>summary::-webkit-details-marker{display:none}
+#profileDlg .gcGuide>summary::after{content:"";width:7px;height:7px;flex:0 0 auto;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg)}
+#profileDlg .gcGuide[open]>summary::after{transform:rotate(-135deg)}
+#profileDlg .gcGuideBody{padding:0 12px 12px}
+#profileDlg .gcGuideBody>p:first-child{margin:0!important}
+#profileDlg .gcGuide ol{margin:10px 0 0}
+#profileDlg .gcGuide li:last-child{margin-bottom:0}
+/* Xóa tài khoản: nhãn + ô nhập cùng một hàng, không lệch mép */
+#profileDlg .fgrid label.delConfirmRow{margin:0;gap:var(--ap-gap);align-items:center}
+#profileDlg .delConfirmHint{margin:0}
+/* Đăng xuất: nút nhỏ canh phải, dính đáy khi còn dư chỗ */
+#profileDlg .acctFooter{flex:0 0 auto;margin-top:auto;justify-content:flex-end}
+#profileDlg .acctFooter .grow{display:none}
+#profileDlg .acctFooter .btn{padding:0 16px}
+@media (max-width:560px){
+  #profileDlg{height:100dvh}   /* điện thoại: hộp chiếm trọn màn hình như trước */
+  #profileDlg form{padding:calc(14px + env(safe-area-inset-top,0px)) 14px calc(16px + env(safe-area-inset-bottom,0px))}
+  #profileDlg .inline-input{flex-wrap:nowrap}
+  #profileDlg .inline-input input{width:auto}
+  #profileDlg .gc-id-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+  #profileDlg .gc-id-row .btn{width:100%;padding:0 8px}
+}
+@media (max-width:420px){
+  #profileDlg .gc-id-head{flex-wrap:wrap}
+}
+
 
 /* ===== Mobile/narrow layout: thanh tìm kiếm khớp bề rộng cụm nút phía trên ===== */
 @media screen and (max-width:700px){
@@ -4415,6 +4487,22 @@ body:has(.ci-pop) #selBar{display:none!important}   /* hộp thông tin Tháng �
 /* Sửa mũi tên điều hướng mobile: ẩn ký tự ‹ › gốc để không chồng lên icon SVG-mask; chỉ giữ một icon */
 @media screen and (max-width:700px){
   .top .nav #prev,.top .nav #next{font-size:0!important;line-height:0!important;}
+}
+/* ===== TỐI ƯU HIỆU NĂNG ĐIỆN THOẠI ===== */
+html{-webkit-tap-highlight-color:transparent}
+button,a,select,label,summary,[role=button]{touch-action:manipulation}
+@media (hover:none),(pointer:coarse){
+  /* thanh cuộn tự vẽ không chạy trên cảm ứng nữa -> ẩn thanh cuộn gốc bằng CSS thay vì bằng JS */
+  :is(.scroller,ul.todos,dialog,#profileDlg form,#authGate,#legend,.np-list,.fx-pop-list){scrollbar-width:none;-ms-overflow-style:none}
+  :is(.scroller,ul.todos,dialog,#profileDlg form,#authGate,#legend,.np-list,.fx-pop-list)::-webkit-scrollbar{width:0;height:0;display:none}
+  /* ô Đang/Sắp diễn ra: giữ viền sáng tĩnh, không chạy animation vô hạn (đỡ GPU + pin) */
+  #sched .cell.live:not(.jump-highlight)::before,#sched .cell.next:not(.jump-highlight)::before,
+  #sched .ag.live:not(.jump-highlight)::before,#sched .ag.next:not(.jump-highlight)::before{animation:none!important;opacity:.7}
+  #sched :is(.cell,.ag):is(.live,.next)::after{animation:none!important;opacity:.9}
+}
+@media (prefers-reduced-motion:reduce){
+  #sched .cell.live::before,#sched .cell.next::before,#sched .ag.live::before,#sched .ag.next::before,
+  #sched :is(.cell,.ag):is(.live,.next)::after{animation:none!important}
 }
 </style>
 </head>
@@ -4710,9 +4798,10 @@ body:has(.ci-pop) #selBar{display:none!important}   /* hộp thông tin Tháng �
         </div>
         <div class="fgrid"><label class="cust"><input type="checkbox" id="gcColor" checked><span>Đồng bộ tag</span></label>
           <label class="cust"><input type="checkbox" id="gcDl" checked><span>Đồng bộ deadline</span></label></div>
-        <p class="hint" id="gcStatus">Chưa kết nối. Cài đặt được lưu theo TÀI KHOẢN: kết nối một lần thì mọi thiết bị đăng nhập cùng tài khoản đều tự đồng bộ (thiết bị mới có thể cần chạm vào trang một lần để Google cấp phiên đăng nhập). Sau khi kết nối, mỗi lần mở trang app tự đồng bộ lại. Lịch trong app sẽ được đẩy sang Google Calendar (tên + thời gian + tag + nhắc trước 1 giờ, và Google Meet nếu bạn bật); deadline cũng được đẩy sang nếu bạn bật. Sự kiện có sẵn trên Google khớp tên + giờ bắt đầu sẽ được liên kết, giữ nguyên mô tả/địa điểm/khách mời.</p>
+        <p class="hint" id="gcStatus">Chưa kết nối. Cài đặt lưu theo tài khoản, dùng chung mọi thiết bị. Mỗi lần mở trang chỉ tự thử đồng bộ một lần; lỗi thì bấm “Kết nối &amp; đồng bộ” để thử lại.</p>
         <div class="actions"><button type="button" class="btn" id="gcOff">Ngắt kết nối</button><span class="grow"></span><button type="button" class="btn primary" id="gcOn">Kết nối &amp; đồng bộ</button></div>
         <details class="gcGuide"><summary>Hướng dẫn lấy OAuth Client ID (chi tiết)</summary>
+<div class="gcGuideBody">
           <p style="margin:8px 0 0;color:var(--muted)">Làm một lần, khoảng 5–10 phút, hoàn toàn miễn phí. Đăng nhập Google Cloud bằng chính tài khoản Google bạn dùng cho lịch.</p>
           <ol>
             <li><b>Tạo project.</b> Mở <code>console.cloud.google.com</code> → bấm ô chọn project ở thanh trên cùng → <b>New project</b> → đặt tên (ví dụ “Lich trinh”) → <b>Create</b>. Đợi vài giây rồi chắc chắn project này đang được chọn ở thanh trên cùng.</li>
@@ -4734,6 +4823,7 @@ body:has(.ci-pop) #selBar{display:none!important}   /* hộp thông tin Tháng �
             <li>Không hiện cửa sổ đăng nhập: trình duyệt đang chặn popup, hãy cho phép popup cho trang này.</li>
             <li>Đang ở chế độ Testing, Google có thể bắt đăng nhập lại sau một thời gian; chỉ cần bấm <b>Kết nối &amp; đồng bộ</b> lần nữa.</li>
           </ul>
+</div>
         </details>
       </div></div></div>
     </div>
@@ -4772,7 +4862,7 @@ body:has(.ci-pop) #selBar{display:none!important}   /* hộp thông tin Tháng �
     <div class="acctSection danger">
       <button type="button" class="acctSectionSummary" aria-expanded="false">Xóa toàn bộ dữ liệu (thiết bị này)<span class="acctArrow" aria-hidden="true"></span></button>
       <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
-        <p class="hint">Xóa toàn bộ lịch, deadline, ghi chú đang lưu trên thiết bị này (và trên cloud nếu tài khoản đang đồng bộ). Bạn có thể nạp lại từ file .json đã sao lưu.</p>
+        <p class="hint">Xóa toàn bộ lịch, deadline, ghi chú trên thiết bị này (và cloud nếu đang đồng bộ).</p>
         <div class="actions"><span class="grow"></span><button type="button" class="btn danger" data-a="reset">Xóa toàn bộ dữ liệu</button></div>
       </div></div></div>
     </div>
@@ -4781,13 +4871,13 @@ body:has(.ci-pop) #selBar{display:none!important}   /* hộp thông tin Tháng �
       <button type="button" class="acctSectionSummary" aria-expanded="false">Xóa tài khoản<span class="acctArrow" aria-hidden="true"></span></button>
       <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
         <div class="fgrid"><label class="full delConfirmRow"><span>Nhập <b>XÓA TÀI KHOẢN</b> để xác nhận</span><input name="delConfirm" autocomplete="off"></label></div>
-        <p class="hint delConfirmHint">Xóa tài khoản sẽ xóa dữ liệu cloud liên quan đến tài khoản này. Hành động này có thể không thể hoàn tác. Dữ liệu trên thiết bị này vẫn được giữ lại.</p>
+        <p class="hint delConfirmHint">Xóa dữ liệu cloud của tài khoản, không hoàn tác được. Dữ liệu trên thiết bị vẫn giữ.</p>
         <p class="err" id="delErr"></p>
         <div class="actions"><span class="grow"></span><button type="button" class="btn danger" id="profileDelete">Xóa tài khoản</button></div>
       </div></div></div>
     </div>
 
-    <div class="actions" style="margin-top:14px"><span class="grow"></span><button type="button" class="btn footerLogout" id="profileLogout" aria-label="Đăng xuất"><span class="lbl">Đăng xuất</span></button></div>
+    <div class="actions acctFooter"><span class="grow"></span><button type="button" class="btn footerLogout" id="profileLogout" aria-label="Đăng xuất"><span class="lbl">Đăng xuất</span></button></div>
   </form>
 </dialog>
 
@@ -5192,7 +5282,7 @@ function abUI(msg){
 }
 const abTimeFull = t => { const d = new Date(t), p = n => String(n).padStart(2,'0'); return p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds()) + ' ' + p(d.getDate()) + '/' + p(d.getMonth()+1) + '/' + d.getFullYear(); };
 async function abRefresh(){
-  if(!abSupported()) return abUI('Trình duyệt này chưa hỗ trợ sao lưu tự động. Hãy dùng Chrome, Edge, Firefox hoặc Safari bản mới.');
+  if(!abSupported()) return abUI('Trình duyệt chưa hỗ trợ sao lưu tự động.');
   if(!curUid) return abUI();   // chưa đăng nhập thì chưa có file nào
   const name = abFileName(); let msg = '';
   try{
@@ -5219,7 +5309,7 @@ async function abWrite(){
     } while(ab.dirty);
     abRefresh();
   }catch(e){
-    abUI('Không ghi được bản sao lưu tự động trên trình duyệt này.');
+    abUI('Không ghi được bản sao lưu tự động.');
   }
   ab.busy = false;
 }
@@ -5454,12 +5544,12 @@ async function pushNow(){
       if(!sync.doc) break;   // vừa đăng xuất/đổi tài khoản giữa chừng
       if(curUid && memOwner !== curUid){ blocked = true; break; }   // dữ liệu trong bộ nhớ không phải của tài khoản này: tuyệt đối không ghi lên cloud của nó
       if(hasData(state)) sync.sawData = true;
-      else if(!sync.sawData && !sync.allowEmpty){ blocked = true; syncInfo('Đã chặn việc ghi dữ liệu trống đè lên dữ liệu trên đám mây.'); break; }   // trống mà chưa từng có dữ liệu trong phiên này và không bấm "Xóa toàn bộ" → gần như chắc chắn là nạp nhầm
+      else if(!sync.sawData && !sync.allowEmpty){ blocked = true; syncInfo('Đã chặn ghi dữ liệu trống đè lên cloud.'); break; }   // trống mà chưa từng có dữ liệu trong phiên này và không bấm "Xóa toàn bộ" → gần như chắc chắn là nạp nhầm
       const json = JSON.stringify(state);
       const bytes = new TextEncoder().encode(json).length;   // tiếng Việt có dấu chiếm 2-3 byte/ký tự; giới hạn tài liệu Firestore là 1 MiB tính theo byte
       if(json.length >= 890000 || bytes > 1000000){
         blocked = true; setAcctSync('bad');
-        syncInfo('Dữ liệu quá lớn (' + Math.round(bytes / 1024) + ' KB) nên chưa đồng bộ lên đám mây được (giới hạn ≈ 900 KB). Hãy xóa bớt lịch/ghi chú cũ hoặc tải bản sao lưu. Dữ liệu vẫn được lưu trên thiết bị này.');
+        syncInfo('Dữ liệu quá lớn (' + Math.round(bytes / 1024) + ' KB) nên chưa đồng bộ được (giới hạn ≈ 900 KB). Hãy xóa bớt dữ liệu cũ.');
         break;
       }
       pushStartAt = Date.now();
@@ -5467,7 +5557,7 @@ async function pushNow(){
     } while(sync.dirty);
     if(!blocked){ setAcctSync('ok'); syncInfo('Đã đồng bộ'); }
   }catch(e){
-    setAcctSync('bad'); syncInfo('Đồng bộ lỗi (' + ((e && e.code) || '?') + '). Dữ liệu vẫn được lưu trên thiết bị này.');
+    setAcctSync('bad'); syncInfo('Đồng bộ lỗi (' + ((e && e.code) || '?') + ').');
     const c = e && e.code;
     if(!['permission-denied','invalid-argument','failed-precondition','resource-exhausted'].includes(c)) sync.retry = setTimeout(pushNow, 20000);   // lỗi tạm thời (mạng…): tự thử lại, không bắt người dùng phải sửa gì đó mới đồng bộ tiếp
   }
@@ -5486,7 +5576,7 @@ function applyRemote(){
   state = st; syncTs = r.ts; sync.sawData = hasData(state);
   mirror();
   saveTs(); initHistory(); render(); abSoon();
-  setAcctSync('ok'); syncInfo('Vừa cập nhật từ thiết bị/tài khoản khác');
+  setAcctSync('ok'); syncInfo('Vừa cập nhật từ thiết bị khác');
 }
 const jsonHasData = j => { try{ return hasData(norm(JSON.parse(j))); }catch(e){ return false; } };
 function detach(){
@@ -5524,7 +5614,7 @@ function attach(doc, opts){
     if(sync.ready && d && typeof d.json === 'string' && rts > syncTs){ pendingRemote = {json:d.json, ts:rts}; applyRemote(); }
   }, e => { setAcctSync('bad'); syncInfo(e && e.code === 'permission-denied'
         ? 'Không có quyền đọc/ghi dữ liệu của tài khoản này.'
-        : 'Đồng bộ bị ngắt (' + ((e && e.code) || '?') + '). Tải lại trang để thử lại.'); });
+        : 'Đồng bộ bị ngắt (' + ((e && e.code) || '?') + '). Tải lại trang.'); });
 }
 /* ---------- Firebase Auth + Firestore (đăng ký/đăng nhập tài khoản) ---------- */
 const fb = {auth:null, db:null, user:null, ready:false};
@@ -5576,8 +5666,8 @@ document.getElementById('authGateRetry').addEventListener('click', () => { gateN
 async function startCloud(){
   // Không có cấu hình Firebase hoặc mở file trực tiếp (không qua web server): không thể có hệ thống
   // tài khoản thật, nên không chặn bằng trang đăng nhập — vào thẳng trang chính như trước, chỉ lưu cục bộ.
-  if(!FIREBASE_CONFIG){ notifyOffline = 'local'; notifyOwnerChanged(); gateShowApp(); syncInfo('Chưa thiết lập đồng bộ đám mây: dữ liệu chỉ lưu trên thiết bị này.'); return; }
-  if(location.protocol !== 'http:' && location.protocol !== 'https:'){ notifyOffline = 'local'; notifyOwnerChanged(); gateShowApp(); syncInfo('Đồng bộ đám mây cần mở trang qua địa chỉ web (https://…), không mở file trực tiếp.'); return; }
+  if(!FIREBASE_CONFIG){ notifyOffline = 'local'; notifyOwnerChanged(); gateShowApp(); syncInfo('Chưa bật đồng bộ cloud, dữ liệu chỉ lưu trên thiết bị.'); return; }
+  if(location.protocol !== 'http:' && location.protocol !== 'https:'){ notifyOffline = 'local'; notifyOwnerChanged(); gateShowApp(); syncInfo('Cần mở trang qua địa chỉ web (https://…).'); return; }
   gateNote('');
   try{
     const base = 'https://www.gstatic.com/firebasejs/' + FB_VER + '/';
@@ -5596,7 +5686,7 @@ async function startCloud(){
       let ow = ''; try{ ow = localStorage.getItem(OWNER_KEY) || ''; }catch(e2){}
       notifyOffline = ow || null; notifyOwnerChanged();   // mất mạng: dùng đúng chủ của dữ liệu cục bộ, không thì không thông báo
       gateShowApp();
-      syncInfo('Không thể kết nối để xác thực lại (có thể đang mất mạng). Đang dùng dữ liệu đã lưu trên thiết bị; mở lại khi có mạng để đồng bộ.');
+      syncInfo('Không kết nối được (có thể mất mạng), đang dùng dữ liệu trên thiết bị.');
     } else {
       gateShowLogin();
       gateNote('Không tải được dịch vụ tài khoản (kiểm tra kết nối Internet).', {warn:true, retry:true});
@@ -5623,7 +5713,7 @@ async function startCloud(){
     } else {
       detach();
       gateShowLogin();
-      syncInfo('Chưa đăng nhập. Dữ liệu chỉ lưu trên thiết bị này.');
+      syncInfo('Chưa đăng nhập.');
     }
   });
 }
@@ -6789,7 +6879,7 @@ function fixedWhen(ev, vs, room = true){
 }
 /* nút “Nghỉ N” trong ô Thời gian của mục Lớp: bấm mở trang nhỏ thống kê các buổi nghỉ (giống nút Liên kết) */
 function absBtn(ev, skip){
-  return `<span class="lkchips abschip"><a class="lkchip absopen" href="#" role="button" aria-label="Buổi nghỉ: ${skip.length}" data-abt="${esc(ev.title || ev.code || '')}" data-abs="${esc(JSON.stringify(skip))}" title="Xem ${skip.length} buổi nghỉ" draggable="false"><i>🚫</i><b>Nghỉ ${skip.length}</b></a></span>`;
+  return `<span class="lkchips abschip"><a class="lkchip absopen" href="#" role="button" aria-label="Buổi nghỉ: ${skip.length}" data-abt="${esc(ev.title || ev.code || '')}" data-abs="${esc(JSON.stringify(skip))}" title="Xem ${skip.length} buổi nghỉ" draggable="false"><b>Nghỉ ${skip.length}</b></a></span>`;
 }
 function fxRowNumber(i){ return `<span class="fx-index"><span class="fx-num">${i+1}</span><button type="button" class="fx-grab" title="Kéo để đổi vị trí" aria-label="Kéo để đổi vị trí">⠿</button></span>`; }
 /* ---------- bộ lọc theo cột cho mục Lịch (trước đây là “Thời khóa biểu của trường” và “Lịch khác”) ---------- */
@@ -8084,6 +8174,7 @@ let calInfo = null, calInfoKey = '', calInfoRef = null, calInfoPending = null;  
 const calInfoSave = () => { try{ uiSoon(); }catch(e){} };   // báo bộ lưu trạng thái (F5) ngay khi hộp thông tin mở / đổi / đóng
 function closeCalInfo(instant){   // đóng có hiệu ứng mờ dần (như hộp thoại); instant = true: gỡ ngay (khi mở hộp khác thay thế)
   const el = calInfo; if(!el) return;
+  document.body.classList.remove('ci-open');
   calInfo = null; calInfoKey = ''; calInfoRef = null; calInfoPending = null; calInfoSave();
   if(instant === true || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)){ el.remove(); return; }
   el.classList.add('closing');
@@ -8192,7 +8283,7 @@ function openCalInfo(chip){
       else { editing = {id:ctx.id, date:ctx.date, slot:ctx.slot, fixed:false}; await $('#delBtn').onclick(); }
     }
   });
-  document.body.appendChild(pop); calInfo = pop; calInfoKey = key; calInfoRef = calInfoRefOf(chip); calInfoPending = null; calInfoSave();
+  document.body.appendChild(pop); document.body.classList.add('ci-open'); calInfo = pop; calInfoKey = key; calInfoRef = calInfoRefOf(chip); calInfoPending = null; calInfoSave();
   calInfoPlace(pop, chip);
   // Không tự focus nút ✎: tránh việc phím Enter/Space vừa bấm lại kích hoạt "Chỉnh sửa" ngay lập tức
 }
@@ -9686,7 +9777,7 @@ function uiSnap(){
   }catch(e){}
 }
 let uiT = 0;
-const uiSoon = () => { clearTimeout(uiT); uiT = setTimeout(uiSnap, 250); };
+const uiSoon = e => { clearTimeout(uiT); uiT = setTimeout(uiSnap, e && e.type === 'scroll' ? 800 : 250); };
 ['input','change','click','keyup','toggle','scroll','close'].forEach(t => document.addEventListener(t, uiSoon, {capture:true, passive:true}));
 addEventListener('scroll', uiSoon, {passive:true});
 addEventListener('pagehide', uiSnap); addEventListener('beforeunload', uiSnap);
@@ -10157,7 +10248,7 @@ let pwaPrompt = null;
 const pwaInstalled = () => matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: window-controls-overlay)').matches || navigator.standalone === true;
 const pwaIsIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 const pwaHttp = () => /^https?:$/.test(location.protocol);
-const PWA_IOS_TXT = 'Bấm nút Chia sẻ (ô vuông có mũi tên ↑) ở thanh của Safari, rồi chọn “Thêm vào Màn hình chính”.';
+const PWA_IOS_TXT = 'Bấm Chia sẻ → “Thêm vào Màn hình chính”.';
 function pwaDismissed(){ try{ return Date.now() < Number(localStorage.getItem(PWA_DISMISS_KEY) || 0); }catch(_){ return false; } }
 function pwaUpdateUI(){
   const bar = $('#pwaBar'), can = pwaHttp() && !pwaInstalled() && (!!pwaPrompt || pwaIsIOS());
@@ -10168,10 +10259,10 @@ function pwaUpdateUI(){
   const info = $('#pwaInfo'), btn = $('#pwaBtn2');
   if(info && btn){
     btn.hidden = !can || (!pwaPrompt && pwaIsIOS());
-    info.textContent = pwaInstalled() ? 'Bạn đang dùng bản ứng dụng đã cài trên thiết bị này.'
-      : pwaPrompt ? 'Cài về thiết bị để mở nhanh, chạy toàn màn hình và dùng được khi mất mạng.'
+    info.textContent = pwaInstalled() ? 'Đã cài ứng dụng.'
+      : pwaPrompt ? 'Cài về thiết bị để mở nhanh.'
       : pwaIsIOS() ? PWA_IOS_TXT
-      : 'Trình duyệt chưa cho phép cài ngay. Với Chrome/Edge, mở menu ⋮ → “Cài đặt ứng dụng” (hoặc bấm biểu tượng cài đặt bên phải thanh địa chỉ). Nếu đã cài rồi, hãy mở ứng dụng từ màn hình chính / menu Start.';
+      : 'Trình duyệt chưa cho phép cài đặt.';
   }
 }
 async function pwaInstall(){
@@ -10249,12 +10340,24 @@ if(firstRun && !(FIREBASE_CONFIG && /^https?:$/.test(location.protocol))){   // 
     .then(s => { if(s && Array.isArray(s.events) && Array.isArray(s.todos)){ state = norm(s); state.view = 'table'; save(); render(); } })
     .catch(() => {});
 }
-setInterval(() => { if(document.visibilityState === 'visible' && !document.querySelector('dialog[open]') && !drag && document.activeElement.tagName !== 'TEXTAREA') render(); }, 60000);
+/* Nhịp 60 giây: chữ "Còn…/Sau…" trong ô chỉ cần làm mới khi trên màn hình CÓ ô Đang/Sắp diễn ra (hoặc sang ngày mới); 5 phút luôn làm mới 1 lần làm lưới an toàn.
+   Không dựng lại bảng ngay khi người dùng đang vuốt/chạm (hoãn 3 giây) để tránh giật. */
+let _rdDay = todayStr(), _rdN = 0, _lastAct = 0;
+['touchstart','touchmove','scroll','pointerdown'].forEach(t => addEventListener(t, () => { _lastAct = performance.now(); }, {capture:true, passive:true}));
+function minuteRender(){
+  if(document.visibilityState !== 'visible' || document.querySelector('dialog[open]') || drag || document.activeElement.tagName === 'TEXTAREA') return;
+  if(performance.now() - _lastAct < 2500){ setTimeout(minuteRender, 3000); return; }
+  const day = todayStr(), need = day !== _rdDay || ++_rdN % 5 === 0 || document.querySelector('#sched .cstate.live, #sched .cstate.next');
+  if(!need) return;
+  _rdDay = day; render();
+}
+setInterval(minuteRender, 60000);
 </script>
 <script>
 /* ===== Thanh cuộn riêng: vẽ thanh trượt tùy biến cho trang + mọi vùng cuộn được ===== */
 (() => {
   'use strict';
+  if(matchMedia('(hover:none),(pointer:coarse)').matches){ document.documentElement.classList.add('sb-hide'); return; }   // cảm ứng: thanh cuộn tự vẽ đã bị CSS ẩn -> khỏi đo layout mỗi lần cuộn / mỗi 6 giây / mỗi lần DOM đổi
   const SEL = '.scroller, ul.todos, dialog, #profileDlg form, #authGate, #legend, .np-list, .fx-pop-list';
   const WIN = window;
   const recs = new Map();                       // phần tử -> {el, host, y, x, m}
@@ -10701,7 +10804,7 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
     if(!on()) return;   // tài khoản này chưa bật (hoặc đã ngắt) đồng bộ Google Calendar
     if(busy){ again=true; return; } busy=true;
     try{
-      if(!await auth(interactive)){ say('Cần đăng nhập Google lại — chạm vào trang một lần hoặc bấm “Kết nối & đồng bộ”.'); armGesture(); return; }
+      if(!await auth(interactive)){ say('Cần đăng nhập Google lại: bấm “Kết nối & đồng bộ”.'); armGesture(); return; }
       say('Đang đồng bộ…');
       const from=addDays(todayStr(),-14), to=addDays(todayStr(),120), want=desired(from,to), gs=await list(from,to);
       const meet=new Map(), mcodes=new Map(), mt=g=>g.hangoutLink||(((g.conferenceData||{}).entryPoints||[]).find(e=>e.entryPointType==='video')||{}).uri||'';
@@ -10755,23 +10858,20 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
       meet.forEach((u,id)=>addMeetLink(state.events.find(e=>e.id===id),u));   // kéo link Google Meet từ Google về ô trong app (không ghi đè link đã có)
       state.events.forEach(ev=>{ if(ev.meet&&ev.meetCode) addMeetLink(ev,'https://meet.google.com/'+ev.meetCode); });
       if(nm2||changed){ save(); render(); }
-      say(`Đã đồng bộ ${new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})}: +${ins} mới, ${lnk} liên kết, ${upd} cập nhật, ${del} xoá${created?', '+created+' Google Meet mới':''}${fail?'; '+fail+' sự kiện không sửa được (không có quyền)':''}${meetFail?'; '+meetFail+' lần chưa gắn được Meet':''}${skipDel?'; bỏ qua xoá '+skipDel+' sự kiện cho an toàn':''}.`);
+      say(`Đã đồng bộ ${new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})}: +${ins} mới, ${lnk} liên kết, ${upd} cập nhật, ${del} xoá${created?', '+created+' Google Meet mới':''}${fail?'; '+fail+' sự kiện không sửa được':''}${meetFail?'; '+meetFail+' lần chưa gắn được Meet':''}${skipDel?'; bỏ qua xoá '+skipDel+' sự kiện':''}.`);
       if(created) toast('Đã tạo Google Meet', 2500); else if(interactive===true) toast('Đã đồng bộ Google Calendar');
-    }catch(e){ if(interactive==='auto'){ say('Chưa tự kết nối được Google ('+e.message+'). Chạm vào trang một lần hoặc bấm “Kết nối & đồng bộ”.'); if(!/khác tài khoản/.test(e.message)) armGesture(); } else { say('Lỗi đồng bộ: '+e.message); if(interactive===true) toast('Lỗi: '+e.message,3000); else if(/hết hạn/.test(e.message)) armGesture(); } }
+    }catch(e){ if(interactive==='auto'){ say('Chưa tự kết nối được Google ('+e.message+'). Bấm “Kết nối & đồng bộ” để thử lại.'); if(!/khác tài khoản/.test(e.message)) armGesture(); } else { say('Lỗi đồng bộ: '+e.message); if(interactive===true) toast('Lỗi: '+e.message,3000); else if(/hết hạn/.test(e.message)) armGesture(); } }
     finally{ busy=false; if(again){ again=false; sched(0); } }   // có thay đổi mới trong lúc đang đồng bộ: chạy lại ngay
   }
   /* Tự kết nối khi vào trang: thử lặng lẽ trước; trình duyệt chặn popup nếu không có thao tác của người dùng nên nếu chưa được, lần chạm/bấm đầu tiên sẽ thử lại (tối đa 2 lần mỗi lần mở trang để không làm phiền) */
-  let armed=false, armN=0;
-  function armGesture(){
-    if(armed||armN>=2||!on()) return; armed=true; armN++;
-    const go=()=>{ document.removeEventListener('click',go,true); document.removeEventListener('keydown',go,true); armed=false; run('auto'); };
-    document.addEventListener('click',go,true); document.addEventListener('keydown',go,true);
-  }
+  let armN=0, autoTried=false;
+  function armGesture(){}   /* không còn tự thử lại khi chạm/bấm: tự kết nối khi vào trang chỉ kiểm tra MỘT lần, không được thì thôi (bấm “Kết nối & đồng bộ” để thử tay) */
+  const autoOnce=()=>{ if(autoTried) return; autoTried=true; void run('auto'); };
   /* (autoStart cũ đã thay bằng boot() ở dưới: chạy cho MỌI tài khoản đã đăng nhập, không chỉ máy đã tự bật) */
   const sched=()=>{ if(!on()) return; if(!(tok&&Date.now()<exp-60000)) armN=0; clearTimeout(timer); timer=0; if(busy){ again=true; return; } void run(false); };   // đồng bộ ngay sau mỗi lần lưu; nếu đang chạy thì chạy lại ngay khi lượt hiện tại kết thúc
   const _save=save; save=function(){ const r=_save.apply(this,arguments); sched(); return r; };
   const _sd=saveDebounced; saveDebounced=function(){ const r=_sd.apply(this,arguments); sched(); return r; };   // mọi thay đổi lịch đều đi qua save()
-  const _rs=restoreSnapshot; restoreSnapshot=function(){ const r=_rs.apply(this,arguments); if(on()){ clearTimeout(timer); if(tok&&Date.now()<exp-60000) run(false); else run('auto'); } return r; };   // undo/redo: đồng bộ NGAY (không chờ); token hết hạn thì tự kết nối lại ngay trong cú bấm để trình duyệt không chặn   // Hoàn tác / Làm lại cũng đồng bộ sang Google (xoá rồi hoàn tác → sự kiện được tạo lại)
+  const _rs=restoreSnapshot; restoreSnapshot=function(){ const r=_rs.apply(this,arguments); if(on()){ clearTimeout(timer); if(tok&&Date.now()<exp-60000) run(false); else autoOnce(); } return r; };   // undo/redo: đồng bộ NGAY (không chờ); token hết hạn thì tự kết nối lại ngay trong cú bấm để trình duyệt không chặn   // Hoàn tác / Làm lại cũng đồng bộ sang Google (xoá rồi hoàn tác → sự kiện được tạo lại)
   window.gcalApi={connected:()=>!!on(), auth:()=>auth(true), now:()=>run(false)};   // dùng cho nút “Tạo Google Meet” trong form lịch
   { const o=$g('gcOrigin'); if(o&&/^https?:$/.test(location.protocol)) o.textContent=location.origin; }   // hiện đúng origin của trang đang mở để dán
   let cidEditing=false, cidBeforeEdit='';
@@ -10801,7 +10901,7 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
       setG({cid:v});
       tok=null; exp=0; tokMe='';
       say(on() ? 'Đã lưu Client ID theo tài khoản. Bấm “Kết nối & đồng bộ” để cấp quyền lại bằng mã mới.' : 'Đã lưu Client ID theo tài khoản app; mã sẽ xuất hiện trên các thiết bị đăng nhập cùng tài khoản.');
-    } else if(!quiet) say('Client ID đã được lưu theo tài khoản app.');
+    } else if(!quiet) say('Đã lưu Client ID.');
     return true;
   }
   $g('gcCidEdit')&&($g('gcCidEdit').onclick=()=>setCidEditing(true));
@@ -10819,7 +10919,7 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
     try{ if(navigator.clipboard&&navigator.clipboard.writeText) await navigator.clipboard.writeText(v); else throw new Error('clipboard unavailable'); }
     catch(e){
       const t=document.createElement('textarea'); t.value=v; t.setAttribute('readonly',''); t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select();
-      const ok=document.execCommand('copy'); t.remove(); if(!ok){ say('Không thể sao chép tự động. Hãy chọn và sao chép mã trong ô.'); return; }
+      const ok=document.execCommand('copy'); t.remove(); if(!ok){ say('Không sao chép được, hãy chọn mã trong ô.'); return; }
     }
     say('Đã sao chép OAuth Client ID.');
   });
@@ -10832,13 +10932,13 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
   /* Cài đặt vừa đổi từ máy khác (đến qua đồng bộ đám mây): cập nhật giao diện và bật/tắt đồng bộ ngay trên máy này */
   function kick(){
     fillUI();
-    if(on()){ say('Tài khoản này đã bật đồng bộ Google Calendar (áp dụng cho mọi thiết bị). Đang kết nối trên thiết bị này…'); loadGIS().catch(()=>{}); armN=0; run('auto'); }
-    else{ if(tok&&window.google&&google.accounts) try{ google.accounts.oauth2.revoke(tok); }catch(e){} tok=null; exp=0; say('Đã ngắt kết nối Google Calendar (cài đặt theo tài khoản). Sự kiện đã tạo trên Google được giữ nguyên.'); }
+    if(on()){ say('Tài khoản đã bật đồng bộ Google Calendar. Đang kết nối…'); loadGIS().catch(()=>{}); armN=0; autoOnce(); }
+    else{ if(tok&&window.google&&google.accounts) try{ google.accounts.oauth2.revoke(tok); }catch(e){} tok=null; exp=0; say('Đã ngắt kết nối Google Calendar. Sự kiện trên Google được giữ nguyên.'); }
   }
   const _ar=applyRemote; applyRemote=function(){ const before=JSON.stringify(G()||null); const r=_ar.apply(this,arguments); if(JSON.stringify(G()||null)!==before) kick(); return r; };
   /* Khi vào trang: đợi đăng nhập + dữ liệu đám mây tải xong (tối đa ~25 giây), rồi mới đọc cài đặt của TÀI KHOẢN và đồng bộ — không phụ thuộc thiết bị */
   (function boot(){ let n=0; const t=setInterval(()=>{ n++;
-    if(appEmail()&&(typeof sync==='undefined'||sync.ready||n>25)){ clearInterval(t); adoptLegacy(); fillUI(); if(on()){ loadGIS().catch(()=>{}); run('auto'); } }
+    if(appEmail()&&(typeof sync==='undefined'||sync.ready||n>25)){ clearInterval(t); adoptLegacy(); fillUI(); if(on()){ loadGIS().catch(()=>{}); autoOnce(); } }
     else if(n>60) clearInterval(t); },1000); })();
   { const cc=$g('gcColor'), cd=$g('gcDl');
     if(cc) cc.onchange=()=>{ setG({color:cc.checked}); sched(); };
@@ -10846,7 +10946,7 @@ setInterval(() => { if(document.visibilityState === 'visible' && !document.query
   fillUI();
   $g('gcOn')&&($g('gcOn').onclick=()=>{ if(cidEditing){ if(!saveClientId(false)) return; setCidEditing(false); } const c=$g('gcCid'), v=c.value.trim(); if(!/\.apps\.googleusercontent\.com$/.test(v)){ say('Client ID chưa đúng định dạng (…apps.googleusercontent.com).'); return; }
     const cc=$g('gcColor'), cd=$g('gcDl'); setG({cid:v,on:true,color:cc?cc.checked:true,dl:cd?cd.checked:true}); LS.removeItem('gcal_noconf'); tok=null; run(true); });
-  $g('gcOff')&&($g('gcOff').onclick=()=>{ setG({on:false}); if(tok&&window.google&&google.accounts) try{ google.accounts.oauth2.revoke(tok); }catch(e){} tok=null; exp=0; say('Đã ngắt kết nối cho tài khoản này (mọi thiết bị). Sự kiện đã tạo trên Google được giữ nguyên.'); });
+  $g('gcOff')&&($g('gcOff').onclick=()=>{ setG({on:false}); if(tok&&window.google&&google.accounts) try{ google.accounts.oauth2.revoke(tok); }catch(e){} tok=null; exp=0; say('Đã ngắt kết nối. Sự kiện trên Google được giữ nguyên.'); });
 }catch(e){ console.error('gcal',e); }})();
 </script>
 <script>
