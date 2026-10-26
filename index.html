@@ -721,7 +721,7 @@ dialog h2{margin:0 0 14px;font-size:17px}
   #dlg form{overflow-y:auto}
   #profileDlg .acctModalHead{padding-top:2px}
 }
-#dlgScope{width:min(420px,94vw)}
+#dlgScope{width:min(420px,94vw);overflow:hidden}
 #dlgConfirm{width:min(400px,94vw)}
 #dlgConfirm h2{margin:0 0 8px;font-size:17px}
 #cfMsg{margin:0 0 20px;color:var(--muted);font-size:14px;line-height:1.55;white-space:pre-line;overflow-wrap:anywhere}
@@ -6018,7 +6018,7 @@ function scopeFrom(ev, occ, rp){
   return nonWk ? occ : mondayOf(occ);
 }
 const scopeLbl = (ev, occ, rp) => scopeFrom(ev, occ, rp) === occ && !(isWk(ev) && wd(occ) === 0 && (!rp || rp === 'none' || repeatUnit({repeat:rp}) === 'week'))
-  ? {fromLabel:`Từ ngày ${dm(occ)} trở đi`, allLabel:'Tất cả các lần'} : {fromLabel:`Từ tuần ${weekRange(occ)} trở đi`};
+  ? {fromLabel:`Từ ngày ${dm(occ)} trở đi`, allLabel:'Tất cả các lần'} : {fromLabel:`Từ tuần ${dmy(mondayOf(occ))} trở đi`};
 /* Mốc bắt đầu cho “từ hiện tại trở đi”: tính từ ngày + giờ hiện tại; buổi nào đã qua giờ thì xét buổi kế tiếp.
    Lịch lặp theo tuần trả về thứ Hai của tuần chứa buổi đó; lặp theo ngày/tháng/năm trả về đúng ngày của buổi. */
 function nowStart(ev, rp, occ){
@@ -6847,9 +6847,13 @@ function fixedFieldCmp(a,b,key){
 function fixedList(kind){
   const list = fixedSeries(kind);
   const st = state.fixedSort?.[kind] || {key:'manual',dir:1};
-  if(st.key && st.key !== 'manual') return list.sort((a,b) => fixedFieldCmp(a,b,st.key) * st.dir || fixedDefaultSort(a,b));
+  // Lịch có trạng thái “Nghỉ” luôn nằm cuối danh sách Lớp,
+  // nhưng vẫn giữ nguyên thứ tự sắp xếp đã chọn trong từng nhóm.
+  const offLast = (a,b) => Number(a.cur.status === 'cancelled') - Number(b.cur.status === 'cancelled');
+  if(st.key && st.key !== 'manual') return list.sort((a,b) => offLast(a,b) || fixedFieldCmp(a,b,st.key) * st.dir || fixedDefaultSort(a,b));
   const order = new Map((state.fixedOrder?.[kind] || []).map((id,i) => [String(id), i]));
   return list.sort((a,b) => {
+    const off = offLast(a,b); if(off) return off;
     const ai = order.has(String(seriesOf(a.cur))) ? order.get(String(seriesOf(a.cur))) : 1e9;
     const bi = order.has(String(seriesOf(b.cur))) ? order.get(String(seriesOf(b.cur))) : 1e9;
     return ai - bi || fixedDefaultSort(a,b);
@@ -7047,7 +7051,7 @@ addEventListener('resize', () => { if(fxPop) fxPopPlace(); }, {passive:true});
 addEventListener('scroll', () => { if(fxPop) fxPopPlace(); }, {capture:true, passive:true});
 /* đang tìm: chỉ hiện các lớp khớp ở bất kỳ phiên bản nào của chuỗi lịch; không làm mất kết quả do một phiên bản cũ/mới khác nhau */
 const fxSeriesScore = x => Math.max(0,...(x.vs||[x.cur]).map(v => eventSearchScoreFor(v, query, searchDateForEvent(v))));
-const fxShow = list => !searchTextActive() ? list : qScope === 'dl' ? [] : list.filter(x => fxSeriesScore(x) > 0).sort((a,b) => fxSeriesScore(b) - fxSeriesScore(a));
+const fxShow = list => !searchTextActive() ? list : qScope === 'dl' ? [] : list.filter(x => fxSeriesScore(x) > 0).sort((a,b) => Number(a.cur.status === 'cancelled') - Number(b.cur.status === 'cancelled') || fxSeriesScore(b) - fxSeriesScore(a));
 function fixedHTML(){ return otherFixedHTML(); }
 function otherFixedHTML(){
   const today = todayStr(), kind = 'other', list = fixedList(kind); fxCache[kind] = fxBuildCache(kind, list);
@@ -7900,19 +7904,19 @@ f.addEventListener('submit', async e => {
     const lbl = scopeLbl(ev, occ, d.repeat);
     const c = await askScope({
       title:'Phạm vi áp dụng thay đổi', one:!editing.fixed, ...lbl,
-      allLabel: wkScope ? (nf === mondayOf(todayStr()) ? 'Từ tuần hiện tại trở đi' : `Từ tuần ${weekRange(nf)} trở đi`) : `Từ ${dm(nf)} trở đi`,
+      allLabel: wkScope ? `Từ tuần ${dmy(mondayOf(nf))} trở đi` : `Từ ${dm(nf)} trở đi`,
       hideFrom: from === nf || (wkScope && from === mondayOf(todayStr())),   // đang ở tuần hiện tại: “từ tuần này” trùng “từ hiện tại”
       oneLabel:slotSpecific ? `Chỉ lưu khung giờ ${editing.slot.start}–${editing.slot.end} ngày ${dm(occ)}` : `Chỉ lưu ngày ${dm(occ)}`
     });
     if(!c) return;
     if(c === 'one'){ saveOnlyOcc(ev, d, times, occ, slotSpecific ? editing.slot : null); }
     else if(c === 'from'){
-      if(d.until && d.until < from && firstDate(ev) < from) return err('Ngày kết thúc lặp phải từ tuần đang sửa trở đi.');
+      if(d.until && d.until < from && firstDate(ev) < from) return err('Ngày kết thúc lặp phải từ ' + (wkScope ? `tuần ${dmy(mondayOf(from))}` : dm(from)) + ' trở đi.');
       const keys = changedKeys(ev, d), later = versionsAfter(ev);   // lấy trước khi tách, để không lẫn với phiên bản vừa tạo
       splitAt(ev, occ, d);
       applyKeys(keys, d, later);   // các phiên bản đứng sau tuần này cũng đổi theo
     } else {
-      if(d.until && d.until < nf) return err('Ngày kết thúc lặp phải từ ' + dm(nf) + ' trở đi.');
+      if(d.until && d.until < nf) return err('Ngày kết thúc lặp phải từ ' + (wkScope ? `tuần ${dmy(mondayOf(nf))}` : dm(nf)) + ' trở đi.');
       applyFromNow(ev, d, nf);     // “từ hiện tại trở đi”: các tuần đã qua giữ nguyên
     }
   } else {
@@ -7945,7 +7949,7 @@ $('#delBtn').onclick = async () => {
   const c = await askScope({
     title:'Phạm vi xóa', one:true,
     oneLabel:slotSpecific ? `Chỉ xóa khung giờ ${editing.slot.start}–${editing.slot.end} ngày ${dm(occ)}` : `Chỉ xóa ngày ${dm(occ)}`,
-    fromLabel:isWk(ev) ? `Từ tuần ${weekRange(occ)} trở đi` : `Từ ngày ${dm(occ)} trở đi`,
+    fromLabel:isWk(ev) ? `Từ tuần ${dmy(mondayOf(occ))} trở đi` : `Từ ngày ${dm(occ)} trở đi`,
     allLabel:'Xóa toàn bộ lớp'
   });
   if(!c) return;
@@ -8643,7 +8647,7 @@ async function moveOcc(id, from, to, s, e, fs, fe){
   const c = !isWk(ev) ? 'one' : await askScope({   // lịch lặp theo ngày/tháng/năm không có “thứ” để dời → chỉ dời đúng buổi này
     title:'Phạm vi dời lịch', one:true,
     oneLabel:multi ? `Chỉ dời khung giờ ${curS}–${curE} ngày ${dm(from)}` : `Chỉ dời ngày ${dm(from)}`,
-    fromLabel:`Từ tuần ${weekRange(from)} trở đi`
+    fromLabel:`Từ tuần ${dmy(mondayOf(from))} trở đi`
   });
   if(!c) return;
   if(c === 'one'){
