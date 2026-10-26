@@ -4171,9 +4171,12 @@ html.dlg-open :is(.cell,.ag)::before,html.dlg-open :is(.cell,.ag)::after{animati
   .top .nav{justify-content:flex-start}
   /* bỏ thanh tab dưới đáy: nút + hạ thấp xuống */
   .tools #viewSeg{display:none!important}
+  :root{padding-bottom:0!important}   /* bỏ dải đen ở viền dưới (padding safe-area của :root nằm ngoài khung .app nên hiện thành một thanh trống dưới danh sách); phần chừa chỗ cho thanh điều hướng hệ thống đã có trong vùng cuộn bên dưới */
+  html,body{background:var(--bg)}
   .app{padding-bottom:0!important}   /* trang là khung cao cố định: padding dưới của .app chính là dải trống cuối màn hình, bỏ hẳn; nút + nổi đè lên nội dung nên chừa chỗ cuối trong từng vùng cuộn */
   body[data-view="table"] #sched>.scroller,body[data-view="cal"] #sched>.calv{padding-bottom:84px}
   body[data-view="agenda"] #sched,body[data-view="monthAgenda"] #sched,body[data-view="fixed"] #sched,body[data-view="deadline"] .layout .below{padding-bottom:84px!important}
+  body[data-view="agenda"] .layout .below,body[data-view="monthAgenda"] .layout .below,body[data-view="fixed"] .layout .below{display:none!important;margin:0!important;padding:0!important;height:0!important}   /* danh sách: bỏ hẳn khối .below rỗng (như Bảng) — nó chiếm thêm một dải ở đáy; khối cũ ở dưới chỉ áp dụng cho điện thoại xoay ngang */
   .tools #addBtn{bottom:calc(20px + env(safe-area-inset-bottom,0px))!important}
   .toast{bottom:calc(88px + env(safe-area-inset-bottom,0px))}
   .pwaBar{bottom:calc(16px + env(safe-area-inset-bottom,0px))}
@@ -4329,7 +4332,7 @@ body[data-view="cal"] #sched .mchip{border-radius:9px!important}
 #authSeg{padding:0}
 #authSeg .seg-ind{top:0;bottom:0;height:auto;left:0;border-radius:calc(var(--r-ctl,10px) - 1px);box-shadow:none;background:color-mix(in srgb,var(--accent) 16%,var(--surface));outline:1.5px solid color-mix(in srgb,var(--accent) 55%,transparent);outline-offset:-1.5px}
 /* Điện thoại: bỏ nút chuyển Bảng/Danh sách khỏi thanh trên cùng — đã nằm trong menu ☰ (Tuần · Bảng / Tuần · Danh sách) */
-@media screen and (max-width:700px){ body .top #taBtn{display:none!important} }
+@media screen and (max-width:700px){ body .top #taBtn{display:inline-flex!important} }   /* hiện lại nút Bảng/Danh sách: nằm giữa nút ngày và nút Tag */
 /* ===== Mobile: chọn ô / chọn cột / sao chép / dán ===== */
 @media (hover:none),(pointer:coarse){
   #sched .cell,#sched .ag,#sched .ce,#sched .sheet th[data-col],#sched .ad>h3{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
@@ -4359,7 +4362,7 @@ body[data-view="cal"] #sched .mc.selday{outline:2px solid var(--accent);outline-
   body[data-view="table"] .layout .legend,body[data-view="cal"] .layout .legend{flex:none}
   body[data-view="table"] #sched,body[data-view="cal"] #sched{flex:1 1 auto;min-height:0;height:auto!important;display:flex;flex-direction:column;overflow:hidden}
   body[data-view="table"] #sched>.scroller,body[data-view="cal"] #sched>.calv{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:84px}
-  body[data-view="table"] .layout .below,body[data-view="cal"] .layout .below{display:none}
+  body[data-view="table"] .layout .below,body[data-view="cal"] .layout .below,body[data-view="agenda"] .layout .below,body[data-view="monthAgenda"] .layout .below,body[data-view="fixed"] .layout .below{display:none!important}   /* danh sách/lớp cố định: bỏ hẳn khối .below (rỗng) như Bảng, nếu không nó chiếm một dải đen ở đáy */
 }
 .ci-actions [data-ci=copy][hidden]{display:none}
 /* Bảng: ô ngày Thứ Hai ở hàng ngày bị ép position:static nên lớp phủ bấm-chọn-cột (::after, inset:0) của nó bám theo thead và phủ kín cả hàng tiêu đề (837×64px): mọi lần bấm / nhấn giữ trên tiêu đề đều trúng Thứ Hai. relative = vẫn không ghim nhưng lớp phủ chỉ phủ đúng ô của nó. */
@@ -10863,7 +10866,7 @@ var ic={
  month:'<svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M3.5 9.3h17M3.5 14.6h17M9.2 4v16M14.8 4v16"/></svg>',
  agenda:'<svg viewBox="0 0 24 24"><path d="M9 6.5h11M9 12h11M9 17.5h11"/><path d="M4.5 6.5h.01M4.5 12h.01M4.5 17.5h.01"/></svg>',
  monthAgenda:'<svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M3.5 9.3h17M8 4v5.3M9 13h10M9 16.5h7"/></svg>'};
-var items=[['week','Tuần · Bảng'],['agenda','Tuần · Danh sách'],['month','Tháng · Bảng'],['monthAgenda','Tháng · Danh sách'],'-',['table','Lịch'],['deadline','Deadline'],['fixed','Lớp']];   /* nút Bảng/Danh sách trên thanh trên cùng (điện thoại) đã chuyển vào đây */
+var items=[['week','Tuần'],['month','Tháng'],'-',['deadline','Deadline'],['fixed','Lớp']];   /* Bảng/Danh sách đã có nút riêng trên thanh trên cùng; ở đây chỉ chọn Tuần / Tháng */   /* nút Bảng/Danh sách trên thanh trên cùng (điện thoại) đã chuyển vào đây */
 var d=document.createElement('nav'); d.id='gDrawer'; d.setAttribute('aria-label','Menu'); d.setAttribute('role','dialog');
 d.innerHTML='<h2>Lịch trình</h2>'+items.map(function(i){return i==='-'?'<hr>':'<button type="button" class="gdi" data-g="'+i[0]+'">'+ic[i[0]]+'<span>'+i[1]+'</span></button>';}).join('');
 var sc=document.createElement('div'); sc.id='gScrim';
@@ -10873,10 +10876,8 @@ function sync(){
  var on=$('#viewSeg button.on'), v=on?on.dataset.v:'table', cal=document.body.dataset.view==='cal', tbl=v==='table';
  d.querySelectorAll('.gdi').forEach(function(b){var g=b.dataset.g,a=false,sv=(typeof state!=='undefined'&&state.view)||document.body.dataset.view;
   if(g==='table'||g==='deadline'||g==='fixed') a=(g===v);
-  else if(g==='week') a=(sv==='table');
-  else if(g==='agenda') a=(sv==='agenda');
-  else if(g==='month') a=(sv==='cal');
-  else if(g==='monthAgenda') a=(sv==='monthAgenda');
+  else if(g==='week') a=(sv==='table'||sv==='agenda');
+  else if(g==='month') a=(sv==='cal'||sv==='monthAgenda');
   b.classList.toggle('on',a); b.setAttribute('aria-current',a?'true':'false');});
  var t=$('#gdTitle'); if(t)t.textContent=v==='deadline'?'Deadline':v==='fixed'?'Lớp':'';
 }
@@ -10889,13 +10890,13 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&document.b
 d.addEventListener('click',function(e){
  var b=e.target.closest('.gdi'); if(!b)return; var g=b.dataset.g;
  if(g==='table'||g==='deadline'||g==='fixed'){ var s=$('#viewSeg button[data-v="'+g+'"]'); if(s)s.click(); }
- else if(g==='week'||g==='agenda'){   /* Chọn rõ kiểu hiển thị Tuần, kể cả khi đang ở một trong hai dạng Tháng */
-  var want=g==='agenda'?'agenda':'table';
+ else if(g==='week'){   /* Tuần: giữ nguyên dạng Bảng/Danh sách đang dùng */
+  var want=(state.view==='agenda'||state.view==='monthAgenda')?'agenda':'table';
   if(state.view==='cal'||state.view==='monthAgenda') weekStart=mondayOf(calDate);
   if(state.view!==want)switchView(want); }
- else if(g==='month'||g==='monthAgenda'){   /* Chọn rõ kiểu hiển thị Tháng */
+ else if(g==='month'){   /* Tháng: giữ nguyên dạng Bảng/Danh sách đang dùng */
   if(state.view!=='cal'&&state.view!=='monthAgenda') calDate=mondayOf(todayStr())===weekStart?todayStr():weekStart;
-  var wantMonth=g==='monthAgenda'?'monthAgenda':'cal';
+  var wantMonth=(state.view==='agenda'||state.view==='monthAgenda')?'monthAgenda':'cal';
   if(state.view!==wantMonth)switchView(wantMonth);
  }
  else { var cur=$('#viewSeg button.on'); if(!cur||cur.dataset.v!=='table'){ var s2=$('#viewSeg button[data-v="table"]'); if(s2)s2.click(); } }
