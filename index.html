@@ -9544,9 +9544,17 @@ document.addEventListener('keydown', e => {
   }
   function place(){
     const r = (() => { const ts = anchor.style.transition, tf = anchor.style.transform; anchor.style.transition = 'none'; anchor.style.transform = 'none'; const q = anchor.getBoundingClientRect(); anchor.style.transform = tf; anchor.style.transition = ts; return q; })(), w = pop.offsetWidth, ph = pop.offsetHeight;   // đo mốc khi chưa bị transform (nhấn/hover) tác động → khung luôn nằm đúng một chỗ
-    let top = r.bottom + 6; if(top + ph > innerHeight - 8) top = Math.max(8, r.top - ph - 6);
-    pop.style.top = top + 'px';
-    pop.style.left = Math.max(8, Math.min(r.left, innerWidth - w - 8)) + 'px';
+    const dl = pop.closest('dialog'), bd = dl ? dl.getBoundingClientRect() : {top:0, bottom:innerHeight, left:0, right:innerWidth};   // khung được phép hiện: hộp thoại (nó cắt phần tràn) hoặc màn hình
+    const minT = Math.max(8, bd.top + 4), maxB = Math.min(innerHeight - 8, bd.bottom - 4);
+    let top = r.bottom + 6; if(top + ph > maxB) top = r.top - ph - 6;
+    if(top < minT || top + ph > maxB) top = Math.max(minT, Math.min(top, maxB - ph));   // không đủ chỗ cả trên lẫn dưới: đè lên ô nhập nhưng vẫn hiện đủ, không bị cắt
+    const minL = Math.max(8, bd.left + 4), maxR = Math.min(innerWidth - 8, bd.right - 4);
+    let left = Math.max(minL, Math.min(r.left, maxR - w));
+    /* bộ chọn nằm trong <dialog> (có transform) nên khung fixed lấy gốc (0,0) ở góc hộp thoại chứ không phải góc màn hình: đo gốc thật rồi bù lại, nếu không bảng lịch bị lệch và bị hộp thoại cắt mất */
+    pop.style.top = '0px'; pop.style.left = '0px';
+    const o = pop.getBoundingClientRect();
+    pop.style.top = (top - o.top) + 'px';
+    pop.style.left = (left - o.left) + 'px';
   }
   function open(input, anc){
     if(pop && inp === input){ close(); return; }
