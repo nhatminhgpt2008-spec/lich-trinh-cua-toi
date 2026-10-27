@@ -2364,7 +2364,7 @@ input,select,textarea,#dlg input,#dlg select,#dlg textarea{transition:border-col
 #dlPanel.page .np-dl.open .np-det .det .lkchips,#dlPanel.page .np-dl.open .np-det .det .bd+.lkchips{margin-top:0}
 #dlPanel.page .np-dl.open .np-det .ag-links .lkchips{margin-top:0}
 /* ô Deadline luôn hiện đủ thông tin: bỏ đường kẻ ngang, dòng "Hoàn thành …" nằm thường (không đè lên đường kẻ), con trỏ mặc định */
-#dlPanel.page .np-dl,#dlPanel.page .np-dl.open{cursor:default}
+#dlPanel.page .np-dl,#dlPanel.page .np-dl.open{cursor:pointer}   /* giống ô ở mục Lịch (.cell/.dlcell: cursor:pointer) */
 #dlPanel.page .np-dl.open>.np-det{border-top:0}
 #dlPanel.page .np-dl.open .np-det .np-dmeta{background:none}
 #dlPanel.page .np-dl .np-created{margin-top:1px}
@@ -3798,6 +3798,10 @@ body{
 ::-webkit-scrollbar{width:10px;height:10px}
 ::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--muted) 34%,transparent);border-radius:99px;border:3px solid transparent;background-clip:content-box}
 ::-webkit-scrollbar-thumb:hover{background:color-mix(in srgb,var(--muted) 55%,transparent);background-clip:content-box;border:3px solid transparent}
+/* Sửa lỗi nháy thanh cuộn mặc định của Chrome khi mới vào trang: các luật *{scrollbar-width:thin} / ::-webkit-scrollbar ở trên bật lại thanh gốc (đè luật ẩn ở mục "Thanh cuộn riêng"),
+   còn lớp .sb-hide chỉ được JS thêm vào sau khi trang tải xong. Ẩn sẵn bằng CSS cho đúng các vùng mà thanh cuộn tự vẽ quản lý (thêm #sched = lịch dạng Danh sách) và cả trang. */
+html,#sched,:is(.scroller,ul.todos,dialog,#profileDlg form,#authGate,#legend,.np-list,.fx-pop-list){scrollbar-width:none;-ms-overflow-style:none}
+html::-webkit-scrollbar,#sched::-webkit-scrollbar,:is(.scroller,ul.todos,dialog,#profileDlg form,#authGate,#legend,.np-list,.fx-pop-list)::-webkit-scrollbar{width:0;height:0;display:none}
 :focus-visible{outline:none;box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--accent)}
 
 /* ----- nút: cùng một nhịp hover/nhấn ở mọi nơi ----- */
@@ -3900,6 +3904,9 @@ dialog[open]::backdrop{animation:pageFade var(--mo-in) ease both}
 .np-list,.np-empty,.np-tabs{border-radius:18px}
 @media (hover:hover){.np-tile:hover,.np-dl:hover{transform:translateY(-2px);box-shadow:var(--sh-2)}}
 .np-tile:active,.np-dl:active{transform:scale(.99);transition-duration:.08s}
+/* Sửa lỗi mất viền trên của thẻ đầu tiên mỗi nhóm khi rê chuột: thẻ nhấc lên 2px (translateY(-2px)) nên chui xuống dưới tiêu đề nhóm (.np-bk, sticky, nền đặc, z-index:2) và bị che mất 2px viền trên.
+   Chừa sẵn 3px giữa tiêu đề và thẻ đầu tiên để khi nhấc lên, thẻ chỉ lùi vào khoảng trống đó chứ không bị tiêu đề đè. */
+#dlPanel.page .np-list .np-bk+.np-dl,#dlPanel.page .np-list .np-bk+.np-dl.open{margin-top:3px}
 
 /* mục gập (details): nội dung bung ra mượt */
 details[open]>:not(summary){animation:uiRise var(--mo-slow) var(--ease) both}
@@ -10370,7 +10377,7 @@ setInterval(minuteRender, 60000);
 (() => {
   'use strict';
   if(matchMedia('(hover:none),(pointer:coarse)').matches){ document.documentElement.classList.add('sb-hide'); return; }   // cảm ứng: thanh cuộn tự vẽ đã bị CSS ẩn -> khỏi đo layout mỗi lần cuộn / mỗi 6 giây / mỗi lần DOM đổi
-  const SEL = '.scroller, ul.todos, dialog, #profileDlg form, #authGate, #legend, .np-list, .fx-pop-list';
+  const SEL = '.scroller, #sched, ul.todos, dialog, #profileDlg form, #authGate, #legend, .np-list, .fx-pop-list';   /* #sched = lịch dạng Danh sách: đăng ký thẳng để thanh cuộn tự vẽ luôn được tạo (trước đây phải chờ lượt quét tự phát hiện, nên thanh gốc lộ ra lâu) */
   const WIN = window;
   const recs = new Map();                       // phần tử -> {el, host, y, x, m}
   const layer = document.createElement('div');
