@@ -2403,9 +2403,9 @@ input,select,textarea,#dlg input,#dlg select,#dlg textarea{transition:border-col
 /* Bảng, màn hẹp / cảm ứng: ô có đủ 3 nhãn (loại + Còn…/Sau… + Trùng) không đủ chỗ trên một hàng nên nhãn loại bị ép còn 1 chữ.
    Hàng 1 (vắt ngang viền trên): nhãn loại · hàng 2 (nằm trong ô): trạng thái + Trùng; ô chừa thêm khoảng đệm phía trên cho hàng 2. */
 @media (max-width:700px),(hover:none){
-  #sched .cell>.cbar.cb3{flex-wrap:wrap;height:auto;row-gap:3px;align-content:flex-start;width:calc(100% - 8px)}
+  #sched .cell>.cbar.cb3{position:relative!important;top:auto!important;left:auto!important;transform:none!important;display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-start;row-gap:3px;height:auto;width:calc(100% - 8px);max-width:none;margin:-14px auto 6px}
   #sched .cell>.cbar.cb3>.cbr{display:block;flex:0 0 100%;height:0}
-  #sched .cell:has(>.cbar.cb3){padding-top:26px}
+  #sched .cell:has(>.cbar.cb3){padding-top:8px}
 }
 
 /* Bảng, màn hẹp / cảm ứng: ô Deadline không đủ chỗ cho "Deadline" + trạng thái trên một hàng (nhãn bị ép còn 1 chữ) → nhãn Deadline vắt ngang viền trên, trạng thái xuống hàng 2 trong ô.
@@ -3816,7 +3816,7 @@ html::-webkit-scrollbar,#sched::-webkit-scrollbar,:is(.scroller,ul.todos,dialog,
 }
 .tools .primary:hover,.btn.primary:hover,button.primary:hover{filter:brightness(1.08);box-shadow:var(--sh-2)}
 #todayBtn{font-weight:600;letter-spacing:.005em}
-#todayBtn:hover{background:var(--accent-soft);color:var(--accent)}
+#todayBtn:hover{}
 
 /* ----- ô chọn Lịch / Deadline / Lớp: viên thuốc, thanh trượt có viền sáng ----- */
 .seg{padding:0;overflow:hidden;background:color-mix(in srgb,var(--surface) 88%,var(--line-soft))}
@@ -4511,6 +4511,56 @@ button,a,select,label,summary,[role=button]{touch-action:manipulation}
   #sched .cell.live::before,#sched .cell.next::before,#sched .ag.live::before,#sched .ag.next::before,
   #sched :is(.cell,.ag):is(.live,.next)::after{animation:none!important}
 }
+
+/* ===== ‹ Hôm nay › cùng hiệu ứng với 3 nút W / Bảng-Danh sách / Tag: chỉ đổi viền (không glow), nổi nhẹ trên máy tính, nhấn thì co 0.95 ===== */
+.top .nav #prev,.top .nav #todayBtn,.top .nav #next{position:relative;z-index:0;box-sizing:border-box;transition:background-color var(--mo),border-color var(--mo),color var(--mo),box-shadow var(--mo),transform var(--mo) var(--ease)}
+.top .nav #prev:hover,.top .nav #todayBtn:hover,.top .nav #next:hover,
+.top .nav #prev:focus-visible,.top .nav #todayBtn:focus-visible,.top .nav #next:focus-visible{z-index:5;background:var(--surface)!important;border-color:var(--accent)!important;color:var(--accent)!important;box-shadow:none}
+@media screen and (min-width:701px){
+  .top .nav #prev:hover,.top .nav #todayBtn:hover,.top .nav #next:hover{box-shadow:var(--sh-2);transform:translateY(-1px)}
+}
+.top .nav #prev:active,.top .nav #todayBtn:active,.top .nav #next:active{transform:scale(.95);box-shadow:var(--sh-1);transition-duration:.08s}
+@media (hover:none){.top .nav #prev:hover,.top .nav #todayBtn:hover,.top .nav #next:hover{transform:none}}
+
+/* ===== Máy tính: 2 nút Lịch / Lớp gộp thành 1 công tắc (giống nút Bảng / Danh sách); điện thoại vẫn dùng thanh tab dưới đáy ===== */
+@media screen and (min-width:701px){
+  #viewSeg{display:none!important}
+  #lcBtn{box-sizing:border-box;width:36px;height:36px;padding:0;border-radius:8px;gap:0;position:relative;z-index:0;transition:background-color var(--mo),border-color var(--mo),color var(--mo),box-shadow var(--mo),transform var(--mo) var(--ease)}
+  #lcBtn::before{content:"";display:block;width:20px;height:20px;background:currentColor;-webkit-mask:var(--ic) center/contain no-repeat;mask:var(--ic) center/contain no-repeat}
+  #lcBtn[data-cur=table]{--ic:var(--i-table)}
+  #lcBtn[data-cur=fixed]{--ic:var(--i-agenda)}
+  #lcBtn:hover{z-index:5;background:var(--accent-soft);box-shadow:var(--sh-2);transform:translateY(-1px)}
+  #lcBtn:active{transform:scale(.95);box-shadow:var(--sh-1);transition-duration:.08s}
+}
+@media (max-width:700px){#lcBtn{display:none!important}}
+
+/* lcBtn = cùng kiểu hiển thị + hiệu ứng với #mbar .mbtn (W, Bảng/Danh sách): nền nhấn nhạt, chữ/biểu tượng màu nhấn, viền xám, bo 8px, nổi lên khi rê, co khi bấm */
+@media screen and (min-width:701px){
+  .tools #lcBtn{background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);border-radius:8px;box-shadow:var(--sh-1);width:36px;height:36px;min-width:36px;padding:0;transition:background-color var(--mo) var(--ease),border-color var(--mo) var(--ease),box-shadow var(--mo) var(--ease),transform var(--mo) var(--ease),color var(--mo) var(--ease)}
+  .tools #lcBtn::before{width:17px;height:17px}
+  .tools #lcBtn:hover,.tools #lcBtn:focus-visible{z-index:5;background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 55%,var(--line));box-shadow:var(--sh-2);transform:translateY(-1px)}
+  .tools #lcBtn:active{transform:scale(.95);box-shadow:var(--sh-1);transition-duration:.08s}
+}
+
+/* ===== Bỏ hết bóng/vòng sáng (glow) khi rê chuột ở W · Bảng/Danh sách · Tag · Lịch/Lớp · ‹ Hôm nay ›: chỉ còn đổi viền/màu + nổi nhẹ ===== */
+#mbar .mbtn:hover,#mbar #tagToggle:hover,#mbar .mbtn:focus-visible,#mbar #tagToggle:focus-visible,
+#legend .mbtn:hover,#legend #tagToggle:hover,#legend .mbtn:focus-visible,#legend #tagToggle:focus-visible,
+.mbtn:hover,.tools #lcBtn:hover,.tools #lcBtn:focus-visible,
+.top .nav #prev:hover,.top .nav #todayBtn:hover,.top .nav #next:hover,
+.top .nav #prev:focus-visible,.top .nav #todayBtn:focus-visible,.top .nav #next:focus-visible{box-shadow:none!important}
+#mbar .mbtn:hover,#mbar #tagToggle:hover,#mbar .mbtn:focus-visible,#mbar #tagToggle:focus-visible,.mbtn:focus-visible{border-color:var(--accent)}
+#mbar .mbtn:active,#mbar #tagToggle:active,.tools #lcBtn:active,.top .nav #prev:active,.top .nav #todayBtn:active,.top .nav #next:active{box-shadow:none!important}
+
+/* ===== W · Bảng/Danh sách · Lịch/Lớp giống hệt nút Tag: nền thường, chữ/biểu tượng xám; rê chuột → chữ + viền sang màu nhấn (nền giữ nguyên) ===== */
+#mbar .mbtn:not(:disabled),#legend .mbtn:not(:disabled),.tools #lcBtn{color:var(--muted);background:var(--surface)!important;border-color:var(--line)}
+#mbar .mbtn:not(:disabled):hover,#mbar .mbtn:not(:disabled):focus-visible,
+#legend .mbtn:not(:disabled):hover,#legend .mbtn:not(:disabled):focus-visible,
+.tools #lcBtn:hover,.tools #lcBtn:focus-visible{color:var(--accent)!important;border-color:var(--accent)!important;background:var(--surface)!important}
+
+/* ‹ Hôm nay › theo chuẩn nút Tag: chữ/biểu tượng xám, nền thường; rê chuột → chữ + viền màu nhấn, nền giữ nguyên */
+.top .nav #prev,.top .nav #todayBtn,.top .nav #next{color:var(--muted)!important;background:var(--surface)!important;border-color:var(--line)}
+.top .nav #prev:hover,.top .nav #todayBtn:hover,.top .nav #next:hover,
+.top .nav #prev:focus-visible,.top .nav #todayBtn:focus-visible,.top .nav #next:focus-visible{color:var(--accent)!important;border-color:var(--accent)!important;background:var(--surface)!important}
 </style>
 </head>
 <body>
@@ -4533,6 +4583,7 @@ button,a,select,label,summary,[role=button]{touch-action:manipulation}
         <span class="q-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="2"/><line x1="15" y1="15" x2="20" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
         <input type="search" id="q" aria-label="Tìm lịch"><button type="button" id="qScope" class="q-scope" title="Đang tìm Lịch — bấm để tìm Deadline">Lịch</button>
       </div>
+      <button type="button" class="mbtn" id="lcBtn" data-cur="table" title="Đang xem Lịch — bấm để sang Lớp" aria-label="Đang xem Lịch"></button>
       <div class="seg" id="viewSeg"><span class="seg-ind" id="viewSegInd" aria-hidden="true"></span><button data-v="table" title="Lịch" aria-label="Lịch">Lịch</button><button data-v="deadline" title="Deadline" aria-label="Deadline">Deadline</button><button data-v="fixed" title="Lớp" aria-label="Lớp">Lớp</button></div>
       <button type="button" class="primary" id="addBtn" title="Thêm lịch hoặc deadline" aria-haspopup="menu" aria-expanded="false" aria-controls="addMenu" aria-label="Thêm lịch hoặc deadline"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button>
       <div class="addmenu" id="addMenu" role="menu" hidden>
@@ -8165,8 +8216,10 @@ function syncModeBtn(){   // W/M hiển thị chế độ hiện tại; bấm ch
     const sv = st.querySelector('svg');   // mũi tên xuống = 0°, lên = -180°: xuống→lên quay ngược chiều kim đồng hồ, lên→xuống quay thuận chiều → cả hai chiều đều quét qua phía bên phải; đặt lại đúng trạng thái sau mỗi lần dựng bảng
     if(sv){ if(window.__stAngle == null || (window.__stAngle !== 0) !== on) window.__stAngle = on ? -180 : 0; sv.style.transition = 'none'; sv.style.transform = `rotate(${window.__stAngle}deg)`; }
     const t3 = on ? 'Đang thu gọn lịch — bấm để xếp theo khung giờ' : 'Đang xếp theo khung giờ — bấm để thu gọn lịch'; st.title = t3; st.setAttribute('aria-label', t3); }
+  { const lc = $('#lcBtn'), fx = segKey(state.view) === 'fixed'; if(lc){ lc.dataset.cur = fx ? 'fixed' : 'table'; const t = fx ? 'Đang xem Lớp — bấm để sang Lịch' : 'Đang xem Lịch — bấm để sang Lớp'; lc.title = t; lc.setAttribute('aria-label', t); } }
   syncCalUI();
 }
+$('#lcBtn').onclick = () => { const toFixed = segKey(state.view) !== 'fixed'; const b = document.querySelector('#viewSeg button[data-v="' + (toFixed ? 'fixed' : 'table') + '"]'); if(b) b.click(); };
 $('#wmBtn').onclick = () => setCalMode(isMonthView() ? 'week' : 'month');
 $('#taBtn').onclick = () => { if(state.view === 'cal') switchView('monthAgenda'); else if(state.view === 'monthAgenda') switchView('cal'); else switchView(state.view === 'table' ? 'agenda' : 'table'); };
 
