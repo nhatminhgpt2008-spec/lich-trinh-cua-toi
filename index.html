@@ -4147,10 +4147,10 @@ html.dlg-open :is(.cell,.ag)::before,html.dlg-open :is(.cell,.ag)::after{animati
   .sheet th.today{box-shadow:none!important}
   .sheet .tl{font-size:11px;color:var(--muted);font-weight:500}
   .sheet td.slot,.sheet td.dls,.sheet td.dlc{border-color:var(--line-soft)!important}
-  /* sự kiện: bo nhỏ, nền nhạt theo màu tag + vạch màu bên trái, chữ căn trái */
+  /* sự kiện: bo nhỏ, nền nhạt theo màu tag (đã bỏ vạch màu bên trái) */
   .cell,.dlcell{text-align:center!important}   /* ô lịch và ô Deadline: nội dung căn giữa (trước đây ô lịch bị căn trái trên điện thoại) */   /* ô Deadline: nội dung căn giữa (tiêu đề, giờ, nút liên kết) */
   .cell{border-radius:6px!important}
-  .cell:not(.live):not(.next):not(.c-cancel):not(.conflict):not(.nofill){background:color-mix(in srgb,var(--cc) 20%,var(--surface))!important;box-shadow:none!important;border-left:4px solid var(--cc)!important;padding-left:6px}
+  .cell:not(.live):not(.next):not(.c-cancel):not(.conflict):not(.nofill){background:color-mix(in srgb,var(--cc) 20%,var(--surface))!important;box-shadow:none!important;border-left:0!important}
   .mchip{border-radius:4px!important}
   /* nút + dạng vuông bo (FAB của Google), thanh tab dưới phẳng */
   .tools #addBtn{width:56px!important;height:56px!important;border-radius:18px!important;right:16px!important;box-shadow:0 1px 3px rgba(60,64,67,.3),0 4px 8px 3px rgba(60,64,67,.15)!important}
@@ -5297,6 +5297,50 @@ button,a,select,label,summary,[role=button]{touch-action:manipulation}
   }
 }
 
+
+/* ===== MOBILE: nút tìm kiếm + thanh tìm kiếm đồng bộ với các nút ở Tuần/Tháng =====
+   Màu biểu tượng, kích thước, hiệu ứng nhấn (thu nhỏ .95 + nền nhấn), hiệu ứng chuyển màu và
+   hiệu ứng bật thanh tìm (popIn) dùng cùng thông số với ☰ / ‹ › / ngày / Tag trên cùng hàng. */
+@media screen and (max-width:700px){
+  body .app > .top .tools #qToggle{
+    color:var(--ink)!important;
+    transition:background-color var(--mo) var(--ease),border-color var(--mo) var(--ease),color var(--mo) var(--ease),transform var(--mo) var(--ease)!important;
+    -webkit-tap-highlight-color:transparent;
+  }
+  /* Tuần/Tháng: cùng cách chia chiều rộng với các nút cùng hàng (trước đây cố định 34px nên hẹp hơn) */
+  body[data-view="table"] .app > .top .tools #qToggle,
+  body[data-view="cal"] .app > .top .tools #qToggle{
+    flex:1 1 0!important;width:auto!important;min-width:26px!important;max-width:48px!important;
+  }
+  /* Nhấn: thu nhỏ + nền nhấn giống các nút còn lại (trước đây bị transform:none!important chặn mất) */
+  body .app > .top .tools #qToggle:active{
+    transform:scale(.95)!important;
+    background:var(--accent-soft)!important;
+    transition-duration:.08s!important;
+  }
+  /* Đang mở thanh tìm */
+  body .app > .top.q-open .tools #qToggle{
+    color:var(--accent)!important;
+    border-color:var(--accent)!important;
+    background:var(--accent-soft)!important;
+  }
+  /* Thanh tìm kiếm: cùng bo góc 12px, viền 1px và nền như các nút; viền nhấn khi mở */
+  body .app > .top.q-open .tools #qWrap{
+    height:36px!important;min-height:36px!important;
+    border:1px solid var(--accent)!important;
+    border-radius:12px!important;
+    background:var(--surface)!important;
+    box-shadow:none!important;
+    animation:popIn var(--mo-in) ease!important;
+  }
+  body .app > .top.q-open .tools #qWrap:focus-within{box-shadow:0 0 0 3px var(--glow)!important}
+  body .app > .top.q-open .tools #qWrap .q-ic{width:34px!important;height:34px!important;color:var(--accent)}
+  body .app > .top.q-open .tools #qWrap input#q{height:34px!important;padding-left:34px!important}
+}
+@media screen and (max-width:700px) and (prefers-reduced-motion:reduce){
+  body .app > .top.q-open .tools #qWrap{animation:none!important}
+  body .app > .top .tools #qToggle:active{transform:none!important}
+}
 </style>
 </head>
 <body>
