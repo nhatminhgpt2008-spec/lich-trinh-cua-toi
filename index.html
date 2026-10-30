@@ -4520,16 +4520,19 @@ body.ci-open #selBar{display:none!important}   /* hộp thông tin Tháng đã c
     justify-content:center!important;
     border:0!important;
     border-radius:14px!important;
-    background:var(--line)!important;
+    background:transparent!important;
+    box-shadow:none!important;
     font-size:12px!important;
     font-weight:600!important;
     color:var(--muted)!important;
   }
-  /* Giữ nguyên tâm của nút khi hover/nhấn; không để hiệu ứng transform chung làm nút nhảy khỏi giữa thanh. */
-  .searchbox .q-scope:hover,.searchbox .q-scope:active{
+  /* Bộ lọc chỉ hiện chữ; loại bỏ nền xám/nền nhấn phủ lên nút khi mới mở thanh tìm kiếm hoặc chạm vào. */
+  .searchbox .q-scope:hover,.searchbox .q-scope:focus,.searchbox .q-scope:focus-visible,.searchbox .q-scope:active{
     transform:translateY(-50%)!important;
+    background:transparent!important;
+    box-shadow:none!important;
   }
-  .searchbox .q-scope:active{background:var(--accent-soft)!important;color:var(--accent)!important}
+  .searchbox .q-scope:active{color:var(--accent)!important}
   /* Chừa chỗ cho nút phạm vi 76px, mép phải 6px và khoảng đệm cho chữ nhập. */
   .searchbox #q{padding-right:94px!important}
 }
@@ -4852,6 +4855,445 @@ button,a,select,label,summary,[role=button]{touch-action:manipulation}
   body[data-view="deadline"] #dlPanel .np-list::-webkit-scrollbar,
   body[data-view="fixed"] #sched::-webkit-scrollbar{
     display:none!important;width:0!important;height:0!important;background:transparent!important;
+  }
+}
+
+/* Bỏ tiêu đề lớn ở thanh đầu trang trên mobile trong mục Deadline và Lớp. */
+@media screen and (max-width:700px){
+  #gdTitle,
+  body[data-view="fixed"] #gdTitle,
+  body[data-view="deadline"] #gdTitle{display:none!important}
+}
+
+/* Mobile: bỏ tiêu đề "Deadline" nhỏ và thanh ngang bên dưới; giữ hàng bộ lọc sát phần nội dung. */
+@media (max-width:820px){
+  #dlPanel.page .np-dlcol .np-h>span:first-child{display:none!important}
+  #dlPanel.page .np-dlcol .np-h::after{content:none!important;display:none!important;height:0!important;margin:0!important;flex:none!important}
+  #dlPanel.page .np-dlcol .np-h{border:0!important;padding-top:0!important;padding-bottom:0!important;margin-bottom:0!important;row-gap:0!important;gap:0!important}
+  #dlPanel.page .np-dlcol .np-h .np-tiles{order:1!important;flex:1 1 100%!important;width:100%!important;margin:0!important}
+}
+/* MOBILE: mục Lớp — bỏ tiêu đề nhỏ "Lịch" và đường viền ngang ngay phía trên */
+@media screen and (max-width:700px){
+  body[data-view="fixed"] .fxblk>.fxh{display:none!important}
+  body[data-view="fixed"] .fxblk{border-top:0!important}
+}
+
+
+/* ===== MOBILE: Deadline/Lớp — nút tìm kiếm cùng kích thước, giao diện và hiệu ứng với Tuần/Tháng ===== */
+@media screen and (max-width:700px){
+  body[data-view="deadline"] .top .tools #qToggle,
+  body[data-view="fixed"] .top .tools #qToggle{
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    box-sizing:border-box!important;
+    flex:0 0 34px!important;
+    width:34px!important;
+    min-width:34px!important;
+    max-width:34px!important;
+    height:34px!important;
+    min-height:34px!important;
+    margin:0 0 0 auto!important;
+    padding:0!important;
+    border:1px solid var(--line)!important;
+    border-radius:12px!important;
+    background:var(--surface)!important;
+    color:var(--ink)!important;
+    transform:none!important;
+    transition:background-color var(--mo) var(--ease),border-color var(--mo) var(--ease),color var(--mo) var(--ease),transform var(--mo) var(--ease)!important;
+  }
+  body[data-view="deadline"] .top.q-open .tools #qToggle,
+  body[data-view="fixed"] .top.q-open .tools #qToggle{
+    background:var(--accent-soft)!important;
+    border-color:var(--accent)!important;
+    color:var(--accent)!important;
+  }
+  /* Mở thanh tìm bằng hiệu ứng pop-in tại chỗ như Tuần/Tháng, không trượt ngang. */
+  body[data-view="deadline"] .top .tools #qWrap,
+  body[data-view="fixed"] .top .tools #qWrap{
+    display:none!important;
+    transition:none!important;
+  }
+  body[data-view="deadline"] .top.q-open .tools #qWrap,
+  body[data-view="fixed"] .top.q-open .tools #qWrap{
+    display:inline-flex!important;
+    order:8!important;
+    flex:1 0 100%!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    height:36px!important;
+    min-height:36px!important;
+    margin:0!important;
+    border:1px solid var(--accent)!important;
+    border-radius:18px!important;
+    background:var(--surface)!important;
+    transform-origin:top right!important;
+    animation:popIn var(--mo-in) ease both!important;
+  }
+  body[data-view="deadline"] .top.q-open .tools #qWrap .q-ic,
+  body[data-view="fixed"] .top.q-open .tools #qWrap .q-ic{
+    top:0!important;left:0!important;width:36px!important;height:34px!important;
+  }
+  body[data-view="deadline"] .top.q-open .tools #qWrap #q,
+  body[data-view="fixed"] .top.q-open .tools #qWrap #q{
+    box-sizing:border-box!important;width:100%!important;min-width:0!important;
+    height:34px!important;padding-left:36px!important;padding-right:94px!important;
+  }
+}
+
+/* Deadline: tách nhẹ hàng 3 ô lọc khỏi mép/viền trên, không khôi phục tiêu đề hay đường kẻ đã bỏ. */
+@media screen and (max-width:820px){
+  #dlPanel.page .np-dlcol .np-h{padding-top:8px!important}
+  #dlPanel.page .np-dlcol .np-h .np-tiles{margin-top:0!important}
+}
+
+
+
+/* MOBILE: thống nhất kích thước và vị trí nút kính lúp trên mọi mục (Tuần/Tháng, Deadline, Lớp). */
+@media screen and (max-width:700px){
+  /* Cùng mép trái/phải của header để nút tìm kiếm luôn đứng đúng một tọa độ giữa các mục. */
+  .top{
+    box-sizing:border-box!important;
+    padding-left:8px!important;
+    padding-right:8px!important;
+  }
+  .top .tools #qToggle{
+    display:inline-flex!important;
+    box-sizing:border-box!important;
+    flex:0 0 36px!important;
+    width:36px!important;
+    min-width:36px!important;
+    max-width:36px!important;
+    height:36px!important;
+    min-height:36px!important;
+    max-height:36px!important;
+    margin:0!important;
+    padding:0!important;
+    order:7!important;
+    align-self:center!important;
+    align-items:center!important;
+    justify-content:center!important;
+    border:1px solid var(--line)!important;
+    border-radius:12px!important;
+    background:var(--surface)!important;
+    color:var(--muted)!important;
+    transform:none!important;
+  }
+  .top .tools #qToggle svg{
+    display:block!important;
+    flex:none!important;
+    width:16px!important;
+    height:16px!important;
+    pointer-events:none!important;
+  }
+  .top.q-open .tools #qToggle{
+    border-color:var(--accent)!important;
+    background:var(--accent-soft)!important;
+    color:var(--accent)!important;
+  }
+}
+
+
+/* FIX: cùng một hệ tọa độ cho header và nút tìm kiếm trên mọi mục mobile.
+   Header phủ đúng chiều rộng viewport; nút tìm luôn cách mép phải 8px,
+   không bị thay đổi bởi padding khác nhau giữa Tuần/Tháng và Deadline/Lớp. */
+@media screen and (max-width:700px){
+  .app > .top{
+    position:relative!important;
+    box-sizing:border-box!important;
+    width:100vw!important;
+    max-width:none!important;
+    margin-left:calc(50% - 50vw)!important;
+    margin-right:0!important;
+    padding-left:8px!important;
+    padding-right:8px!important;
+  }
+  .app > .top .tools #qToggle{
+    position:relative!important;
+    inset:auto!important;
+    box-sizing:border-box!important;
+    flex:0 0 36px!important;
+    width:36px!important;
+    min-width:36px!important;
+    max-width:36px!important;
+    height:36px!important;
+    min-height:36px!important;
+    max-height:36px!important;
+    margin:0 0 0 auto!important;
+    padding:0!important;
+    order:7!important;
+    align-self:center!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+  .app > .top .tools #qToggle svg{
+    display:block!important;
+    width:16px!important;
+    height:16px!important;
+    flex:none!important;
+    margin:0!important;
+  }
+}
+
+
+
+/* FINAL FIX MOBILE: dùng đúng một tọa độ theo viewport cho nút tìm kiếm ở mọi mục.
+   Không căn bằng margin/flex vì thành phần cùng hàng khác nhau giữa Tuần/Tháng và Deadline/Lớp. */
+@media screen and (max-width:700px){
+  .app > .top{
+    position:relative!important;
+    box-sizing:border-box!important;
+    width:100vw!important;
+    max-width:none!important;
+    margin-left:calc(50% - 50vw)!important;
+    margin-right:0!important;
+    padding-left:8px!important;
+    padding-right:8px!important;
+  }
+  .app > .top .tools #qToggle{
+    position:absolute!important;
+    top:6px!important;
+    right:8px!important;
+    bottom:auto!important;
+    left:auto!important;
+    inset-inline-start:auto!important;
+    inset-inline-end:8px!important;
+    box-sizing:border-box!important;
+    display:inline-flex!important;
+    flex:none!important;
+    width:36px!important;
+    min-width:36px!important;
+    max-width:36px!important;
+    height:36px!important;
+    min-height:36px!important;
+    max-height:36px!important;
+    margin:0!important;
+    padding:0!important;
+    align-items:center!important;
+    justify-content:center!important;
+    transform:none!important;
+  }
+  .app > .top .tools #qToggle svg{
+    display:block!important;
+    width:16px!important;
+    height:16px!important;
+    margin:0!important;
+    flex:none!important;
+  }
+}
+
+
+
+/* Reserve the same 44px button slot in every mobile header so other flex items
+   cannot push the search control or occupy its position differently by section. */
+@media screen and (max-width:700px){
+  .app > .top{
+    padding-right:52px!important;
+  }
+}
+
+/* FIX THEO YÊU CẦU: nút tìm kiếm đứng cùng vị trí ở mọi mục trên điện thoại;
+   mục Lớp ẩn đường kẻ/thanh cuộn ngay dưới hàng nút sắp xếp và lọc. */
+@media screen and (max-width:700px){
+  .app > .top{
+    position:relative!important;
+    box-sizing:border-box!important;
+    width:100vw!important;
+    max-width:none!important;
+    margin-left:calc(50% - 50vw)!important;
+    margin-right:0!important;
+    padding-left:8px!important;
+    padding-right:52px!important;
+  }
+  .app > .top .tools #qToggle{
+    position:absolute!important;
+    top:6px!important;
+    right:8px!important;
+    bottom:auto!important;
+    left:auto!important;
+    inset-inline-start:auto!important;
+    inset-inline-end:8px!important;
+    display:inline-flex!important;
+    box-sizing:border-box!important;
+    flex:none!important;
+    width:36px!important;
+    min-width:36px!important;
+    max-width:36px!important;
+    height:36px!important;
+    min-height:36px!important;
+    max-height:36px!important;
+    margin:0!important;
+    padding:0!important;
+    align-items:center!important;
+    justify-content:center!important;
+    transform:none!important;
+  }
+  .app > .top .tools #qToggle svg{
+    display:block!important;
+    width:16px!important;
+    height:16px!important;
+    margin:0!important;
+    flex:none!important;
+  }
+  body[data-view="fixed"] table.fx thead tr{
+    border-bottom:0!important;
+    scrollbar-width:none!important;
+    -ms-overflow-style:none!important;
+  }
+  body[data-view="fixed"] table.fx thead tr::-webkit-scrollbar{
+    display:none!important;
+    width:0!important;
+    height:0!important;
+    background:transparent!important;
+  }
+}
+
+
+/* FINAL ALIGNMENT: nút tìm kiếm cao đúng 34px như các nút Tuần/Tháng trên mobile;
+   dùng chung cho các mục Lịch, Deadline và Lớp. */
+@media screen and (max-width:700px){
+  .app > .top .tools #qToggle{
+    box-sizing:border-box!important;
+    width:34px!important;
+    min-width:34px!important;
+    max-width:34px!important;
+    height:34px!important;
+    min-height:34px!important;
+    max-height:34px!important;
+    top:6px!important;
+    right:8px!important;
+    padding:0!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+}
+
+
+
+/* FINAL FIX: khoảng cách giữa các nút ở header Tuần/Tháng luôn đồng đều trên mobile.
+   Giữ gap 4px giữa mọi nút; bỏ margin riêng của nút Hôm nay gây khoảng cách kép. */
+@media screen and (max-width:700px){
+  body[data-view="table"] .app > .top,
+  body[data-view="cal"] .app > .top{
+    column-gap:4px!important;
+    row-gap:4px!important;
+  }
+  body[data-view="table"] .app > .top .nav,
+  body[data-view="cal"] .app > .top .nav{
+    column-gap:4px!important;
+    row-gap:4px!important;
+  }
+  body[data-view="table"] .app > .top .nav #prev,
+  body[data-view="table"] .app > .top .nav #todayBtn,
+  body[data-view="table"] .app > .top .nav #next,
+  body[data-view="table"] .app > .top .nav #wkChip,
+  body[data-view="table"] .app > .top #taBtn,
+  body[data-view="table"] .app > .top #tagToggle,
+  body[data-view="table"] .app > .top .tools #notifyTop,
+  body[data-view="table"] .app > .top .tools #qToggle,
+  body[data-view="table"] .app > .top #gdMenu,
+  body[data-view="cal"] .app > .top .nav #prev,
+  body[data-view="cal"] .app > .top .nav #todayBtn,
+  body[data-view="cal"] .app > .top .nav #next,
+  body[data-view="cal"] .app > .top .nav #wkChip,
+  body[data-view="cal"] .app > .top #taBtn,
+  body[data-view="cal"] .app > .top #tagToggle,
+  body[data-view="cal"] .app > .top .tools #notifyTop,
+  body[data-view="cal"] .app > .top .tools #qToggle,
+  body[data-view="cal"] .app > .top #gdMenu{
+    margin:0!important;
+  }
+}
+
+
+/* FINAL FIX: Tuần/Tháng — tính cả nút tìm kiếm vào cùng hàng flex để khoảng cách
+   giữa mọi nút, kể cả Tag/Thông báo → Tìm kiếm, luôn bằng nhau (4px).
+   Không ghim tìm kiếm absolute và không chừa một khoảng trống riêng bên phải. */
+@media screen and (max-width:700px){
+  body[data-view="table"] .app > .top,
+  body[data-view="cal"] .app > .top{
+    box-sizing:border-box!important;
+    gap:4px!important;
+    column-gap:4px!important;
+    row-gap:4px!important;
+    padding-left:8px!important;
+    padding-right:8px!important;
+    justify-content:flex-start!important;
+  }
+
+  /* Cho các nút con của .tools tham gia trực tiếp cùng hàng với nút điều hướng. */
+  body[data-view="table"] .app > .top > .tools,
+  body[data-view="cal"] .app > .top > .tools{
+    display:contents!important;
+  }
+  body[data-view="table"] .app > .top > .tools::before,
+  body[data-view="table"] .app > .top > .tools::after,
+  body[data-view="cal"] .app > .top > .tools::before,
+  body[data-view="cal"] .app > .top > .tools::after{
+    display:none!important;
+    content:none!important;
+  }
+  body[data-view="table"] .app > .top > .tools > .grow,
+  body[data-view="cal"] .app > .top > .tools > .grow{
+    display:none!important;
+  }
+
+  /* Thứ tự chung trong hàng: điều hướng → Bảng/Danh sách → Tag → Thông báo → Tìm kiếm. */
+  body[data-view="table"] .app > .top #gdMenu,
+  body[data-view="cal"] .app > .top #gdMenu{order:0!important}
+  body[data-view="table"] .app > .top .nav #prev,
+  body[data-view="cal"] .app > .top .nav #prev{order:1!important;margin:0!important}
+  body[data-view="table"] .app > .top .nav #todayBtn,
+  body[data-view="cal"] .app > .top .nav #todayBtn{order:2!important;margin:0!important}
+  body[data-view="table"] .app > .top .nav #next,
+  body[data-view="cal"] .app > .top .nav #next{order:3!important;margin:0!important}
+  body[data-view="table"] .app > .top .nav #wkChip:not([hidden]),
+  body[data-view="cal"] .app > .top .nav #wkChip:not([hidden]){order:4!important;margin:0!important}
+  body[data-view="table"] .app > .top #taBtn,
+  body[data-view="table"] .app > .top #tagToggle,
+  body[data-view="cal"] .app > .top #taBtn,
+  body[data-view="cal"] .app > .top #tagToggle{order:5!important;margin:0!important}
+  body[data-view="table"] .app > .top .tools #notifyTop,
+  body[data-view="cal"] .app > .top .tools #notifyTop{order:6!important;margin:0!important}
+
+  /* Nút tìm kiếm nằm trong luồng bình thường và cùng gap 4px như các nút khác. */
+  body[data-view="table"] .app > .top .tools #qToggle,
+  body[data-view="cal"] .app > .top .tools #qToggle{
+    position:static!important;
+    inset:auto!important;
+    inset-inline-start:auto!important;
+    inset-inline-end:auto!important;
+    top:auto!important;
+    right:auto!important;
+    bottom:auto!important;
+    left:auto!important;
+    transform:none!important;
+    box-sizing:border-box!important;
+    display:inline-flex!important;
+    flex:0 0 34px!important;
+    width:34px!important;
+    min-width:34px!important;
+    max-width:34px!important;
+    height:34px!important;
+    min-height:34px!important;
+    max-height:34px!important;
+    order:7!important;
+    align-self:center!important;
+    align-items:center!important;
+    justify-content:center!important;
+    margin:0!important;
+    padding:0!important;
+  }
+  body[data-view="table"] .app > .top .tools #qToggle svg,
+  body[data-view="cal"] .app > .top .tools #qToggle svg{
+    display:block!important;
+    flex:none!important;
+    width:16px!important;
+    height:16px!important;
+    margin:0!important;
   }
 }
 
