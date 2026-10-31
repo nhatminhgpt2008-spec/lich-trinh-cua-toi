@@ -6,7 +6,7 @@
 <meta name="description" content="Lịch trình cá nhân: thời khoá biểu, deadline và thông báo lịch học.">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#131a17">
+<meta name="theme-color" content="#0f1412">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Lịch">
@@ -13400,10 +13400,16 @@ place();
 })();
 </script>
 <script>
-/* Thanh trạng thái điện thoại (hàng pin/giờ) lấy đúng màu nền của app thay vì màu xanh cố định; tự đổi theo giao diện sáng/tối */
+/* Đồng bộ màu chrome của PWA với nền trang (không dùng màu nhấn xanh lá).
+   Android kiểm soát thanh điều hướng hệ thống; đây là màu gợi ý cho hệ thống. */
 (function(){
   var m=document.querySelector('meta[name="theme-color"]'); if(!m) return;
-  function apply(){ try{ var c=getComputedStyle(document.documentElement).getPropertyValue('--surface').trim(); if(c) m.setAttribute('content',c); }catch(e){} }
+  function apply(){
+    try{
+      var c=getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+      if(c && /^#[0-9a-f]{3,8}$/i.test(c)) m.setAttribute('content',c);
+    }catch(e){}
+  }
   apply();
   try{ new MutationObserver(apply).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','class','style']}); }catch(e){}
   try{ var q=matchMedia('(prefers-color-scheme: dark)'); (q.addEventListener?q.addEventListener.bind(q,'change'):q.addListener.bind(q))(apply); }catch(e){}
