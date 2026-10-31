@@ -14,7 +14,13 @@ self.addEventListener('fetch', e => {
   e.respondWith((async () => {
     const cache = await caches.open(CACHE);
     const cached = await cache.match('./');
-    const net = fetch(r, {cache:'no-store'}).then(res => { if(res.ok && res.type === 'basic') cache.put('./', res.clone()); return res; });   // chỉ lưu khi tải thành công; no-store = luôn lấy bản mới nhất
+    const net = fetch(r, {cache:'no-store'}).then(async res => {
+      // Đợi ghi xong để vòng đời respondWith/waitUntil bảo vệ cả lần cập nhật cache.
+      if(res.ok && res.type === 'basic'){
+        try{ await cache.put('./', res.clone()); }catch(_){}   // cache đầy: vẫn trả trang lấy từ mạng
+      }
+      return res;
+    });
     if(!cached) return net;                      // lần đầu: chờ mạng
     e.waitUntil(net.catch(() => {}));           // mạng chậm vẫn kịp cập nhật cache cho lần mở sau
     return Promise.race([net, new Promise(ok => setTimeout(() => ok(cached), 3000))]).catch(() => cached);   // mất mạng hoặc quá 3 giây → mở bản đã lưu cho nhanh
