@@ -217,7 +217,7 @@ button,[role=button],a,summary,label,select{touch-action:manipulation}
   box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pulse-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--pulse-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--pulse-color) 55%,transparent);
 }
 /* hover: đổi đúng sắc thái của chính ô đó (không rơi về màu môn học như .cell:hover mặc định), đồng thời tạo hiệu ứng sáng nhẹ khi rê chuột cho cả ô đỏ (đang diễn ra) và ô vàng (sắp diễn ra) */
-.cell.live:hover,.ag.live:hover{background:color-mix(in srgb,var(--live-color) 34%,var(--surface))}
+@media (hover:hover){.cell.live:hover,.ag.live:hover{background:color-mix(in srgb,var(--live-color) 34%,var(--surface))}}
 
 /* lớp phủ giữ đúng một tông màu, dùng chung cho cả Bảng và Danh sách */
 .ag.live::after,.cell.live::after{
@@ -281,7 +281,7 @@ button,[role=button],a,summary,label,select{touch-action:manipulation}
 .ag.dl.done .et small{color:var(--accent)}
 .ag.dl .ag-time.all{font-size:11.5px;white-space:nowrap}
 .dlcell{border-radius:10px;text-align:center;line-height:1.4;cursor:pointer;overflow-wrap:anywhere;touch-action:manipulation;contain:style;background:color-mix(in srgb,var(--dl) 22%,var(--surface));color:var(--ink);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--dl) 60%,transparent)}
-.dlcell:hover{background:color-mix(in srgb,var(--dl) 30%,var(--surface))}
+@media (hover:hover){.dlcell:hover{background:color-mix(in srgb,var(--dl) 30%,var(--surface))}}
 .dlcell .dlt{font-weight:600;font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink);opacity:.85;letter-spacing:.2px;margin:1px 0 3px}
 .dlcell .chip{margin:2px 0 0}
 .dlcell.dim,.ag.dl.dim{opacity:.25}
@@ -428,7 +428,7 @@ button,[role=button],a,summary,label,select{touch-action:manipulation}
 .sheet td.empty-c{cursor:cell}
 .sheet .none{padding:24px;text-align:center;color:var(--muted)}
 .cell{--cc:var(--muted);border-radius:10px;text-align:center;line-height:1.4;cursor:pointer;overflow-wrap:anywhere;touch-action:manipulation;contain:style;background:color-mix(in srgb,var(--cc) 22%,var(--surface));color:var(--ink);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cc) 60%,transparent)}
-.cell:hover{background:color-mix(in srgb,var(--cc) 30%,var(--surface))}
+@media (hover:hover){.cell:hover{background:color-mix(in srgb,var(--cc) 30%,var(--surface))}}
 .cell.nofill{background:var(--surface)}
 .cell.nofill:hover{background:color-mix(in srgb,var(--cc) 12%,var(--surface))}
 .cell + .cell{margin-top:3px}
@@ -1279,7 +1279,7 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}   /*
 /* Đồng bộ hình thức ô Đang diễn ra / Sắp diễn ra giữa Bảng (.cell) và Danh sách (.ag). */
 .cell.live,.ag.live{border-radius:10px;border-width:1px;border-color:color-mix(in srgb,var(--live-color) 70%,transparent);background:color-mix(in srgb,var(--live-color) 26%,var(--surface));--pulse-color:var(--live-color);--gc:var(--live-color);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--live-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--live-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--live-color) 55%,transparent)}
 .cell.next,.ag.next{border-radius:10px;border-width:1px;border-color:color-mix(in srgb,var(--next-color) 70%,transparent);background:color-mix(in srgb,var(--next-color) 26%,var(--surface));--pulse-color:var(--next-color);--gc:var(--next-color);transform:translateZ(0);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--next-color) 70%,transparent),0 0 0 4px color-mix(in srgb,var(--next-color) 18%,transparent),0 0 22px 4px color-mix(in srgb,var(--next-color) 55%,transparent)}
-.cell.live:hover,.ag.live:hover{background:color-mix(in srgb,var(--live-color) 34%,var(--surface))}
+@media (hover:hover){.cell.live:hover,.ag.live:hover{background:color-mix(in srgb,var(--live-color) 34%,var(--surface))}}
 .cell.next:hover,.ag.next:hover{background:color-mix(in srgb,var(--next-color) 34%,var(--surface))}
 /* ĐỒNG BỘ HIỆU ỨNG Ô ĐANG DIỄN RA / SẮP DIỄN RA: cùng nhịp, cùng biên độ; chỉ khác màu */
 .cell.live:not(.jump-highlight)::before,.cell.next:not(.jump-highlight)::before,.ag.live:not(.jump-highlight)::before,.ag.next:not(.jump-highlight)::before{
@@ -2305,9 +2305,11 @@ input,select,textarea,#dlg input,#dlg select,#dlg textarea{transition:border-col
 #sched .dlcell,
 #sched .dlcell.done,
 #sched .dlcell:not(.done):has(.chip.late){background:color-mix(in srgb,var(--cancel-bd) 22%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cancel-bd) 60%,transparent)}
+@media (hover:hover){
 #sched .dlcell:hover,
 #sched .dlcell.done:hover,
 #sched .dlcell:not(.done):has(.chip.late):hover{background:color-mix(in srgb,var(--cancel-bd) 32%,var(--surface))}
+}
 #sched .ag.dl,#sched .ag.dl.done,#sched .ag.dl:not(.done):has(.chip.late){--bd:var(--cancel-bd);--bgt:color-mix(in srgb,var(--cancel-bd) 18%,var(--surface))}
 :root:not([data-theme=dark]) #sched .ag.dl,:root:not([data-theme=dark]) #sched .ag.dl.done{--bgt:color-mix(in srgb,var(--cancel-bd) 22%,var(--surface))}
 #sched .ag.dl.done:not(.live):not(.next):hover{background:color-mix(in srgb,var(--cancel-bd) 30%,var(--surface))}
@@ -6785,6 +6787,585 @@ body[data-view="table"] #sched .cell .ev-content .ev-title{
   }
 }
 
+
+/* 01-11-2026: Tuần–Bảng mobile: đo khoảng đệm nội dung theo VIỀN Ô,
+   không theo tag. Tag tuyệt đối ở mép trên nên không tham gia flex layout.
+   Hai đệm trên và dưới luôn bằng nhau; hàng tag nhiều nhãn chỉ có khoảng
+   an toàn tối thiểu chống chồng lên chữ. */
+@media screen and (max-width:700px){
+  body[data-view="table"] #sched .sheet .stk>.cell,
+  body[data-view="table"] #sched .sheet .stk>.dlcell{
+    --cell-edge-pad:14px;
+    padding:var(--cell-edge-pad) 7px!important;
+    justify-content:center!important;
+    gap:0!important;
+    box-sizing:border-box!important;
+    position:relative!important;
+  }
+  /* Nhiều tag có thể xuống hàng: chỉ tăng khoảng an toàn khi cần,
+     và tăng ĐỀU hai phía để nội dung vẫn cân theo viền. */
+  body[data-view="table"] #sched .sheet .stk>.cell:has(>.cbar),
+  body[data-view="table"] #sched .sheet .stk>.dlcell:has(>.cbar){
+    --cell-edge-pad:26px;
+    margin-top:8px!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>.cell:has(>.ctag),
+  body[data-view="table"] #sched .sheet .stk>.dlcell:has(>.ctag){
+    margin-top:8px!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>.cell>.ctag,
+  body[data-view="table"] #sched .sheet .stk>.cell>.cbar,
+  body[data-view="table"] #sched .sheet .stk>.cell>.cbar.cb3,
+  body[data-view="table"] #sched .sheet .stk>.dlcell>.ctag,
+  body[data-view="table"] #sched .sheet .stk>.dlcell>.cbar{
+    position:absolute!important;
+    top:-7px!important;
+    left:50%!important;
+    right:auto!important;
+    bottom:auto!important;
+    transform:translateX(-50%)!important;
+    margin:0!important;
+    width:max-content!important;
+    max-width:calc(100% - 8px)!important;
+    z-index:8!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>.cell .ev-content,
+  body[data-view="table"] #sched .sheet .stk>.dlcell .dl-content,
+  body[data-view="table"] #sched .sheet .stk>.cell.mobile-cell-selected>.ev-content{
+    padding:0!important;
+    margin:0!important;
+    width:100%!important;
+    max-width:100%!important;
+  }
+}
+
+
+/* ===== 01/11 – Mobile: tag trên ô Bảng căn như PC =====
+   Cụm tag vắt ngang giữa viền trên của ô, không tham gia bố cục nội dung.
+   Nội dung vẫn căn theo viền trên/dưới của ô, không theo tag. */
+@media screen and (max-width:700px){
+  body[data-view="table"] #sched .sheet,
+  body[data-view="table"] #sched .sheet .stk,
+  body[data-view="table"] #sched .sheet td.slot{
+    overflow:visible!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>.cell,
+  body[data-view="table"] #sched .sheet .stk>.dlcell{
+    position:relative!important;
+    overflow:visible!important;
+    z-index:2;
+  }
+  body[data-view="table"] #sched .sheet .stk>.cell:has(>.ctag,>.cbar),
+  body[data-view="table"] #sched .sheet .stk>.dlcell:has(>.ctag,>.cbar){
+    padding-top:16px!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>.cell>.ctag,
+  body[data-view="table"] #sched .sheet .stk>.cell>.cbar,
+  body[data-view="table"] #sched .sheet .stk>.dlcell>.ctag,
+  body[data-view="table"] #sched .sheet .stk>.dlcell>.cbar,
+  body[data-view="table"] #sched .sheet .stk>.cell>.cbar.cb3,
+  body[data-view="table"] #sched .sheet .stk>.dlcell>.cbar.cb3{
+    position:absolute!important;
+    top:-7px!important;
+    left:50%!important;
+    right:auto!important;
+    bottom:auto!important;
+    transform:translateX(-50%)!important;
+    margin:0!important;
+    width:max-content!important;
+    max-width:calc(100% - 10px)!important;
+    min-height:14px!important;
+    height:auto!important;
+    display:flex!important;
+    flex-flow:row nowrap!important;
+    align-items:center!important;
+    justify-content:center!important;
+    align-content:flex-start!important;
+    column-gap:3px!important;
+    row-gap:3px!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    pointer-events:none!important;
+    z-index:14!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>.cell>.ctag,
+  body[data-view="table"] #sched .sheet .stk>.dlcell>.ctag,
+  body[data-view="table"] #sched .sheet .stk>.cell>.cbar>.ctag,
+  body[data-view="table"] #sched .sheet .stk>.dlcell>.cbar>.ctag,
+  body[data-view="table"] #sched .sheet .stk>.cell>.cbar>.cstate,
+  body[data-view="table"] #sched .sheet .stk>.dlcell>.cbar>.cstate{
+    display:inline-flex!important;
+    position:relative!important;
+    flex:0 1 auto!important;
+    min-width:0!important;
+    align-items:center!important;
+    justify-content:center!important;
+    box-sizing:border-box!important;
+    height:14px!important;
+    min-height:14px!important;
+    max-height:14px!important;
+    padding:0 6px!important;
+    margin:0!important;
+    border:0!important;
+    border-radius:999px!important;
+    font-size:9px!important;
+    font-weight:750!important;
+    line-height:14px!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    box-shadow:0 0 0 1px var(--surface)!important;
+    max-width:100%!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>.cell>.cbar .cbr,
+  body[data-view="table"] #sched .sheet .stk>.dlcell>.cbar .cbr{display:none!important}
+  /* Tag đơn phải ra khỏi luồng, giống cụm .cbar; không dùng position:relative. */
+  body[data-view="table"] #sched .sheet .stk>.cell>.ctag,
+  body[data-view="table"] #sched .sheet .stk>.dlcell>.ctag{
+    position:absolute!important;
+    top:-7px!important;
+    left:50%!important;
+    right:auto!important;
+    bottom:auto!important;
+    transform:translateX(-50%)!important;
+    margin:0!important;
+    z-index:14!important;
+  }
+
+  /* Một hàng giống PC: nhãn loại giữ đủ chữ; trạng thái dài tự cắt gọn, không
+     xuống dòng chồng lên tiêu đề khi cột tuần quá hẹp. */
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.cbar>.ctag{
+    flex:0 0 auto!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.cbar>.cstate{
+    flex:0 1 auto!important;
+    min-width:0!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+
+}
+
+
+/* 01/11: Tuần–Bảng mobile – khoảng cách nội dung tới hai VIỀN của ô có tag.
+   Trước đây :has(>.cbar) đặt padding-bottom:26px nhưng CSS căn tag cuối
+   chỉ thay padding-top thành 16px. Giữ 16px cả hai phía để không thừa đáy.
+   Tag vẫn là lớp absolute ở giữa viền trên, không tham gia bố cục. */
+@media screen and (max-width:700px){
+  body[data-view="table"] #sched .sheet .stk>.cell:has(>.cbar),
+  body[data-view="table"] #sched .sheet .stk>.dlcell:has(>.cbar){
+    padding-top:16px!important;
+    padding-bottom:16px!important;
+  }
+}
+
+
+/* PC: .dlcell > div:first-of-type từng vô tình cộng 26px vào thanh tag
+   (do .cbar là div đầu), khiến tag xuống dòng ở độ rộng trung bình. */
+@media screen and (min-width:701px){
+  body[data-view="table"] #sched .sheet .stk>.dlcell>.cbar{
+    padding:0!important;
+    flex-wrap:nowrap!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>.dlcell>.cbar>.ctag{
+    flex:0 0 auto!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>.dlcell>.cbar>.cstate{
+    flex:0 1 auto!important;
+    min-width:0!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+}
+
+/* ===== 01/11 – PC hẹp: tag Bảng luôn một hàng, không đè tiêu đề =====
+   Bỏ ngắt hàng cưỡng bức .cbr (nguyên nhân tạo hàng Hoàn thành lấn vào chữ).
+   Dùng bảng rộng tối thiểu 900px ở PC quá hẹp: cuộn ngang thay vì ép chữ
+   không đọc được. Mobile <=700px và PC >1180px giữ bố cục riêng. */
+@media screen and (min-width:701px) and (max-width:1180px){
+  body[data-view="table"] #sched table.sheet{min-width:900px!important}
+  body[data-view="table"] #sched .sheet .stk>.cell,
+  body[data-view="table"] #sched .sheet .stk>.dlcell{
+    position:relative!important;
+    overflow:visible!important;
+  }
+  /* Cụm tag chỉ cao một hàng 14px, nằm chính giữa viền trên của ô. */
+  body[data-view="table"] #sched .sheet .stk>.cell>.cbar,
+  body[data-view="table"] #sched .sheet .stk>.dlcell>.cbar,
+  body[data-view="table"] #sched .sheet .stk>.cell>.cbar.cb3{
+    position:absolute!important;
+    inset:auto!important;
+    top:-7px!important;
+    left:50%!important;
+    right:auto!important;
+    bottom:auto!important;
+    transform:translateX(-50%)!important;
+    margin:0!important;
+    width:max-content!important;
+    max-width:calc(100% - 8px)!important;
+    height:14px!important;
+    min-height:14px!important;
+    display:flex!important;
+    flex-flow:row nowrap!important;
+    align-items:center!important;
+    justify-content:center!important;
+    align-content:center!important;
+    gap:3px!important;
+    padding:0!important; /* .dlcell>div:first-of-type trước đó vô tình thêm 26px vào chính thanh tag */
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    pointer-events:none!important;
+    z-index:12!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>.cell>.cbar .cbr,
+  body[data-view="table"] #sched .sheet .stk>.dlcell>.cbar .cbr{
+    display:none!important;
+  }
+  /* Chữ tag co nhẹ để Deadline + Hoàn thành vừa cột ~110px.
+     Nếu trạng thái dài hơn, chỉ rút gọn chính nhãn đó chứ không xuống hàng. */
+  body[data-view="table"] #sched .sheet .stk>.cell>.cbar>:is(.ctag,.cstate),
+  body[data-view="table"] #sched .sheet .stk>.dlcell>.cbar>:is(.ctag,.cstate){
+    position:static!important;
+    transform:none!important;
+    flex:0 1 auto!important;
+    min-width:0!important;
+    max-width:100%!important;
+    height:14px!important;
+    min-height:14px!important;
+    max-height:14px!important;
+    padding:0 3px!important;
+    font-size:8.5px!important;
+    line-height:14px!important;
+    margin:0!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    border-radius:99px!important;
+    box-sizing:border-box!important;
+  }
+  /* Nhãn loại ưu tiên giữ đủ chữ (đặc biệt "Deadline");
+     chỉ nhãn trạng thái dài được rút gọn ở cột chật. */
+  body[data-view="table"] #sched .sheet .stk>.dlcell>.cbar>.ctag,
+  body[data-view="table"] #sched .sheet .stk>.cell>.cbar>.cstate.cconf{
+    flex:0 0 auto!important;
+  }
+  /* Đệm trên theo đúng viền ô và chiều cao tag, không phụ thuộc tag xuống dòng. */
+  body[data-view="table"] #sched .sheet .stk>.cell:has(>.cbar),
+  body[data-view="table"] #sched .sheet .stk>.dlcell:has(>.cbar){
+    padding-top:16px!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>.cell:has(>.ctag),
+  body[data-view="table"] #sched .sheet .stk>.dlcell:has(>.ctag){
+    padding-top:12px!important;
+  }
+}
+
+
+/* ===== 01/11/2026 – Tuần–Bảng: nút là lớp phủ, không chừa hàng cho nút ===== */
+/* PC: hai nút CHỈ theo hover. Việc chọn hoặc focus ô không ghim nút.
+   Cả ô lịch và Deadline cùng vị trí. Không cộng đệm vì toolbar. */
+@media screen and (min-width:701px){
+  /* Contract thống nhất cho cả lịch và Deadline trên PC. Toolbar là overlay:
+     các token vị trí/kích thước KHÔNG làm tăng padding hay tạo hàng mới. */
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell){
+    --week-action-top:3px;
+    --week-action-size:20px;
+    --week-edit-right:3px;
+    --week-link-right:26px;
+    --week-tag-clearance:12px;
+    padding:8px!important;
+    box-sizing:border-box!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell):has(>.cbar,>.ctag){
+    padding-top:8px!important;
+    padding-bottom:8px!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.editb,
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.card-link-top{
+    position:absolute!important;
+    top:var(--week-action-top)!important;
+    height:var(--week-action-size)!important;
+    width:var(--week-action-size)!important;
+    z-index:50!important;
+    visibility:hidden!important;
+    opacity:0!important;
+    pointer-events:none!important;
+    margin:0!important;
+    transform:none!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.editb{right:var(--week-edit-right)!important}
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.card-link-top{right:var(--week-link-right)!important;display:flex!important}
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell):hover>.editb,
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell):hover>.card-link-top{
+    visibility:visible!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+  }
+}
+/* Mobile: chọn ô (lịch hoặc Deadline) thì HIỆN CẢ HAI nút.
+   Hai nút đều bám góc trên phải của ô Deadline gốc, phủ tag/nội dung;
+   không làm thay đổi kích thước hay vị trí chữ khi chọn. */
+@media screen and (max-width:700px){
+  /* Contract mobile: chọn ô chỉ thay visibility của overlay, không đổi box. */
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell){
+    --week-action-top:3px;
+    --week-action-size:24px;
+    --week-edit-right:5px;
+    --week-link-right:33px;
+    --week-tag-clearance:20px;
+    position:relative!important;
+    align-items:center!important;
+    justify-content:center!important;
+    text-align:center!important;
+    box-sizing:border-box!important;
+    gap:0!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell){
+    padding:14px 7px!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell):has(>.cbar,>.ctag){
+    padding:16px 7px!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>.dlcell>.cbar{
+    padding:0!important;
+    margin:0!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>.dlcell .dl-content{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:5px!important;
+    width:100%!important;
+    min-width:0!important;
+    padding:0!important;
+    margin:0!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>.dlcell .dl-title{
+    font-size:13.6px!important;
+    line-height:1.28!important;
+    font-weight:750!important;
+    overflow-wrap:anywhere;
+  }
+  body[data-view="table"] #sched .sheet .stk>.dlcell .dlt{
+    font-size:11.4px!important;
+    line-height:1.32!important;
+  }
+  /* Deadline dùng nút Liên kết tại góc khi chọn, giống ô lịch;
+     không lặp lại nút liên kết lớn ở dưới nội dung. */
+  body[data-view="table"] #sched .sheet .stk>.dlcell .dl-content>.lkchips{
+    display:none!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.editb,
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.card-link-top{
+    display:flex!important;
+    position:absolute!important;
+    top:var(--week-action-top)!important;
+    width:var(--week-action-size)!important;
+    height:var(--week-action-size)!important;
+    box-sizing:border-box!important;
+    align-items:center!important;
+    justify-content:center!important;
+    margin:0!important;
+    padding:0!important;
+    border-radius:7px!important;
+    transform:none!important;
+    z-index:50!important;
+    visibility:hidden!important;
+    opacity:0!important;
+    pointer-events:none!important;
+    transition:background-color .15s ease, border-color .15s ease!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.editb{right:var(--week-edit-right)!important}
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.card-link-top{right:var(--week-link-right)!important}
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell).mobile-cell-selected>.editb,
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell).mobile-cell-selected>.card-link-top{
+    top:var(--week-action-top)!important; /* thắng luật cũ .cell.mobile-cell-selected top:calc(...) */
+    visibility:visible!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.card-link-top>.lkchips{
+    display:flex!important;
+    width:24px!important;height:24px!important;
+    align-items:center!important;justify-content:center!important;
+    margin:0!important;padding:0!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.card-link-top .lkchip{
+    display:flex!important;
+    width:24px!important;height:24px!important;
+    min-width:24px!important;max-width:24px!important;
+    align-items:center!important;justify-content:center!important;
+    box-sizing:border-box!important;
+    margin:0!important;padding:0!important;
+    border:1px solid var(--line)!important;
+    border-radius:7px!important;
+    background:var(--surface)!important;
+    color:var(--ink)!important;
+    font-size:13px!important;
+    line-height:1!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.card-link-top .lkchip b{display:none!important}
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.card-link-top .lkchip i{font-style:normal!important}
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.editb .ic{width:15px!important;height:15px!important}
+  /* Không đổi spacing riêng khi được chọn: chỉ tăng z-index để icon bấm được. */
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell).mobile-cell-selected{z-index:20!important}
+}
+
+
+/* ===== 01/11/2026 – Tuần–Bảng: đồng nhất khoảng cách tag/nội dung, toolbar tức thì =====
+   Chỉ tăng 4px so với bản trước. Tag luôn tuyệt đối, không tạo hàng cho nút.
+   Ô thường và Deadline dùng cùng đệm trên theo từng loại màn hình. */
+@media screen and (min-width:701px){
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell):has(>.ctag,>.cbar){
+    padding-top:var(--week-tag-clearance)!important;
+  }
+  /* Hover không nhấp nháy/di chuyển; chỉ hiện ngay khi con trỏ vào ô.
+     Focus/đã chọn trên PC không tự ghim nút. */
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.editb,
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.card-link-top,
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.card-link-top .lkchip{
+    transition:none!important;
+    animation:none!important;
+    transform:none!important;
+    translate:none!important;
+    scale:none!important;
+    will-change:auto!important;
+  }
+}
+@media screen and (max-width:700px){
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell):has(>.ctag,>.cbar){
+    padding-top:var(--week-tag-clearance)!important;
+  }
+}
+
+/* ===== 01/11/2026 – Nút Liên kết cùng kiểu với các nút khác + đồng bộ hiệu ứng Tuần–Bảng ===== */
+/* Icon SVG của nút Liên kết: cùng nét vẽ, cùng cỡ với icon bút/ghim/thùng rác */
+.lkchip i{display:inline-grid;place-items:center;line-height:1}
+.lkchip .ic{display:block;flex:none}
+.ind .ic{display:inline-block;vertical-align:-2px;margin-right:1px}
+/* Nút Liên kết ở góc ô: cùng viền / nền / bo góc / màu hover như nút Sửa, ở mọi thiết bị */
+#sched :is(.cell,.dlcell,.ag)>.card-link-top .lkchip,
+#dlPanel .np-hv .card-link-top .lkchip{
+  border:1px solid color-mix(in srgb,var(--ink) 22%,transparent)!important;
+  background:color-mix(in srgb,var(--surface) 88%,transparent)!important;
+  color:var(--ink)!important;border-radius:6px!important;
+  box-shadow:none!important;font-size:inherit!important;
+}
+#sched :is(.cell,.dlcell,.ag)>.card-link-top .lkchip:hover,
+#sched :is(.cell,.dlcell,.ag)>.card-link-top .lkchip:focus-visible,
+#dlPanel .np-hv .card-link-top .lkchip:hover{
+  background:var(--accent)!important;color:var(--accent-ink)!important;border-color:var(--accent)!important;outline:none;
+}
+#sched :is(.cell,.dlcell,.ag)>.card-link-top .lkchip .ic{width:13px!important;height:13px!important}
+/* Hàng nút ở thẻ Deadline mở rộng (điện thoại): cùng kiểu với 4 nút còn lại */
+#dlPanel .np-dact>.card-link-top .lkchip{
+  border:1px solid var(--line)!important;background:var(--surface)!important;color:var(--ink)!important;border-radius:8px!important;
+}
+#dlPanel .np-dact>.card-link-top .lkchip .ic{width:14px!important;height:14px!important}
+#dlPanel .np-dact>.card-link-top .lkchip:hover{background:var(--accent)!important;color:var(--accent-ink)!important;border-color:var(--accent)!important}
+/* Điện thoại, ô Tuần–Bảng: icon bút 15px nên icon liên kết cũng 15px */
+@media screen and (max-width:700px){
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.card-link-top .lkchip{
+    border:1px solid color-mix(in srgb,var(--ink) 22%,transparent)!important;
+    background:color-mix(in srgb,var(--surface) 88%,transparent)!important;
+    border-radius:7px!important;
+  }
+  body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.card-link-top .lkchip .ic{width:15px!important;height:15px!important}
+}
+/* Đồng bộ hiệu ứng Tuần–Bảng giữa máy tính và điện thoại:
+   - hai nút góc hiện tức thì (không trượt/mờ dần) ở cả hai nơi
+   - ô được chạm trên cảm ứng có cùng hiệu ứng như ô được rê chuột trên máy tính (nền đậm hơn, đổ bóng, sáng nhẹ) */
+body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.editb,
+body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.card-link-top,
+body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.card-link-top .lkchip,
+body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.editb{
+  transition:none!important;animation:none!important;
+}
+body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.editb:hover,
+body[data-view="table"] #sched .sheet .stk>:is(.cell,.dlcell)>.card-link-top .lkchip:hover{
+  background:var(--accent)!important;color:var(--accent-ink)!important;border-color:var(--accent)!important;opacity:1!important;
+}
+
+/* Lớp: tag dài được cắt gọn "…" trong đúng cột của nó, không tràn sang cột bên cạnh (đủ tên khi rê chuột) */
+.fx td:has(>.lg.static){overflow:hidden;min-width:0}
+.fx .lg.static{max-width:100%;min-width:0;box-sizing:border-box;vertical-align:middle}
+.fx .lg.static i{flex:none}
+.fx .lg.static .lgn{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ===== 01/11/2026 – Tuần–Bảng: ô lịch và ô Deadline dùng MỘT bộ giao diện, giống nhau trên PC và điện thoại =====
+   Giá trị lấy theo bản PC của ô lịch. Ô Deadline dùng cùng class nội dung (ev-content / ev-heading / ev-title / ctime)
+   và cùng biến màu (--cc), nên chữ, khoảng cách, nền, viền, bo góc và hiệu ứng đều trùng khớp. */
+body[data-view="table"] #sched .sheet .stk>.dlcell{
+  --cc:var(--dl);
+  --ev-primary:var(--ink);
+  --ev-secondary:color-mix(in srgb,var(--ink) 88%,var(--surface));
+  --ev-tertiary:color-mix(in srgb,var(--ink) 74%,var(--surface));
+}
+[data-theme="dark"] body[data-view="table"] #sched .sheet .stk>.dlcell{
+  --ev-secondary:color-mix(in srgb,#fff 87%,var(--surface));
+  --ev-tertiary:color-mix(in srgb,#fff 72%,var(--surface));
+}
+html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell){
+  font-size:12.5px!important;line-height:1.4!important;
+  --week-tag-clearance:12px;
+  box-sizing:border-box!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+  text-align:center!important;gap:0!important;
+  padding:8px!important;margin:6px 0 0!important;
+  border-radius:10px!important;
+}
+html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell):has(>.ctag,>.cbar){padding-top:12px!important;padding-bottom:8px!important}
+/* nền + viền: sáng / tối, cùng công thức cho ô lịch và ô Deadline */
+html:not([data-theme="dark"]) body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell):not(.live):not(.next):not(.nofill){
+  background:color-mix(in srgb,var(--cc) 46%,var(--surface))!important;
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cc) 95%,#000 0%)!important;border-left:0!important;
+}
+html[data-theme="dark"] body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell):not(.live):not(.next):not(.nofill){
+  background:color-mix(in srgb,var(--cc) 22%,var(--surface))!important;
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cc) 60%,transparent)!important;border-left:0!important;
+}
+/* nội dung */
+html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell) .ev-content{
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+  gap:4px!important;width:100%!important;min-width:0!important;margin:0!important;padding:0!important;
+}
+html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell) .cc{font-size:10.9px!important;font-weight:650!important;line-height:1.32!important;letter-spacing:.02em!important;margin:0!important;padding:0!important}
+html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell) .ev-heading{display:block!important;width:100%!important;min-width:0!important;margin:0!important;padding:0!important;text-align:center!important}
+html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell) .ev-title{display:block!important;min-width:0!important;margin:0!important;font-size:14.2px!important;font-weight:780!important;line-height:1.27!important;letter-spacing:-.014em!important;color:var(--ev-primary);overflow-wrap:break-word}
+html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell) .ctime{display:block!important;margin:0!important;padding:0!important;font-size:11.8px!important;font-weight:530!important;line-height:1.34!important;letter-spacing:normal!important;font-variant-numeric:tabular-nums;color:var(--ev-secondary)}
+html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell) .ev-meta{font-size:11.8px!important;line-height:1.34!important;margin:0!important;padding:0!important}
+html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell) .ev-room{font-weight:560!important}
+html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell) .ev-teacher{font-weight:530!important}
+html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell) .ev-content>.lkchips{display:none!important}
+/* nhãn tag + trạng thái trên viền */
+html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell)>.ctag,html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell)>.cbar>.ctag{height:12px!important;min-height:0!important;line-height:12px!important;font-weight:700!important;border-radius:99px!important;box-shadow:none!important}
+html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell)>.cbar{height:auto!important;min-height:0!important}
+html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell)>.cbar>.cstate{font-size:10px!important;font-weight:700!important;padding:1px 5px!important;line-height:13px!important;height:auto!important;min-height:15px!important;box-shadow:none!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell)>.cbar{max-width:calc(100% + 4px)!important;flex-wrap:nowrap!important}
+/* hiệu ứng rê chuột (PC) = hiệu ứng ô đang chọn (điện thoại) */
+@media (hover:hover){
+  html:not([data-theme="dark"]) body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell):not(.live):not(.next):not(.nofill):hover{background:color-mix(in srgb,var(--cc) 56%,var(--surface))!important;box-shadow:0 6px 16px -8px rgba(0,0,0,.45)!important;filter:brightness(1.07)}
+  html[data-theme="dark"] body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell):not(.live):not(.next):not(.nofill):hover{background:color-mix(in srgb,var(--cc) 30%,var(--surface))!important;box-shadow:0 6px 16px -8px rgba(0,0,0,.45)!important;filter:brightness(1.07)}
+}
+@media screen and (max-width:700px){
+  html:not([data-theme="dark"]) body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell):not(.live):not(.next):not(.nofill).mobile-cell-selected{background:color-mix(in srgb,var(--cc) 56%,var(--surface))!important;box-shadow:0 6px 16px -8px rgba(0,0,0,.45)!important;filter:brightness(1.07)}
+  html[data-theme="dark"] body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell):not(.live):not(.next):not(.nofill).mobile-cell-selected{background:color-mix(in srgb,var(--cc) 30%,var(--surface))!important;box-shadow:0 6px 16px -8px rgba(0,0,0,.45)!important;filter:brightness(1.07)}
+}
+html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell){transition:box-shadow var(--mo) var(--ease),filter var(--mo) var(--ease)}
+
+/* Mã lớp, giờ, người phụ trách: CÙNG MỘT định dạng (theo dòng người phụ trách): chữ 11.8px, bán đậm 600, tông chữ phụ; PC và điện thoại như nhau */
+html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell) :is(.cc,.ctime,.ev-teacher){
+  font-size:11.8px!important;font-weight:600!important;line-height:1.34!important;
+  letter-spacing:normal!important;text-transform:none!important;opacity:1!important;
+  color:var(--ev-tertiary)!important;font-variant-numeric:tabular-nums;
+}
+
+/* Khoảng cách giữa các dòng trong ô: bằng nhau (4px), các dòng không có lề riêng */
+html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell) .ev-content>*{margin-top:0!important;margin-bottom:0!important}
+
 </style>
 </head>
 <body>
@@ -7138,6 +7719,7 @@ body[data-view="table"] #sched .cell .ev-content .ev-title{
       <button type="button" class="acctSectionSummary" aria-expanded="false">Thông báo<span class="acctArrow" aria-hidden="true"></span></button>
       <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
         <div class="actions"><button type="button" class="btn" data-a="notify" id="notifyBtn">Bật thông báo lịch</button></div>
+        <p class="hint" id="notifyLimitHint">Thông báo được cập nhật khi ứng dụng còn đang chạy. Nếu đóng hẳn ứng dụng hoặc hệ điều hành ngừng chạy nền, thông báo có thể không xuất hiện đúng giờ. Đây chưa phải thông báo push chạy độc lập với ứng dụng.</p>
       </div></div></div>
     </div>
 
@@ -7274,7 +7856,7 @@ function ctagHTML(ev){
 function tagStyle(t){ return `--bd:${esc(t.color)};--bgt:color-mix(in srgb,${esc(t.color)} 22%,var(--surface))`; }
 const DOW = ['Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy','Chủ Nhật'];
 const DAYN = ['T2','T3','T4','T5','T6','T7','CN'];
-/* chỉ là cấu trúc tag ban đầu; toàn bộ lịch học nằm trong file dữ liệu .json */
+/* Cấu trúc tag mặc định; dữ liệu lịch thật theo tài khoản được nạp từ Firestore/localStorage, hoặc JSON khi người dùng chủ động khôi phục. */
 /* kiểu lặp: người dùng tự thêm / sửa / xóa (đổi số tuần giữa hai lần). 'none' (Không lặp) là mục cố định, không nằm trong danh sách này */
 const DEFAULT_REPEATS = [
   {id:'weekly',   name:'Hàng tuần', every:1, unit:'week'},
@@ -7409,10 +7991,11 @@ const has = v => v !== '' && v != null;
 const seriesOf = ev => ev.series || ev.id;
 
 /* ---------- dữ liệu ----------
-   Code KHÔNG chứa lịch học nào. Toàn bộ dữ liệu (lớp cố định, sự kiện, deadline, ghi chú)
-   nằm trong file lich-trinh-data.json:
-   • Mở “Tài khoản của tôi” → “Sao lưu” → “Khôi phục dữ liệu (.json)” để nạp file.
-   • Nếu trang được mở qua web server (cùng thư mục với file .json), lần chạy đầu tiên sẽ tự nạp. */
+   index.html KHÔNG chứa lịch học cá nhân. State thuộc từng tài khoản được lấy từ
+   Firestore và bản sao localStorage theo UID; người dùng có thể khôi phục JSON thủ công.
+   DATA_FILE chỉ là nguồn khởi tạo TÙY CHỌN trong trường hợp không có Firebase/HTTP(S).
+   Khi Firebase đã cấu hình trên HTTP(S), KHÔNG tự tải JSON chung để tránh lẫn dữ liệu
+   của các tài khoản. Cần kiểm tra điều kiện thực tế ở cuối script chính. */
 const KEY = 'uit-planner-v2';
 const SCHEMA = 7;
 const DATA_FILE = 'lich-trinh-data.json';
@@ -8935,7 +9518,7 @@ function lkBtn(title, n, items, body){
   const hasContent = !!content;
   const tip = hasContent ? (n ? 'Xem nội dung và ' + n + ' liên kết' : 'Xem nội dung') : (n ? 'Xem ' + n + ' liên kết' : 'Chưa có liên kết');
   const data = items.map(x => ({u:x.url, n:x.label}));
-  return `<span class="lkchips"><a class="lkchip lkopen" href="#" role="button" aria-label="${hasContent ? 'Nội dung và liên kết: ' : 'Liên kết: '}${n}" data-lkt="${esc(title)}" data-lk="${esc(JSON.stringify(data))}" data-bd="${esc(content)}" title="${esc(tip)}" draggable="false"><i>🔗</i><b>${n}</b></a></span>`;
+  return `<span class="lkchips"><a class="lkchip lkopen" href="#" role="button" aria-label="${hasContent ? 'Nội dung và liên kết: ' : 'Liên kết: '}${n}" data-lkt="${esc(title)}" data-lk="${esc(JSON.stringify(data))}" data-bd="${esc(content)}" title="${esc(tip)}" draggable="false"><i>${ico('link', 13)}</i><b>${n}</b></a></span>`;
 }
 const evChips = ev => {
   const ls = getLinks(ev), items = ls.map((l, i) => ({url:l.url, label:linkLabel(ev, l, i)}));
@@ -8959,6 +9542,7 @@ function editActionAttrs(subject = ''){
 }
 const IC = {
   edit:'<path d="M4 20h4L19.5 8.5a2.1 2.1 0 0 0 0-3l-1-1a2.1 2.1 0 0 0-3 0L4 16z"/><path d="M13.5 6l4.5 4.5"/>',
+  link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
   pin:'<path d="M12 16.5V22M8.5 3h7l-1 5.5 3 3.5v2.5h-12V12l3-3.5z"/>',
   trash:'<path d="M4 7h16M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13M10 11v5.5M14 11v5.5"/>',
   list:'<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/><path d="M8 14h8M8 17.2h8" stroke-width="1.9"/>',
@@ -8987,7 +9571,7 @@ function dlBarHTML(t){
 }
 function dlCellHTML(t){
   return `<div class="dlcell${t.done?' done':''}${t.pin?' pinned':''} " data-todo="${esc(t.id)}" tabindex="0" role="button">${editBtn()}${dlTopLink(t)}${dlBarHTML(t)}${t.pin ? `<span class="dlmark" aria-hidden="true" title="Đã ghim">${ico('pin', 13)}</span>` : ''}
-    <div class="dl-content"><div class="dl-title">${esc(t.text)}</div><div class="dlt">${t.dueTime ? esc(t.dueTime) : 'Cả ngày'}</div>${dlBtn(t)}</div></div>`;
+    <div class="ev-content"><div class="ev-heading"><b class="ev-title">${esc(t.text)}</b></div><div class="ctime">${t.dueTime ? esc(t.dueTime) : 'Cả ngày'}</div>${dlBtn(t)}</div></div>`;
 }
 /* Danh sách: nhãn trạng thái (Đã hoàn thành / Quá hạn… / còn …) đứng cùng hàng với nhãn tag Deadline, vắt ngang viền trên thẻ (giống Kết thúc sau… / Diễn ra sau… của các ô lịch) */
 function dlAgendaBarHTML(t){   // cùng 4 trạng thái như Bảng: Hoàn thành / Quá hạn / Hôm nay / Còn hạn
@@ -9425,7 +10009,7 @@ function otherFixedHTML(){
     h += `<tr class="fx-row ${seriesScore > 0 ? '' : 'dim'}" data-id="${esc(ev.id)}" data-series="${esc(sid)}" data-fx-kind="${kind}" data-date="${esc(occ)}" tabindex="0" role="button" title="Bấm để sửa hoặc kéo tay nắm để đổi vị trí">
       <td class="n">${fxRowNumber(i)}</td>
       <td>${ev.code ? `<div class="code">${esc(ev.code)}</div>` : ''}<div class="stitle">${(cc => cc && cc !== ev.code ? `<span class="cc2">${esc(cc)}</span>` : '')(String(ev.code || '').split('.')[0])}${esc(ev.title)}${ev.status === 'cancelled' ? '<span class="tag x">Nghỉ</span>' : ''}</div></td>
-      <td><span class="lg static" style="--bd:${esc(tag.color)}"><i></i>${esc(tag.name)}</span></td>
+      <td><span class="lg static" style="--bd:${esc(tag.color)}" title="${esc(tag.name)}"><i></i><span class="lgn">${esc(tag.name)}</span></span></td>
       <td>${fixedWhen(ev, vs, false)}</td>
       <td>${esc(ev.room) || '<span class="sub">–</span>'}</td>
       <td>${esc(ev.teacher) || '<span class="sub">–</span>'}</td>
@@ -9845,7 +10429,7 @@ function normLink(s){                       // '' = trống, null = không hợp
 }
 function indHTML(x){
   const n = getLinks(x).length;
-  return n ? `<span class="ind" title="Có liên kết">🔗${n > 1 ? n : ''}</span>` : '';
+  return n ? `<span class="ind" title="Có liên kết">${ico('link', 12)}${n > 1 ? n : ''}</span>` : '';
 }
 /* ---------- hộp thoại hỏi phạm vi áp dụng (lịch lặp) ---------- */
 const dlgScope = $('#dlgScope');
@@ -10689,7 +11273,11 @@ function onSchedClick(target){
   const ah = target.closest('.ad[data-date] > h3'); if(ah) return selectCol(ah.parentElement.dataset.date);   // Danh sách: bấm tiêu đề ngày để chọn cả ngày
   const ch = target.closest('.sheet .dn th[data-col]'); if(ch) return selectCol(ch.dataset.col);   // chỉ bấm ô thứ mới chọn cả cột
   const dl = target.closest('[data-todo]'); if(dl && state.view === 'cal' && dl.classList.contains('mchip')) return openCalInfo(dl);   // dạng Tháng: hiện hộp thông tin, sửa / xóa bằng biểu tượng
-  if(dl) return dl.querySelector(':scope>.editb') ? clearSel() : openTodo(dl.dataset.todo);   // ô deadline ở Lịch: bấm vào không chọn ô (chỉ bấm ✎ để sửa)
+  if(dl){
+    // Mobile Tuần–Bảng: chạm Deadline cũng chọn ô để hiện hai nút giống ô lịch.
+    // PC và các chế độ khác giữ cách mở/nhấn gốc, không cố định toolbar.
+    return dl.querySelector(':scope>.editb') ? selectCell(dl) : openTodo(dl.dataset.todo);   // giống ô lịch: chọn ô (viền chọn), sửa bằng nút ✎
+  }
   const el = target.closest('[data-id]');
   if(el && el.querySelector(':scope>.editb')) return selectCell(el);
   if(el && state.view === 'cal' && el.classList.contains('mchip')) return openCalInfo(el);   // dạng Tháng: hiện hộp thông tin, sửa / xóa bằng biểu tượng
@@ -10737,7 +11325,7 @@ function toast(msg, ms = 1800){
 document.addEventListener('close', e => { if(toastEl && e.target.tagName === 'DIALOG' && toastEl.parentNode === e.target) document.body.appendChild(toastEl); }, true);   // đóng dialog khi toast còn hiện → trả toast về body
 $('#sched').addEventListener('keydown', e => {
   if((e.key === 'Enter' || e.key === ' ') && state.view === 'cal' && e.target.classList && e.target.classList.contains('mchip')){ e.preventDefault(); openCalInfo(e.target); return; }   // dạng Tháng: hiện thông tin trước
-  if((e.key === 'Enter' || e.key === ' ') && e.target.dataset && e.target.dataset.todo){ e.preventDefault(); if(e.target.querySelector(':scope>.editb')) clearSel(); else openTodo(e.target.dataset.todo); return; }
+  if((e.key === 'Enter' || e.key === ' ') && e.target.dataset && e.target.dataset.todo){ e.preventDefault(); if(e.target.querySelector(':scope>.editb')) selectCell(e.target); else openTodo(e.target.dataset.todo); return; }
   if((e.key === 'Enter' || e.key === ' ') && e.target.dataset && e.target.dataset.id){ e.preventDefault(); const d=e.target.dataset; if(e.target.querySelector(':scope>.editb')) selectCell(e.target); else openModal(d.id, d.date, undefined, d.s&&d.e ? {start:d.s,end:d.e} : null); }
 });
 /* ===== Tuần / Tháng: menu chọn kiểu xem, bấm vào lịch ===== */
@@ -11159,7 +11747,9 @@ function selStyle(){   // giữ viền ô đang chọn và cập nhật khung c�
       : `#sched [data-id="${q(selCell.id)}"][data-date="${q(selCell.date)}"][data-s="${q(selCell.s)}"]{${css}}`;
   if(st.textContent !== selCss) st.textContent = selCss;   // chỉ ghi khi đổi: ghi lại cùng nội dung vẫn làm trình duyệt tính lại style toàn trang
   // Trên cảm ứng chỉ hiển thị thao tác ở ô chọn, tránh :hover bám vào ô từng chạm.
-  const chosen = selCell && !selCell.col && !selCell.todo ? selEl() : null;
+  const chosen = selCell && !selCell.col ? (selCell.todo
+    ? [...document.querySelectorAll('#sched .sheet .dlcell[data-todo]')].find(node => node.dataset.todo === selCell.todo) || null
+    : selEl()) : null;
   document.querySelectorAll('#sched .mobile-cell-selected').forEach(node => {
     if(node !== chosen) node.classList.remove('mobile-cell-selected');
   });
@@ -11229,7 +11819,7 @@ function selEl(){
   return document.querySelector(`#sched [data-id="${q(selCell.id)}"][data-date="${q(selCell.date)}"][data-s="${q(selCell.s)}"]`);
 }
 function editCell(c){   // mở hộp chỉnh sửa của ô (chỉ gọi khi bấm nút ✎)
-  if(c.dataset.todo){ clearSel(); return openTodo(c.dataset.todo); }   // ô deadline không sao chép được nên cũng không chọn được
+  if(c.dataset.todo){ clearSel(); return openTodo(c.dataset.todo); }   // Deadline mobile có thể chọn để hiện toolbar, nhưng không nằm trong luồng sao chép ô lịch
   selectCell(c);
   openModal(c.dataset.id, c.dataset.date, undefined, (c.dataset.s && c.dataset.e) ? {start:c.dataset.s, end:c.dataset.e} : null);
 }
@@ -11286,7 +11876,7 @@ document.addEventListener('pointerdown', e => { if(ctxMenu && !ctxMenu.contains(
 document.addEventListener('pointerdown', e => {   // bấm ra ngoài ô (khoảng trống, nút khác…) thì bỏ chọn ô
   if(!selCell) return;
   if(e.target.closest && e.target.closest('#selBar, .ctxm, .sheet th[data-col], .ad>h3, .mc[data-date], .ci-pop')) return;
-  const c = e.target.closest && e.target.closest('.cell[data-id], .ag[data-id]');
+  const c = e.target.closest && e.target.closest('.cell[data-id], .dlcell[data-todo], .ag[data-id]');
   if(c && c.querySelector(':scope>.editb')) return;
   clearSel();
 }, true);
@@ -12742,7 +13332,7 @@ try{
   }
 }catch(e){}
 startCloud();
-/* lần chạy đầu tiên (chưa có dữ liệu lưu): thử tự nạp file dữ liệu nằm cùng thư mục (chỉ chạy khi mở qua web server) */
+/* Chỉ khởi tạo từ JSON tùy chọn nếu KHÔNG chạy mô hình Firebase trên HTTP(S); không nạp dữ liệu chung vào tài khoản cloud. */
 if(firstRun && !(FIREBASE_CONFIG && /^https?:$/.test(location.protocol))){   // có hệ thống tài khoản thì mỗi tài khoản tự có dữ liệu riêng, không nạp chung một file cho mọi người
   fetch(DATA_FILE, {cache:'no-store'}).then(r => r.ok ? r.json() : Promise.reject())
     .then(s => { if(s && Array.isArray(s.events) && Array.isArray(s.todos)){ state = norm(s); state.view = 'table'; save(); render(); } })
