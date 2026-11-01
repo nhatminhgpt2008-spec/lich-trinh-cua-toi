@@ -6721,6 +6721,70 @@ body[data-view="table"] #sched .cell .ev-content .ev-title{
   }
 }
 
+
+/* ===== MOBILE / TOUCH: ẩn toàn bộ thanh scrollbar, KHÔNG khóa thao tác cuộn =====
+   Đặt ở cuối CSS để ưu tiên trước các quy tắc scrollbar-width:thin cũ.
+   Giữ nguyên overflow-x/y:auto, touch-action và chức năng vuốt của Tháng – Bảng. */
+@media (max-width:900px), (hover:none), (pointer:coarse){
+  html, body, body *, body *::before, body *::after{
+    scrollbar-width:none!important;
+    -ms-overflow-style:none!important;
+  }
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar,
+  body *::-webkit-scrollbar{
+    display:none!important;
+    width:0!important;
+    height:0!important;
+    background:transparent!important;
+  }
+  .sbLayer,.sbar,.sbar-x,.sbar-y{
+    display:none!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+  }
+  .scroller.sb-has-x,.legend.sb-has-x{
+    padding-bottom:0!important;
+  }
+}
+
+
+/* ===== Lớp trên mobile: sử dụng gần toàn bộ bề rộng màn hình =====
+   Bỏ padding cộng dồn giữa #sched -> .fxblk -> thẻ hàng.
+   Không thay đổi cấu trúc bảng, thao tác kéo thả hay bộ lọc. */
+@media screen and (max-width:700px){
+  body[data-view="fixed"] #sched{
+    width:100%!important;min-width:0!important;max-width:100%!important;
+    padding-left:4px!important;padding-right:4px!important;
+    box-sizing:border-box!important;
+  }
+  body[data-view="fixed"] #sched>.fxblk,
+  body[data-view="fixed"] #sched .fxblk{
+    width:100%!important;max-width:100%!important;min-width:0!important;
+    margin-left:0!important;margin-right:0!important;
+    padding-left:0!important;padding-right:0!important;
+    box-sizing:border-box!important;
+  }
+  body[data-view="fixed"] .fxblk>.scroller{
+    width:100%!important;max-width:100%!important;min-width:0!important;
+    margin:0!important;padding:0!important;box-sizing:border-box!important;
+  }
+  body[data-view="fixed"] table.fx{width:100%!important;max-width:100%!important;min-width:0!important}
+  body[data-view="fixed"] table.fx tbody tr.fx-row{
+    margin:6px 2px!important;
+    padding:10px 11px!important;
+    width:auto!important;max-width:none!important;
+    box-sizing:border-box!important;
+  }
+  body[data-view="fixed"] table.fx thead tr{
+    padding-left:2px!important;padding-right:2px!important;
+  }
+  body[data-view="fixed"] .fxblk .fx-filter-bar,
+  body[data-view="fixed"] .fxblk .fxbar{
+    padding-left:2px!important;padding-right:2px!important;
+  }
+}
+
 </style>
 </head>
 <body>
