@@ -7428,6 +7428,21 @@ html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.
   body[data-view="monthAgenda"] #sched .ag>.card-link-top .lkchip b{display:none!important}
   body[data-view="agenda"] #sched .ag>.card-link-top .lkchip i,
   body[data-view="monthAgenda"] #sched .ag>.card-link-top .lkchip i{font-style:normal;line-height:1}
+  /* nút Liên kết: rê / chạm giữ / nhấn đổi sang màu nhấn giống nút Sửa (luật nền ở trên có !important và độ ưu tiên cao hơn nên trước đây :hover không thắng được) */
+  body[data-view="agenda"] #sched .ag>.card-link-top .lkchip,
+  body[data-view="monthAgenda"] #sched .ag>.card-link-top .lkchip,
+  body[data-view="agenda"] #sched .ag>.editb,
+  body[data-view="monthAgenda"] #sched .ag>.editb{transition:none!important;animation:none!important}
+  body[data-view="agenda"] #sched .ag>.card-link-top .lkchip:is(:hover,:active,:focus-visible),
+  body[data-view="monthAgenda"] #sched .ag>.card-link-top .lkchip:is(:hover,:active,:focus-visible),
+  body[data-view="agenda"] #sched .ag>.editb:is(:hover,:active,:focus-visible),
+  body[data-view="monthAgenda"] #sched .ag>.editb:is(:hover,:active,:focus-visible){
+    background:var(--accent)!important;color:var(--accent-ink)!important;border-color:var(--accent)!important;opacity:1!important;outline:none;transform:none!important;
+  }
+  body[data-view="agenda"] #sched .ag>.card-link-top .lkchip:is(:hover,:active,:focus-visible) i,
+  body[data-view="monthAgenda"] #sched .ag>.card-link-top .lkchip:is(:hover,:active,:focus-visible) i,
+  body[data-view="agenda"] #sched .ag>.card-link-top .lkchip:is(:hover,:active,:focus-visible) .ic,
+  body[data-view="monthAgenda"] #sched .ag>.card-link-top .lkchip:is(:hover,:active,:focus-visible) .ic{color:var(--accent-ink)!important}
   body[data-view="agenda"] #sched .ag.dl,
   body[data-view="monthAgenda"] #sched .ag.dl{align-items:center}
 }
@@ -11848,7 +11863,12 @@ function clearSel(){ if(!selCell) return; selCell = null; selStyle(); }
 /* Thanh thao tác cho cảm ứng: chọn ô / chọn cột rồi bấm Sao chép / Dán (điện thoại không có Ctrl+C / Ctrl+V) */
 let selBar = null, selBarFrame = 0;
 function selTarget(){   // đích hiện tại của việc chọn; null nếu chưa chọn hoặc ô / cột không còn hiển thị
-  if(!selCell || selCell.todo) return null;
+  if(selCell && selCell.todo){   // Deadline ở Danh sách: chọn được như ô thường nhưng KHÔNG sao chép / dán được (kind 'todo' → hai nút bị khóa)
+    const q = String(selCell.todo).replace(/["\\]/g, '');
+    const el = document.querySelector(`#sched .ag.dl[data-todo="${q}"]`);
+    return el && el.getClientRects().length ? {kind:'todo', src:el} : null;
+  }
+  if(!selCell) return null;
   if(selCell.col){
     const q = String(selCell.col).replace(/["\\]/g, '');
     const el = [...document.querySelectorAll('#sched .sheet .dn th[data-col]')].find(x => x.dataset.col === selCell.col) || document.querySelector(`#sched .ad[data-date="${q}"], #sched .mc[data-date="${q}"]`);
@@ -11862,7 +11882,7 @@ function selBarAct(a){
   if(a === 'off'){ if(tg) clearSel(); else clearClip(); updSelBar(); return; }
   if(!tg) return;
   if(a === 'copy' && tg.kind === 'cell'){ const c = tg.src.closest(CELL_SEL); if(c) copyCellEl(c); }
-  else if(a === 'paste' && cellClip){
+  else if(a === 'paste' && cellClip && tg.kind !== 'todo'){
     if(tg.kind === 'col') pasteClip({date:tg.date, s:'', e:''});
     else { const p = pasteTarget(tg.src); if(p) pasteClip(p); }
   }
@@ -11883,10 +11903,11 @@ function updSelBar(){
   let txt;
   if(!tg) txt = `Đã sao chép “${clipTitle}” · chọn cột hoặc ô để dán`;
   else if(tg.kind === 'col') txt = `Ngày ${DOW[wd(tg.date)]}, ${dm(tg.date)}`;
+  else if(tg.kind === 'todo'){ const td = state.todos.find(x => x.id === selCell.todo); txt = `Deadline: ${(td && td.text) || 'deadline'}`; }
   else { const ev = evOf(tg.src.closest(CELL_SEL) || tg.src); txt = `Ô: ${(ev && ev.title) || 'ô lịch'}`; }
   selBar.querySelector('.sbt').textContent = txt;
   selBar.querySelector('[data-a=copy]').disabled = !(tg && tg.kind === 'cell');
-  selBar.querySelector('[data-a=paste]').disabled = !(tg && cellClip);
+  selBar.querySelector('[data-a=paste]').disabled = !(tg && tg.kind !== 'todo' && cellClip);
   selBar.querySelector('[data-a=off]').setAttribute('aria-label', tg ? 'Bỏ chọn' : 'Bỏ sao chép');
   selBar.classList.add('on');
 }
@@ -11918,6 +11939,7 @@ function openCtx(x, y, items){
   const first = m.querySelector('button:not(:disabled)'); if(first && !isCoarseUI()) first.focus({preventScroll:true});
 }
 function schedMenu(t, x, y){
+  if(isCoarseUI() && t.closest('.ag.dl[data-todo]')) return false;   // điện thoại: thẻ deadline ở Danh sách không sao chép / dán được → không có menu
   const cell = t.closest(CELL_SEL), tg = pasteTarget(t), items = [];
   if(cell) items.push({html:'Sao chép', run:() => copyCellEl(cell)});
   if(tg) items.push({html:'Dán', off:!cellClip, run:() => pasteClip(tg)});
@@ -11954,7 +11976,7 @@ document.addEventListener('pointerdown', e => { if(ctxMenu && !ctxMenu.contains(
 document.addEventListener('pointerdown', e => {   // bấm ra ngoài ô (khoảng trống, nút khác…) thì bỏ chọn ô
   if(!selCell) return;
   if(e.target.closest && e.target.closest('#selBar, .ctxm, .sheet th[data-col], .ad>h3, .mc[data-date], .ci-pop')) return;
-  const c = e.target.closest && e.target.closest('.cell[data-id], .dlcell[data-todo], .ag[data-id]');
+  const c = e.target.closest && e.target.closest('.cell[data-id], .dlcell[data-todo], .ag[data-id], .ag.dl[data-todo]');
   if(c && c.querySelector(':scope>.editb')) return;
   clearSel();
 }, true);
