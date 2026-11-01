@@ -7366,6 +7366,84 @@ html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.
 /* Khoảng cách giữa các dòng trong ô: bằng nhau (4px), các dòng không có lề riêng */
 html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell) .ev-content>*{margin-top:0!important;margin-bottom:0!important}
 
+/* ===== Mobile · Tuần/Tháng › Danh sách: đồng bộ giao diện với PC ===== */
+@media screen and (max-width:700px){
+  body[data-view="agenda"] #sched .ag,
+  body[data-view="monthAgenda"] #sched .ag{
+    box-sizing:border-box;grid-template-columns:54px minmax(0,1fr);
+    align-items:center;column-gap:10px;row-gap:0!important;
+    padding:12px 11px!important;min-height:64px;
+  }
+  body[data-view="agenda"] #sched .ag:has(>.ctag,>.cbar),
+  body[data-view="monthAgenda"] #sched .ag:has(>.ctag,>.cbar){padding-top:10px!important;padding-bottom:10px!important}
+  body[data-view="agenda"] #sched .ag .ag-time,
+  body[data-view="monthAgenda"] #sched .ag .ag-time{align-self:center;margin:0;line-height:1.3;font-size:13px}
+  body[data-view="agenda"] #sched .ag .ag-main,
+  body[data-view="monthAgenda"] #sched .ag .ag-main{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:5px;min-width:0;width:100%;align-self:center}
+  body[data-view="agenda"] #sched .ag .ag-main>*,
+  body[data-view="monthAgenda"] #sched .ag .ag-main>*{margin:0!important}
+  body[data-view="agenda"] #sched .ag:not(.dl) .et,
+  body[data-view="monthAgenda"] #sched .ag:not(.dl) .et{font-size:13.5px;font-weight:750;line-height:1.4}
+  body[data-view="agenda"] #sched .ag:not(.dl) .em,
+  body[data-view="monthAgenda"] #sched .ag:not(.dl) .em{font-size:11.5px;line-height:1.4}
+  body[data-view="agenda"] #sched .ag .ag-links,
+  body[data-view="monthAgenda"] #sched .ag .ag-links,
+  body[data-view="agenda"] #sched .ag .ag-main .em:empty,
+  body[data-view="monthAgenda"] #sched .ag .ag-main .em:empty{display:none!important}
+  body[data-view="agenda"] #sched .ag .et,
+  body[data-view="monthAgenda"] #sched .ag .et{padding-right:58px}
+
+  /* hai nút góc phải: ẩn mặc định, hiện khi thẻ được chọn */
+  body[data-view="agenda"] #sched .ag>.editb,
+  body[data-view="monthAgenda"] #sched .ag>.editb,
+  body[data-view="agenda"] #sched .ag>.card-link-top,
+  body[data-view="monthAgenda"] #sched .ag>.card-link-top{
+    position:absolute!important;top:8px!important;width:24px!important;height:24px!important;
+    box-sizing:border-box;margin:0!important;padding:0;z-index:12;
+    display:flex!important;align-items:center;justify-content:center;
+    visibility:hidden!important;opacity:0!important;pointer-events:none!important;
+    transition:none!important;
+  }
+  body[data-view="agenda"] #sched .ag>.editb,
+  body[data-view="monthAgenda"] #sched .ag>.editb{right:8px!important;border-radius:6px}
+  body[data-view="agenda"] #sched .ag>.card-link-top,
+  body[data-view="monthAgenda"] #sched .ag>.card-link-top{right:35px!important}
+  body[data-view="agenda"] #sched .ag.mobile-cell-selected>.editb,
+  body[data-view="monthAgenda"] #sched .ag.mobile-cell-selected>.editb,
+  body[data-view="agenda"] #sched .ag.mobile-cell-selected>.card-link-top,
+  body[data-view="monthAgenda"] #sched .ag.mobile-cell-selected>.card-link-top{
+    visibility:visible!important;opacity:1!important;pointer-events:auto!important;
+  }
+  body[data-view="agenda"] #sched .ag>.card-link-top .lkchips,
+  body[data-view="monthAgenda"] #sched .ag>.card-link-top .lkchips{display:flex!important;align-items:center;justify-content:center;margin:0!important}
+  body[data-view="agenda"] #sched .ag>.card-link-top .lkchip,
+  body[data-view="monthAgenda"] #sched .ag>.card-link-top .lkchip{
+    display:grid!important;place-items:center;width:24px!important;height:24px!important;
+    min-width:24px;max-width:24px;padding:0!important;margin:0;
+    border:1px solid color-mix(in srgb,var(--ink) 22%,transparent)!important;
+    border-radius:6px!important;background:color-mix(in srgb,var(--surface) 94%,transparent)!important;
+    color:var(--ink)!important;text-decoration:none;font-size:12px;line-height:1;
+  }
+  body[data-view="agenda"] #sched .ag>.card-link-top .lkchip b,
+  body[data-view="monthAgenda"] #sched .ag>.card-link-top .lkchip b{display:none!important}
+  body[data-view="agenda"] #sched .ag>.card-link-top .lkchip i,
+  body[data-view="monthAgenda"] #sched .ag>.card-link-top .lkchip i{font-style:normal;line-height:1}
+  body[data-view="agenda"] #sched .ag.dl,
+  body[data-view="monthAgenda"] #sched .ag.dl{align-items:center}
+}
+/* PC: icon Liên kết / Sửa chỉ hiện ở ô đang rê chuột, không bám lại ô vừa bấm (focus-within) */
+@media (hover:hover) and (min-width:701px){
+  #sched :is(.cell,.dlcell,.ag):not(:hover):focus-within>.card-link-top{visibility:hidden}
+  #sched :is(.cell,.dlcell,.ag):not(:hover):has(:focus-visible)>.card-link-top{visibility:visible}
+}
+/* Tuần–Bảng: ô Deadline đã ghim giữ màu tím (nền + viền) cả khi rê chuột / được chọn, giống mục Danh sách */
+html body[data-view="table"] #sched .sheet td .stk>.dlcell.dlcell.dlcell.dlcell.dlcell.dlcell.dlcell.dlcell.pinned.pinned{background:color-mix(in srgb,var(--pin-soft) 68%,var(--surface))!important;border-color:var(--pin-border)!important;box-shadow:inset 0 0 0 1px var(--pin-border)!important;filter:none}
+html body[data-view="table"] #sched .sheet td .stk>.dlcell.dlcell.dlcell.dlcell.dlcell.dlcell.dlcell.dlcell.pinned.pinned:is(:hover,.mobile-cell-selected){background:color-mix(in srgb,var(--pin-soft) 90%,var(--surface))!important;border-color:var(--pin-border)!important;box-shadow:inset 0 0 0 1px var(--pin-border),0 6px 16px -8px rgba(0,0,0,.45)!important;filter:none}
+/* PC: nút ghim/sửa ở panel Deadline cũng chỉ hiện khi rê chuột, không bám lại ô vừa bấm */
+@media (hover:hover) and (min-width:701px){
+  .np-dl:not(.pinned):not(:hover):focus-within .np-tools{opacity:0}
+  .np-dl:not(:hover):has(:focus-visible) .np-tools{opacity:1}
+}
 </style>
 </head>
 <body>
@@ -11748,7 +11826,7 @@ function selStyle(){   // giữ viền ô đang chọn và cập nhật khung c�
   if(st.textContent !== selCss) st.textContent = selCss;   // chỉ ghi khi đổi: ghi lại cùng nội dung vẫn làm trình duyệt tính lại style toàn trang
   // Trên cảm ứng chỉ hiển thị thao tác ở ô chọn, tránh :hover bám vào ô từng chạm.
   const chosen = selCell && !selCell.col ? (selCell.todo
-    ? [...document.querySelectorAll('#sched .sheet .dlcell[data-todo]')].find(node => node.dataset.todo === selCell.todo) || null
+    ? [...document.querySelectorAll('#sched .dlcell[data-todo],#sched .ag.dl[data-todo]')].find(node => node.dataset.todo === selCell.todo) || null
     : selEl()) : null;
   document.querySelectorAll('#sched .mobile-cell-selected').forEach(node => {
     if(node !== chosen) node.classList.remove('mobile-cell-selected');
