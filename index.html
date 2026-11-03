@@ -339,7 +339,8 @@ button,[role=button],a,summary,label,select{touch-action:manipulation}
 /* NỘI DUNG CÓ ĐỊNH DẠNG: ô soạn thảo (thêm/sửa lịch, thêm/sửa deadline) + phần hiển thị */
 .rtf{display:grid;gap:4px;font-size:12.5px;color:var(--muted);min-width:0}
 .rte{position:relative;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);transition:border-color var(--mo),box-shadow var(--mo)}
-.rte:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.rte .rtbody:focus,.rte .rtbody:focus-visible{outline:0;box-shadow:none}   /* vùng gõ không tự vẽ thêm vòng riêng (luật :focus-visible chung ở dưới) — chỉ khung .rte ngoài cùng phát sáng */
+.rte:has(.rtbody:focus){border-color:var(--accent);box-shadow:0 0 0 4px var(--glow)}   /* giống các ô nhập khác; bấm nút trên thanh công cụ không làm cả khung phát sáng */
 /* ===== Thanh công cụ soạn nội dung (Hoàn tác · Cỡ chữ · B I U S · Màu · Căn lề · Danh sách · Xóa định dạng) ===== */
 .rtbar{display:flex;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;align-items:center;gap:2px;padding:5px 6px;border-bottom:1px solid var(--line);background:var(--line-soft);border-radius:7px 7px 0 0}
 .rtbar::-webkit-scrollbar{display:none}
@@ -576,14 +577,6 @@ fieldset.rep .fgrid{grid-template-columns:1fr 1fr}
 .fgrid .days div{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
 .fgrid .days label{display:flex;flex-direction:row;align-items:center;gap:4px;justify-content:center;border:1px solid var(--line);border-radius:99px;color:var(--ink);cursor:pointer}
 .fgrid .days input{width:auto;height:auto;accent-color:var(--accent)}
-.rtbox{grid-column:1/-1;display:grid;gap:6px;font-size:12.5px;color:var(--muted)}
-.rtchips{display:flex;flex-wrap:wrap;gap:6px}
-.rtchip{display:inline-flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;min-height:40px;padding:5px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;font-size:13px;line-height:1.2;cursor:pointer}
-.rtchip small{font-size:11px;color:var(--muted)}
-.rtchip:hover{border-color:var(--accent)}
-.rtchip.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
-.rtchip.on small{color:inherit;opacity:.8}
-.rtchip.add{border-style:dashed;color:var(--accent);align-items:center}
 .rtrows{display:grid;gap:8px;margin:0 0 10px}
 .rtrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;position:relative;padding:4px;border-radius:12px;transition:scale var(--mo),box-shadow var(--mo)}
 .rtrow .gr{flex:none;width:22px;height:32px;padding:0;border:0;background:none;color:var(--muted);font-size:17px;line-height:1;cursor:grab;touch-action:none;user-select:none;border-radius:6px}
@@ -601,11 +594,21 @@ fieldset.rep .fgrid{grid-template-columns:1fr 1fr}
 #noneTimes,
 #timesWrap,
 .trow{animation:none!important}}
-.rtrow input.rn{flex:1 1 150px;min-width:0;width:auto}
 .rtrow .rte{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);white-space:nowrap}
 .rtrow .rte input{width:64px;flex:none}
 .rtrow .rte select{width:auto;flex:none}
 .rtrow .x{flex:none;width:34px;border:1px solid var(--line);background:none;border-radius:8px;height:36px;color:var(--danger);cursor:pointer}
+/* Kiểu lặp (hộp thoại tùy chỉnh): [kéo 22] [Mỗi 34] [số 64] [đơn vị 88] [xóa 36 — sát cạnh ô đơn vị] — cao đều 36px, một hàng */
+#dlgRepeat .rtrows{gap:10px}
+#dlgRepeat .rtrow{display:grid;grid-template-columns:22px 34px 64px 88px 36px minmax(0,1fr);column-gap:8px;align-items:center;padding:4px}
+#dlgRepeat .rtrow .gr{width:22px;height:36px}
+#dlgRepeat .rtrow .rte{display:contents}
+#dlgRepeat .rtrow .rte>span:not(.cs){text-align:right;font-size:12.5px;color:var(--muted);white-space:nowrap}
+#dlgRepeat .rtrow .rte input.re{width:64px;height:36px;padding:0 6px;box-sizing:border-box;text-align:center;-moz-appearance:textfield;appearance:textfield}
+#dlgRepeat .rtrow .rte input.re::-webkit-inner-spin-button,#dlgRepeat .rtrow .rte input.re::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+#dlgRepeat .rtrow .rte>.cs{width:88px;height:36px}
+#dlgRepeat .rtrow .rte>.cs .cs-btn{height:36px;padding:0 28px 0 10px;box-sizing:border-box}
+#dlgRepeat .rtrow .x{grid-column:5;width:36px;height:36px;padding:0;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center}
 .tagrows{display:grid;gap:8px;margin-bottom:12px}
 .tagrow{display:grid;grid-template-columns:44px 1fr auto 34px;gap:8px;align-items:center}
 .tagrow input[type=color]{width:44px;height:36px;padding:2px;border:1px solid var(--line);border-radius:8px;background:var(--surface);cursor:pointer}
@@ -748,8 +751,24 @@ fieldset.rep.tm{padding:12px 14px 14px}
 fieldset.rep.tm .fgrid{gap:14px 12px}
 .tm-until{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .tm-until:has(#untilWrap[hidden]){grid-template-columns:1fr}
-.tm-sep{grid-column:1/-1;display:flex;align-items:center;gap:10px;font-size:11.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
-.tm-sep::after{content:"";flex:1;height:1px;background:var(--line)}
+/* Không lặp: ô “Thời hạn lặp” mờ như ô “Lặp đến ngày” đang khóa, nhưng con trỏ chuột giữ nguyên (không đổi sang biểu tượng cấm) */
+#untilModeWrap .cs-btn:disabled{opacity:.45;cursor:default}
+#untilModeWrap select:disabled{cursor:default}
+/* LỖI CUỘN HỘP THOẠI: animation mở dialog dùng fill-mode "both" nên transform còn nguyên sau khi chạy xong → các thanh cuộn tự vẽ (position:fixed, nằm trong dialog)
+   bị tính theo khung dialog thay vì khung nhìn, làm vùng cuộn dài thêm một đoạn trống và dialog cuộn được dù nội dung ngắn.
+   Chỉ giữ trạng thái đầu (backwards) rồi bỏ transform khi animation xong. */
+dialog[open]:not(.closing){animation-fill-mode:backwards}
+/* Kiểu lặp: tiêu đề + nút Thêm/Hủy/Lưu đứng yên, chỉ danh sách kiểu lặp tự cuộn khi có nhiều dòng (không cuộn cả hộp thoại) */
+#dlgRepeat[open]{display:flex;flex-direction:column;overflow:hidden}
+#dlgRepeat form{display:flex;flex-direction:column;flex:1 1 auto;min-height:0;overflow:hidden}
+#dlgRepeat .dlgHead,#dlgRepeat .lkadd,#dlgRepeat .err,#dlgRepeat .actions{flex:none}
+#dlgRepeat .rtrows{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;margin:0 -8px 10px;padding:2px 8px}
+#dlgRepeat .lkadd{align-self:flex-start}
+/* ô “Lặp đến ngày” đang khóa (Không lặp / Vô hạn): không nhấn được, con trỏ giữ nguyên */
+#untilWrap:has(input[readonly]){pointer-events:none}
+#untilWrap input[readonly]{cursor:default;user-select:none}
+.tm-top{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px 12px;min-width:0}
+@media (max-width:340px){.tm-top{grid-template-columns:1fr}}
 .fgrid .days{gap:6px}
 .fgrid .days label{position:relative;padding:8px 4px}
 .fgrid .days label input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
@@ -1999,7 +2018,6 @@ button,
 summary,
 .lkchip,
 .fgrid .days label,
-.rtchip,
 .fx-opt,
 .hubSw,
 .hubCard,
@@ -2018,8 +2036,8 @@ summary,
 .np-tabs button,
 .np-tabs button b{
   transition:background-color var(--mo) ease,border-color var(--mo) ease,color var(--mo) ease,opacity var(--mo) ease}
-button:not(:disabled):active,.rtchip:active,.fgrid .days label:active{opacity:.7;transform:none;scale:none}
-#dlg .btn:active,.rtchip:active,.fgrid .days label:active{transform:none;scale:none;opacity:.7}
+button:not(:disabled):active,.fgrid .days label:active{opacity:.7;transform:none;scale:none}
+#dlg .btn:active,.fgrid .days label:active{transform:none;scale:none;opacity:.7}
 .cs-btn:active:not(:disabled),.cs-o:active{transform:none}
 button:disabled{opacity:.4;cursor:not-allowed}
 .tools button:disabled{opacity:.4}
@@ -4419,7 +4437,7 @@ body.ci-open #selBar{display:none!important}   /* hộp thông tin Tháng đã c
 #profileDlg{--ap-x:14px;--ap-gap:12px;--ap-ctl:36px;height:min(640px,86dvh);overflow:hidden}   /* chỉ <form> bên trong cuộn; hộp không tự cuộn thêm nên không còn khoảng trống thừa dưới nút Đăng xuất */
 #profileDlg form{display:flex;flex-direction:column;gap:10px;padding:18px}
 /* đầu hộp: avatar – tên/email – nút đóng canh giữa cùng một trục */
-#profileDlg .acctModalHead{row-gap:2px;padding-bottom:16px;margin-bottom:6px}
+#profileDlg .acctModalHead{row-gap:2px;padding-bottom:8px;margin-bottom:2px;border-bottom:0}
 #profileDlg .iconbtn{grid-row:1/3;align-self:center;width:32px;height:32px}
 #profileDlg .verifyHint{margin:0}
 /* mỗi mục: viền đều, tiêu đề cao cố định, lề trái/phải bằng nhau */
@@ -4471,6 +4489,81 @@ body.ci-open #selBar{display:none!important}   /* hộp thông tin Tháng đã c
 #profileDlg .fgrid label.delConfirmRow{margin:0;gap:var(--ap-gap);align-items:center}
 #profileDlg .delConfirmHint{margin:0}
 /* Đăng xuất: nút nhỏ canh phải, dính đáy khi còn dư chỗ */
+/* Dữ liệu & sao lưu: nhóm chức năng + danh sách phiên bản trước đó */
+#profileDlg .dataGroup{display:flex;flex-direction:column;gap:8px}
+#profileDlg .dataHead{font-size:13px;font-weight:600;color:var(--ink)}
+/* Thẻ trạng thái dùng chung (Dữ liệu & sao lưu, Google Calendar) */
+#profileDlg .dataHeadRow{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+#profileDlg .dataHeadRow .gc-id-actions .btn{height:30px;padding:0 10px;font-size:12px}
+#profileDlg .statCard{border:1px solid var(--line);border-radius:10px;overflow:hidden}
+#profileDlg .statRow{display:flex;align-items:center;gap:10px;padding:10px 12px;font-size:13.5px;line-height:1.4;min-width:0}
+#profileDlg .statRow+.statRow{border-top:1px solid var(--line)}
+#profileDlg .statRow .k{flex:0 0 auto;color:var(--muted)}
+#profileDlg .statRow .v{flex:1 1 auto;min-width:0;text-align:right;font-weight:600;overflow-wrap:anywhere}
+#profileDlg .statRow.main,#profileDlg .statRow.plain{gap:9px}
+#profileDlg .statRow.main{font-weight:600}
+#profileDlg .statDot{flex:0 0 auto;width:8px;height:8px;border-radius:50%;background:var(--muted)}
+#profileDlg .statCard[data-sy=ok] .statDot{background:var(--accent)}
+#profileDlg .statCard[data-sy=busy] .statDot{background:var(--warn)}
+#profileDlg .statCard[data-sy=bad] .statDot{background:var(--danger)}
+#profileDlg .statRow #profileSyncInfo,#profileDlg .statRow #gcStatus{display:block;flex:1 1 auto;min-width:0;width:auto;margin:0;padding:0;border:0;border-radius:0;background:none;color:inherit;font-weight:inherit;font-size:inherit;overflow-wrap:anywhere}
+#profileDlg .statRow #profileSyncInfo::before{content:none}
+#profileDlg .statRow:has(> #profileSyncInfo:empty),#profileDlg .statRow:has(> #abInfo[hidden]){display:none}
+#profileDlg .statusGroup:not(:has(#profileSyncInfo:not(:empty),#abInfo:not([hidden]))){display:none}
+/* Ứng dụng & thông báo: mỗi dòng một chức năng, nút bên phải */
+#profileDlg .setRow{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:10px}
+#profileDlg .setTxt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px;font-size:13.5px}
+#profileDlg .setTxt small{font-size:12.5px;line-height:1.4;color:var(--muted)}
+#profileDlg .setRow .btn{flex:0 0 auto;width:auto;height:32px;min-height:0;padding:0 14px;font-size:13px}
+#versionList{display:flex;flex-direction:column;gap:6px}
+#versionList[hidden]{display:none}
+#profileDlg .verRow{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:10px}
+#profileDlg .verTxt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px;font-size:13px}
+#profileDlg .verTxt small{font-size:12px;line-height:1.4;color:var(--muted);overflow-wrap:anywhere}
+#profileDlg .verRow .btn{flex:0 0 auto;width:auto;height:32px;min-height:0;padding:0 12px;font-size:13px}
+/* ===== Google Calendar + Dữ liệu & sao lưu: cùng kiểu với "Ứng dụng & thông báo" (mỗi chức năng một dòng .setRow) ===== */
+#profileDlg .setRow{min-width:0;box-sizing:border-box;min-height:52px;padding:8px 12px}
+#profileDlg label.setRow{cursor:pointer}
+#profileDlg .setRow [hidden]{display:none!important}
+#profileDlg .setTxt{justify-content:center}
+#profileDlg .setTxt b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#profileDlg .setTxt.fix{flex:0 0 auto}
+#profileDlg .rowAct{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+#profileDlg .setRow .btn.icn{width:32px;padding:0;display:inline-flex;align-items:center;justify-content:center}
+#profileDlg .setRow .btn.primary{font-weight:600}
+#profileDlg .setRow input:not([type=checkbox]){flex:1 1 0;min-width:0;width:auto;height:32px!important;padding:0 10px;font:500 12.5px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-overflow:ellipsis}
+#profileDlg .setRow input[readonly]{background:var(--line-soft);cursor:default;border-color:transparent}
+#profileDlg .setRow input:not([readonly]):not([type=checkbox]){background:var(--surface);border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+/* trạng thái: chấm màu + một dòng; trống (đã đồng bộ bình thường) thì ẩn cả dòng */
+#profileDlg #dataStat{display:contents}
+#profileDlg .setRow.statRow{gap:9px;align-items:center;padding:8px 12px}
+#profileDlg .setRow.statRow .statDot{margin:0}
+#profileDlg .setRow.statRow.main{font-weight:600}
+#profileDlg .setRow #gcStatus,#profileDlg .setRow #profileSyncInfo{display:block;flex:1 1 auto;min-width:0;margin:0;padding:0;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.45}   /* trạng thái hiện đủ nội dung, dài thì xuống dòng */
+#profileDlg .setRow .v{flex:0 1 auto;min-width:0;margin-left:auto;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#profileDlg .setRow:has(> #profileSyncInfo:empty),#profileDlg .setRow:has(> #abInfo[hidden]){display:none}
+#profileDlg #gcStat[data-sy=ok] .statDot{background:var(--accent)}
+#profileDlg #gcStat[data-sy=busy] .statDot{background:var(--warn)}
+#profileDlg #gcStat[data-sy=bad] .statDot{background:var(--danger)}
+/* Client ID + trạng thái gộp chung một thẻ */
+#profileDlg .gcIdCard{flex-direction:column;align-items:stretch;gap:0;padding:8px 12px}
+#profileDlg .gcIdLine{display:flex;align-items:center;gap:8px;min-width:0;min-height:36px}
+#profileDlg .gcStatLine{display:flex;align-items:flex-start;gap:9px;margin-top:8px;font-size:13px}
+#profileDlg .gcStatLine:has(#gcStatus:empty){display:none}
+#profileDlg .gcStatLine .statDot{margin-top:6px}
+/* chọn nội dung đồng bộ: hai nút bật/tắt gọn trên một dòng */
+#profileDlg .gcChip{position:relative;display:inline-flex;cursor:pointer}
+#profileDlg .gcChip input{position:absolute;inset:0;width:100%!important;height:100%!important;margin:0;opacity:0;cursor:pointer}
+#profileDlg .gcChip span{display:inline-flex;align-items:center;height:32px;padding:0 13px;border:1px solid var(--line);border-radius:99px;font-size:13px;font-weight:500;color:var(--muted);background:var(--surface);transition:background .15s,color .15s,border-color .15s}
+#profileDlg .gcChip input:checked+span{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 30%,var(--line));color:var(--accent);font-weight:600}
+#profileDlg .gcChip input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+#profileDlg .gcGuide>summary{min-height:44px;font-size:13.5px;font-weight:600}
+/* Xóa dữ liệu & tài khoản: cùng kiểu dòng, giữ màu cảnh báo */
+#profileDlg .acctSection.danger .setRow{border-color:color-mix(in srgb,var(--danger) 28%,var(--line))}
+#profileDlg .setRow input[name=delConfirm]:not([readonly]):not([type=checkbox]),#profileDlg .setRow input[name=resetConfirm]:not([readonly]):not([type=checkbox]){background:var(--surface);border-color:var(--line);box-shadow:none}
+#profileDlg .setRow input[name=delConfirm]:not([readonly]):not([type=checkbox]):focus,#profileDlg .setRow input[name=resetConfirm]:not([readonly]):not([type=checkbox]):focus{border-color:var(--danger);box-shadow:0 0 0 2px color-mix(in srgb,var(--danger) 18%,transparent)}
+#profileDlg .setRow input[name=delConfirm],#profileDlg .setRow input[name=resetConfirm]{padding:0 6px!important}
+#profileDlg .setRow input[name=delConfirm]::placeholder,#profileDlg .setRow input[name=resetConfirm]::placeholder{font:400 11.5px/1 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;letter-spacing:0}
 #profileDlg .acctFooter{flex:0 0 auto;margin-top:auto;justify-content:flex-end}
 #profileDlg .acctFooter .grow{display:none}
 #profileDlg .acctFooter .btn{padding:0 16px}
@@ -5592,6 +5685,20 @@ body[data-view="cal"] #sched .mchip.ce b{font-size:inherit!important}
 #sched .dlcell.pinned:hover,#sched .ag.dl.pinned:hover,
 #dlPanel.page .np-list .np-dl.pinned:hover{
   background:color-mix(in srgb,var(--pin-soft) 90%,var(--surface))!important;
+}
+/* Deadline đã hoàn thành mà đang ghim: vẫn ghim (nút ghim giữ nguyên) nhưng nền + viền xanh giống các ô hoàn thành khác, không dùng màu tím của ghim */
+#dlPanel.page .np-list .np-dl.pinned.done,
+#dlPanel.page .np-list .np-dl.pinned.done.open,
+#dlPanel.page .np-list .np-dl.pinned.bk-done,
+#dlPanel.page .np-list .np-dl.pinned.bk-done.open{
+  --oc:var(--accent);
+  background:color-mix(in srgb,var(--oc) 9%,var(--surface))!important;
+  border-color:transparent!important;
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--oc) 35%,transparent)!important;
+}
+#dlPanel.page .np-list .np-dl.pinned.done:hover,
+#dlPanel.page .np-list .np-dl.pinned.bk-done:hover{
+  background:color-mix(in srgb,var(--oc) 14%,var(--surface))!important;
 }
 /* Nhãn ghim có biểu tượng tương phản ở cả hai giao diện. */
 #sched .dlcell.pinned .dlmark,#sched .ag.dl.pinned .dlmark{
@@ -6727,6 +6834,35 @@ body[data-view="table"] #sched .cell .ev-content .ev-title{
 /* ===== MOBILE / TOUCH: ẩn toàn bộ thanh scrollbar, KHÔNG khóa thao tác cuộn =====
    Đặt ở cuối CSS để ưu tiên trước các quy tắc scrollbar-width:thin cũ.
    Giữ nguyên overflow-x/y:auto, touch-action và chức năng vuốt của Tháng – Bảng. */
+/* Máy tính, Lịch › Danh sách: hai khung (lịch + Deadline) dài xuống sát đáy cửa sổ như Tuần › Bảng (lề dưới 4px), không còn dừng ở độ cao cố định rồi chừa khoảng trống */
+@media (min-width:821px){
+  .app:has(.layout.ag-on){box-sizing:border-box;height:100vh;height:100dvh;min-height:700px;overflow:clip;display:flex;flex-direction:column}
+  .app:has(.layout.ag-on)>*{flex-shrink:0}
+  .app:has(.layout.ag-on)>.layout.ag-on{flex:1 1 auto;min-height:0;grid-template-rows:auto auto minmax(0,1fr)}
+  .layout.ag-on #sched,.layout.ag-on #dlNew:not([hidden]){height:auto!important;min-height:0;align-self:stretch}
+  .layout.ag-on>.below{min-height:0;align-self:stretch;grid-template-rows:minmax(0,1fr)}
+}
+/* Máy tính, mục Lớp: khung cố định vừa khít cửa sổ như Tuần › Bảng (lề dưới 4px); danh sách lớp tự cuộn bên trong khung, không cuộn cả trang */
+@media (min-width:701px){
+  .app:has(.layout.fx-on){box-sizing:border-box;height:100vh;height:100dvh;min-height:700px;overflow:clip;display:flex;flex-direction:column}
+  .app:has(.layout.fx-on)>*{flex-shrink:0}
+  .app:has(.layout.fx-on)>.layout.fx-on{flex:1 1 auto;min-height:0;grid-template-rows:auto auto minmax(0,1fr)}
+  .layout.fx-on #sched{padding:0!important;height:auto!important;min-height:0;align-self:stretch;display:flex;flex-direction:column;gap:16px;overflow:hidden}
+  .layout.fx-on #sched>.fxblk{flex:1 1 0;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+  .layout.fx-on #sched>.fxblk>:not(.scroller){flex:none}
+  .layout.fx-on #sched>.fxblk>.scroller{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain}
+  .layout.fx-on #sched .fx thead th{position:sticky;top:0;z-index:4;background:var(--surface);box-shadow:inset 0 -1px 0 var(--line)}   /* hàng tiêu đề cột đứng yên khi cuộn, như hàng Thứ/Ngày của Bảng */
+}
+/* Thanh cuộn tự vẽ: bo tròn như thẻ/hộp thoại của app, màu dịu (không chói, không bóng đổ); rê chuột / kéo mới đậm và dày hơn */
+.sbar::before{border-radius:99px;box-shadow:none;background:color-mix(in srgb,var(--muted) 10%,transparent)}
+.sbar-y::before{width:4px;margin-left:-2px}
+.sbar-x::before{height:4px;margin-top:-2px}
+.sbthumb{border-radius:99px;box-shadow:none;background:color-mix(in srgb,var(--accent) 55%,var(--surface))!important}
+.sbar-y .sbthumb{width:4px;margin-left:-2px}
+.sbar-x .sbthumb{height:4px;margin-top:-2px}
+.sbthumb::after{border-radius:99px}
+.sbar:hover .sbthumb,.sbar.drag .sbthumb{background:var(--accent)!important}
+.sbar.drag .sbthumb{box-shadow:none}
 @media (max-width:900px), (hover:none), (pointer:coarse){
   html, body, body *, body *::before, body *::after{
     scrollbar-width:none!important;
@@ -7520,13 +7656,14 @@ html body[data-view="table"] #sched .sheet td .stk>.dlcell.dlcell.dlcell.dlcell.
       </div>
       <fieldset class="rep tm" data-k="both"><legend>Thời gian</legend>
         <div class="fgrid">
-          <label>Ngày bắt đầu<input type="date" name="date" required></label>
-          <div class="rtbox"><span>Kiểu lặp</span><div class="rtchips" id="rtChips" role="group" aria-label="Kiểu lặp"></div><div hidden><select name="repeat"><option value="none">Không lặp</option></select></div></div>
+          <div class="tm-top">
+            <label>Ngày bắt đầu<input type="date" name="date" required></label>
+            <label>Kiểu lặp<select name="repeat"><option value="none">Không lặp</option></select></label>
+          </div>
           <div class="tm-until" id="untilBox">
-            <label id="untilModeWrap">Thời hạn lặp<select name="untilMode"><option value="inf">Lặp vô hạn</option><option value="date">Lặp đến ngày</option></select></label>
+            <label id="untilModeWrap">Thời hạn lặp<select name="untilMode"><option value="inf">Vô hạn</option><option value="date">Có hạn</option></select></label>
             <label id="untilWrap">Lặp đến ngày<input type="date" name="until"></label>
           </div>
-          <div class="tm-sep"><span>Giờ</span></div>
           <div class="fgrid full" id="noneTimes" hidden>
             <label>Giờ bắt đầu<input type="text" class="t24" name="start" inputmode="numeric" maxlength="5" placeholder="HH:MM" autocomplete="off"></label>
             <label>Giờ kết thúc<input type="text" class="t24" name="end" inputmode="numeric" maxlength="5" placeholder="HH:MM" autocomplete="off"></label>
@@ -7611,7 +7748,6 @@ html body[data-view="table"] #sched .sheet td .stk>.dlcell.dlcell.dlcell.dlcell.
 <dialog id="dlgRepeat" aria-labelledby="repeatDlgTitle">
   <form id="rtForm" onsubmit="return false" autocomplete="off">
     <div class="dlgHead"><h2 id="repeatDlgTitle">Kiểu lặp</h2><button type="button" class="iconbtn" id="rtCloseX" aria-label="Đóng">×</button></div>
-    
     <div class="rtrows" id="rtRows"></div>
     <button type="button" class="btn lkadd" id="rtAdd">+ Thêm kiểu lặp</button>
     <p class="err" id="rtErr" role="alert"></p>
@@ -7738,27 +7874,19 @@ html body[data-view="table"] #sched .sheet td .stk>.dlcell.dlcell.dlcell.dlcell.
     <div class="acctSection">
       <button type="button" class="acctSectionSummary" aria-expanded="false">Google Calendar<span class="acctArrow" aria-hidden="true"></span></button>
       <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
-        <div class="gc-idbar full">
-          <div class="gc-id-head">
-            <label for="gcCid">OAuth Client ID</label>
-            <div class="gc-id-actions">
-              <button type="button" class="btn" id="gcCidCopy" title="Sao chép Client ID">Sao chép</button>
-              <button type="button" class="btn" id="gcCidEdit" title="Cho phép chỉnh sửa Client ID">Chỉnh sửa</button>
-            </div>
-          </div>
-          <div class="gc-id-row">
+        <div class="setRow gcIdCard">
+          <div class="gcIdLine">
+            <div class="setTxt fix"><b>Client ID</b></div>
             <input id="gcCid" aria-label="OAuth Client ID" placeholder="xxxx.apps.googleusercontent.com" autocomplete="off" spellcheck="false" readonly aria-readonly="true">
-            <button type="button" class="btn primary" id="gcCidSave" title="Lưu Client ID lên tài khoản" hidden>Lưu</button>
-            <button type="button" class="btn" id="gcCidCancel" title="Hủy chỉnh sửa Client ID" hidden>Hủy</button>
+            <button type="button" class="btn icn" id="gcCidCopy" title="Sao chép Client ID" aria-label="Sao chép Client ID"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button>
+            <button type="button" class="btn icn" id="gcCidEdit" title="Chỉnh sửa Client ID" aria-label="Chỉnh sửa Client ID"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+            <button type="button" class="btn primary" id="gcCidSave" title="Lưu Client ID" hidden>Lưu</button>
+            <button type="button" class="btn" id="gcCidCancel" title="Hủy" hidden>Hủy</button>
           </div>
+          <div class="gcStatLine" id="gcStat"><i class="statDot"></i><span id="gcStatus" role="status"></span></div>
         </div>
-        <div class="fgrid"><label class="cust"><input type="checkbox" id="gcColor" checked><span>Đồng bộ tag</span></label>
-          <label class="cust"><input type="checkbox" id="gcDl" checked><span>Đồng bộ deadline</span></label></div>
-        <p class="hint" id="gcStatus">Chưa kết nối. Cài đặt lưu theo tài khoản, dùng chung mọi thiết bị. Mỗi lần mở trang chỉ tự thử đồng bộ một lần; lỗi thì bấm “Kết nối &amp; đồng bộ” để thử lại.</p>
-        <div class="actions"><button type="button" class="btn" id="gcOff">Ngắt kết nối</button><span class="grow"></span><button type="button" class="btn primary" id="gcOn">Kết nối &amp; đồng bộ</button></div>
-        <details class="gcGuide"><summary>Hướng dẫn lấy OAuth Client ID (chi tiết)</summary>
+        <details class="gcGuide"><summary>Hướng dẫn lấy Client ID</summary>
 <div class="gcGuideBody">
-          <p style="margin:8px 0 0;color:var(--muted)">Làm một lần, khoảng 5–10 phút, hoàn toàn miễn phí. Đăng nhập Google Cloud bằng chính tài khoản Google bạn dùng cho lịch.</p>
           <ol>
             <li><b>Tạo project.</b> Mở <code>console.cloud.google.com</code> → bấm ô chọn project ở thanh trên cùng → <b>New project</b> → đặt tên (ví dụ “Lich trinh”) → <b>Create</b>. Đợi vài giây rồi chắc chắn project này đang được chọn ở thanh trên cùng.</li>
             <li><b>Bật Google Calendar API.</b> Menu ☰ → <b>APIs &amp; Services</b> → <b>Library</b> → gõ “Google Calendar API” → mở kết quả → bấm <b>Enable</b>. Google Meet dùng chung API này nên không cần bật thêm gì.</li>
@@ -7777,60 +7905,44 @@ html body[data-view="table"] #sched .sheet td .stk>.dlcell.dlcell.dlcell.dlcell.
             <li><code>access_denied</code> hoặc “app chưa được phê duyệt”: email chưa nằm trong <b>Test users</b> (bước 4).</li>
             <li>Báo khác tài khoản: Google phải trùng với email đang đăng nhập trong app, chọn đúng tài khoản đó.</li>
             <li>Không hiện cửa sổ đăng nhập: trình duyệt đang chặn popup, hãy cho phép popup cho trang này.</li>
-            <li>Đang ở chế độ Testing, Google có thể bắt đăng nhập lại sau một thời gian; chỉ cần bấm <b>Kết nối &amp; đồng bộ</b> lần nữa.</li>
+            <li>Đang ở chế độ Testing, Google có thể bắt đăng nhập lại sau một thời gian; chỉ cần bấm <b>Kết nối lại</b>.</li>
           </ul>
 </div>
         </details>
-      </div></div></div>
-    </div>
-
-    <div class="acctSection">
-      <button type="button" class="acctSectionSummary" aria-expanded="false">Lịch &amp; chia sẻ<span class="acctArrow" aria-hidden="true"></span></button>
-      <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
-        <div class="actions"><button type="button" class="btn" data-a="ics">Xuất lịch (.ics)</button><button type="button" class="btn" data-a="print">In tuần này</button></div>
+        <div class="setRow"><div class="setTxt"><b>Đồng bộ</b></div><div class="rowAct"><label class="gcChip"><input type="checkbox" id="gcColor" checked><span>Tag</span></label><label class="gcChip"><input type="checkbox" id="gcDl" checked><span>Deadline</span></label></div></div>
+        <div class="actions"><span class="grow"></span><button type="button" class="btn primary" id="gcOn">Kết nối &amp; đồng bộ</button><button type="button" class="btn" id="gcOff" hidden>Ngắt kết nối</button></div>
       </div></div></div>
     </div>
 
     <div class="acctSection">
       <button type="button" class="acctSectionSummary" aria-expanded="false">Dữ liệu &amp; sao lưu<span class="acctArrow" aria-hidden="true"></span></button>
       <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
-        <p class="syncinfo" id="profileSyncInfo"></p>
-        <div class="actions"><button type="button" class="btn" id="profileExport">Tải dữ liệu hiện tại (.json)</button><button type="button" class="btn" data-a="ab-download">Tải bản sao lưu tự động (.json)</button><button type="button" class="btn" data-a="import">Khôi phục từ file (.json)</button><button type="button" class="btn" data-a="safety">Khôi phục bản an toàn</button></div>
-        <p class="syncinfo" id="abInfo" hidden></p>
+        <div class="statCard" id="dataStat">
+          <div class="setRow statRow main"><i class="statDot"></i><span id="profileSyncInfo"></span></div>
+          <div class="setRow statRow"><div class="setTxt"><b>Sao lưu tự động</b></div><span class="v" id="abInfo" hidden></span></div>
+        </div>
+        <div class="setRow"><div class="setTxt"><b>Dữ liệu</b></div><div class="rowAct"><button type="button" class="btn primary" data-a="backup">Tải về</button><button type="button" class="btn" data-a="import">Khôi phục</button></div></div>
+        <div class="setRow"><div class="setTxt"><b>Xuất lịch (.ics)</b></div><button type="button" class="btn" data-a="ics">Xuất</button></div>
+        <div class="setRow"><div class="setTxt"><b>Phiên bản trước đó</b></div><button type="button" class="btn" id="versionsBtn" data-a="versions" aria-expanded="false" aria-controls="versionList">Xem</button></div>
+        <div id="versionList" hidden></div>
       </div></div></div>
     </div>
 
     <div class="acctSection">
-      <button type="button" class="acctSectionSummary" aria-expanded="false">Ứng dụng<span class="acctArrow" aria-hidden="true"></span></button>
+      <button type="button" class="acctSectionSummary" aria-expanded="false">Ứng dụng &amp; thông báo<span class="acctArrow" aria-hidden="true"></span></button>
       <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
-        <p class="syncinfo" id="pwaInfo"></p>
-        <div class="actions"><button type="button" class="btn" id="pwaBtn2">Cài đặt ứng dụng</button></div>
-      </div></div></div>
-    </div>
-
-    <div class="acctSection">
-      <button type="button" class="acctSectionSummary" aria-expanded="false">Thông báo<span class="acctArrow" aria-hidden="true"></span></button>
-      <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
-        <div class="actions"><button type="button" class="btn" data-a="notify" id="notifyBtn">Bật thông báo lịch</button></div>
-        <p class="hint" id="notifyLimitHint">Thông báo được cập nhật khi ứng dụng còn đang chạy. Nếu đóng hẳn ứng dụng hoặc hệ điều hành ngừng chạy nền, thông báo có thể không xuất hiện đúng giờ. Đây chưa phải thông báo push chạy độc lập với ứng dụng.</p>
+        <div class="setRow"><div class="setTxt"><b>Ứng dụng</b><small id="pwaInfo"></small></div><button type="button" class="btn" id="pwaBtn2">Cài đặt</button></div>
+        <div class="setRow"><div class="setTxt"><b>Thông báo lịch</b><small id="notifyLimitHint">Chỉ hiện khi ứng dụng còn chạy.</small></div><button type="button" class="btn" data-a="notify" id="notifyBtn">Bật</button></div>
       </div></div></div>
     </div>
 
     <div class="acctSection danger">
-      <button type="button" class="acctSectionSummary" aria-expanded="false">Xóa toàn bộ dữ liệu (thiết bị này)<span class="acctArrow" aria-hidden="true"></span></button>
+      <button type="button" class="acctSectionSummary" aria-expanded="false">Xóa dữ liệu &amp; tài khoản<span class="acctArrow" aria-hidden="true"></span></button>
       <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
-        <p class="hint">Xóa toàn bộ lịch, deadline, ghi chú trên thiết bị này (và cloud nếu đang đồng bộ).</p>
-        <div class="actions"><span class="grow"></span><button type="button" class="btn danger" data-a="reset">Xóa toàn bộ dữ liệu</button></div>
-      </div></div></div>
-    </div>
-
-    <div class="acctSection danger">
-      <button type="button" class="acctSectionSummary" aria-expanded="false">Xóa tài khoản<span class="acctArrow" aria-hidden="true"></span></button>
-      <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
-        <div class="fgrid"><label class="full delConfirmRow"><span>Nhập <b>XÓA TÀI KHOẢN</b> để xác nhận</span><input name="delConfirm" autocomplete="off"></label></div>
-        <p class="hint delConfirmHint">Xóa dữ liệu cloud của tài khoản, không hoàn tác được. Dữ liệu trên thiết bị vẫn giữ.</p>
+        <div class="setRow"><input name="resetConfirm" placeholder="Nhập mã để xóa dữ liệu" aria-label="Nhập mã xác nhận để xóa toàn bộ dữ liệu" autocomplete="off" spellcheck="false"><button type="button" class="btn danger" data-a="reset" title="Xóa toàn bộ dữ liệu" aria-label="Xóa toàn bộ dữ liệu">Xóa</button></div>
+        <p class="err" id="resetErr" role="alert"></p>
+        <div class="setRow"><input name="delConfirm" placeholder="Nhập mã để xóa tài khoản" aria-label="Nhập mã xác nhận để xóa tài khoản" autocomplete="off" spellcheck="false"><button type="button" class="btn danger" id="profileDelete" title="Xóa tài khoản" aria-label="Xóa tài khoản">Xóa</button></div>
         <p class="err" id="delErr" role="alert"></p>
-        <div class="actions"><span class="grow"></span><button type="button" class="btn danger" id="profileDelete">Xóa tài khoản</button></div>
       </div></div></div>
     </div>
 
@@ -7886,6 +7998,7 @@ const wd = s => (parse(s).getDay()+6)%7;                       // 0 = Thứ Hai
 const isRec = ev => !!ev.repeat && ev.repeat !== 'none';
 const REPEAT_UNITS = {day:'ngày', week:'tuần', month:'tháng', year:'năm'};
 const REPEAT_MAX = {day:365, week:52, month:24, year:10};
+const repeatName = (every, unit) => `Mỗi ${+every === 1 ? '' : every + ' '}${REPEAT_UNITS[unit] || 'tuần'}`;   // tên kiểu lặp luôn tự sinh từ chu kỳ
 function repeatType(ev, types){ return (types || state.repeatTypes || []).find(x => x.id === ev.repeat) || null; }
 function repeatUnit(ev, types){ const t = repeatType(ev, types); return t && REPEAT_UNITS[t.unit] ? t.unit : 'week'; }   // đơn vị chu kỳ: ngày / tuần / tháng / năm (dữ liệu cũ không có unit = tuần)
 const isWk = ev => repeatUnit(ev) === 'week';
@@ -7909,7 +8022,7 @@ function firstWeeklyDate(ev){
 }
 function recurWhen(ev){   // mô tả ngắn cho lịch lặp theo ngày / tháng / năm (thay cho danh sách thứ)
   const u = repeatUnit(ev), n = repeatEvery(ev), [, m, d] = ev.date.split('-').map(Number);
-  if(u === 'day') return n === 1 ? 'Hàng ngày' : `Mỗi ${n} ngày`;
+  if(u === 'day') return n === 1 ? 'Mỗi ngày' : `Mỗi ${n} ngày`;
   if(u === 'month') return `Ngày ${d} ${n === 1 ? 'hàng tháng' : `mỗi ${n} tháng`}`;
   return `Ngày ${d}/${m} ${n === 1 ? 'hàng năm' : `mỗi ${n} năm`}`;
 }
@@ -7952,11 +8065,11 @@ const DAYN = ['T2','T3','T4','T5','T6','T7','CN'];
 /* Cấu trúc tag mặc định; dữ liệu lịch thật theo tài khoản được nạp từ Firestore/localStorage, hoặc JSON khi người dùng chủ động khôi phục. */
 /* kiểu lặp: người dùng tự thêm / sửa / xóa (đổi số tuần giữa hai lần). 'none' (Không lặp) là mục cố định, không nằm trong danh sách này */
 const DEFAULT_REPEATS = [
-  {id:'weekly',   name:'Hàng tuần', every:1, unit:'week'},
-  {id:'biweekly', name:'Cách tuần', every:2, unit:'week'},
-  {id:'daily',    name:'Hàng ngày', every:1, unit:'day'},
-  {id:'monthly',  name:'Hàng tháng', every:1, unit:'month'},
-  {id:'yearly',   name:'Hàng năm', every:1, unit:'year'}
+  {id:'weekly',   name:'Mỗi tuần', every:1, unit:'week'},
+  {id:'biweekly', name:'Mỗi 2 tuần', every:2, unit:'week'},
+  {id:'daily',    name:'Mỗi ngày', every:1, unit:'day'},
+  {id:'monthly',  name:'Mỗi tháng', every:1, unit:'month'},
+  {id:'yearly',   name:'Mỗi năm', every:1, unit:'year'}
 ];
 const DEFAULT_TAGS = [];   // mặc định không có tag nào tạo sẵn; người dùng tự thêm trong bảng Tag
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -8152,9 +8265,9 @@ function normRepeatTypes(list, events){
   const out = [], seen = new Set();
   (Array.isArray(list) ? list : DEFAULT_REPEATS).forEach(r => {
     if(!r || typeof r !== 'object') return;
-    const id = String(r.id || '').trim(), name = String(r.name || '').trim().slice(0, 40), every = Math.round(+r.every), unit = REPEAT_UNITS[r.unit] ? r.unit : 'week';
-    if(!id || id === 'none' || seen.has(id) || !name || !(every >= 1 && every <= REPEAT_MAX[unit])) return;
-    seen.add(id); out.push({id, name, every, unit});
+    const id = String(r.id || '').trim(), every = Math.round(+r.every), unit = REPEAT_UNITS[r.unit] ? r.unit : 'week';
+    if(!id || id === 'none' || seen.has(id) || !(every >= 1 && every <= REPEAT_MAX[unit])) return;
+    seen.add(id); out.push({id, name:repeatName(every, unit), every, unit});   // tên cũ (Hàng tuần, Cách tuần…) được đổi sang dạng “Mỗi …”
   });
   (events || []).forEach(ev => {   // lịch đang dùng một kiểu lặp không còn trong danh sách (dữ liệu cũ/hỏng): khôi phục để lịch không bị lệch
     if(!ev.repeat || ev.repeat === 'none' || seen.has(ev.repeat)) return;
@@ -8241,15 +8354,15 @@ function abUI(msg){
   const i = document.getElementById('abInfo');
   if(i){ i.hidden = !msg; i.textContent = msg || ''; }
 }
-const abTimeFull = t => { const d = new Date(t), p = n => String(n).padStart(2,'0'); return p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds()) + ' ' + p(d.getDate()) + '/' + p(d.getMonth()+1) + '/' + d.getFullYear(); };
+const abTimeFull = t => { const d = new Date(t), p = n => String(n).padStart(2,'0'); return p(d.getHours()) + ':' + p(d.getMinutes()) + ' ' + p(d.getDate()) + '/' + p(d.getMonth()+1) + '/' + d.getFullYear(); };
 async function abRefresh(){
-  if(!abSupported()) return abUI('Trình duyệt chưa hỗ trợ sao lưu tự động.');
+  if(!abSupported()) return abUI('Chưa hỗ trợ');
   if(!curUid) return abUI();   // chưa đăng nhập thì chưa có file nào
   const name = abFileName(); let msg = '';
   try{
     const f = await (await (await abDir()).getFileHandle(name)).getFile();
-    msg = 'Sao lưu tự động lần cuối vào ' + abTimeFull(f.lastModified);
-  }catch(e){ msg = 'Sao lưu tự động: chưa có bản sao lưu'; }
+    msg = abTimeFull(f.lastModified);
+  }catch(e){ msg = 'Chưa có bản sao lưu'; }
   abUI(msg);
 }
 /* ghi một file sao lưu; overwrite=false (dữ liệu đang trống) thì chỉ TẠO file nếu chưa có, không bao giờ ghi đè bản đã có */
@@ -8270,22 +8383,24 @@ async function abWrite(){
     } while(ab.dirty);
     abRefresh();
   }catch(e){
-    abUI('Không ghi được bản sao lưu tự động.');
+    abUI('Không ghi được');
   }
   ab.busy = false;
 }
 function abSoon(){ clearTimeout(ab.timer); ab.timer = setTimeout(abWrite, 1500); }
 async function abInit(){ abRefresh(); abWrite(); }
-/* tải file sao lưu của tài khoản đang đăng nhập về máy */
-async function abDownload(){
-  if(!curUid) return;
+/* Tải bản sao lưu: dữ liệu hiện tại; nếu đang trống (lỡ xóa) thì lấy bản sao lưu tự động còn lại trên máy */
+const dateStamp = () => { const d = new Date(), p = n => String(n).padStart(2,'0'); return d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate()); };
+async function backupDownload(){
+  const name = 'lich-trinh-sao-luu-' + dateStamp() + '.json';
+  if(hasData(state)){ download(name, JSON.stringify(state, null, 2), 'application/json'); return; }
   try{
-    const f = await (await (await abDir()).getFileHandle(abFileName())).getFile();
-    download(abFileName(), await f.text(), 'application/json');
-  }catch(e){
-    if(hasData(state)) download(abFileName(), JSON.stringify(state, null, 2), 'application/json');
-    else alert('Chưa có bản sao lưu cho tài khoản này.');
-  }
+    if(abSupported() && curUid){
+      const f = await (await (await abDir()).getFileHandle(abFileName())).getFile();
+      download(name, await f.text(), 'application/json'); return;
+    }
+  }catch(e){}
+  toast('Chưa có dữ liệu để sao lưu.');
 }
 function persistLocal(){
   dropUpcoming();
@@ -8391,7 +8506,7 @@ try{ syncTs = +localStorage.getItem(tsKeyFor(null)) || 0; }catch(e){}
 const sync = {doc:null, ready:false, timer:0, busy:false, dirty:false, unsub:null, sawData:false, allowEmpty:false, retry:0};
 let pendingRemote = null;
 const hasData = st => !!(st.events.length || st.todos.length || (st.rows && st.rows.length) || Object.keys(st.notes || {}).length);   // tính cả lịch cố định (rows): trước đây chỉ có lịch cố định thì bị coi là "trống"
-const syncInfo = t => { const p = document.getElementById('profileSyncInfo'); if(p) p.textContent = t || ''; };
+const syncInfo = t => { const p = document.getElementById('profileSyncInfo'); if(p) p.textContent = (t === 'Đã đồng bộ') ? '' : (t || ''); };   // trạng thái bình thường thì không hiện dòng nào
 const saveTs = () => { try{ localStorage.setItem(tsKeyFor(curUid), String(syncTs)); }catch(e){} };
 /* ---------- dữ liệu cục bộ theo từng "chủ sở hữu" (chống lẫn dữ liệu khi đổi TÀI KHOẢN trên cùng thiết bị) ----------
    localStorage[KEY] là nơi lưu "đang hoạt động". OWNER_KEY ghi lại state hiện tại đang thuộc về ai: '' (chưa
@@ -8481,19 +8596,32 @@ function safeSnap(reason, obj){
     localStorage.setItem(safeKey(), JSON.stringify(list));
   }catch(e){}
 }
-async function safeRestoreUI(){
-  const list = safeList();
-  if(!list.length){ alert('Chưa có bản an toàn nào trên thiết bị này. Bản an toàn được tự tạo trước khi dữ liệu bị thay thế hoặc xóa.'); return; }
-  const rev = list.slice().reverse();
-  const lines = rev.map((x, i) => { let c = '?'; try{ const t = norm(JSON.parse(x.json)); c = t.events.length + ' lịch, ' + t.todos.length + ' deadline, ' + Object.keys(t.notes || {}).length + ' ghi chú'; }catch(e){} return (i + 1) + '. ' + new Date(x.t).toLocaleString('vi-VN') + ' — ' + x.reason + ' (' + c + ')'; });
-  const ans = prompt('Chọn bản cần khôi phục (nhập số):\n\n' + lines.join('\n'), '1');
-  const n = parseInt(ans, 10);
-  if(!ans || !(n >= 1 && n <= rev.length)) return;
-  let st; try{ st = norm(JSON.parse(rev[n - 1].json)); }catch(e){ alert('Bản này bị hỏng, không khôi phục được.'); return; }
-  if(!(await askConfirm('Thay dữ liệu hiện tại bằng bản số ' + n + '? (Dữ liệu hiện tại cũng được giữ lại thành một bản an toàn.)', {title:'Khôi phục bản an toàn', ok:'Thay thế'}))) return;
-  safeSnap('trước khi khôi phục bản an toàn', state);
-  st.view = state.view;
+const safeCounts = json => { try{ const t = norm(JSON.parse(json)); return t.events.length + ' lịch · ' + t.todos.length + ' deadline · ' + Object.keys(t.notes || {}).length + ' ghi chú'; }catch(e){ return 'không đọc được'; } };
+const versionBox = () => document.getElementById('versionList');
+function renderVersions(){
+  const box = versionBox(); if(!box) return;
+  const list = safeList().slice().reverse();   // mới nhất lên đầu
+  box.innerHTML = list.length
+    ? list.map(x => `<div class="verRow"><div class="verTxt"><b>${esc(new Date(x.t).toLocaleString('vi-VN'))}</b><small>${esc(x.reason)} · ${esc(safeCounts(x.json))}</small></div><button type="button" class="btn" data-ver="${+x.t}">Khôi phục</button></div>`).join('')
+    : '<p class="hint">Chưa có phiên bản nào.</p>';
+}
+function toggleVersions(force){
+  const box = versionBox(), btn = document.getElementById('versionsBtn'); if(!box || !btn) return;
+  const show = typeof force === 'boolean' ? force : box.hidden;
+  if(show) renderVersions();
+  box.hidden = !show;
+  btn.setAttribute('aria-expanded', String(show));
+  btn.textContent = show ? 'Ẩn' : 'Xem';
+}
+async function restoreVersion(t){
+  const x = safeList().find(v => +v.t === t); if(!x) return;
+  let st; try{ st = norm(JSON.parse(x.json)); }catch(e){ alert('Phiên bản này bị hỏng, không khôi phục được.'); return; }
+  if(!(await askConfirm('Thay dữ liệu hiện tại bằng phiên bản lúc ' + new Date(x.t).toLocaleString('vi-VN') + '?\n' + safeCounts(x.json) + '\n\nDữ liệu hiện tại cũng được giữ lại thành một phiên bản trước đó.', {title:'Khôi phục phiên bản', ok:'Khôi phục'}))) return;
+  safeSnap('trước khi khôi phục phiên bản cũ', state);
+  st.view = state.view;   // chế độ xem là của riêng từng thiết bị
+  if(state.gcal) st.gcal = state.gcal;   // giữ kết nối Google Calendar hiện tại
   state = st; sync.sawData = true; save(); render();
+  renderVersions(); toast('Đã khôi phục phiên bản đã chọn.');
 }
 function pushSoon(){ clearTimeout(sync.timer); sync.timer = setTimeout(pushNow, 800); }
 async function pushNow(){
@@ -8589,6 +8717,7 @@ function initials(nameOrEmail){
   return Array.from(last)[0].toUpperCase();
 }
 function setAcctSync(state){
+  const sc = document.getElementById('dataStat'); if(sc) sc.dataset.sy = state || '';   // màu chấm trong thẻ Trạng thái
   const el = document.getElementById('acctSy'); if(!el) return;
   el.className = 'sy' + (state ? ' ' + state : '');
   el.title = state === 'ok' ? 'Đã đồng bộ' : state === 'busy' ? 'Đang đồng bộ…' : state === 'bad' ? 'Đồng bộ lỗi' : 'Chưa đăng nhập';
@@ -8814,6 +8943,8 @@ function openProfile(){
   if(!fb.user) return;
   profileForm.elements.name.value = fb.user.displayName || '';
   profileForm.elements.curPass.value = ''; profileForm.elements.newPass.value = ''; profileForm.elements.delConfirm.value = '';
+  { const rc = String(Math.floor(1000 + Math.random() * 9000)), ri = profileForm.elements.resetConfirm; ri.value = ''; ri.dataset.code = rc; ri.placeholder = 'Nhập mã ' + rc + ' để xóa dữ liệu'; ri.setAttribute('aria-label', ri.placeholder); document.getElementById('resetErr').textContent = ''; }
+  { const dc = String(Math.floor(1000 + Math.random() * 9000)), di = profileForm.elements.delConfirm; di.dataset.code = dc; di.placeholder = 'Nhập mã ' + dc + ' để xóa tài khoản'; di.setAttribute('aria-label', di.placeholder); }   // mã xác nhận ngẫu nhiên, đổi mỗi lần mở
   profileForm.elements.curPass.type = 'password';
   const cpt = document.getElementById('curPassToggle'); cpt.textContent = '👁'; cpt.setAttribute('aria-label', 'Hiện mật khẩu hiện tại');
   document.getElementById('profileErr').textContent = ''; document.getElementById('pwErr').textContent = ''; document.getElementById('delErr').textContent = '';
@@ -8825,6 +8956,7 @@ function openProfile(){
   badge.textContent = fb.user.emailVerified ? '✓ Đã xác minh' : 'Chưa xác minh';
   badge.className = 'acctModalVerify' + (fb.user.emailVerified ? ' ok' : ' warn');
   document.querySelectorAll('#profileForm .acctSection.open').forEach(s => { s.classList.remove('open'); s.querySelector('.acctSectionSummary').setAttribute('aria-expanded', 'false'); });
+  toggleVersions(false);   // mỗi lần mở lại hộp thoại: danh sách phiên bản luôn thu gọn
   profileDlg.showModal();
   try{ localStorage.setItem(PROFILE_OPEN_KEY, '1'); }catch(e){}
 }
@@ -8881,7 +9013,7 @@ document.getElementById('pwSave').addEventListener('click', async () => {
     errEl.style.color = 'var(--accent)'; errEl.textContent = 'Đã đổi mật khẩu.';
   }catch(err){ errEl.style.color = ''; errEl.textContent = friendlyAuthErr(err); }
 });
-document.getElementById('profileExport').addEventListener('click', () => download(DATA_FILE, JSON.stringify(state, null, 2), 'application/json'));
+document.getElementById('versionList').addEventListener('click', e => { const b = e.target.closest('button[data-ver]'); if(b) restoreVersion(+b.dataset.ver); });
 document.getElementById('profileLogout').addEventListener('click', async () => {
   closeDialog(profileDlg);
   try{ clearTimeout(sync.timer); await pushNow(); }catch(e){}   // đẩy nốt thay đổi vừa sửa (<0,8 giây) lên đám mây trước khi ngắt kết nối
@@ -8891,7 +9023,7 @@ document.getElementById('profileDelete').addEventListener('click', async () => {
   if(!fb.user) return;
   const errEl = document.getElementById('delErr');
   errEl.textContent = '';
-  if(profileForm.elements.delConfirm.value.trim() !== 'XÓA TÀI KHOẢN'){ errEl.textContent = 'Vui lòng nhập đúng "XÓA TÀI KHOẢN" để xác nhận.'; return; }
+  if(profileForm.elements.delConfirm.value.trim() !== profileForm.elements.delConfirm.dataset.code){ errEl.textContent = 'Mã chưa đúng.'; return; }
   const lastIn = Date.parse((fb.user.metadata && fb.user.metadata.lastSignInTime) || '') || 0;
   if(Date.now() - lastIn > 4 * 60 * 1000){ errEl.textContent = 'Vì lý do bảo mật, hãy đăng xuất, đăng nhập lại rồi xóa tài khoản ngay sau đó (trong vòng vài phút). Dữ liệu chưa bị xóa.'; return; }   // kiểm tra TRƯỚC: trước đây xóa dữ liệu đám mây xong mới báo "cần đăng nhập lại" nên tài khoản còn mà dữ liệu đã mất
   if(!(await askConfirm('Xóa vĩnh viễn tài khoản và toàn bộ dữ liệu đám mây liên quan? Hành động này không thể hoàn tác.', {title:'Xóa tài khoản', ok:'Xóa tài khoản', danger:true}))) return;
@@ -10369,6 +10501,7 @@ function initRTE(ta){
   const body = document.createElement('div');
   body.className = 'rtbody'; body.contentEditable = 'true'; body.spellcheck = true;
   body.setAttribute('role', 'textbox'); body.setAttribute('aria-multiline', 'true'); body.setAttribute('aria-label', 'Nội dung');
+  body.setAttribute('writingsuggestions', 'false'); body.setAttribute('autocomplete', 'off'); body.dataset.gramm = 'false'; body.dataset.gramm_editor = 'false'; body.dataset.enableGrammarly = 'false';   // tắt gợi ý viết / tự điền của trình duyệt (Chrome “Giúp tôi viết”…) và Grammarly; vẫn giữ gạch đỏ chính tả
   wrap.appendChild(body);
   ta.hidden = true; ta.after(wrap);
   try{ document.execCommand('defaultParagraphSeparator', false, 'div'); }catch(_){}
@@ -10689,10 +10822,35 @@ function formWeekly(){   // kiểu lặp đang chọn tính theo tuần (hoặc 
   const t = state.repeatTypes.find(x => x.id === v);
   return !t || !REPEAT_UNITS[t.unit] || t.unit === 'week';
 }
+const UNTIL_NONE = 'Không có', UNTIL_OFF = 'Không lặp';   // Vô hạn → “Không có”; Không lặp → “Không lặp”
+const isUntilTxt = v => v === UNTIL_NONE || v === UNTIL_OFF;
+let untilModeKeep = 'inf';   // lựa chọn Thời hạn lặp (Vô hạn / Có hạn) đang giữ lại khi chuyển sang Không lặp
+let untilKeep = '';   // ngày kết thúc đang giữ lại khi chuyển sang Vô hạn (để chọn lại Có hạn không mất)
 function syncRepeat(){
-  drawRepeatChips();
+  rtPrev = f.elements.repeat.value;
   const r = f.elements.repeat.value !== 'none', wk = formWeekly();
-  $('#untilBox').hidden = !r; $('#untilWrap').hidden = !r || f.elements.untilMode.value !== 'date';
+  /* hai ô “Thời hạn lặp” / “Lặp đến ngày” luôn hiện: không lặp hoặc Vô hạn thì cùng hiện “Không có” và bị khóa */
+  $('#untilBox').hidden = false; $('#untilWrap').hidden = false;
+  { const um = f.elements.untilMode, off = um.querySelector('option[value="off"]');
+    if(!r){   // Không lặp: “Thời hạn lặp” hiện “Không có” (mờ, khóa); nhớ lựa chọn cũ để chọn lại kiểu lặp không mất
+      if(um.value !== 'off') untilModeKeep = um.value === 'date' ? 'date' : 'inf';
+      if(!off) um.add(new Option('Không lặp', 'off'));
+      um.value = 'off'; um.disabled = true;
+    } else {
+      if(um.value === 'off' || um.value === '') um.value = untilModeKeep;
+      if(off) off.remove();
+      um.disabled = false;
+    }
+  }
+  { const un = f.elements.until, inf = f.elements.untilMode.value !== 'date';
+    if(inf){
+      if(un.type === 'date'){ untilKeep = un.value; un.type = 'text'; } else if(!isUntilTxt(un.value)) untilKeep = un.value;
+      un.value = r ? UNTIL_NONE : UNTIL_OFF; un.readOnly = true; un.tabIndex = -1;
+    } else {
+      if(un.type !== 'date'){ const keep = isUntilTxt(un.value) ? untilKeep : un.value; un.type = 'date'; un.value = keep || ''; }
+      un.readOnly = false; un.tabIndex = 0;
+    }
+  }
   $('#daysWrap').hidden = !wk; $('#noneTimes').hidden = wk;
   if(!wk){   // theo ngày / tháng / năm: chỉ một khung giờ, không chọn thứ
     if(tmWk){ readTimes(); const first = Object.values(timesDraft).find(l => l && l.length); if(first){ f.elements.start.value = first[0].start; f.elements.end.value = first[0].end; } }
@@ -10703,6 +10861,16 @@ function syncRepeat(){
   if(f.elements.date.value && !daysBoxes().some(b => b.checked)) daysBoxes()[wd(f.elements.date.value)].checked = true;
   drawTimes();
 }
+/* mục cuối của ô Kiểu lặp: "＋ Tùy chỉnh…" mở hộp thoại quản lý kiểu lặp, ô chọn giữ nguyên giá trị cũ */
+const RT_MANAGE = '__manage';
+let rtPrev = 'none';
+f.elements.repeat.addEventListener('change', e => {
+  const sel = f.elements.repeat;
+  if(sel.value === RT_MANAGE){
+    e.stopImmediatePropagation(); sel.value = rtPrev;
+    rtDraft = state.repeatTypes.map(t => ({...t})); rtErr(''); rtDraw(); dlgRepeat.showModal();
+  } else rtPrev = sel.value;
+});
 f.elements.repeat.addEventListener('change', syncRepeat);
 
 /* ---------- quản lý kiểu lặp: thêm / sửa / xóa ---------- */
@@ -10711,30 +10879,14 @@ let rtDraft = [];
 const rtLabel = t => t.every > 1 && !t.name.includes(String(t.every)) ? `${t.name} (mỗi ${t.every} ${REPEAT_UNITS[t.unit] || 'tuần'})` : t.name;
 function fillRepeatSelect(keep){
   const sel = f.elements.repeat, cur = keep === undefined ? sel.value : keep;
-  sel.innerHTML = '<option value="none">Không lặp</option>' + state.repeatTypes.map(t => `<option value="${esc(t.id)}">${esc(rtLabel(t))}</option>`).join('');
-  sel.value = [...sel.options].some(o => o.value === cur) ? cur : 'none';
-  drawRepeatChips();
+  sel.innerHTML = '<option value="none">Không lặp</option>' + state.repeatTypes.map(t => `<option value="${esc(t.id)}">${esc(rtLabel(t))}</option>`).join('') + `<option value="${RT_MANAGE}">Tùy chỉnh...</option>`;
+  sel.value = [...sel.options].some(o => o.value === cur && cur !== RT_MANAGE) ? cur : 'none';
+  rtPrev = sel.value;
 }
-function drawRepeatChips(){
-  const box = $('#rtChips'), cur = f.elements.repeat.value, items = [{id:'none', name:'Không lặp'}, ...state.repeatTypes];
-  const sig = items.map(t => [t.id, t.name, t.every, t.unit].join('|')).join(';');
-  if(box.dataset.sig === sig){   // danh sách không đổi: chỉ đổi trạng thái chọn để màu chuyển mượt
-    box.querySelectorAll('.rtchip[data-id]').forEach(b => { const on = b.dataset.id === cur; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
-    return;
-  }
-  box.dataset.sig = sig;
-  box.innerHTML = items.map(t => `<button type="button" class="rtchip${t.id === cur ? ' on' : ''}" data-id="${esc(t.id)}" aria-pressed="${t.id === cur}">${esc(t.name)}${t.id === 'none' ? '' : `<small>mỗi ${t.every === 1 ? '' : t.every + ' '}${REPEAT_UNITS[t.unit] || 'tuần'}</small>`}</button>`).join('') + '<button type="button" class="rtchip add" id="rtManage">＋ Tùy chỉnh</button>';
-}
-$('#rtChips').addEventListener('click', e => {
-  const b = e.target.closest('.rtchip'); if(!b) return;
-  if(b.id === 'rtManage'){ rtDraft = state.repeatTypes.map(t => ({...t})); rtErr(''); rtDraw(); dlgRepeat.showModal(); return; }
-  f.elements.repeat.value = b.dataset.id;
-  f.elements.repeat.dispatchEvent(new Event('change', {bubbles:true}));
-});
 const rtUsed = id => new Set(state.events.filter(e => e.repeat === id).map(seriesOf)).size;   // số lịch (chuỗi lặp) đang dùng kiểu này
 const rtErr = m => { $('#rtErr').textContent = m || ''; return false; };
 function rtDraw(){
-  $('#rtRows').innerHTML = rtDraft.length ? rtDraft.map(t => `<div class="rtrow" data-id="${esc(t.id)}"><button type="button" class="gr" title="Kéo để đổi thứ tự" aria-label="Đổi thứ tự kiểu lặp">⠿</button><input class="rn" maxlength="40" placeholder="Tên kiểu lặp" value="${esc(t.name)}" aria-label="Tên kiểu lặp"><label class="rte"><span>Mỗi</span><input type="number" class="re" min="1" max="${REPEAT_MAX[t.unit] || 52}" step="1" inputmode="numeric" value="${esc(t.every)}" aria-label="Số chu kỳ giữa hai lần"><select class="ru" aria-label="Đơn vị">${Object.entries(REPEAT_UNITS).map(([k, v]) => `<option value="${k}"${(t.unit || 'week') === k ? ' selected' : ''}>${v}</option>`).join('')}</select></label><button type="button" class="x" aria-label="Xóa kiểu lặp" title="Xóa kiểu lặp">×</button></div>`).join('') : '<p class="hint">Chưa có kiểu lặp nào. Bấm “Thêm kiểu lặp” để tạo.</p>';
+  $('#rtRows').innerHTML = rtDraft.length ? rtDraft.map(t => `<div class="rtrow" data-id="${esc(t.id)}"><button type="button" class="gr" title="Kéo để đổi thứ tự" aria-label="Đổi thứ tự kiểu lặp">⠿</button><label class="rte"><span>Mỗi</span><input type="number" class="re" min="1" max="${REPEAT_MAX[t.unit] || 52}" step="1" inputmode="numeric" value="${esc(t.every)}" aria-label="Số chu kỳ giữa hai lần"><select class="ru" aria-label="Đơn vị">${Object.entries(REPEAT_UNITS).map(([k, v]) => `<option value="${k}"${(t.unit || 'week') === k ? ' selected' : ''}>${v}</option>`).join('')}</select></label><button type="button" class="x" aria-label="Xóa kiểu lặp" title="Xóa kiểu lặp">×</button></div>`).join('') : '<p class="hint">Chưa có kiểu lặp nào. Bấm “Thêm kiểu lặp” để tạo.</p>';
 }
 /* đổi thứ tự bằng tay nắm ⠿: cùng cơ chế với phần Liên kết (kéo chuột/cảm ứng, hoặc bấm tay nắm rồi dùng ↑ ↓; các hàng khác trượt êm sang chỗ mới) */
 function makeSortable(box, rowSel){
@@ -10785,7 +10937,7 @@ makeSortable($('#rtRows'), '.rtrow');
 function rtRead(){
   document.querySelectorAll('#rtRows .rtrow').forEach(r => {
     const t = rtDraft.find(x => x.id === r.dataset.id); if(!t) return;
-    t.name = r.querySelector('.rn').value; t.every = r.querySelector('.re').value; t.unit = r.querySelector('.ru').value;
+    t.every = r.querySelector('.re').value; t.unit = r.querySelector('.ru').value;
   });
   const order = [...document.querySelectorAll('#rtRows .rtrow')].map(r => r.dataset.id);   // thứ tự theo vị trí đã kéo
   rtDraft.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
@@ -10795,26 +10947,30 @@ $('#rtAdd').addEventListener('click', () => {
   rtRead(); rtErr('');
   rtDraft.push({id:'r' + uid(), name:'', every:1, unit:'month'}); rtDraw();
   const rows = document.querySelectorAll('#rtRows .rtrow'); if(rows.length) rows[rows.length - 1].classList.add('new');
-  const ins = document.querySelectorAll('#rtRows .rn'); if(ins.length) ins[ins.length - 1].focus();
+  const ins = document.querySelectorAll('#rtRows .re'); if(ins.length) ins[ins.length - 1].focus();
 });
-$('#rtRows').addEventListener('change', e => { const sel = e.target.closest('.ru'); if(sel) sel.parentElement.querySelector('.re').max = REPEAT_MAX[sel.value]; });
+$('#rtRows').addEventListener('change', e => {
+  const row = e.target.closest('.rtrow'); if(!row) return;
+  const re = row.querySelector('.re'), u = row.querySelector('.ru').value, max = REPEAT_MAX[u];
+  re.max = max; const v = Math.round(+re.value); re.value = v >= 1 ? Math.min(v, max) : 1;   // luôn là số nguyên trong 1…tối đa của đơn vị
+});
 $('#rtRows').addEventListener('click', e => {
   const x = e.target.closest('.x'); if(!x) return;
   rtRead();
   const row = x.closest('.rtrow'), t = rtDraft.find(v => v.id === row.dataset.id); if(!t) return;
   const n = rtUsed(t.id);
-  if(n) return rtErr(`Không xóa được “${String(t.name).trim() || 'kiểu lặp này'}”: đang có ${n} lịch dùng kiểu lặp này. Hãy đổi các lịch đó sang kiểu lặp khác trước.`);
+  if(n) return rtErr(`Không xóa được “${repeatName(t.every, t.unit)}”: đang có ${n} lịch dùng kiểu lặp này. Hãy đổi các lịch đó sang kiểu lặp khác trước.`);
   rtErr(''); rtDraft = rtDraft.filter(v => v !== t); rtDraw();
 });
 $('#rtSave').addEventListener('click', () => {
   rtRead();
-  const out = [], names = new Set();
+  const out = [], keys = new Set();
   for(const t of rtDraft){
-    const name = String(t.name).trim(), every = Number(t.every), unit = REPEAT_UNITS[t.unit] ? t.unit : 'week';
-    if(!name) return rtErr('Tên kiểu lặp không được để trống.');
-    if(!Number.isInteger(every) || every < 1 || every > REPEAT_MAX[unit]) return rtErr(`“${name}”: số ${REPEAT_UNITS[unit]} phải là số nguyên từ 1 đến ${REPEAT_MAX[unit]}.`);
-    if(names.has(name.toLowerCase())) return rtErr(`Có hai kiểu lặp trùng tên “${name}”.`);
-    names.add(name.toLowerCase()); out.push({id:t.id, name, every, unit});
+    const every = Number(t.every), unit = REPEAT_UNITS[t.unit] ? t.unit : 'week';
+    if(!Number.isInteger(every) || every < 1 || every > REPEAT_MAX[unit]) return rtErr(`Số ${REPEAT_UNITS[unit]} phải là số nguyên từ 1 đến ${REPEAT_MAX[unit]}.`);
+    const key = every + '|' + unit, name = repeatName(every, unit);
+    if(keys.has(key)) return rtErr(`Có hai kiểu lặp giống nhau: “${name}”. Hãy xóa hoặc đổi một kiểu.`);
+    keys.add(key); out.push({id:t.id, name, every, unit});
   }
   const lost = state.repeatTypes.filter(t => !out.some(o => o.id === t.id) && rtUsed(t.id));   // phòng hờ: không để lịch mất kiểu lặp
   if(lost.length) return rtErr(`Không thể bỏ “${lost[0].name}” vì đang có lịch dùng.`);
@@ -10844,7 +11000,7 @@ function buildData(){
   d.link = d.links[0] ? d.links[0].url : ''; d.linkName = d.links[0] ? d.links[0].name : '';   // giữ 2 trường cũ = liên kết đầu tiên (tương thích)
   const useUntil = d.repeat !== 'none' && d.untilMode === 'date'; delete d.untilMode;
   if(useUntil){
-    if(!d.until) return err('Hãy chọn ngày kết thúc lặp, hoặc chọn Lặp vô hạn.');
+    if(!d.until) return err('Hãy chọn ngày kết thúc lặp, hoặc chọn Vô hạn.');
     if(d.until < d.date) return err('Ngày kết thúc lặp phải sau ngày bắt đầu.');
   } else d.until = '';
   let extra = [];
@@ -12155,16 +12311,16 @@ function toICS(){
   L.push('END:VCALENDAR');
   return L.join('\r\n');
 }
+function resetCodeOk(){ const ri = profileForm.elements.resetConfirm, er = document.getElementById('resetErr'); if(ri.value.trim() !== ri.dataset.code){ er.textContent = 'Mã chưa đúng.'; return false; } er.textContent = ''; ri.value = ''; return true; }
 profileForm.addEventListener('click', e => {
   const b = e.target.closest('button'); if(!b) return;
   const a = b.dataset.a; if(!a) return;
-  if(a === 'print') window.print();
-  if(a === 'ab-download') abDownload();
+  if(a === 'backup') backupDownload();
+  if(a === 'versions') toggleVersions();
   if(a === 'notify') enableScheduleNotifications();
   if(a === 'ics') download('lich-trinh.ics', toICS(), 'text/calendar');
   if(a === 'import') $('#file').click();
-  if(a === 'safety') safeRestoreUI();
-  if(a === 'reset') askConfirm('Xóa toàn bộ dữ liệu (lịch, deadline, ghi chú)?\n\nĐang đăng nhập thì dữ liệu trên đám mây và trên MỌI thiết bị khác của tài khoản này cũng bị xóa theo.\nMột bản an toàn được giữ lại trên máy này để khôi phục (Tài khoản → Sao lưu → Khôi phục bản an toàn).', {title:'Xóa toàn bộ dữ liệu', ok:'Xóa tất cả', danger:true}).then(ok => { if(!ok) return; safeSnap('trước khi xóa toàn bộ', state); sync.allowEmpty = true; state = emptyState(); state.view = innerWidth<800?'agenda':'table'; weekStart = mondayOf(todayStr()); save(); render(); });
+  if(a === 'reset' && resetCodeOk()) askConfirm('Xóa toàn bộ dữ liệu (lịch, deadline, ghi chú)?\n\nĐang đăng nhập thì dữ liệu trên đám mây và trên MỌI thiết bị khác của tài khoản này cũng bị xóa theo.\nMột bản an toàn được giữ lại trên máy này để khôi phục (Tài khoản → Dữ liệu & sao lưu → Phiên bản trước đó).', {title:'Xóa toàn bộ dữ liệu', ok:'Xóa tất cả', danger:true}).then(ok => { if(!ok) return; safeSnap('trước khi xóa toàn bộ', state); sync.allowEmpty = true; state = emptyState(); state.view = innerWidth<800?'agenda':'table'; weekStart = mondayOf(todayStr()); save(); render(); });
 });
 $('#file').onchange = e => {
   const file = e.target.files[0]; if(!file) return;
@@ -12173,7 +12329,13 @@ $('#file').onchange = e => {
     try{
       const s = JSON.parse(r.result);
       if(!Array.isArray(s.events) || !Array.isArray(s.todos)) throw 0;
-      if(await askConfirm('Thay thế dữ liệu hiện tại bằng dữ liệu trong file?', {title:'Nạp dữ liệu từ file', ok:'Thay thế'})){ safeSnap('trước khi nạp từ file', state); state = norm(s); sync.sawData = true; save(); render(); }
+      const st = norm(s), cnt = t => t.events.length + ' lịch · ' + t.todos.length + ' deadline · ' + Object.keys(t.notes || {}).length + ' ghi chú';
+      if(await askConfirm('Trong file: ' + cnt(st) + '\nĐang có: ' + cnt(state) + '\n\nThay thế dữ liệu hiện tại bằng dữ liệu trong file? Dữ liệu hiện tại được giữ lại trong “Phiên bản trước đó”.', {title:'Khôi phục từ file', ok:'Thay thế'})){
+        safeSnap('trước khi khôi phục từ file', state);
+        st.view = state.view; if(state.gcal) st.gcal = state.gcal;   // chế độ xem & kết nối Google Calendar là của riêng thiết bị/tài khoản, không lấy từ file
+        state = st; sync.sawData = true; save(); render();
+        toast('Đã khôi phục dữ liệu từ file.');
+      }
     }catch(_){ alert('File không hợp lệ. Hãy chọn file .json đã sao lưu từ trang này.'); }
   };
   r.readAsText(file); e.target.value = '';
@@ -12842,6 +13004,18 @@ document.addEventListener('keydown', e => {
     if(removed && cur && !document.contains(cur.btn)) close(cur, true);
   }).observe(document.body, {childList:true, subtree:true});
 })();
+/* ---------- tắt gợi ý / tự điền mặc định của trình duyệt ở mọi ô nhập chữ trong hộp thoại (kể cả ô sinh sau này) ----------
+   Chrome hay bỏ qua autocomplete="off" đặt ở <form>, nên đặt thẳng lên từng ô; không đụng tới ô đăng nhập (email / mật khẩu) để trình quản lý mật khẩu vẫn hoạt động. */
+(() => {
+  const SEL = 'dialog input:not([type]), dialog input[type=text], dialog input[type=search], dialog input[type=number], dialog input[type=url], dialog input[type=tel], dialog textarea';
+  const fix = root => {
+    const list = root.matches && root.matches(SEL) ? [root] : [];
+    if(root.querySelectorAll) list.push(...root.querySelectorAll(SEL));
+    list.forEach(el => { if(el.getAttribute('autocomplete') !== 'off') el.setAttribute('autocomplete', 'off'); if(!el.hasAttribute('writingsuggestions')) el.setAttribute('writingsuggestions', 'false'); });
+  };
+  fix(document);
+  new MutationObserver(ms => { for(const m of ms) for(const n of m.addedNodes) if(n.nodeType === 1) fix(n); }).observe(document.body, {childList:true, subtree:true});
+})();
 /* ---------- giữ nguyên trang / thao tác khi bấm F5 ---------- */
 const UI_KEY = KEY + ':ui';
 const UIS = (() => { try{ return window.sessionStorage; }catch(e){ return null; } })();
@@ -13111,13 +13285,13 @@ function updateNotifyButton(){
   if(tb){ const ns = npNotifyState(); tb.disabled = ns.dis; tb.classList.toggle('on', ns.on); tb.textContent = ns.on ? '🔔' : '🔕'; const t = ns.on ? 'Tắt thông báo lịch' : ns.txt; tb.title = t; tb.setAttribute('aria-label', t); }
   const b = $('#notifyBtn'); if(!b) return;
   if(!('Notification' in window)){
-    b.textContent = 'Thông báo không hỗ trợ'; b.disabled = true; return;
+    b.textContent = 'Không hỗ trợ'; b.disabled = true; return;
   }
   if(Notification.permission === 'denied'){
-    b.textContent = 'Thông báo bị chặn'; b.disabled = true; return;
+    b.textContent = 'Bị chặn'; b.disabled = true; return;
   }
   b.disabled = false;
-  b.textContent = scheduleNotifyEnabled() ? 'Tắt thông báo lịch' : 'Bật thông báo lịch';
+  b.textContent = scheduleNotifyEnabled() ? 'Tắt' : 'Bật';
 }
 function getNotifySWRegistration(){
   if(!('serviceWorker' in navigator) || !/^https?:$/.test(location.protocol)) return Promise.resolve(null);
@@ -13581,7 +13755,7 @@ setInterval(minuteRender, 60000);
       if(rec.host !== layer) animating = hostAnimating(rec.host);
     }
     let topPad = 0;
-    if(!rec.win && el.parentElement && el.parentElement.id === 'sched'){   // khung lịch có hàng tiêu đề ghim: thanh cuộn dọc chỉ chạy bên phải phần nội dung, bắt đầu dưới hàng tiêu đề
+    if(!rec.win && el.parentElement && (el.parentElement.id === 'sched' || el.parentElement.classList.contains('fxblk'))){   /* mục Lớp (.fxblk) cũng có hàng tiêu đề cột ghim */   // khung lịch có hàng tiêu đề ghim: thanh cuộn dọc chỉ chạy bên phải phần nội dung, bắt đầu dưới hàng tiêu đề
       const hd = el.querySelector('thead, .mh'); if(hd) topPad = Math.min(hd.getBoundingClientRect().height, Math.max(0, rect.bottom - rect.top - 80));
     }
     const L = Math.max(rect.left, 0), T = Math.max(rect.top, 0) + topPad, R = Math.min(rect.right, vw), B = Math.min(rect.bottom, vh);
@@ -13805,12 +13979,14 @@ setInterval(minuteRender, 60000);
    - Phạm vi: 14 ngày trước → 120 ngày sau. Cần Client ID (Google Cloud: bật Calendar API, OAuth Web, thêm địa chỉ trang web vào Authorized JavaScript origins). */
 (()=>{try{
   const $g=i=>document.getElementById(i), LS=localStorage, TZ=Intl.DateTimeFormat().resolvedOptions().timeZone, API='https://www.googleapis.com/calendar/v3/calendars/primary/events';
-  let tok=null, tokMe='', exp=0, tc=null, busy=false, again=false, timer=0;
-  const say=t=>{ const e=$g('gcStatus'); if(e) e.textContent=t; };
+  let tok=null, tokMe='', exp=0, tc=null, busy=false, again=false, timer=0, needAuth=false;   // needAuth: đang bật nhưng cần cấp quyền lại
+  const say=t=>{ const e=$g('gcStatus'); if(!e) return; if(/^Đã đồng bộ/.test(t)) t=''; e.textContent=t; e.title=t; const c=$g('gcStat'); if(c) c.dataset.sy=/lỗi|Cần|Chưa tự|chưa đúng|Hãy |Không /.test(t)?'bad':/Đang/.test(t)?'busy':/^Đã (đồng bộ|sao chép|lưu)/.test(t)?'ok':''; };
   /* Cài đặt kết nối nằm trong state.gcal = {cid, on, color, dl} → đi theo TÀI KHOẢN qua đồng bộ đám mây (không còn lưu riêng từng thiết bị).
      Kết nối ở một máy thì mọi máy đăng nhập cùng tài khoản đều tự đồng bộ; ngắt kết nối cũng áp dụng cho mọi máy. */
   const G=()=>{ const g=state&&state.gcal; return g&&typeof g==='object'?g:null; };
-  const setG=p=>{ state.gcal={...(G()||{}),...p}; persistLocal(); };   // persistLocal: lưu máy + đẩy lên đám mây (không ghi vào lịch sử hoàn tác)
+  /* MỘT nút duy nhất: chưa bật → “Kết nối & đồng bộ”; đang chạy → “Ngắt kết nối”; đang bật nhưng lỗi/cần cấp quyền lại → “Kết nối lại” (kèm nút “Ngắt kết nối” để không bị kẹt) */
+  const gcBtn=()=>{ const b=$g('gcOn'), off=$g('gcOff'); if(!b) return; const g=G(), o=!!(g&&g.on&&g.cid); b.textContent=!o?'Kết nối & đồng bộ':needAuth?'Kết nối lại':'Ngắt kết nối'; b.classList.toggle('primary',!o||needAuth); if(off) off.hidden=!(o&&needAuth); };
+  const setG=p=>{ state.gcal={...(G()||{}),...p}; persistLocal(); gcBtn(); };   // persistLocal: lưu máy + đẩy lên đám mây (không ghi vào lịch sử hoàn tác)
   const on=()=>{ const g=G(); return !!(g&&g.on&&g.cid); };
   const cidOf=()=>{ const g=G(); return (g&&g.cid)||''; };
   const appEmail=()=>{ try{ return String((fb&&fb.user&&fb.user.email)||'').toLowerCase(); }catch(e){ return ''; } };   // chỉ cho liên kết đúng tài khoản Google trùng email đang đăng nhập trong app
@@ -13832,7 +14008,7 @@ setInterval(minuteRender, 60000);
     let r; for(let n=0;;n++){ r=await fetch(url,{method:m,headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
       let rl=r.status===429||r.status>=500; if(r.status===403){ try{ rl=/ateLimit/i.test(JSON.stringify(await r.clone().json())); }catch(e){} }   // 403 vì quá tốc độ thì thử lại; 403 vì không có quyền thì thôi
       if(rl&&n<4){ await new Promise(k=>setTimeout(k,600*2**n)); continue; } break; }   // quá tốc độ / lỗi tạm: thử lại, giãn dần
-    if(r.status===401){ tok=null; throw new Error('Phiên Google hết hạn — bấm “Kết nối & đồng bộ”'); }
+    if(r.status===401){ tok=null; throw new Error('Phiên Google hết hạn — bấm “Kết nối lại”'); }
     if(!r.ok && !(m==='DELETE'&&(r.status===404||r.status===410))) throw new Error('Google '+r.status);
     return r.status===204?null:r.json().catch(()=>null);
   }
@@ -13906,7 +14082,7 @@ setInterval(minuteRender, 60000);
     if(!on()) return;   // tài khoản này chưa bật (hoặc đã ngắt) đồng bộ Google Calendar
     if(busy){ again=true; return; } busy=true;
     try{
-      if(!await auth(interactive)){ say('Cần đăng nhập Google lại: bấm “Kết nối & đồng bộ”.'); armGesture(); return; }
+      if(!await auth(interactive)){ needAuth=true; gcBtn(); say('Cần đăng nhập Google lại: bấm “Kết nối lại”.'); armGesture(); return; }
       say('Đang đồng bộ…');
       const from=addDays(todayStr(),-14), to=addDays(todayStr(),120), want=desired(from,to), gs=await list(from,to);
       const meet=new Map(), mcodes=new Map(), mt=g=>g.hangoutLink||(((g.conferenceData||{}).entryPoints||[]).find(e=>e.entryPointType==='video')||{}).uri||'';
@@ -13960,9 +14136,9 @@ setInterval(minuteRender, 60000);
       meet.forEach((u,id)=>addMeetLink(state.events.find(e=>e.id===id),u));   // kéo link Google Meet từ Google về ô trong app (không ghi đè link đã có)
       state.events.forEach(ev=>{ if(ev.meet&&ev.meetCode) addMeetLink(ev,'https://meet.google.com/'+ev.meetCode); });
       if(nm2||changed){ save(); render(); }
-      say(`Đã đồng bộ ${new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})}: +${ins} mới, ${lnk} liên kết, ${upd} cập nhật, ${del} xoá${created?', '+created+' Google Meet mới':''}${fail?'; '+fail+' sự kiện không sửa được':''}${meetFail?'; '+meetFail+' lần chưa gắn được Meet':''}${skipDel?'; bỏ qua xoá '+skipDel+' sự kiện':''}.`);
+      needAuth=false; gcBtn(); say(`Đã đồng bộ ${new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})}${(fail||meetFail)?' · có '+(fail+meetFail)+' lỗi':''}`);
       if(created) toast('Đã tạo Google Meet', 2500); else if(interactive===true) toast('Đã đồng bộ Google Calendar');
-    }catch(e){ if(interactive==='auto'){ say('Chưa tự kết nối được Google ('+e.message+'). Bấm “Kết nối & đồng bộ” để thử lại.'); if(!/khác tài khoản/.test(e.message)) armGesture(); } else { say('Lỗi đồng bộ: '+e.message); if(interactive===true) toast('Lỗi: '+e.message,3000); else if(/hết hạn/.test(e.message)) armGesture(); } }
+    }catch(e){ if(interactive==='auto'){ needAuth=true; gcBtn(); say('Chưa tự kết nối được Google ('+e.message+'). Bấm “Kết nối lại” để thử lại.'); if(!/khác tài khoản/.test(e.message)) armGesture(); } else { say('Lỗi đồng bộ: '+e.message); if(interactive===true){ needAuth=true; gcBtn(); toast('Lỗi: '+e.message,3000); } else if(/hết hạn/.test(e.message)){ needAuth=true; gcBtn(); armGesture(); } } }
     finally{ busy=false; if(again){ again=false; sched(0); } }   // có thay đổi mới trong lúc đang đồng bộ: chạy lại ngay
   }
   /* Tự kết nối khi vào trang: thử lặng lẽ trước; trình duyệt chặn popup nếu không có thao tác của người dùng nên nếu chưa được, lần chạm/bấm đầu tiên sẽ thử lại (tối đa 2 lần mỗi lần mở trang để không làm phiền) */
@@ -13994,6 +14170,7 @@ setInterval(minuteRender, 60000);
     const c=$g('gcCid'), cc=$g('gcColor'), cd=$g('gcDl');
     if(c&&!cidEditing&&document.activeElement!==c) c.value=cidOf();
     if(cc) cc.checked=COLOR_ON(); if(cd) cd.checked=DL_ON();
+    gcBtn();
   }
   function saveClientId(quiet){
     const c=$g('gcCid'), v=String(c&&c.value||'').trim();
@@ -14002,7 +14179,8 @@ setInterval(minuteRender, 60000);
     if(v!==cidOf()){
       setG({cid:v});
       tok=null; exp=0; tokMe='';
-      say(on() ? 'Đã lưu Client ID theo tài khoản. Bấm “Kết nối & đồng bộ” để cấp quyền lại bằng mã mới.' : 'Đã lưu Client ID theo tài khoản app; mã sẽ xuất hiện trên các thiết bị đăng nhập cùng tài khoản.');
+      if(on()){ needAuth=true; gcBtn(); }
+      say(on() ? 'Đã lưu Client ID theo tài khoản. Bấm “Kết nối lại” để cấp quyền bằng mã mới.' : 'Đã lưu Client ID theo tài khoản app; mã sẽ xuất hiện trên các thiết bị đăng nhập cùng tài khoản.');
     } else if(!quiet) say('Đã lưu Client ID.');
     return true;
   }
@@ -14035,7 +14213,7 @@ setInterval(minuteRender, 60000);
   function kick(){
     fillUI();
     if(on()){ say('Tài khoản đã bật đồng bộ Google Calendar. Đang kết nối…'); loadGIS().catch(()=>{}); armN=0; autoOnce(); }
-    else{ if(tok&&window.google&&google.accounts) try{ google.accounts.oauth2.revoke(tok); }catch(e){} tok=null; exp=0; say('Đã ngắt kết nối Google Calendar. Sự kiện trên Google được giữ nguyên.'); }
+    else{ if(tok&&window.google&&google.accounts) try{ google.accounts.oauth2.revoke(tok); }catch(e){} tok=null; exp=0; needAuth=false; gcBtn(); say('Đã ngắt kết nối Google Calendar. Sự kiện trên Google được giữ nguyên.'); }
   }
   const _ar=applyRemote; applyRemote=function(){ const before=JSON.stringify(G()||null); const r=_ar.apply(this,arguments); if(JSON.stringify(G()||null)!==before) kick(); return r; };
   /* Khi vào trang: đợi đăng nhập + dữ liệu đám mây tải xong (tối đa ~25 giây), rồi mới đọc cài đặt của TÀI KHOẢN và đồng bộ — không phụ thuộc thiết bị */
@@ -14046,9 +14224,10 @@ setInterval(minuteRender, 60000);
     if(cc) cc.onchange=()=>{ setG({color:cc.checked}); sched(); };
     if(cd) cd.onchange=()=>{ setG({dl:cd.checked}); sched(); }; }
   fillUI();
-  $g('gcOn')&&($g('gcOn').onclick=()=>{ if(cidEditing){ if(!saveClientId(false)) return; setCidEditing(false); } const c=$g('gcCid'), v=c.value.trim(); if(!/\.apps\.googleusercontent\.com$/.test(v)){ say('Client ID chưa đúng định dạng (…apps.googleusercontent.com).'); return; }
-    const cc=$g('gcColor'), cd=$g('gcDl'); setG({cid:v,on:true,color:cc?cc.checked:true,dl:cd?cd.checked:true}); LS.removeItem('gcal_noconf'); tok=null; run(true); });
-  $g('gcOff')&&($g('gcOff').onclick=()=>{ setG({on:false}); if(tok&&window.google&&google.accounts) try{ google.accounts.oauth2.revoke(tok); }catch(e){} tok=null; exp=0; say('Đã ngắt kết nối. Sự kiện trên Google được giữ nguyên.'); });
+  const gcDisconnect=()=>{ setG({on:false}); if(tok&&window.google&&google.accounts) try{ google.accounts.oauth2.revoke(tok); }catch(e){} tok=null; exp=0; needAuth=false; gcBtn(); say('Đã ngắt kết nối. Sự kiện trên Google được giữ nguyên.'); };
+  $g('gcOn')&&($g('gcOn').onclick=()=>{ if(on()&&!needAuth){ gcDisconnect(); return; } if(cidEditing){ if(!saveClientId(false)) return; setCidEditing(false); } const c=$g('gcCid'), v=c.value.trim(); if(!/\.apps\.googleusercontent\.com$/.test(v)){ say('Client ID chưa đúng định dạng (…apps.googleusercontent.com).'); return; }
+    const cc=$g('gcColor'), cd=$g('gcDl'); setG({cid:v,on:true,color:cc?cc.checked:true,dl:cd?cd.checked:true}); LS.removeItem('gcal_noconf'); tok=null; needAuth=false; gcBtn(); run(true); });
+  $g('gcOff')&&($g('gcOff').onclick=gcDisconnect);
 }catch(e){ console.error('gcal',e); }})();
 </script>
 <script>
