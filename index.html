@@ -13526,7 +13526,7 @@ function pwaUpdateUI(){
   const info = $('#pwaInfo'), btn = $('#pwaBtn2');
   if(info && btn){
     btn.hidden = !can || (!pwaPrompt && pwaIsIOS());
-    info.textContent = pwaInstalled() ? 'Đã cài ứng dụng.'
+    info.textContent = pwaInstalled() ? 'Đã cài đặt ứng dụng.'
       : pwaPrompt ? 'Cài về thiết bị để mở nhanh.'
       : pwaIsIOS() ? PWA_IOS_TXT
       : 'Trình duyệt chưa cho phép cài đặt.';
