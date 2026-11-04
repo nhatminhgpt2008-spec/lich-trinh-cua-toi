@@ -7610,6 +7610,22 @@ html body[data-view="table"] #sched .sheet td .stk>.dlcell.dlcell.dlcell.dlcell.
   .np-dl:not(.pinned):not(:hover):focus-within .np-tools{opacity:0}
   .np-dl:not(:hover):has(:focus-visible) .np-tools{opacity:1}
 }
+/* ===== Tuần–Bảng: MỘT hiệu ứng rê chuột duy nhất cho MỌI ô (ô thường, đang diễn ra, sắp diễn ra, không tô nền, Deadline) =====
+   Trước đây luật chung loại trừ .live/.next/.nofill và chỉ .cell mới được nâng 1px, nên ô đang/sắp diễn ra và ô Deadline lệch hiệu ứng so với các ô còn lại.
+   Chuẩn chung: nền đậm hơn một bậc (giữ công thức màu riêng từng ô) + nâng 1px + bóng đổ mềm + sáng 7%, cùng thời lượng/đường cong. */
+html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell){transition:background-color var(--mo) var(--ease),box-shadow var(--mo) var(--ease),filter var(--mo) var(--ease),transform var(--mo) var(--ease)}
+@media (hover:hover){
+  html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell):hover{box-shadow:0 6px 16px -8px rgba(0,0,0,.45)!important;filter:brightness(1.07)}
+  html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell).pinned:hover{filter:none}   /* ô Deadline đã ghim giữ màu tím như cũ, chỉ dùng chung độ nâng + bóng */
+  #sched .cell:is(.live,.next):hover::after{animation:none;opacity:1}   /* rê chuột: khung trạng thái đứng yên, không nhấp nháy lệch nhịp với các ô khác */
+}
+@media (hover:hover) and (min-width:701px){
+  html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell):hover{transform:translateY(-1px)}
+}
+@media screen and (max-width:700px){
+  html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell).mobile-cell-selected{box-shadow:0 6px 16px -8px rgba(0,0,0,.45)!important;filter:brightness(1.07)}
+  html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell).pinned.mobile-cell-selected{filter:none}
+}
 </style>
 </head>
 <body>
