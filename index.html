@@ -1754,7 +1754,7 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}   /*
    =================================================================== */
 #dlgTags{width:min(640px,94vw)}
 #dlgTags form{padding:0}
-.hubHead{top:0;z-index:3;background:var(--surface);padding:18px 20px 12px;border-bottom:1px solid var(--line);border-radius:14px 14px 0 0}
+.hubHead{top:0;z-index:3;background:var(--surface);padding:18px 20px 12px;border-radius:14px 14px 0 0}
 .hubHead .dlgHead h2{margin:0}
 .hubHead p{margin:3px 0 0;font-size:12.5px;color:var(--muted)}
 .hubTabs{position:relative;display:grid;grid-template-columns:1fr 1fr;margin-top:12px}
@@ -1781,7 +1781,7 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}   /*
 .hubMain b{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hubMain small{color:var(--muted);font-size:12px;line-height:1.35}
 .hubBar{height:4px;border-radius:99px;background:var(--line-soft);overflow:hidden;margin-top:2px}
-.hubBar i{display:block;height:100%;background:var(--c);border-radius:inherit}
+.hubBar i{display:block;height:100%;background:var(--c);border-radius:inherit;transition:width var(--mo) ease}
 .hubSec{margin:18px 0 8px;font-size:13px;font-weight:600;color:var(--muted)}
 .hubSw{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:8px 12px;border:1px solid var(--line);border-radius:10px;cursor:pointer;margin-bottom:6px}
 .hubSw i{width:12px;height:12px;border-radius:4px;background:var(--c)}
@@ -1792,12 +1792,27 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}   /*
 .hubSw input:checked{background:var(--accent)}
 .hubSw input:checked::after{transform:translateX(18px)}
 .hubSw input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* ===== Nút chọn màu gộp (Quản lý): ô màu + bảng màu gợi ý / ngẫu nhiên / tùy chỉnh ===== */
+.cpk{position:relative;display:block;width:44px;height:36px}
+.cpk input[type=color]{position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none;border:0;padding:0}
+.cpkBtn{position:relative;display:block;width:100%;height:100%;padding:3px;border:1px solid var(--line);border-radius:8px;background:var(--surface);cursor:pointer}
+.cpkBtn:hover,.cpkBtn[aria-expanded="true"]{border-color:var(--accent)}
+.cpkBtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.cpkSw{display:block;width:100%;height:100%;border-radius:5px;background:var(--c,#888)}
+.cpkPop{position:absolute;z-index:60;box-sizing:border-box;width:218px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:0 14px 32px -8px rgba(0,0,0,.45)}
+.cpkPop[hidden]{display:none}
+.cpkGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;justify-items:center}
+.cpkDot{width:28px;height:28px;padding:0;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);background:var(--c);cursor:pointer}
+.cpkDot:hover{box-shadow:0 0 0 2px var(--muted)}
+.cpkDot.on{box-shadow:0 0 0 2px var(--accent)}
+.cpkDot:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.cpkFoot{display:grid;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.cpkAct{display:flex;align-items:center;justify-content:center;gap:6px;height:30px;padding:0 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-size:12.5px;cursor:pointer}
+.cpkAct:hover{border-color:var(--accent);background:var(--accent-soft)}
+.cpkAct:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.cpkRb{width:14px;height:14px;border-radius:50%;background:conic-gradient(#e5484d,#f5a524,#f2d94e,#46a758,#3e9bd1,#7550c0,#e5484d)}
 .hubAdd{display:grid;grid-template-columns:44px 1fr auto;gap:8px;align-items:center}
 .hubAdd input[type=color],.hubRow input[type=color]{width:44px;height:36px;padding:2px;border:1px solid var(--line);border-radius:8px;background:var(--surface);cursor:pointer}
-.hubPal{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px;align-items:center}
-.hubPal button{width:24px;height:24px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);background:var(--c);cursor:pointer;padding:0}
-.hubPal button:hover{box-shadow:0 0 0 2px var(--muted)}
-.hubPal .rnd{width:auto;height:24px;border-radius:99px;padding:0 10px;background:var(--surface);color:var(--ink);font-size:12px;border:1px solid var(--line);box-shadow:none}
 .hubRows{display:grid;gap:8px}
 .hubRow{display:grid;grid-template-columns:auto 44px 1fr auto;gap:8px;align-items:center}
 .hubNameField{display:grid;gap:4px;min-width:0}
@@ -1824,7 +1839,7 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}   /*
   .hubRow .del{grid-row:1;grid-column:4}
   .hubRow .hubDel{grid-row:2}
 }
-@media (prefers-reduced-motion:reduce){.hubCard,.hubSw input,.hubSw input::after,.hubPal button{transition:none}}
+@media (prefers-reduced-motion:reduce){.hubCard,.hubSw input,.hubSw input::after,.cpkDot{transition:none}}
 
 /* --- cố định kích thước ô + hiệu ứng bấm / chuyển (bảng Tag) --- */
 #dlgTags[open]{display:flex;flex-direction:column;height:min(680px,88vh)}
@@ -1849,7 +1864,6 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}   /*
 .hubInd{position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px) / 2);border-radius:9px;background:var(--accent);box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform var(--mo) ease;pointer-events:none}
 .hubTabs[data-t="manage"] .hubInd{transform:translateX(100%)}
 .hubBody.fade{animation:hubFade var(--mo-in) ease-out}
-.hubBar i{transition:width var(--mo) ease}
 @media (prefers-reduced-motion:reduce){.hubInd{transition:none}.hubBody.fade{animation:none}}
 
 /* --- chuyển Bảng / Danh sách / Công việc / Lớp: chỉ mờ dần (xem khối HIỆU ỨNG cuối file) --- */
@@ -2293,7 +2307,7 @@ input,select,textarea,#dlg input,#dlg select,#dlg textarea{transition:border-col
 #sched .dlcell.pinned{box-shadow:inset 0 0 0 2px var(--pinc),0 0 12px -2px color-mix(in srgb,var(--pinc) 65%,transparent)!important}
 #sched .ag.dl.pinned{border-color:var(--pinc)!important;box-shadow:inset 0 0 0 1px var(--pinc),0 0 12px -2px color-mix(in srgb,var(--pinc) 65%,transparent)!important}
 #dlPanel.page .np-list .np-dl.pinned,#dlPanel.page .np-list .np-dl.pinned.open{--oc:var(--pinc);box-shadow:inset 0 0 0 2px var(--pinc),0 0 10px -3px color-mix(in srgb,var(--pinc) 60%,transparent)}
-#sched .ag.dl.pinned .ag-time{margin-top:6px}   /* chừa chỗ để giờ không bị thẻ ghim che */
+#sched .ag.dl.pinned .ag-time{margin-top:0}   /* giờ luôn căn giữa dọc như các ô khác (thẻ ghim nhỏ ở góc, không cần chừa chỗ) */
 #dlPanel.page .np-bk.bk-pin{--bc:var(--pinc)}
 #dlPanel.page .np-bk.bk-pin small{color:var(--bc)}
 #dlPanel.page .np-ab.np-abpin.on,#dlPanel .np-hv .np-ab.np-abpin.on{background:var(--pinc);border-color:var(--pinc);color:#fff;opacity:1}
@@ -3458,6 +3472,7 @@ body[data-view="table"] #sched .sheet thead tr.dn>th.week-label #stackToggle[ari
 .qr-kind.dl::before{content:"◷"}
 /* Chỉ hiển thị chữ phân loại trong kết quả tìm kiếm, không dùng biểu tượng */
 .qr-kind::before{display:none!important;content:none!important}
+.qr-kind.qr-tag{--tg:var(--line);min-width:68px;max-width:104px;overflow:hidden;text-overflow:ellipsis;background:color-mix(in srgb,var(--tg) 14%,var(--surface));border-color:color-mix(in srgb,var(--tg) 48%,var(--line));color:color-mix(in srgb,var(--tg) 60%,var(--ink))}
 .qr-copy{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
 .qr-copy b{font-size:12.5px;font-weight:700;line-height:1.35;overflow-wrap:anywhere}
 .qr-copy small{font-size:11px;color:var(--muted);line-height:1.4;overflow-wrap:anywhere}
@@ -9331,8 +9346,8 @@ function qItemHTML(item){
     return `<button type="button" class="qr-item" data-q-result="${index}" role="option"><span class="qr-kind dl">Deadline</span><span class="qr-copy"><b>${esc(t.text||'Deadline không có tiêu đề')}</b><small>${esc(meta)}</small></span><span class="qr-arrow" aria-hidden="true">↗</span></button>`;
   }
   const ev=item.ev, date=item.date, tag=tagOf(ev.type), times=ev.times && ev.times[wd(date)] && ev.times[wd(date)].length ? ev.times[wd(date)].map(x=>`${x.start||''}–${x.end||''}`).join(', ') : [ev.start,ev.end].filter(Boolean).join('–');
-  const meta=[date?`${DOW[wd(date)]}, ${dmy(date)}`:'',times,tag.name||'Không tag',ev.room,ev.teacher].filter(Boolean).join(' · ');
-  return `<button type="button" class="qr-item" data-q-result="${index}" role="option"><span class="qr-kind ${item.recurring?'recurring':'event'}">${item.recurring?'Lớp':'Lịch'}</span><span class="qr-copy"><b>${esc([ev.code,ev.title].filter(Boolean).join(' · ')||'Lịch không có tiêu đề')}</b><small>${esc(meta)}</small></span><span class="qr-arrow" aria-hidden="true">↗</span></button>`;
+  const meta=[date?`${DOW[wd(date)]}, ${dmy(date)}`:'',times,tag.name?'':'Không tag',ev.room,ev.teacher].filter(Boolean).join(' · ');
+  return `<button type="button" class="qr-item" data-q-result="${index}" role="option">${tag.name?`<span class="qr-kind qr-tag" style="--tg:${esc(tag.color)}" title="${esc(tag.name)}">${esc(tag.name)}</span>`:`<span class="qr-kind ${item.recurring?'recurring':'event'}">${item.recurring?'Lớp':'Lịch'}</span>`}<span class="qr-copy"><b>${esc([ev.code,ev.title].filter(Boolean).join(' · ')||'Lịch không có tiêu đề')}</b><small>${esc(meta)}</small></span><span class="qr-arrow" aria-hidden="true">↗</span></button>`;
 }
 function positionQResults(){
   const box=$('#qResults'); if(!box || box.hidden) return;
@@ -12369,11 +12384,15 @@ function tagStats(){
     if(o.cancelled) s.cx++;
     else if(o.ev.start && o.ev.end){ const m = toMin(o.ev.end) - toMin(o.ev.start); s.n++; s.min += m; totalMin += m; n++; }
   });
-  return {S, n, totalMin, cancel:occs.filter(o => o.cancelled).length, conflict:occs.filter(o => o.conflict).length, dl:weekDeadlines().length};
+  const cf = occs.filter(o => o.conflict), cfMin = cf.reduce((a, o) => a + (o.ev.start && o.ev.end ? toMin(o.ev.end) - toMin(o.ev.start) : 0), 0);
+  return {S, n, totalMin, cancel:occs.filter(o => o.cancelled).length, conflict:cf.length, cfMin, dl:weekDeadlines().length};
 }
+/* dòng thống kê của MỌI tag (kể cả mục "Hiển thị thêm"): ... buổi · ... giờ (phút → giờ) · ... buổi nghỉ */
+const hubHoursVN = m => String(Math.round(m / 60 * 100) / 100).replace('.', ',');
+const hubStatLine = (n, min, cx) => `${n} buổi · ${hubHoursVN(min)} giờ · ${cx} buổi nghỉ`;
 function hubSumHTML(st, tsel){
   const head = tsel ? `Đang lọc <b>${state.tags.filter(t => tagSel.has(t.id)).length}/${state.tags.length}</b> tag` : `Đang hiện <b>${state.tags.length}</b> tag`;
-  return `<span>${head} · Tuần ${weekRange(weekStart)}</span><button type="button" class="btn" data-act="clr" data-k="clr" ${tsel ? '' : 'disabled'}>Hiện tất cả</button>`;
+  return `<span>${head} · Tuần ${dmy(mondayOf(weekStart))}</span><button type="button" class="btn" data-act="clr" data-k="clr" ${tsel ? '' : 'disabled'}>Hiện tất cả</button>`;
 }
 /* đổi lựa chọn tag tại chỗ (không vẽ lại cả danh sách) để các hiệu ứng chạy mượt */
 function hubSelSync(){
@@ -12386,6 +12405,56 @@ function hubSelSync(){
 }
 /* chuyển tab: nội dung trượt vào theo hướng chuyển */
 function hubSlide(){ const b = $('#hubBody'); b.classList.remove('fade'); void b.offsetWidth; b.classList.add('fade'); }   // chỉ mờ dần nhẹ khi đổi tab
+/* nút chọn màu gộp: bấm mở bảng màu gợi ý + ngẫu nhiên + màu tùy chỉnh */
+function cpkHTML(inputHTML){
+  return `<span class="cpk">${inputHTML}<button type="button" class="cpkBtn" data-act="cpk" aria-haspopup="dialog" aria-expanded="false" title="Chọn màu"><span class="cpkSw"></span></button></span>`;
+}
+const cpkInput = el => el.closest('.cpk')?.querySelector('input[type=color]');
+let cpkOpen = null, cpkPopEl = null;
+function cpkSyncAll(){
+  dlgTags.querySelectorAll('.cpk').forEach(w => {
+    const i = w.querySelector('input[type=color]'), b = w.querySelector('.cpkBtn');
+    if(!i || !b) return;
+    b.style.setProperty('--c', i.value);
+    b.setAttribute('aria-label', (i.getAttribute('aria-label') || 'Màu') + ': ' + i.value);
+  });
+  cpkMarkSel();
+}
+function cpkMarkSel(){
+  if(!cpkPopEl || !cpkOpen) return;
+  const cur = (cpkInput(cpkOpen)?.value || '').toLowerCase();
+  cpkPopEl.querySelectorAll('[data-col]').forEach(b => b.classList.toggle('on', b.dataset.col.toLowerCase() === cur));
+}
+function cpkClose(){
+  if(!cpkOpen) return;
+  cpkOpen.setAttribute('aria-expanded', 'false'); cpkOpen = null;
+  if(cpkPopEl) cpkPopEl.hidden = true;
+}
+function cpkSet(inp, v){
+  inp.value = v;
+  inp.dispatchEvent(new Event('input', {bubbles:true}));   // dùng lại đúng các xử lý màu sẵn có (tag mới, tag hiện có, màu ô đặc biệt)
+  cpkSyncAll();
+}
+function cpkToggle(btn){
+  if(cpkOpen === btn){ cpkClose(); return; }
+  cpkClose();
+  if(!cpkPopEl){
+    cpkPopEl = document.createElement('div');
+    cpkPopEl.className = 'cpkPop'; cpkPopEl.setAttribute('role', 'dialog'); cpkPopEl.setAttribute('aria-label', 'Chọn màu');
+    cpkPopEl.innerHTML = `<div class="cpkGrid">${HUB_PAL.map(c => `<button type="button" class="cpkDot" style="--c:${c}" data-act="cpkpick" data-col="${c}" aria-label="Màu ${c}"></button>`).join('')}</div>
+      <div class="cpkFoot"><button type="button" class="cpkAct" data-act="cpkrnd">🎲 Ngẫu nhiên</button><button type="button" class="cpkAct" data-act="cpkcus"><i class="cpkRb" aria-hidden="true"></i>Tùy chỉnh…</button></div>`;
+    dlgTags.appendChild(cpkPopEl);
+  }
+  cpkOpen = btn; btn.setAttribute('aria-expanded', 'true');
+  cpkPopEl.hidden = false; cpkMarkSel();
+  const d = dlgTags.getBoundingClientRect(), r = btn.getBoundingClientRect(), pw = cpkPopEl.offsetWidth, ph = cpkPopEl.offsetHeight;
+  let x = r.left - d.left, y = r.bottom - d.top + 6;
+  if(x + pw > d.width - 8) x = d.width - pw - 8;
+  if(x < 8) x = 8;
+  if(y + ph > d.height - 8) y = Math.max(8, r.top - d.top - ph - 6);   // hết chỗ phía dưới thì mở lên trên
+  cpkPopEl.style.left = x + 'px'; cpkPopEl.style.top = y + 'px';
+  (cpkPopEl.querySelector('.cpkDot.on') || cpkPopEl.querySelector('.cpkDot'))?.focus({preventScroll:true});
+}
 function hubSwitch(to){
   if(to === hubTab) return;
   hubTab = to; hubDel = null; hubTabsSync(); drawHub(); $('#hubBody').scrollTop = 0; hubSlide();
@@ -12393,7 +12462,7 @@ function hubSwitch(to){
 function hubViewHTML(st, tsel){
   const cards = state.tags.map(t => {
     const s = st.S[t.id], sel = tsel && tagSel.has(t.id), nsel = tsel && !sel, pct = st.totalMin ? Math.round(s.min / st.totalMin * 100) : 0;
-    const meta = [`${s.n} buổi · ${hubHrs(s.min)} giờ trong tuần`, s.cx ? `${s.cx} nghỉ` : '', `${s.total} lịch${s.rec ? ` (${s.rec} lặp)` : ''}`].filter(Boolean).join(' · ');
+    const meta = hubStatLine(s.n, s.min, s.cx);   // chỉ số liệu của tuần đang xem
     return `<div class="hubCard${sel ? ' sel' : ''}${nsel ? ' nsel' : ''}" role="checkbox" aria-checked="${sel}" tabindex="0" data-act="sel" data-id="${esc(t.id)}" data-k="sel:${esc(t.id)}" style="--c:${esc(t.color)}">
       <span class="hubChk" aria-hidden="true"></span>
       <div class="hubMain"><b>${esc(t.name)}</b><small>${esc(meta)}</small><div class="hubBar" title="${pct}% số giờ trong tuần"><i style="width:${pct}%"></i></div></div>
@@ -12403,9 +12472,9 @@ function hubViewHTML(st, tsel){
   return `<div class="hubSum" id="hubSum">${hubSumHTML(st, tsel)}</div>
     <div class="hubList" role="group" aria-label="Chọn tag để lọc">${cards}</div>
     <div class="hubSec">Hiển thị thêm</div>
-    ${sw('__dl', 'Deadline', statusColor('dl'), `${st.dl} trong tuần`)}
-    ${sw('__cancel', 'Lịch nghỉ', statusColor('cancel'), `${st.cancel} buổi trong tuần`)}
-    ${sw('__conflict', 'Lịch trùng', statusColor('conflict'), `${st.conflict} buổi trong tuần`)}`;
+    ${sw('__dl', 'Deadline', statusColor('dl'), hubStatLine(st.dl, 0, 0))}
+    ${sw('__cancel', 'Lịch nghỉ', statusColor('cancel'), hubStatLine(0, 0, st.cancel))}
+    ${sw('__conflict', 'Lịch trùng', statusColor('conflict'), hubStatLine(st.conflict, st.cfMin, 0))}`;
 }
 function hubManageHTML(st){
   const n = state.tags.length;
@@ -12421,14 +12490,13 @@ function hubManageHTML(st){
     })() : '';
     return `<div><div class="hubRow" data-id="${esc(t.id)}">
       <button type="button" class="hubGrip" data-id="${esc(t.id)}" data-k="grip:${esc(t.id)}" aria-label="Kéo để đổi vị trí (hoặc bấm ↑ ↓ trên bàn phím)" title="Kéo để đổi vị trí"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.7"/><circle cx="15" cy="6" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="9" cy="18" r="1.7"/><circle cx="15" cy="18" r="1.7"/></svg></button>
-      <input type="color" class="tc" value="${esc(t.color)}" aria-label="Màu tag">
+      ${cpkHTML(`<input type="color" class="tc" value="${esc(t.color)}" aria-label="Màu tag" tabindex="-1">`)}
       <div class="hubNameField"><input type="text" class="tn" value="${esc(t.name)}" placeholder="Tên tag" maxlength="40" aria-label="Tên tag" aria-invalid="false"><small class="hubNameErr" id="hubTagErr-${esc(t.id)}" role="status" aria-live="polite" hidden></small></div>
       <button type="button" class="del" data-act="del" data-id="${esc(t.id)}" data-k="del:${esc(t.id)}" title="Xóa hoặc gộp vào tag khác">Xóa</button>${del}</div></div>`;
   }).join('');
-  const stRow = (id, k, label) => `<div class="tagrow st"><input type="color" id="${id}" value="${esc(statusColor(k))}" aria-label="Màu ${label}"><span>${label}</span><button type="button" class="btn" data-act="stdef" data-id="${k}" data-k="stdef:${k}">Mặc định</button></div>`;
+  const stRow = (id, k, label) => `<div class="tagrow st">${cpkHTML(`<input type="color" id="${id}" value="${esc(statusColor(k))}" aria-label="Màu ${label}" tabindex="-1">`)}<span>${label}</span><button type="button" class="btn" data-act="stdef" data-id="${k}" data-k="stdef:${k}">Mặc định</button></div>`;
   return `<div class="hubSec" style="margin-top:0">Thêm tag mới</div>
-    <div class="hubAdd"><input type="color" id="hubNewC" value="${esc(hubNewColor)}" aria-label="Màu tag mới"><div class="hubNameField"><input type="text" id="hubNewN" value="${esc(hubNewName)}" placeholder="Tên tag mới…" maxlength="40" aria-label="Tên tag mới" aria-invalid="false"><small class="hubNameErr" id="hubNewErr" role="status" aria-live="polite" hidden></small></div><button type="button" class="btn primary" data-act="add" data-k="add">+ Thêm</button></div>
-    <div class="hubPal" aria-label="Màu gợi ý">${HUB_PAL.map(c => `<button type="button" style="--c:${c}" data-act="pal" data-id="${c}" aria-label="Màu ${c}"></button>`).join('')}<button type="button" class="rnd" data-act="rnd" data-k="rnd">🎲 Ngẫu nhiên</button></div>
+    <div class="hubAdd">${cpkHTML(`<input type="color" id="hubNewC" value="${esc(hubNewColor)}" aria-label="Màu tag mới" tabindex="-1">`)}<div class="hubNameField"><input type="text" id="hubNewN" value="${esc(hubNewName)}" placeholder="Tên tag mới…" maxlength="40" aria-label="Tên tag mới" aria-invalid="false"><small class="hubNameErr" id="hubNewErr" role="status" aria-live="polite" hidden></small></div><button type="button" class="btn primary" data-act="add" data-k="add">+ Thêm</button></div>
     <div class="hubSec">Tag hiện có (${n})</div>
     <div class="hubRows">${rows}</div>
     <div class="hubSec">Màu ô đặc biệt</div>
@@ -12436,10 +12504,12 @@ function hubManageHTML(st){
 }
 function drawHub(){
   const ae = document.activeElement, fk = ae && dlgTags.contains(ae) ? ae.dataset.k : null, sc = $('#hubBody').scrollTop;
+  cpkClose();
   hubTabsSync();
   const st = tagStats();
   $('#hubBody').innerHTML = hubTab === 'view' ? hubViewHTML(st, tagSelActive()) : hubManageHTML(st);
   $('#hubBody').scrollTop = sc;
+  cpkSyncAll();
   if(fk){ const el = [...dlgTags.querySelectorAll('[data-k]')].find(x => x.dataset.k === fk && !x.disabled); if(el) el.focus({preventScroll:true}); }
 }
 function hubTabsSync(){
@@ -12465,15 +12535,17 @@ function hueOf(hex){
   const h = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4;
   return (h * 60 + 360) % 360;
 }
+const HUB_HUES = [0, 22, 42, 75, 140, 175, 200, 222, 250, 275, 305, 335];
+let hubLastHue = -1;
 function randomTagColor(){
   const used = state.tags.map(t => hueOf(t.color)).filter(h => h !== null);
-  let best = null, bestGap = -1;
-  for(let i = 0; i < 30; i++){
-    const h = Math.random() * 360;
-    const gap = used.length ? Math.min(...used.map(u => { const d = Math.abs(u - h); return Math.min(d, 360 - d); })) : 180;
-    if(gap > bestGap){ bestGap = gap; best = h; }
-  }
-  return hslHex(best, 55 + Math.random() * 20, 36 + Math.random() * 12);
+  const dist = (u, h) => { const d = Math.abs(u - h); return Math.min(d, 360 - d); };
+  let pool = HUB_HUES.filter(h => dist(h, hubLastHue) > 20 && !used.some(u => dist(u, h) < 20));
+  if(!pool.length) pool = HUB_HUES.filter(h => dist(h, hubLastHue) > 20);
+  const base = pool[Math.floor(Math.random() * pool.length)];
+  const h = (base + (Math.random() - .5) * 20 + 360) % 360;
+  hubLastHue = h;
+  return hslHex(h, 55 + Math.random() * 20, 36 + Math.random() * 12);
 }
 const normalizeTagName = value => String(value ?? '').normalize('NFC').trim().replace(/\s+/g, ' ');
 const NO_TAG_LABEL = ''; // lựa chọn không có tag hiển thị ô trống (option dùng &nbsp; để giữ chiều cao dòng)
@@ -12540,16 +12612,29 @@ dlgTags.addEventListener('click', e => {
   else if(a === 'delno'){ hubDel = null; drawHub(); }
   else if(a === 'delok'){ const m = $('#hubMerge'); hubMergeTag(id, m ? m.value : ''); hubDel = null; drawHub(); hubRenderSoon(); }
   else if(a === 'add') hubAddTag();
-  else if(a === 'pal'){ hubNewColor = id; $('#hubNewC').value = id; }
-  else if(a === 'rnd'){ hubNewColor = randomTagColor(); $('#hubNewC').value = hubNewColor; }
-  else if(a === 'stdef'){ const inp = $({dl:'#stDl', cancel:'#stCancel', conflict:'#stConflict'}[id]); inp.value = STATUS_DEF[themeNow()][id]; hubSetStatus(id, inp.value); }
+  else if(a === 'stdef'){ const inp = $({dl:'#stDl', cancel:'#stCancel', conflict:'#stConflict'}[id]); inp.value = STATUS_DEF[themeNow()][id]; hubSetStatus(id, inp.value); cpkSyncAll(); }
 });
+/* nút chọn màu */
+dlgTags.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'), a = b && b.dataset.act;
+  if(a === 'cpk'){ cpkToggle(b); return; }
+  if(a === 'cpkpick'){ const i = cpkOpen && cpkInput(cpkOpen); if(i) cpkSet(i, b.dataset.col); const o = cpkOpen; cpkClose(); if(o) o.focus({preventScroll:true}); return; }
+  if(a === 'cpkrnd'){ const i = cpkOpen && cpkInput(cpkOpen); if(i) cpkSet(i, randomTagColor()); return; }   // bảng vẫn mở để bấm lại cho tới khi ưng
+  if(a === 'cpkcus'){ const i = cpkOpen && cpkInput(cpkOpen); if(i){ try{ i.showPicker(); }catch(_){ i.click(); } } return; }
+  if(cpkOpen && !e.target.closest('.cpkPop')) cpkClose();
+}, true);
+dlgTags.addEventListener('keydown', e => {
+  if(e.key === 'Escape' && cpkOpen){ e.preventDefault(); e.stopPropagation(); const o = cpkOpen; cpkClose(); o.focus({preventScroll:true}); }
+}, true);
+dlgTags.addEventListener('cancel', e => { if(cpkOpen){ e.preventDefault(); const o = cpkOpen; cpkClose(); o.focus({preventScroll:true}); } });
+$('#hubBody').addEventListener('scroll', cpkClose, {passive:true});
 dlgTags.addEventListener('keydown', e => {
   if((e.key === 'Enter' || e.key === ' ') && e.target.matches('.hubCard')){ e.preventDefault(); e.target.click(); }
   else if(e.key === 'Enter' && e.target.id === 'hubNewN'){ e.preventDefault(); hubAddTag(); }
 });
 dlgTags.addEventListener('input', e => {
   const el = e.target;
+  if(el.type === 'color') cpkSyncAll();
   if(el.id === 'hubNewN'){ hubNewName = el.value; hubSetTagNameError(el, hubTagNameCheck(el.value).error); return; }
   if(el.id === 'hubNewC'){ hubNewColor = el.value; return; }
   const sid = {stDl:'dl', stCancel:'cancel', stConflict:'conflict'}[el.id];
@@ -13235,7 +13320,9 @@ function renderDlPanel(){
   const doneG = scoped.length - openG.length, validN = openG.filter(t => bkOf(t) !== 'late').length;   // validN = còn hạn: chưa xong và chưa quá hạn
   const tile = (k, ic, lb, txt, on, zero, tip) => `<button type="button" class="np-tile ${k}${on ? ' on' : ''}${zero ? ' zero' : ''}" data-act="bk" data-bk="${k}" title="${tip}" aria-label="${tip}: ${txt}" aria-pressed="${on ? 'true' : 'false'}"><span class="np-ti" aria-hidden="true">${ic}</span><span class="np-tn">${txt}</span><span class="np-tl">${lb}</span></button>`;
   const tiles = `<div class="np-tiles">${tile('late', '⚠️', 'Quá hạn', lateN, npSel.has('late'), !lateN, 'Quá hạn')}${tile('open', '📋', 'Còn hạn', validN, npSel.has('open'), !validN, 'Còn hạn')}${tile('done', '✅', 'Hoàn thành', doneG, npSel.has('done'), !doneG, 'Hoàn thành')}</div>`;
-  const html = `<div class="np-grid"><section class="np-col np-dlcol"><h2 class="np-h"><span>Deadline</span>${tiles}</h2>
+  const html = scopeExcludesDl
+    ? `<div class="np-grid"><section class="np-col np-dlcol"><div class="q-scope-empty"><b>Đang lọc Lịch</b><span>Mục này không nằm trong phạm vi tìm kiếm.</span></div></section></div>`   // y hệt khung bên Lịch khi bị loại khỏi phạm vi tìm kiếm
+    : `<div class="np-grid"><section class="np-col np-dlcol"><h2 class="np-h"><span>Deadline</span>${tiles}</h2>
         <div class="np-list">${dlHTML}</div></section>
     </div>`;
   if(el.hidden) el.hidden = false;
@@ -13527,7 +13614,7 @@ function pwaUpdateUI(){
   if(info && btn){
     btn.hidden = !can || (!pwaPrompt && pwaIsIOS());
     info.textContent = pwaInstalled() ? 'Đã cài đặt ứng dụng.'
-      : pwaPrompt ? 'Cài về thiết bị để mở nhanh.'
+      : pwaPrompt ? 'Cài đặt về thiết bị để mở nhanh.'
       : pwaIsIOS() ? PWA_IOS_TXT
       : 'Trình duyệt chưa cho phép cài đặt.';
   }
