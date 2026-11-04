@@ -479,7 +479,7 @@ button,[role=button],a,summary,label,select{touch-action:manipulation}
 
 /* lớp cố định */
 .fx{width:100%;border-collapse:collapse;font-size:13px}
-.fx th{text-align:left;color:var(--muted);font-weight:500;font-size:12.5px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.fx th{text-align:left;color:var(--muted);font-weight:500;font-size:12.5px;padding:10px 12px;border-bottom:1px solid var(--line-soft)}
 .fx td{padding:10px 12px;border-bottom:1px solid var(--line-soft);vertical-align:middle}
 .fx th.nowrap .fx-sort{white-space:nowrap}
 .fx tbody tr{cursor:pointer}
@@ -528,6 +528,7 @@ body.fx-grabbing,body.fx-grabbing *{cursor:grabbing!important;user-select:none!i
 .fx th .fx-th .fx-sort{width:auto;flex:1 1 auto;min-width:0}
 .fx-th .fx-lbl{flex:1 1 auto}
 .fx-flt{flex:none;width:22px;height:22px;padding:0;border:0;background:none;color:var(--muted);opacity:.55;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.fx-flt svg{display:block;flex:none}
 .fx-flt:hover,.fx-flt.on{opacity:1;color:var(--accent);background:var(--accent-soft)}
 .fxblk{position:relative}
 .fxf{position:absolute;top:6px;right:12px;max-width:calc(100% - 215px);z-index:1;display:flex;align-items:center;gap:8px;padding:0;font-size:12.5px;color:var(--muted)}
@@ -1762,7 +1763,7 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}   /*
 .hubTabs button svg{width:15px;height:15px;flex:none}
 .hubTabs button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .hubBody{padding:14px 20px 8px}
-.hubFoot{bottom:0;z-index:3;display:flex;gap:8px;align-items:center;padding:12px 20px;background:var(--surface);border-top:1px solid var(--line);border-radius:0 0 14px 14px}
+.hubFoot{bottom:0;z-index:3;display:flex;gap:8px;align-items:center;padding:12px 20px;background:var(--surface);border-top:0;border-radius:0 0 14px 14px}
 .hubFoot small{color:var(--muted);font-size:12px;flex:1}
 #dlgTags .btn{width:auto;min-height:0;white-space:nowrap}
 .hubSum{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;font-size:13px;color:var(--muted);flex-wrap:wrap}
@@ -1811,13 +1812,17 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}   /*
 .cpkAct:hover{border-color:var(--accent);background:var(--accent-soft)}
 .cpkAct:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .cpkRb{width:14px;height:14px;border-radius:50%;background:conic-gradient(#e5484d,#f5a524,#f2d94e,#46a758,#3e9bd1,#7550c0,#e5484d)}
-.hubAdd{display:grid;grid-template-columns:44px 1fr auto;gap:8px;align-items:center}
+.hubAdd{display:grid;grid-template-columns:44px 1fr auto;gap:8px;align-items:start}   /* start: ô màu + nút Thêm luôn ngang hàng với ô nhập, không bị đẩy xuống giữa khi có dòng lỗi */
+.hubAdd>.btn,.hubAdd>button{height:36px;box-sizing:border-box}
 .hubAdd input[type=color],.hubRow input[type=color]{width:44px;height:36px;padding:2px;border:1px solid var(--line);border-radius:8px;background:var(--surface);cursor:pointer}
 .hubRows{display:grid;gap:8px}
-.hubRow{display:grid;grid-template-columns:auto 44px 1fr auto;gap:8px;align-items:center}
-.hubNameField{display:grid;gap:4px;min-width:0}
+.hubRow{display:grid;grid-template-columns:auto 44px 1fr auto;gap:8px;align-items:start}
+.hubRow .hubGrip{align-self:start}
+.hubNameField{display:grid;gap:0;min-width:0;position:relative}
 .hubNameField input{width:100%;min-width:0}
 .hubNameField input.bad{border-color:var(--danger)!important}
+.hubNameField input.bad:focus,.hubNameField input.bad:focus-visible{outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--danger) 22%,transparent)}   /* lỗi: chỉ một vòng đỏ, không chồng vòng xanh focus */
+.hubNameErr{position:absolute;left:0;top:calc(100% + 2px);z-index:6;max-width:100%;padding:1px 6px;border-radius:6px;background:var(--surface);pointer-events:none}   /* lời báo lỗi nổi đè lên, không chiếm chỗ → không đẩy các mục bên dưới xuống */
 .hubNameErr{display:block;color:var(--danger);font-size:11.5px;line-height:1.35;overflow-wrap:anywhere}
 .hubNameErr[hidden]{display:none!important}
 .hubGrip{width:28px;height:36px;display:grid;place-items:center;padding:0;border:0;border-radius:6px;background:none;color:var(--muted);cursor:grab;touch-action:none}
@@ -4582,6 +4587,15 @@ body.ci-open #selBar{display:none!important}   /* hộp thông tin Tháng đã c
 #profileDlg .acctFooter{flex:0 0 auto;margin-top:auto;justify-content:flex-end}
 #profileDlg .acctFooter .grow{display:none}
 #profileDlg .acctFooter .btn{padding:0 16px}
+
+/* Tài khoản: chỉ danh sách mục cuộn; nút Đăng xuất luôn cố định ở đáy hộp */
+#profileDlg form,#profileDlg form:is(*){overflow:hidden}
+#profileDlg .acctScroll{flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:10px;scrollbar-width:none;-ms-overflow-style:none;overscroll-behavior:contain}
+#profileDlg .acctScroll::-webkit-scrollbar{width:0;height:0;display:none}
+/* vùng cuộn tràn ra hết lề của hộp -> thanh cuộn nằm trong lề phải, không đè lên các ô */
+#profileDlg .acctScroll{margin:0 -18px;padding:0 18px}
+@media (max-width:560px){#profileDlg .acctScroll{margin:0 -14px;padding:0 14px}}
+#profileDlg .acctFooter{flex:0 0 auto;margin-top:0;padding-top:2px}
 @media (max-width:560px){
   #profileDlg{height:100dvh}   /* điện thoại: hộp chiếm trọn màn hình như trước */
   #profileDlg form{padding:calc(14px + env(safe-area-inset-top,0px)) 14px calc(16px + env(safe-area-inset-bottom,0px))}
@@ -5538,14 +5552,15 @@ button,a,select,label,summary,[role=button]{touch-action:manipulation}
   body[data-view="deadline"] #dlPanel.page .np-list{padding-left:0!important;padding-right:0!important}
   body[data-view="deadline"] #dlPanel.page .np-dlcol .np-list .np-dl{padding-left:16px!important;padding-right:16px!important}
   body[data-view="fixed"] #sched{padding-left:4px!important;padding-right:4px!important}
-  body[data-view="fixed"] .fx[data-fx-kind="other"]{width:100%;min-width:950px;table-layout:fixed}
-  body[data-view="fixed"] .fx[data-fx-kind="other"] th:nth-child(1){width:6%}
-  body[data-view="fixed"] .fx[data-fx-kind="other"] th:nth-child(2){width:24%}
-  body[data-view="fixed"] .fx[data-fx-kind="other"] th:nth-child(3){width:10%}
-  body[data-view="fixed"] .fx[data-fx-kind="other"] th:nth-child(4){width:18%}
-  body[data-view="fixed"] .fx[data-fx-kind="other"] th:nth-child(5){width:14%}
-  body[data-view="fixed"] .fx[data-fx-kind="other"] th:nth-child(6){width:14%}
-  body[data-view="fixed"] .fx[data-fx-kind="other"] th:nth-child(7){width:14%}
+  body[data-view="fixed"] .fx[data-fx-kind="other"]{width:100%;min-width:1034px;table-layout:fixed}
+  /* các cột theo nội dung: cột Liên kết chỉ cần vừa nhãn + nút lọc, phần dư dồn cho Tên lịch / Thời gian / Người phụ trách; cột # và Liên kết gọn, các cột còn lại chia theo tỉ lệ độ rộng */
+  body[data-view="fixed"] .fx[data-fx-kind="other"] th:nth-child(1){width:56px}
+  body[data-view="fixed"] .fx[data-fx-kind="other"] th:nth-child(2){width:250px}
+  body[data-view="fixed"] .fx[data-fx-kind="other"] th:nth-child(3){width:130px}
+  body[data-view="fixed"] .fx[data-fx-kind="other"] th:nth-child(4){width:190px}
+  body[data-view="fixed"] .fx[data-fx-kind="other"] th:nth-child(5){width:130px}
+  body[data-view="fixed"] .fx[data-fx-kind="other"] th:nth-child(6){width:170px}
+  body[data-view="fixed"] .fx[data-fx-kind="other"] th:nth-child(7){width:108px}
 }
 @media (max-width:700px){
   body[data-view="deadline"] #dlPanel.page{padding-left:4px!important;padding-right:4px!important}
@@ -6866,7 +6881,7 @@ body[data-view="table"] #sched .cell .ev-content .ev-title{
   .layout.fx-on #sched>.fxblk{flex:1 1 0;min-height:0;display:flex;flex-direction:column;overflow:hidden}
   .layout.fx-on #sched>.fxblk>:not(.scroller){flex:none}
   .layout.fx-on #sched>.fxblk>.scroller{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain}
-  .layout.fx-on #sched .fx thead th{position:sticky;top:0;z-index:4;background:var(--surface);box-shadow:inset 0 -1px 0 var(--line)}   /* hàng tiêu đề cột đứng yên khi cuộn, như hàng Thứ/Ngày của Bảng */
+  .layout.fx-on #sched .fx thead th{position:sticky;top:0;z-index:4;background:var(--surface);border-bottom:0;box-shadow:inset 0 -1px 0 var(--line-soft)}   /* chỉ một vạch 1px, chồng viền+bóng trước đây thành 2px; hàng tiêu đề cột đứng yên khi cuộn, như hàng Thứ/Ngày của Bảng */
 }
 /* Thanh cuộn tự vẽ: bo tròn như thẻ/hộp thoại của app, màu dịu (không chói, không bóng đổ); rê chuột / kéo mới đậm và dày hơn */
 .sbar::before{border-radius:99px;box-shadow:none;background:color-mix(in srgb,var(--muted) 10%,transparent)}
@@ -7626,6 +7641,74 @@ html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.
   html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell).mobile-cell-selected{box-shadow:0 6px 16px -8px rgba(0,0,0,.45)!important;filter:brightness(1.07)}
   html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.dlcell):is(.cell,.dlcell).pinned.mobile-cell-selected{filter:none}
 }
+/* ===== Nút + hộp "Ghi chú tuần" (chỉ máy tính, kế bên nút Tag) ===== */
+#dlgNote{width:min(640px,94vw)}   /* ngang bằng bảng Tag */
+#dlgNote[open]{display:flex;flex-direction:column;height:min(700px,88vh)}   /* kích thước cố định: không co giãn theo nội dung */
+#dlgNote form{display:flex;flex-direction:column;flex:1;min-height:0}
+#dlgNote h2{font-size:17px;line-height:1.35;margin:0 0 2px;flex:none}
+#dlgNote .abssub{margin:0 0 12px;color:var(--muted);font-size:12.5px;flex:none}
+#dlgNote textarea{display:none}   /* textarea chỉ giữ dữ liệu; ô soạn thảo (.rte) do initRTE dựng */
+#dlgNote .rte{flex:1;min-height:0;display:flex;flex-direction:column}
+#dlgNote .rte .rtbar{flex:none}
+#dlgNote .rte .rtbody{flex:1;min-height:0;max-height:none;resize:none;overflow:auto;padding:12px 14px}
+#dlgNote .actions{display:flex;align-items:center;gap:8px;margin-top:12px;flex:none}
+#dlgNote .actions .grow{flex:1}
+@media (max-width:700px){#noteBtn,#mNoteBtn{display:none!important}}
+body[data-view="cal"] #noteBtn,body[data-view="monthAgenda"] #noteBtn{display:none!important}   /* ghi chú theo tuần: ẩn ở dạng Tháng */
+body:not([data-view="cal"]):not([data-view="monthAgenda"]) #mNoteBtn{display:none!important}   /* ghi chú tháng: chỉ hiện ở dạng Tháng */
+@media (min-width:701px){
+  #mbar #noteBtn:not(.on){color:var(--muted);background:var(--surface);border-color:var(--line)}
+  #mbar #noteBtn:not(.on):hover{color:var(--accent);border-color:var(--accent)}
+  #mbar #mNoteBtn:not(.on){color:var(--muted);background:var(--surface);border-color:var(--line)}
+  #mbar #mNoteBtn:not(.on):hover{color:var(--accent);border-color:var(--accent)}
+}
+/* ===== Hộp "Ghi chú tháng": tổng hợp ghi chú các tuần trong tháng (chỉ đọc) ===== */
+#dlgMNote{width:min(640px,94vw)}
+#dlgMNote[open]{display:flex;flex-direction:column;height:min(700px,88vh)}
+#dlgMNote form{display:flex;flex-direction:column;flex:1;min-height:0}
+#dlgMNote h2{font-size:17px;line-height:1.35;margin:0 0 2px;flex:none}
+#dlgMNote .abssub{margin:0 0 12px;color:var(--muted);font-size:12.5px;flex:none}
+#dlgNote .dlgHead,#dlgMNote .dlgHead{flex:none;align-items:flex-start}
+#dlgNote .hdR{display:flex;align-items:flex-start;gap:8px;flex:none}
+#dlgNote .hdR .iconbtn{margin-top:-2px}
+#dlgNote .hdR .iconbtn[hidden]{display:none}
+#dlgMNote .mnList{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;display:grid;gap:10px;align-content:start}
+#dlgMNote .mnItem{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:10px 14px 12px}
+#dlgMNote .mnRow{display:flex;align-items:center;gap:10px;margin:0 0 6px}
+#dlgMNote .mnHead{font-size:13px;font-weight:700;color:var(--accent);flex:1;min-width:0}
+#dlgMNote .mnNone{background:transparent;padding:8px 14px}
+#dlgMNote .mnNone .mnRow{margin:0 0 4px}
+#dlgMNote .mnNone .mnHead{color:var(--muted)}
+#dlgMNote .mnHint{color:var(--muted);font-size:12.5px}
+#dlgMNote .mnEdit{width:auto;min-height:0;height:28px;padding:0 12px;font-size:12.5px;white-space:nowrap;flex:none}
+#dlgMNote .mnBody{font-size:14px;line-height:1.55;color:var(--ink);white-space:pre-wrap;overflow-wrap:anywhere}
+#dlgMNote .mnBody .rt{white-space:normal}
+#dlgMNote .mnBody ul,#dlgMNote .mnBody ol{margin:.2em 0;padding-left:1.5em}
+#dlgMNote .mnBody ul{list-style:disc}#dlgMNote .mnBody ol{list-style:decimal}
+#dlgMNote .mnBody a{color:var(--accent);text-decoration:underline}
+#dlgMNote .mnEmpty{margin:auto;text-align:center;color:var(--muted);font-size:13.5px;padding:40px 10px}
+#dlgMNote .actions{display:flex;align-items:center;gap:8px;margin-top:12px;flex:none}
+#dlgMNote .actions .grow{flex:1}
+/* Điện thoại: hộp Ghi chú tuần / tháng toàn màn hình (giống bảng Tag), nút to dễ bấm, chừa vùng an toàn */
+@media (max-width:700px){
+  #dlgNote,#dlgNote[open],#dlgMNote,#dlgMNote[open]{position:fixed;inset:0;margin:0;width:100%;max-width:none;height:100dvh;max-height:none;border:0;border-radius:0}
+  #dlgNote[open],#dlgMNote[open]{display:flex;flex-direction:column}
+  #dlgNote form,#dlgMNote form{padding:calc(14px + env(safe-area-inset-top,0px)) 16px calc(12px + env(safe-area-inset-bottom,0px));height:100%;box-sizing:border-box}
+  #dlgNote .iconbtn,#dlgMNote .iconbtn{width:40px;height:40px;font-size:22px}
+  #dlgNote .rte .rtbody{font-size:16px;padding:12px}   /* 16px: iOS không tự phóng to khi gõ */
+  #dlgNote .actions,#dlgMNote .actions{gap:10px}
+  #dlgNote .actions .btn,#dlgMNote .actions .btn{height:44px;min-height:44px;padding:0 18px;font-size:14px}
+  #dlgNote .actions .btn.primary,#dlgMNote .actions .btn.primary{min-width:96px}
+  #dlgMNote .mnItem{padding:12px 14px 14px}
+  #dlgMNote .mnEdit{height:34px;padding:0 14px;font-size:13px}
+  #dlgMNote .mnBody{font-size:15px}
+}
+@media (max-width:760px){#profileDlg form{overflow:hidden!important}}
+/* Ghi chú tuần / tháng: dùng thanh cuộn tự vẽ của trang (ẩn thanh gốc) */
+#dlgNote .rte .rtbody,#dlgMNote .mnList{scrollbar-width:none;-ms-overflow-style:none}
+#dlgNote .rte .rtbody::-webkit-scrollbar,#dlgMNote .mnList::-webkit-scrollbar{width:0;height:0;display:none}
+#dlgMNote .mnList{margin:0 -20px;padding:0 20px}   /* thanh cuộn nằm ở lề phải, không đè lên các thẻ */
+@media (max-width:700px){#dlgMNote .mnList{margin:0 -16px;padding:0 16px}}
 </style>
 </head>
 <body>
@@ -7664,7 +7747,7 @@ html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.
 
   <div class="layout">
     <main>
-      <div class="legend" id="legend"><button type="button" class="mbtn" id="wmBtn" data-cur="week" title="Đang xem Tuần (W) — phím M để sang Tháng" aria-label="Chế độ Tuần"><b class="wm-l" aria-hidden="true">W</b></button><button type="button" class="mbtn" id="taBtn" data-cur="table"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/><g class="mb-tbl" fill="currentColor" stroke="none"><circle cx="8.3" cy="14" r="1.1"/><circle cx="12" cy="14" r="1.1"/><circle cx="15.7" cy="14" r="1.1"/><circle cx="8.3" cy="17.3" r="1.1"/><circle cx="12" cy="17.3" r="1.1"/><circle cx="15.7" cy="17.3" r="1.1"/></g><g class="mb-ag" stroke-width="1.9"><path d="M8 14h8M8 17.2h8"/></g></svg></button><button type="button" class="lg tgl" id="tagToggle" title="Mở bảng Tag" aria-label="Mở bảng Tag" aria-haspopup="dialog"><svg class="tgi" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M3.5 12.2V4.5a1 1 0 0 1 1-1h7.7a1 1 0 0 1 .7.3l7.6 7.6a1 1 0 0 1 0 1.4l-7.7 7.7a1 1 0 0 1-1.4 0L3.8 12.9a1 1 0 0 1-.3-.7z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="8.2" cy="8.2" r="1.5" fill="currentColor"/></svg><b class="tgn" id="tagBadge" hidden></b></button><div class="lgclip"><div class="lgroup" id="lgroup"></div></div></div>
+      <div class="legend" id="legend"><button type="button" class="mbtn" id="wmBtn" data-cur="week" title="Đang xem Tuần (W) — phím M để sang Tháng" aria-label="Chế độ Tuần"><b class="wm-l" aria-hidden="true">W</b></button><button type="button" class="mbtn" id="taBtn" data-cur="table"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/><g class="mb-tbl" fill="currentColor" stroke="none"><circle cx="8.3" cy="14" r="1.1"/><circle cx="12" cy="14" r="1.1"/><circle cx="15.7" cy="14" r="1.1"/><circle cx="8.3" cy="17.3" r="1.1"/><circle cx="12" cy="17.3" r="1.1"/><circle cx="15.7" cy="17.3" r="1.1"/></g><g class="mb-ag" stroke-width="1.9"><path d="M8 14h8M8 17.2h8"/></g></svg></button><button type="button" class="lg tgl" id="tagToggle" title="Mở bảng Tag" aria-label="Mở bảng Tag" aria-haspopup="dialog"><svg class="tgi" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M3.5 12.2V4.5a1 1 0 0 1 1-1h7.7a1 1 0 0 1 .7.3l7.6 7.6a1 1 0 0 1 0 1.4l-7.7 7.7a1 1 0 0 1-1.4 0L3.8 12.9a1 1 0 0 1-.3-.7z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="8.2" cy="8.2" r="1.5" fill="currentColor"/></svg><b class="tgn" id="tagBadge" hidden></b></button><button type="button" class="mbtn" id="noteBtn" title="Ghi chú tuần" aria-label="Ghi chú tuần" aria-haspopup="dialog"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4M12 2v4M16 2v4"/><rect width="16" height="18" x="4" y="4" rx="2"/><path d="M8 10h8M8 14h8M8 18h8"/></svg></button><button type="button" class="mbtn" id="mNoteBtn" title="Ghi chú tháng" aria-label="Ghi chú tháng" aria-haspopup="dialog"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4M12 2v4M16 2v4"/><rect width="16" height="18" x="4" y="4" rx="2"/><path d="M8 10h8M8 14h8M8 18h8"/></svg></button><div class="lgclip"><div class="lgroup" id="lgroup"></div></div></div>
       <section class="card" id="sched"></section>
     </main>
     <section class="below">
@@ -7727,7 +7810,7 @@ html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.
   <form id="tagForm" autocomplete="off">
     <div class="hubHead">
       <div class="dlgHead"><div><h2 id="hubTitle">Tag</h2></div><button type="button" class="iconbtn" id="tagCloseX" aria-label="Đóng">×</button></div>
-      <div class="hubTabs" id="hubTabs" role="tablist" data-t="view"><i class="hubInd" aria-hidden="true"></i><button type="button" role="tab" data-tab="view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></svg>Xem &amp; lọc</button><button type="button" role="tab" data-tab="manage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>Quản lý</button></div>
+      <div class="hubTabs" id="hubTabs" role="tablist" data-t="view"><i class="hubInd" aria-hidden="true"></i><button type="button" role="tab" data-tab="view">Xem &amp; lọc</button><button type="button" role="tab" data-tab="manage">Quản lý</button></div>
     </div>
     <div class="hubBody" id="hubBody"></div>
     <div class="hubFoot"><span class="grow"></span><button type="button" class="btn primary" id="tagClose">Xong</button></div>
@@ -7813,6 +7896,28 @@ html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.
   </form>
 </dialog>
 
+<dialog id="dlgNote" aria-labelledby="noteTitle">
+  <form id="noteForm" onsubmit="return false" autocomplete="off">
+    <div class="dlgHead">
+      <div><h2 id="noteTitle">Ghi chú tuần</h2><p class="abssub" id="noteSub"></p></div>
+      <div class="hdR"><button type="button" class="iconbtn" id="noteBack" title="Quay lại ghi chú tháng" aria-label="Quay lại ghi chú tháng" hidden><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><button type="button" class="iconbtn" id="noteCloseX" aria-label="Đóng">×</button></div>
+    </div>
+    <textarea id="noteText" rows="10" data-rte hidden aria-label="Ghi chú cho tuần này"></textarea>
+    <div class="actions"><button type="button" class="btn" id="noteClear">Xóa ghi chú</button><span class="grow"></span><button type="button" class="btn primary" id="noteDone">Xong</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlgMNote" aria-labelledby="mnTitle">
+  <form id="mnForm" onsubmit="return false" autocomplete="off">
+    <div class="dlgHead">
+      <div><h2 id="mnTitle">Ghi chú tháng</h2><p class="abssub" id="mnSub"></p></div>
+      <button type="button" class="iconbtn" id="mnCloseX" aria-label="Đóng">×</button>
+    </div>
+    <div class="mnList" id="mnList"></div>
+    <div class="actions"><span class="grow"></span><button type="button" class="btn primary" id="mnDone">Xong</button></div>
+  </form>
+</dialog>
+
 <dialog id="dlgConfirm" aria-labelledby="cfTitle">
   <form id="confirmForm" onsubmit="return false" autocomplete="off">
     <h2 id="cfTitle">Xác nhận</h2>
@@ -7870,6 +7975,7 @@ html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.
     </div>
     <p class="hint verifyHint" id="profileVerifyHint" hidden>Email chưa được xác minh. <a href="#" id="profileResendVerify">Gửi lại email xác minh</a></p>
 
+    <div class="acctScroll">
     <div class="acctSection">
       <button type="button" class="acctSectionSummary" aria-expanded="false">Thông tin cá nhân<span class="acctArrow" aria-hidden="true"></span></button>
       <div class="acctSectionCollapse"><div class="acctSectionBody"><div class="acctSectionPad">
@@ -7975,6 +8081,8 @@ html body[data-view="table"] #sched .sheet td .stk>:is(.cell,.dlcell):is(.cell,.
         <div class="setRow"><input name="delConfirm" placeholder="Nhập mã để xóa tài khoản" aria-label="Nhập mã xác nhận để xóa tài khoản" autocomplete="off" spellcheck="false"><button type="button" class="btn danger" id="profileDelete" title="Xóa tài khoản" aria-label="Xóa tài khoản">Xóa</button></div>
         <p class="err" id="delErr" role="alert"></p>
       </div></div></div>
+    </div>
+
     </div>
 
     <div class="actions acctFooter"><span class="grow"></span><button type="button" class="btn footerLogout" id="profileLogout" aria-label="Đăng xuất"><span class="lbl">Đăng xuất</span></button></div>
@@ -9538,7 +9646,7 @@ function _softPatch(host, html){
     return true;
   }catch(e){ return false; }
 }
-function render(){
+function render(){ try{ noteSync(); }catch(_){}
   dropUpcoming();
   fixView();
   if(isMonthView()) weekStart = mondayOf(calDate);
@@ -10131,7 +10239,7 @@ function fxRowPass(kind, sid){
   }
   return true;
 }
-const FX_FUNNEL = '<svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M2 3h12l-4.6 5.4V13l-2.8-1.6V8.4z" fill="currentColor"/></svg>';
+const FX_FUNNEL = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18l-7 8.2V19h-4v-5.8z"/></svg>';
 function fxFltBtn(kind, key, label){
   const on = !!(fxFilter[kind][key] && fxFilter[kind][key].length);
   return `<button type="button" class="fx-flt${on ? ' on' : ''}" data-fxflt="${kind}:${key}" title="Lọc và sắp xếp theo ${esc(label)}" aria-label="Lọc và sắp xếp theo ${esc(label)}" aria-haspopup="true">${FX_FUNNEL}</button>`;
@@ -10255,7 +10363,7 @@ const fxShow = list => !searchTextActive() ? list : qScope === 'dl' ? [] : list.
 function fixedHTML(){ return otherFixedHTML(); }
 function otherFixedHTML(){
   const today = todayStr(), kind = 'other', list = fixedList(kind); fxCache[kind] = fxBuildCache(kind, list);
-  let h = `<div class="card fxblk"><h3 class="fxh">Lịch</h3>${fxBar(kind)}<div class="scroller"><table class="fx" data-fx-kind="${kind}"><thead><tr><th class="n">#</th>${fxSortTh(kind,'name','Tên lịch / Nội dung')}${fxSortTh(kind,'tag','Tag')}${fxSortTh(kind,'when','Thời gian')}${fxSortTh(kind,'room','Địa điểm','nowrap')}${fxSortTh(kind,'teacher','Người phụ trách')}${fxLinkTh(kind)}</tr></thead><tbody>`;
+  let h = `<div class="card fxblk">${fxBar(kind)}<div class="scroller"><table class="fx" data-fx-kind="${kind}"><thead><tr><th class="n">#</th>${fxSortTh(kind,'name','Tên lịch / Nội dung')}${fxSortTh(kind,'tag','Tag')}${fxSortTh(kind,'when','Thời gian')}${fxSortTh(kind,'room','Địa điểm','nowrap')}${fxSortTh(kind,'teacher','Người phụ trách')}${fxLinkTh(kind)}</tr></thead><tbody>`;
   if(!list.length) h += '<tr><td colspan="7" class="none">Chưa có lịch</td></tr>';
   else if(searchTextActive() && !fxShow(list).length) h += '<tr><td colspan="7" class="none">Không có lịch nào trong phạm vi tìm kiếm này</td></tr>';
   fxShow(list).forEach(({cur:ev, vs}, i) => {
@@ -10507,8 +10615,8 @@ const RT_ICO = {
   left:'<path d="M4 6h16M4 10h10M4 14h16M4 18h10"/>',
   center:'<path d="M4 6h16M7 10h10M4 14h16M7 18h10"/>',
   right:'<path d="M4 6h16M10 10h10M4 14h16M10 18h10"/>',
-  ul:'<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1" fill="currentColor"/><circle cx="4.5" cy="12" r="1" fill="currentColor"/><circle cx="4.5" cy="18" r="1" fill="currentColor"/>',
-  ol:'<path d="M11 6h9M11 12h9M11 18h9"/><g stroke-width="1.2"><path d="M3.6 5.3 5 4.2V8"/><path d="M3.5 11.2a1.4 1.4 0 0 1 2.8 0c0 .9-1 1.5-2.8 2.8h3"/><path d="M3.5 16h2.7l-1.5 1.8c1 0 1.7.5 1.7 1.2s-.7 1.2-1.5 1.2c-.6 0-1.2-.2-1.6-.6"/></g>',
+  ul:'<path d="M10.5 5H21M10.5 12H21M10.5 19H21"/><g fill="currentColor" stroke="none"><circle cx="4.8" cy="5" r="1.7"/><circle cx="4.8" cy="12" r="1.7"/><circle cx="4.8" cy="19" r="1.7"/></g>',
+  ol:'<path d="M11 5h10M11 12h10M11 19h10"/><g stroke-width="1.4"><path d="M3.8 4.3 5.4 3.2v4.1"/><path d="M3.8 10.8a1.6 1.6 0 0 1 3 .6c0 1-1.3 1.5-3 2.6h3.2"/><path d="M3.8 16.9h3l-1.4 1.7a1.5 1.5 0 1 1-1.4 2.1"/></g>',
   caret:'<path d="m7 10 5 5 5-5"/>',
   clear:'<path d="M4 7V4h16v3"/><path d="M5 20h6"/><path d="M13 4 8 20"/><path d="m15 15 5 5"/><path d="m20 15-5 5"/>'
 };
@@ -10649,7 +10757,7 @@ function initRTE(ta){
     const c = b.dataset.c;
     if(c === 'size'){ saveSel(); openPop(b, sizeHTML(), v => { restoreSel(); pendingPx = +v; try{ document.execCommand('styleWithCSS', false, false); }catch(_){} document.execCommand('fontSize', false, '7'); after(); }); return; }
     if(c === 'color'){ saveSel(); openPop(b, palHTML(RT_TEXT_PAL, 'Mặc định', lastColor), v => { if(v){ lastColor = v; colBtn.style.setProperty('--bar', v); } run('foreColor', v || RT_SENTINEL); }); return; }
-    if(c === 'list'){ saveSel(); openPop(b, `<div class="rtlist"><button type="button" data-v="insertUnorderedList" title="Dấu chấm" aria-label="Dấu chấm">${rtSvg(RT_ICO.ul)}</button><button type="button" data-v="insertOrderedList" title="Đánh số" aria-label="Đánh số">${rtSvg(RT_ICO.ol)}</button></div>`, v => run(v)); return; }
+    if(c === 'list'){ saveSel(); openPop(b, `<div class="rtlist"><button type="button" data-v="insertUnorderedList" title="Dấu chấm" aria-label="Dấu chấm">${rtSvg(RT_ICO.ul).replace('width="16" height="16"', 'width="22" height="22"')}</button><button type="button" data-v="insertOrderedList" title="Đánh số" aria-label="Đánh số">${rtSvg(RT_ICO.ol).replace('width="16" height="16"', 'width="22" height="22"')}</button></div>`, v => run(v)); return; }
     if(c === 'hilite'){ saveSel(); openPop(b, palHTML(RT_HL_PAL, 'Không tô', lastHl), v => { if(v){ lastHl = v; hlBtn.style.setProperty('--bar', v); } run('hiliteColor', v || 'transparent'); }); return; }
     closePop();
     run(c === 'clear' ? 'removeFormat' : c);
@@ -12388,24 +12496,29 @@ function hubRenderSoon(fast){
   else hubT = setTimeout(hubFlush, 300);
 }
 function hubFlush(){ clearTimeout(hubT); cancelAnimationFrame(hubRaf); if(!hubDirty) return; hubDirty = false; render(); }
+function dlStats(){   // số deadline trong phạm vi đang xem: tổng · hoàn thành · chưa hoàn thành (chưa quá hạn) · quá hạn (cùng 3 nhóm với trang Deadline, cộng lại bằng tổng)
+  const l = weekDeadlines(), done = l.filter(t => t.done).length, late = l.filter(t => !t.done && t.due && dueLate(t)).length;
+  return {total:l.length, done, late, pend:l.length - done - late};
+}
 function tagStats(){
   const last = state.tags.length ? state.tags[state.tags.length - 1].id : '', S = {};
-  state.tags.forEach(t => S[t.id] = {n:0, min:0, cx:0, total:0, rec:0});
+  state.tags.forEach(t => S[t.id] = {n:0, min:0, cx:0, cf:0, total:0, rec:0});
   const idOf = ty => S[ty] ? ty : (ty === '' ? '' : last);
   state.events.forEach(ev => { const s = S[idOf(ev.type)]; if(!s) return; s.total++; if(isRec(ev)) s.rec++; });
   const occs = weekOccs(weekStart); let totalMin = 0, n = 0;
   occs.forEach(o => {
     const s = S[idOf(o.ev.type)];
     if(!s) return;
+    if(o.conflict) s.cf++;
     if(o.cancelled) s.cx++;
     else if(o.ev.start && o.ev.end){ const m = toMin(o.ev.end) - toMin(o.ev.start); s.n++; s.min += m; totalMin += m; n++; }
   });
   const cf = occs.filter(o => o.conflict), cfMin = cf.reduce((a, o) => a + (o.ev.start && o.ev.end ? toMin(o.ev.end) - toMin(o.ev.start) : 0), 0);
-  return {S, n, totalMin, cancel:occs.filter(o => o.cancelled).length, conflict:cf.length, cfMin, dl:weekDeadlines().length};
+  return {S, n, totalMin, cancel:occs.filter(o => o.cancelled).length, conflict:cf.length, cfMin, dl:dlStats()};
 }
-/* dòng thống kê của MỌI tag (kể cả mục "Hiển thị thêm"): ... buổi · ... giờ (phút → giờ) · ... buổi nghỉ */
+/* dòng thống kê của các tag: ... buổi · ... giờ (phút → giờ) · ... buổi nghỉ · ... buổi trùng; mục "Hiển thị thêm" có dòng riêng */
 const hubHoursVN = m => String(Math.round(m / 60 * 100) / 100).replace('.', ',');
-const hubStatLine = (n, min, cx) => `${n} buổi · ${hubHoursVN(min)} giờ · ${cx} buổi nghỉ`;
+const hubStatLine = (n, min, cx, cf) => `${n} buổi · ${hubHoursVN(min)} giờ · ${cx} buổi nghỉ · ${cf} buổi trùng lịch`;
 function hubSumHTML(st, tsel){
   const head = tsel ? `Đang lọc <b>${state.tags.filter(t => tagSel.has(t.id)).length}/${state.tags.length}</b> tag` : `Đang hiện <b>${state.tags.length}</b> tag`;
   return `<span>${head} · Tuần ${dmy(mondayOf(weekStart))}</span><button type="button" class="btn" data-act="clr" data-k="clr" ${tsel ? '' : 'disabled'}>Hiện tất cả</button>`;
@@ -12478,7 +12591,7 @@ function hubSwitch(to){
 function hubViewHTML(st, tsel){
   const cards = state.tags.map(t => {
     const s = st.S[t.id], sel = tsel && tagSel.has(t.id), nsel = tsel && !sel, pct = st.totalMin ? Math.round(s.min / st.totalMin * 100) : 0;
-    const meta = hubStatLine(s.n, s.min, s.cx);   // chỉ số liệu của tuần đang xem
+    const meta = hubStatLine(s.n, s.min, s.cx, s.cf);   // chỉ số liệu của tuần đang xem
     return `<div class="hubCard${sel ? ' sel' : ''}${nsel ? ' nsel' : ''}" role="checkbox" aria-checked="${sel}" tabindex="0" data-act="sel" data-id="${esc(t.id)}" data-k="sel:${esc(t.id)}" style="--c:${esc(t.color)}">
       <span class="hubChk" aria-hidden="true"></span>
       <div class="hubMain"><b>${esc(t.name)}</b><small>${esc(meta)}</small><div class="hubBar" title="${pct}% số giờ trong tuần"><i style="width:${pct}%"></i></div></div>
@@ -12488,9 +12601,9 @@ function hubViewHTML(st, tsel){
   return `<div class="hubSum" id="hubSum">${hubSumHTML(st, tsel)}</div>
     <div class="hubList" role="group" aria-label="Chọn tag để lọc">${cards}</div>
     <div class="hubSec">Hiển thị thêm</div>
-    ${sw('__dl', 'Deadline', statusColor('dl'), hubStatLine(st.dl, 0, 0))}
-    ${sw('__cancel', 'Lịch nghỉ', statusColor('cancel'), hubStatLine(0, 0, st.cancel))}
-    ${sw('__conflict', 'Lịch trùng', statusColor('conflict'), hubStatLine(st.conflict, st.cfMin, 0))}`;
+    ${sw('__dl', 'Deadline', statusColor('dl'), `${st.dl.total} deadline · ${st.dl.late} quá hạn · ${st.dl.done} hoàn thành · ${st.dl.pend} chưa hoàn thành`)}
+    ${sw('__cancel', 'Nghỉ', statusColor('cancel'), `${st.cancel} buổi nghỉ`)}
+    ${sw('__conflict', 'Trùng lịch', statusColor('conflict'), `${st.conflict} buổi trùng lịch`)}`;
 }
 function hubManageHTML(st){
   const n = state.tags.length;
@@ -12818,6 +12931,79 @@ document.addEventListener('click', e => {
   if(!dlgAbs.open) dlgAbs.showModal();
 }, true);
 $('#absClose').addEventListener('click', () => closeDialog(dlgAbs));
+/* ---------- Ghi chú tuần (PC): lưu theo ngày Thứ Hai của tuần đang xem trong state.notes ---------- */
+const dlgNote = $('#dlgNote'), noteText = $('#noteText');
+let noteKey = '';
+/* ô ghi chú dùng cùng trình soạn thảo (initRTE) với mục Nội dung của Thêm lịch: textarea chỉ giữ dữ liệu, gõ ở .rtbody */
+const noteBody = dlgNote.querySelector('.rtbody');
+if(noteBody) noteBody.setAttribute('aria-label', 'Ghi chú cho tuần này');
+function noteFocus(){
+  if(!noteBody){ noteText.focus({preventScroll:true}); return; }
+  noteBody.focus({preventScroll:true});
+  const sel = getSelection(), r = document.createRange();
+  r.selectNodeContents(noteBody); r.collapse(false); sel.removeAllRanges(); sel.addRange(r);   // đặt con trỏ ở cuối nội dung
+}
+const noteGet = k => String((state.notes && state.notes[k]) || '');
+/* các tuần (thứ Hai) có phần nào nằm trong tháng đang xem, kèm ghi chú nếu có */
+function monthNoteWeeks(all){
+  const r = calMonthBounds(), out = [];
+  for(let k = mondayOf(r.from); k <= r.to; k = addDays(k, 7)){ const t = noteGet(k); if(all || t.trim()) out.push({key:k, text:t}); }
+  return out;
+}
+function noteSync(){
+  { const mb = $('#mNoteBtn'); if(mb){ let has = false; try{ has = monthNoteWeeks().length > 0; }catch(_){} mb.classList.toggle('on', has); const t = has ? 'Ghi chú tháng (đã có ghi chú)' : 'Ghi chú tháng'; mb.title = t; mb.setAttribute('aria-label', t); } }
+  const b = $('#noteBtn'); if(!b) return;
+  const has = !!noteGet(mondayOf(weekStart)).trim();
+  b.classList.toggle('on', has);
+  const t = has ? 'Ghi chú tuần (đã có ghi chú)' : 'Ghi chú tuần';
+  b.title = t; b.setAttribute('aria-label', t);
+}
+function openWeekNote(key){
+  noteKey = (typeof key === 'string' && key) || mondayOf(weekStart);
+  { const bk = $('#noteBack'); if(bk) bk.hidden = !mnReturn; }   // nút Quay lại chỉ hiện khi mở từ bảng Ghi chú tháng
+  $('#noteSub').textContent = `Tuần ${dmy(noteKey)}`;
+  noteText.value = noteGet(noteKey);
+  if(!dlgNote.open) dlgNote.showModal();
+  noteFocus();
+}
+function noteFlush(){
+  if(!noteKey) return;
+  const v = noteText.value.replace(/\s+$/, ''), old = noteGet(noteKey);
+  if(v !== old){
+    if(!state.notes || typeof state.notes !== 'object') state.notes = {};
+    if(v.trim()) state.notes[noteKey] = v; else delete state.notes[noteKey];
+    save();
+  }
+  noteSync();
+}
+const dlgMNote = $('#dlgMNote');
+function openMonthNote(){
+  const r = calMonthBounds(), list = monthNoteWeeks(true), keep = $('#mnList').scrollTop;
+  $('#mnSub').textContent = `Tháng ${+r.from.slice(5,7)}/${r.from.slice(0,4)}`;
+  $('#mnList').innerHTML = list.map(n => n.text.trim()
+    ? `<div class="mnItem"><div class="mnRow"><div class="mnHead">Tuần ${dmy(n.key)}</div><button type="button" class="btn mnEdit" data-wk="${n.key}" aria-label="Sửa ghi chú tuần ${dmy(n.key)}">Sửa</button></div><div class="mnBody">${bodyHTML(n.text)}</div></div>`
+    : `<div class="mnItem mnNone"><div class="mnRow"><div class="mnHead">Tuần ${dmy(n.key)}</div><button type="button" class="btn mnEdit" data-wk="${n.key}" aria-label="Sửa ghi chú tuần ${dmy(n.key)}">Sửa</button></div><div class="mnHint">Chưa có ghi chú</div></div>`).join('');
+  $('#mnList').scrollTop = keep;
+  if(!dlgMNote.open) dlgMNote.showModal();
+}
+/* bấm Sửa / Thêm: đóng bảng tổng hợp, mở hộp soạn ghi chú của đúng tuần đó; soạn xong (Xong / Esc) quay lại bảng tổng hợp đã cập nhật */
+let mnPending = null, mnReturn = false;
+$('#mnList').addEventListener('click', e => {
+  const b = e.target.closest('.mnEdit'); if(!b) return;
+  mnPending = b.dataset.wk; closeDialog(dlgMNote);
+});
+dlgMNote.addEventListener('close', () => { if(mnPending){ const k = mnPending; mnPending = null; mnReturn = true; openWeekNote(k); } });
+dlgNote.addEventListener('close', () => { if(mnReturn){ mnReturn = false; setTimeout(openMonthNote, 0); } });   // setTimeout: để noteFlush (đăng ký ngay bên dưới) lưu xong rồi mới dựng lại bảng tổng hợp
+$('#mnDone').addEventListener('click', () => closeDialog(dlgMNote));
+$('#mnCloseX').addEventListener('click', () => closeDialog(dlgMNote));
+dlgMNote.addEventListener('click', e => { if(bdHit(e, dlgMNote)) closeDialog(dlgMNote); });
+dlgNote.addEventListener('close', noteFlush);   // đóng bằng Xong, Esc hay bấm nền đều lưu
+$('#noteDone').addEventListener('click', () => closeDialog(dlgNote));
+$('#noteBack').addEventListener('click', () => closeDialog(dlgNote));   // lưu rồi quay lại bảng Ghi chú tháng (mnReturn còn bật)
+$('#noteCloseX').addEventListener('click', () => { mnReturn = false; closeDialog(dlgNote); });   // × = đóng hẳn, không quay lại bảng tháng
+$('#noteClear').addEventListener('click', () => { noteText.value = ''; noteFocus(); });
+dlgNote.addEventListener('click', e => { if(bdHit(e, dlgNote)){ mnReturn = false; closeDialog(dlgNote); } });
+noteSync();
 dlgAbs.addEventListener('click', e => { if(bdHit(e, dlgAbs)) closeDialog(dlgAbs); });
 $('#lkClose').addEventListener('click', () => closeDialog(dlgLinks));
 dlgLinks.addEventListener('click', e => { if(bdHit(e, dlgLinks)) closeDialog(dlgLinks); });
@@ -12944,9 +13130,10 @@ document.addEventListener('keydown', e => {
 { const bar=$('#mbar'), lg=$('#legend'), wm=$('#wmBtn'), ta=$('#taBtn'), tg=$('#tagToggle');   /* máy tính: W/M · Bảng/Danh sách · Tag nằm trên thanh đầu; điện thoại: về lại hàng legend */
   if(bar && lg && wm && ta && tg){
     const mq = matchMedia('(min-width:701px)');
-    const place = () => { if(mq.matches){ [wm, ta, tg].forEach(b => bar.appendChild(b)); } else { const ref = lg.querySelector('.lgclip'); [wm, ta, tg].forEach(b => lg.insertBefore(b, ref));   /* chèn trước vùng tag đang lọc, đúng thứ tự W/M · Bảng/Danh sách · Tag */ } };
+    const nb = $('#noteBtn'), mnb = $('#mNoteBtn'), grp = [wm, ta, tg, nb, mnb].filter(Boolean);
+    const place = () => { if(mq.matches){ grp.forEach(b => bar.appendChild(b)); } else { const ref = lg.querySelector('.lgclip'); grp.forEach(b => lg.insertBefore(b, ref));   /* chèn trước vùng tag đang lọc, đúng thứ tự W/M · Bảng/Danh sách · Tag */ } };
     place(); mq.addEventListener('change', place);
-    bar.addEventListener('click', e => { if(e.target.closest('#tagToggle')) openTags(); });   /* ở trên thanh đầu, nút Tag không còn nằm trong #legend nên tự bắt click */
+    bar.addEventListener('click', e => { if(e.target.closest('#tagToggle')) openTags(); else if(e.target.closest('#noteBtn')) openWeekNote(); else if(e.target.closest('#mNoteBtn')) openMonthNote(); });   /* ở trên thanh đầu, nút Tag không còn nằm trong #legend nên tự bắt click */
   } }
 { const chip=$('#wkChip'), j=$('#jump');   /* chip Tuần/Tháng = nút chọn ngày (đã gộp nút lịch) */
   if(chip && j){
@@ -13737,7 +13924,7 @@ setInterval(minuteRender, 60000);
 (() => {
   'use strict';
   if(matchMedia('(hover:none),(pointer:coarse)').matches){ document.documentElement.classList.add('sb-hide'); return; }   // cảm ứng: thanh cuộn tự vẽ đã bị CSS ẩn -> khỏi đo layout mỗi lần cuộn / mỗi 6 giây / mỗi lần DOM đổi
-  const SEL = '.scroller, #sched, ul.todos, dialog, #profileDlg form, #authGate, #legend, .np-list, .fx-pop-list';   /* #sched = lịch dạng Danh sách: đăng ký thẳng để thanh cuộn tự vẽ luôn được tạo (trước đây phải chờ lượt quét tự phát hiện, nên thanh gốc lộ ra lâu) */
+  const SEL = '.scroller, #sched, ul.todos, dialog, #profileDlg form, #profileDlg .acctScroll, #dlgNote .rtbody, #dlgMNote .mnList, #authGate, #legend, .np-list, .fx-pop-list';   /* #sched = lịch dạng Danh sách: đăng ký thẳng để thanh cuộn tự vẽ luôn được tạo (trước đây phải chờ lượt quét tự phát hiện, nên thanh gốc lộ ra lâu) */
   const WIN = window;
   const recs = new Map();                       // phần tử -> {el, host, y, x, m}
   const layer = document.createElement('div');
@@ -14359,8 +14546,9 @@ var ic={
  week:'<svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M8 4v16M12 4v16M16 4v16"/></svg>',
  month:'<svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M3.5 9.3h17M3.5 14.6h17M9.2 4v16M14.8 4v16"/></svg>',
  agenda:'<svg viewBox="0 0 24 24"><path d="M9 6.5h11M9 12h11M9 17.5h11"/><path d="M4.5 6.5h.01M4.5 12h.01M4.5 17.5h.01"/></svg>',
+ note:'<svg viewBox="0 0 24 24"><path d="M8 2v4M12 2v4M16 2v4"/><rect width="16" height="18" x="4" y="4" rx="2"/><path d="M8 10h8M8 14h8M8 18h8"/></svg>',
  monthAgenda:'<svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M3.5 9.3h17M8 4v5.3M9 13h10M9 16.5h7"/></svg>'};
-var items=[['week','Tuần'],['month','Tháng'],'-',['deadline','Deadline'],['fixed','Lớp']];   /* Bảng/Danh sách đã có nút riêng trên thanh trên cùng; ở đây chỉ chọn Tuần / Tháng */   /* nút Bảng/Danh sách trên thanh trên cùng (điện thoại) đã chuyển vào đây */
+var items=[['week','Tuần'],['month','Tháng'],'-',['note','Ghi chú'],'-',['deadline','Deadline'],['fixed','Lớp']];   /* Bảng/Danh sách đã có nút riêng trên thanh trên cùng; ở đây chỉ chọn Tuần / Tháng */   /* nút Bảng/Danh sách trên thanh trên cùng (điện thoại) đã chuyển vào đây */
 var d=document.createElement('nav'); d.id='gDrawer'; d.setAttribute('aria-label','Menu'); d.setAttribute('role','dialog');
 d.innerHTML='<h2>Lịch trình</h2>'+items.map(function(i){return i==='-'?'<hr>':'<button type="button" class="gdi" data-g="'+i[0]+'">'+ic[i[0]]+'<span>'+i[1]+'</span></button>';}).join('');
 var sc=document.createElement('div'); sc.id='gScrim';
@@ -14372,6 +14560,7 @@ function sync(){
   if(g==='table'||g==='deadline'||g==='fixed') a=(g===v);
   else if(g==='week') a=(sv==='table'||sv==='agenda');
   else if(g==='month') a=(sv==='cal'||sv==='monthAgenda');
+  if(g==='note'){ var nb=$('#noteBtn'),mb=$('#mNoteBtn'),m2=(sv==='cal'||sv==='monthAgenda'); a=!!((m2?mb:nb)&&(m2?mb:nb).classList.contains('on')); }
   b.classList.toggle('on',a); b.setAttribute('aria-current',a?'true':'false');});
  var t=$('#gdTitle'); if(t)t.textContent=v==='deadline'?'Deadline':v==='fixed'?'Lớp':'';
 }
@@ -14384,6 +14573,11 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&document.b
 d.addEventListener('click',function(e){
  var b=e.target.closest('.gdi'); if(!b)return; var g=b.dataset.g;
  if(g==='table'||g==='deadline'||g==='fixed'){ var s=$('#viewSeg button[data-v="'+g+'"]'); if(s)s.click(); }
+ else if(g==='note'){   /* Ghi chú: dạng Tháng mở tổng hợp tháng, còn lại mở ghi chú của tuần đang xem */
+  var sv2=(typeof state!=='undefined'&&state.view)||document.body.dataset.view;
+  open(false);
+  if(sv2==='cal'||sv2==='monthAgenda'){ if(typeof openMonthNote==='function')openMonthNote(); } else if(typeof openWeekNote==='function')openWeekNote();
+  return; }
  else if(g==='week'){   /* Tuần: giữ nguyên dạng Bảng/Danh sách đang dùng */
   var want=(state.view==='agenda'||state.view==='monthAgenda')?'agenda':'table';
   if(state.view==='cal'||state.view==='monthAgenda') weekStart=mondayOf(calDate);
