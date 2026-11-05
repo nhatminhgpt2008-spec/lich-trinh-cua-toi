@@ -2878,12 +2878,20 @@ body .layout.ag-on .below #dlNew.card:not([hidden]){padding-top:10px}   /* PC: 1
 #dlgOffDate .dpw{display:block;width:100%}
 #dlgOffDate .dpw>input{width:100%;box-sizing:border-box}
 .fx-offrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
-.fx-offbtn{height:auto;padding:1px 9px;border-radius:99px;font-size:11.5px;font-weight:600;background:transparent;border:1px solid var(--accent);color:var(--ink);cursor:pointer;line-height:1.6}
+.fx-offbtn{display:inline-block;height:auto;margin-left:4px;vertical-align:1px;padding:0 8px;border-radius:99px;font-size:10.5px;font-weight:600;background:transparent;border:1px solid var(--accent);color:var(--ink);cursor:pointer;line-height:1.6;white-space:nowrap}
 .fx-offbtn:hover{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+@media (max-width:700px){.fx-offbtn{min-height:28px;padding:0 12px;font-size:12px;margin-left:6px}}   /* điện thoại: nút đủ lớn để chạm */
 @media (hover:hover){.fx-offbtn{opacity:0;transition:opacity .15s}.fx-row:hover .fx-offbtn,.fx-offbtn:focus-visible{opacity:1}}   /* Khôi phục chỉ hiện khi rê chuột vào dòng (máy cảm ứng không rê được nên luôn hiện) */
 .fx-row.ended{opacity:.6}
 .fx-row.ended:hover{opacity:1}
-.fxend{display:flex;justify-content:flex-end;padding:8px 12px 0}
+/* nút Ẩn/Hiện lớp đã nghỉ: cùng giao diện + hiệu ứng với nút Hôm nay (chữ xám, viền xám; rê chuột → chữ + viền màu nhấn, nổi nhẹ trên máy tính; bấm thì co 0.95) */
+.top #fxEndTop{order:-1;display:none;position:relative;z-index:0;box-sizing:border-box;height:36px;min-width:0;margin:0 4px 0 0;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)!important;color:var(--muted)!important;font-size:13px;font-weight:600;letter-spacing:.005em;white-space:nowrap;cursor:pointer;transition:background-color var(--mo),border-color var(--mo),color var(--mo),transform var(--mo) var(--ease)}
+.top #fxEndTop:hover,.top #fxEndTop:focus-visible{z-index:5;background:var(--surface)!important;border-color:var(--accent)!important;color:var(--accent)!important;box-shadow:none!important}
+@media screen and (min-width:701px){.top #fxEndTop:hover{transform:translateY(-1px)}}
+@media (hover:none){.top #fxEndTop:hover{transform:none}}
+.top #fxEndTop:active{transform:scale(.95);box-shadow:none!important;transition-duration:.08s}
+@media (max-width:700px){.top #fxEndTop{order:2;flex:0 1 auto;min-width:0;max-width:calc(100% - 150px);overflow:hidden;text-overflow:ellipsis;height:34px;border-radius:12px;padding:0 10px;font-size:12.5px}}   /* điện thoại: đứng sau nút menu ☰ và tiêu đề, không chen lên trước nút menu */
+body[data-view="fixed"] .top #fxEndTop:not([hidden]){display:inline-flex;align-items:center}
 .fxend-btn{height:auto;padding:3px 12px;border-radius:99px;font-size:12px;font-weight:600;background:transparent;border:1px solid var(--line);color:var(--muted);cursor:pointer}
 .fxend-btn:hover{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 #dlgAbs .abssum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 12px;flex:none}
@@ -4572,6 +4580,8 @@ body.ci-open #selBar{display:none!important}   /* hộp thông tin Tháng đã c
 #profileDlg .setTxt b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #profileDlg .setTxt.fix{flex:0 0 auto}
 #profileDlg .rowAct{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+#profileDlg .setRow:has(.rowAct [data-a="manual"]){flex-wrap:wrap}
+#profileDlg .rowAct:has([data-a="manual"]){flex-wrap:wrap;justify-content:flex-end;margin-left:auto}   /* 3 nút: màn hình hẹp thì xuống dòng gọn bên phải */
 #profileDlg .setRow .btn.icn{width:32px;padding:0;display:inline-flex;align-items:center;justify-content:center}
 #profileDlg .setRow .btn.primary{font-weight:600}
 #profileDlg .setRow input:not([type=checkbox]){flex:1 1 0;min-width:0;width:auto;height:32px!important;padding:0 10px;font:500 12.5px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-overflow:ellipsis}
@@ -5583,7 +5593,8 @@ button,a,select,label,summary,[role=button]{touch-action:manipulation}
   body[data-view="fixed"] .fx[data-fx-kind="other"] th:nth-child(4){width:190px}
   body[data-view="fixed"] .fx[data-fx-kind="other"] th:nth-child(5){width:130px}
   body[data-view="fixed"] .fx[data-fx-kind="other"] th:nth-child(6){width:170px}
-  body[data-view="fixed"] .fx[data-fx-kind="other"] th:nth-child(7){width:108px}
+  body[data-view="fixed"] .fx[data-fx-kind="other"] th:nth-child(7){width:60px}
+  body[data-view="fixed"] .fx[data-fx-kind="other"] :is(th,td):nth-child(7){padding-left:4px;padding-right:4px}   /* cột Liên kết: bớt đệm hai bên để hẹp được; chữ "Liên kết" tự xuống dòng cạnh nút lọc */
 }
 @media (max-width:700px){
   body[data-view="deadline"] #dlPanel.page{padding-left:4px!important;padding-right:4px!important}
@@ -7738,6 +7749,7 @@ body:not([data-view="cal"]):not([data-view="monthAgenda"]) #mNoteBtn{display:non
 <div id="bootScreen"><div class="bootSpin" aria-hidden="true"></div><p>Đang kiểm tra đăng nhập…</p></div>
 <div class="app">
   <header class="top">
+    <button type="button" class="fxend-btn" id="fxEndTop" data-fxend="1" hidden></button>
     <div class="brand"><h1>Lịch trình của tôi</h1><p id="range"></p></div>
     <div class="nav">
       <button id="prev" title="Tuần trước (←)" aria-label="Tuần trước">‹</button>
@@ -8097,7 +8109,7 @@ body:not([data-view="cal"]):not([data-view="monthAgenda"]) #mNoteBtn{display:non
           <div class="setRow statRow main"><i class="statDot"></i><span id="profileSyncInfo"></span></div>
           <div class="setRow statRow"><div class="setTxt"><b>Sao lưu tự động</b></div><span class="v" id="abInfo" hidden></span></div>
         </div>
-        <div class="setRow"><div class="setTxt"><b>Dữ liệu</b></div><div class="rowAct"><button type="button" class="btn primary" data-a="backup">Tải về</button><button type="button" class="btn" data-a="import">Khôi phục</button></div></div>
+        <div class="setRow"><div class="setTxt"><b>Dữ liệu</b></div><div class="rowAct"><button type="button" class="btn" data-a="manual" title="Lưu một bản sao ngay trên máy này, xem lại ở Phiên bản trước đó">Sao lưu thủ công</button><button type="button" class="btn primary" data-a="backup">Tải về</button><button type="button" class="btn" data-a="import">Khôi phục</button></div></div>
         <div class="setRow"><div class="setTxt"><b>Xuất lịch (.ics)</b></div><button type="button" class="btn" data-a="ics">Xuất</button></div>
         <div class="setRow"><div class="setTxt"><b>Phiên bản trước đó</b></div><button type="button" class="btn" id="versionsBtn" data-a="versions" aria-expanded="false" aria-controls="versionList">Xem</button></div>
         <div id="versionList" hidden></div>
@@ -8384,7 +8396,7 @@ const KEY = 'uit-planner-v2';
 const SCHEMA = 7;
 const DATA_FILE = 'lich-trinh-data.json';
 function emptyState(){
-  return {events:[], todos:[], notes:{}, view:null, tableStacked:false, tags:DEFAULT_TAGS.map(t=>({...t})), rows:[], status:{cancel:null, conflict:null}, fixedOrder:{school:[], other:[]}, fixedSort:{school:{key:'manual',dir:1}, other:{key:'manual',dir:1}}, repeatTypes:DEFAULT_REPEATS.map(r => ({...r})), fillV2:true, repeatV2:true, schema:SCHEMA};
+  return {events:[], todos:[], notes:{}, view:null, tableStacked:false, tags:DEFAULT_TAGS.map(t=>({...t})), rows:[], status:{cancel:null, conflict:null}, fixedOrder:{school:[], other:[]}, fixedSort:{school:{key:'manual',dir:1}, other:{key:'tag',dir:1}}, fxTagSort:true, repeatTypes:DEFAULT_REPEATS.map(r => ({...r})), fillV2:true, repeatV2:true, schema:SCHEMA};
 }
 function migrate(st){
   st.events.forEach(ev => {
@@ -8394,7 +8406,7 @@ function migrate(st){
     delete ev.credits; delete ev.mode; delete ev.tc; delete ev.htgd; delete ev.size; delete ev.periods;
     if(ev.kind === 'free') ev.kind = 'event';   // “Lịch tự do” đã bỏ: ô cũ thành lịch thường (giữ nguyên nội dung)
     if(isRec(ev) && !ev.series) ev.series = ev.id;
-    // (không tự đổi lịch lặp đang “Nghỉ” cũ thành Nghỉ hẳn nữa: việc đó làm lớp biến mất khỏi Lớp/Bảng; isOffRow vẫn hiển thị đúng tag Nghỉ)
+    liftWholeCancel(ev);   // dữ liệu cũ (kể cả bản khôi phục): cả lịch lặp đặt “Nghỉ” → chuyển sang mô hình off để đồng bộ với tính năng hiện tại (chỉ chạy lúc nạp/khôi phục, không chạy mỗi lần lưu)
   });
   if((st.schema||0) < 5){                       // bỏ tag ELITE cũ, chuyển sang “Sự kiện”
     st.tags = st.tags.filter(t => t.id !== 'elite');
@@ -8483,7 +8495,8 @@ function norm(s){
     if(!st.fixedSort[k].key) st.fixedSort[k].key = 'manual';
     st.fixedSort[k].dir = st.fixedSort[k].dir === -1 ? -1 : 1;
   });
-  ['school','other'].forEach(k => { if(['tc','htgd','note'].includes(st.fixedSort[k].key)) st.fixedSort[k].key = 'manual'; });   // đưa các khóa sắp xếp của cột đã bỏ về mặc định
+  ['school','other'].forEach(k => { if(['tc','htgd','note'].includes(st.fixedSort[k].key)) st.fixedSort[k].key = 'manual'; });
+  if(!st.fxTagSort){ st.fixedSort.other = {key:'tag', dir:1}; st.fxTagSort = true; }   // một lần: mục Lớp mặc định sắp theo Tag A → Z (sau đó muốn đổi cách sắp xếp thì vẫn được, lựa chọn được giữ nguyên)   // đưa các khóa sắp xếp của cột đã bỏ về mặc định
   st.repeatTypes = normRepeatTypes(st.repeatTypes, st.events);
   if(!st.repeatV2){   // thêm một lần các kiểu lặp theo ngày / tháng / năm cho dữ liệu cũ (xóa đi thì không bị thêm lại)
     DEFAULT_REPEATS.forEach(d => { if(!st.repeatTypes.some(x => x.id === d.id)) st.repeatTypes.push({...d}); });
@@ -8770,10 +8783,29 @@ function safeSnap(reason, obj){
     const list = safeList();
     if(list.length && list[list.length - 1].json === json) return;
     list.push({t:Date.now(), reason, json});
-    while(list.length > SAFE_MAX) list.shift();
-    while(list.length > 1 && JSON.stringify(list).length > 2500000) list.shift();   // giữ trong hạn mức localStorage
+    safeTrim(list);
     localStorage.setItem(safeKey(), JSON.stringify(list));
   }catch(e){}
+}
+/* bản tự chụp tối đa SAFE_MAX; bản “Sao lưu thủ công” (manual) tính riêng, tối đa SAFE_MAX bản, nên bấm sao lưu không đẩy mất các bản tự chụp (và ngược lại) */
+function safeTrim(list){
+  const drop = man => { const i = list.findIndex(x => !!x.manual === man); if(i >= 0) list.splice(i, 1); return i >= 0; };
+  while(list.filter(x => !x.manual).length > SAFE_MAX) drop(false);
+  while(list.filter(x => x.manual).length > SAFE_MAX) drop(true);
+  while(list.length > 1 && JSON.stringify(list).length > 2500000) if(!drop(false)) drop(true);   // giữ trong hạn mức localStorage: bỏ bản tự chụp cũ trước
+}
+function manualBackup(){
+  let json, st; try{ json = JSON.stringify(state); st = norm(JSON.parse(json)); }catch(e){ toast('Không sao lưu được.'); return; }
+  if(!hasData(st)){ toast('Chưa có dữ liệu để sao lưu.'); return; }
+  try{
+    const list = safeList(), last = list[list.length - 1];
+    if(last && last.json === json){ last.manual = true; last.reason = 'sao lưu thủ công'; last.t = Date.now(); }   // dữ liệu y hệt bản gần nhất: đánh dấu bản đó là sao lưu thủ công thay vì tạo bản trùng
+    else list.push({t:Date.now(), reason:'sao lưu thủ công', json, manual:true});
+    safeTrim(list);
+    localStorage.setItem(safeKey(), JSON.stringify(list));
+  }catch(e){ toast('Không sao lưu được: bộ nhớ trình duyệt đã đầy.'); return; }
+  const box = versionBox(); if(box && !box.hidden) renderVersions();
+  toast('Đã sao lưu · ' + safeCounts(json) + '. Xem ở “Phiên bản trước đó”.', 3500);
 }
 const safeCounts = json => { try{ const t = norm(JSON.parse(json)); return t.events.length + ' lịch · ' + t.todos.length + ' deadline · ' + Object.keys(t.notes || {}).length + ' ghi chú'; }catch(e){ return 'không đọc được'; } };
 const versionBox = () => document.getElementById('versionList');
@@ -10196,8 +10228,8 @@ function fixedFieldCmp(a,b,key){
   if(typeof av === 'number' && typeof bv === 'number') return av-bv;
   return String(av).localeCompare(String(bv),'vi',{numeric:true,sensitivity:'base'});
 }
-/* lớp có tag nghỉ (Nghỉ / Tạm nghỉ) luôn nằm cuối danh sách Lớp */
-const isOffRow = ev => ev.status === 'cancelled' || !!offOf(ev);
+/* lớp đã nghỉ hoặc Tạm nghỉ nằm cuối danh sách Lớp; lớp “Nghỉ từ …” chưa tới ngày vẫn nằm cùng lớp chưa nghỉ */
+const isOffRow = ev => { const o = offOf(ev); return ev.status === 'cancelled' || (!!o && (o.type === 'pause' || o.from <= todayStr())); };   // Nghỉ chưa tới ngày thì vẫn xếp cùng các lớp chưa nghỉ; xuống cuối khi đã nghỉ
 function fixedList(kind){
   const list = fixedSeries(kind);
   const st = state.fixedSort?.[kind] || {key:'manual',dir:1};
@@ -10435,20 +10467,21 @@ addEventListener('scroll', () => { if(fxPop) fxPopPlace(); }, {capture:true, pas
 /* đang tìm: chỉ hiện các lớp khớp ở bất kỳ phiên bản nào của chuỗi lịch; không làm mất kết quả do một phiên bản cũ/mới khác nhau */
 const fxSeriesScore = x => Math.max(0,...(x.vs||[x.cur]).map(v => eventSearchScoreFor(v, query, searchDateForEvent(v))));
 const fxShow = list => !searchTextActive() ? list : qScope === 'dl' ? [] : list.filter(x => fxSeriesScore(x) > 0).sort((a,b) => Number(isOffRow(a.cur)) - Number(isOffRow(b.cur)) || fxSeriesScore(b) - fxSeriesScore(a));
-let fxShowEnded = false; try{ fxShowEnded = localStorage.getItem('lt_showEnded') === '1'; }catch(_){}
+let fxShowEnded = true; try{ fxShowEnded = localStorage.getItem('lt_showEnded') !== '0'; }catch(_){}   // mặc định HIỆN lớp đã nghỉ để không tưởng mất dữ liệu
 function offTagHTML(ev){
   const o = offOf(ev);
   if(o) return o.type === 'end' ? `<span class="tag x">Nghỉ từ ${dmy(o.from)}</span>` : `<span class="tag x">Tạm nghỉ ${dmy(o.from)} – ${dmy(o.to)}</span>`;
   return ev.status === 'cancelled' ? '<span class="tag x">Nghỉ</span>' : '';
 }
 function offBtnsHTML(ev){
-  return offOf(ev) ? `<div class="fx-offrow"><button type="button" class="fx-offbtn" data-offact="restore" data-id="${esc(ev.id)}">Khôi phục</button></div>` : '';
+  return offOf(ev) ? `<button type="button" class="fx-offbtn" data-offact="restore" data-id="${esc(ev.id)}">Khôi phục</button>` : '';   // nằm ngay cạnh tag “Nghỉ từ …”
 }
 function fixedHTML(){ return otherFixedHTML(); }
 function otherFixedHTML(){
   const today = todayStr(), kind = 'other', list = fixedList(kind); fxCache[kind] = fxBuildCache(kind, list);
   const endedN = list.filter(x => endedNow(x.cur)).length; let vis = 0;
-  let h = `<div class="card fxblk">${fxBar(kind)}${endedN ? `<div class="fxend"><button type="button" class="fxend-btn" data-fxend="1" aria-pressed="${fxShowEnded}">${fxShowEnded ? 'Ẩn' : 'Hiện'} ${endedN} lớp đã nghỉ</button></div>` : ''}<div class="scroller"><table class="fx" data-fx-kind="${kind}"><thead><tr><th class="n">#</th>${fxSortTh(kind,'name','Tên lịch / Nội dung')}${fxSortTh(kind,'tag','Tag')}${fxSortTh(kind,'when','Thời gian')}${fxSortTh(kind,'room','Địa điểm','nowrap')}${fxSortTh(kind,'teacher','Người phụ trách')}${fxLinkTh(kind)}</tr></thead><tbody>`;
+  { const tb = document.getElementById('fxEndTop'); if(tb){ tb.hidden = false; tb.textContent = `${fxShowEnded ? 'Ẩn' : 'Hiện'} ${endedN} lớp đã nghỉ`; tb.setAttribute('aria-pressed', String(fxShowEnded)); } }   // nút Ẩn/Hiện lớp đã nghỉ nằm ở góc trái trên của thanh đầu, cùng hàng nút tài khoản
+  let h = `<div class="card fxblk">${fxBar(kind)}<div class="scroller"><table class="fx" data-fx-kind="${kind}"><thead><tr><th class="n">#</th>${fxSortTh(kind,'name','Tên lịch / Nội dung')}${fxSortTh(kind,'tag','Tag')}${fxSortTh(kind,'when','Thời gian')}${fxSortTh(kind,'room','Địa điểm','nowrap')}${fxSortTh(kind,'teacher','Người phụ trách')}${fxLinkTh(kind)}</tr></thead><tbody>`;
   if(!list.length) h += '<tr><td colspan="7" class="none">Chưa có lịch</td></tr>';
   else if(searchTextActive() && !fxShow(list).length) h += '<tr><td colspan="7" class="none">Không có lịch nào trong phạm vi tìm kiếm này</td></tr>';
   fxShow(list).forEach(({cur:ev, vs}, i) => {
@@ -10458,7 +10491,7 @@ function otherFixedHTML(){
     const ended = endedNow(ev), hideEnded = ended && !fxShowEnded, num = hideEnded ? 0 : vis++;
     h += `<tr class="fx-row ${seriesScore > 0 ? '' : 'dim'}${ended ? ' ended' : ''}${hideEnded ? ' fx-hide' : ''}" data-id="${esc(ev.id)}" data-series="${esc(sid)}" data-fx-kind="${kind}" data-date="${esc(occ)}" tabindex="0" role="button" title="Bấm để sửa hoặc kéo tay nắm để đổi vị trí">
       <td class="n">${fxRowNumber(hideEnded ? i : num)}</td>
-      <td>${ev.code ? `<div class="code">${esc(ev.code)}</div>` : ''}<div class="stitle">${(cc => cc && cc !== ev.code ? `<span class="cc2">${esc(cc)}</span>` : '')(String(ev.code || '').split('.')[0])}${esc(ev.title)}${offTagHTML(ev)}</div>${offBtnsHTML(ev)}</td>
+      <td>${ev.code ? `<div class="code">${esc(ev.code)}</div>` : ''}<div class="stitle">${(cc => cc && cc !== ev.code ? `<span class="cc2">${esc(cc)}</span>` : '')(String(ev.code || '').split('.')[0])}${esc(ev.title)}${offTagHTML(ev)}${offBtnsHTML(ev)}</div></td>
       <td><span class="lg static" style="--bd:${esc(tag.color)}" title="${esc(tag.name)}"><i></i><span class="lgn">${esc(tag.name)}</span></span></td>
       <td>${fixedWhen(ev, vs, false)}</td>
       <td>${esc(ev.room) || '<span class="sub">–</span>'}</td>
@@ -10999,6 +11032,7 @@ function openModal(id, date, defaults, slot){
   const rec = !!ev && isRec(ev);
   applyKind(); tmWk = true; syncRepeat();
   { const o = ev && isRec(ev) ? offOf(ev) : null, base = o ? o.from : (date || todayStr());
+    syncOffUI();   // dựng đủ 3 lựa chọn trước khi gán: nếu ô Trạng thái còn 2 lựa chọn của lịch một lần, “Tạm nghỉ” gán vào sẽ bị mất và form hiện nhầm “Bình thường”
     if(offUIOn() && o) f.elements.status.value = o.type === 'end' ? 'cancelled' : 'pause';
     f.elements.offFrom.value = base; f.elements.offTo.value = o && o.type === 'pause' ? o.to : addDays(base, 13);
     syncOffUI(); offLast = f.elements.status.value; }
@@ -12617,6 +12651,7 @@ function resetCodeOk(){ const ri = profileForm.elements.resetConfirm, er = docum
 profileForm.addEventListener('click', e => {
   const b = e.target.closest('button'); if(!b) return;
   const a = b.dataset.a; if(!a) return;
+  if(a === 'manual') manualBackup();
   if(a === 'backup') backupDownload();
   if(a === 'versions') toggleVersions();
   if(a === 'notify') enableScheduleNotifications();
