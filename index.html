@@ -8394,7 +8394,7 @@ function migrate(st){
     delete ev.credits; delete ev.mode; delete ev.tc; delete ev.htgd; delete ev.size; delete ev.periods;
     if(ev.kind === 'free') ev.kind = 'event';   // “Lịch tự do” đã bỏ: ô cũ thành lịch thường (giữ nguyên nội dung)
     if(isRec(ev) && !ev.series) ev.series = ev.id;
-    liftWholeCancel(ev);   // dữ liệu cũ: cả lịch lặp đặt “Nghỉ” → trạng thái Nghỉ hẳn
+    // (không tự đổi lịch lặp đang “Nghỉ” cũ thành Nghỉ hẳn nữa: việc đó làm lớp biến mất khỏi Lớp/Bảng; isOffRow vẫn hiển thị đúng tag Nghỉ)
   });
   if((st.schema||0) < 5){                       // bỏ tag ELITE cũ, chuyển sang “Sự kiện”
     st.tags = st.tags.filter(t => t.id !== 'elite');
@@ -8588,12 +8588,12 @@ function persistLocal(){
   abSoon();
   if(sync.ready && (!curUid || memOwner === curUid)) pushSoon();
 }
-function save(){ state.events.forEach(liftWholeCancel); persistLocal(); commitHistory(); }
+function save(){ persistLocal(); commitHistory(); }
 // giống save() nhưng không ghi vào lịch sử hoàn tác/làm lại — dùng cho các thay đổi không phải dữ liệu (chế độ xem, sắp xếp)
 function saveUI(){ mirror(); }   /* đổi chế độ xem / sắp xếp là của RIÊNG từng thiết bị: chỉ lưu tại máy, KHÔNG được tăng mốc thời gian đồng bộ hay đẩy lên đám mây
                                     (trước đây mỗi lần đổi giao diện trên một máy cũ/offline sẽ tăng mốc thời gian, rồi đè bản cũ của máy đó lên dữ liệu mới hơn trên đám mây) */
 // Giống save() nhưng gộp các thay đổi gần nhau thành một bước hoàn tác.
-function saveDebounced(){ state.events.forEach(liftWholeCancel); persistLocal(); commitHistoryDebounced(); }
+function saveDebounced(){ persistLocal(); commitHistoryDebounced(); }
 
 /* ---------- hoàn tác / làm lại (undo / redo) ---------- */
 let hist = [];
