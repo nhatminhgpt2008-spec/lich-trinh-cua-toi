@@ -10196,12 +10196,14 @@ function fixedFieldCmp(a,b,key){
   if(typeof av === 'number' && typeof bv === 'number') return av-bv;
   return String(av).localeCompare(String(bv),'vi',{numeric:true,sensitivity:'base'});
 }
+/* lớp có tag nghỉ (Nghỉ / Tạm nghỉ) luôn nằm cuối danh sách Lớp */
+const isOffRow = ev => ev.status === 'cancelled' || !!offOf(ev);
 function fixedList(kind){
   const list = fixedSeries(kind);
   const st = state.fixedSort?.[kind] || {key:'manual',dir:1};
   // Lịch có trạng thái “Nghỉ” luôn nằm cuối danh sách Lớp,
   // nhưng vẫn giữ nguyên thứ tự sắp xếp đã chọn trong từng nhóm.
-  const offLast = (a,b) => Number(a.cur.status === 'cancelled' || endedNow(a.cur)) - Number(b.cur.status === 'cancelled' || endedNow(b.cur));
+  const offLast = (a,b) => Number(isOffRow(a.cur)) - Number(isOffRow(b.cur));
   if(st.key && st.key !== 'manual') return list.sort((a,b) => offLast(a,b) || fixedFieldCmp(a,b,st.key) * st.dir || fixedDefaultSort(a,b));
   const order = new Map((state.fixedOrder?.[kind] || []).map((id,i) => [String(id), i]));
   return list.sort((a,b) => {
@@ -10432,7 +10434,7 @@ addEventListener('resize', () => { if(fxPop) fxPopPlace(); }, {passive:true});
 addEventListener('scroll', () => { if(fxPop) fxPopPlace(); }, {capture:true, passive:true});
 /* đang tìm: chỉ hiện các lớp khớp ở bất kỳ phiên bản nào của chuỗi lịch; không làm mất kết quả do một phiên bản cũ/mới khác nhau */
 const fxSeriesScore = x => Math.max(0,...(x.vs||[x.cur]).map(v => eventSearchScoreFor(v, query, searchDateForEvent(v))));
-const fxShow = list => !searchTextActive() ? list : qScope === 'dl' ? [] : list.filter(x => fxSeriesScore(x) > 0).sort((a,b) => Number(a.cur.status === 'cancelled' || endedNow(a.cur)) - Number(b.cur.status === 'cancelled' || endedNow(b.cur)) || fxSeriesScore(b) - fxSeriesScore(a));
+const fxShow = list => !searchTextActive() ? list : qScope === 'dl' ? [] : list.filter(x => fxSeriesScore(x) > 0).sort((a,b) => Number(isOffRow(a.cur)) - Number(isOffRow(b.cur)) || fxSeriesScore(b) - fxSeriesScore(a));
 let fxShowEnded = false; try{ fxShowEnded = localStorage.getItem('lt_showEnded') === '1'; }catch(_){}
 function offTagHTML(ev){
   const o = offOf(ev);
