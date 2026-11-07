@@ -10651,7 +10651,7 @@ function fixedFieldCmp(a,b,key){
   return String(av).localeCompare(String(bv),'vi',{numeric:true,sensitivity:'base'});
 }
 /* lớp đã nghỉ hoặc Tạm nghỉ nằm cuối danh sách Lớp; lớp “Nghỉ từ …” chưa tới ngày vẫn nằm cùng lớp chưa nghỉ */
-const isOffRow = ev => { const o = offOf(ev); return ev.status === 'cancelled' || (!!o && (o.type === 'pause' || o.from <= todayStr())); };   // Nghỉ chưa tới ngày thì vẫn xếp cùng các lớp chưa nghỉ; xuống cuối khi đã nghỉ
+const isOffRow = ev => ev.status === 'cancelled' || endedNow(ev);   // Chỉ lớp đã nghỉ hẳn (hoặc huỷ) mới xuống cuối; tạm nghỉ vẫn xếp như bình thường
 function fixedList(kind){
   const list = fixedSeries(kind);
   const st = state.fixedSort?.[kind] || {key:'manual',dir:1};
