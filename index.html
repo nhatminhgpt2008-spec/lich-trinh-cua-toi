@@ -8109,7 +8109,7 @@ body:not([data-view="cal"]):not([data-view="monthAgenda"]) #mNoteBtn{display:non
           <div class="setRow statRow main"><i class="statDot"></i><span id="profileSyncInfo"></span></div>
           <div class="setRow statRow"><div class="setTxt"><b>Sao lưu tự động</b></div><span class="v" id="abInfo" hidden></span></div>
         </div>
-        <div class="setRow"><div class="setTxt"><b>Dữ liệu</b></div><div class="rowAct"><button type="button" class="btn" data-a="manual" title="Lưu một bản sao ngay trên máy này, xem lại ở Phiên bản trước đó">Sao lưu</button><button type="button" class="btn primary" data-a="backup">Tải về</button><button type="button" class="btn" data-a="import">Khôi phục</button></div></div>
+        <div class="setRow"><div class="setTxt"><b>Dữ liệu</b></div><div class="rowAct"><button type="button" class="btn" data-a="manual" title="Lưu một bản sao ngay trên máy này, xem lại ở Phiên bản trước đó">Sao lưu thủ công</button><button type="button" class="btn primary" data-a="backup">Tải về</button><button type="button" class="btn" data-a="import">Khôi phục</button></div></div>
         <div class="setRow"><div class="setTxt"><b>Xuất lịch (.ics)</b></div><button type="button" class="btn" data-a="ics">Xuất</button></div>
         <div class="setRow"><div class="setTxt"><b>Phiên bản trước đó</b></div><button type="button" class="btn" id="versionsBtn" data-a="versions" aria-expanded="false" aria-controls="versionList">Xem</button></div>
         <div id="versionList" hidden></div>
@@ -8392,8 +8392,6 @@ const seriesOf = ev => ev.series || ev.id;
    DATA_FILE chỉ là nguồn khởi tạo TÙY CHỌN trong trường hợp không có Firebase/HTTP(S).
    Khi Firebase đã cấu hình trên HTTP(S), KHÔNG tự tải JSON chung để tránh lẫn dữ liệu
    của các tài khoản. Cần kiểm tra điều kiện thực tế ở cuối script chính. */
-// Bật gộp ba chiều; tắt cờ này sẽ quay về nhánh nhận/ghi theo luật cũ của index.merge.html.
-const MERGE_ENABLED = true;
 const KEY = 'uit-planner-v2';
 const SCHEMA = 7;
 const DATA_FILE = 'lich-trinh-data.json';
@@ -8696,8 +8694,8 @@ function learnClock(d){   // d = dữ liệu tài liệu vừa được máy ch�
   if(syncTs){ syncTs += delta; saveTs(); pushSoon(); }   // sửa lại mốc của bản đang có cho đúng giờ máy chủ
 }
 try{ syncTs = +localStorage.getItem(tsKeyFor(null)) || 0; }catch(e){}
-const sync = {doc:null, ready:false, timer:0, busy:false, dirty:false, unsub:null, sawData:false, allowEmpty:false, overwrite:false, retry:0,
-  remoteTs:null, base:null, attemptTs:new Set()};   // base chỉ thuộc tab này; remoteTs = base.rts; attemptTs nhận diện giao dịch đã hết hạn nhưng có thể vẫn ghi muộn.
+const sync = {doc:null, ready:false, timer:0, busy:false, dirty:false, unsub:null, sawData:false, allowEmpty:false, retry:0,
+  remoteTs:null};   // remoteTs = mốc (ts) của bản đám mây mà máy này ĐÃ BIẾT (đã nhận hoặc chính mình vừa ghi); null = chưa biết. syncTs thì tăng theo từng lần sửa trên máy nên không dùng để phát hiện máy khác đã ghi xen vào.
 let pendingRemote = null;
 const hasData = st => !!(st.events.length || st.todos.length || (st.rows && st.rows.length) || Object.keys(st.notes || {}).length);   // tính cả lịch cố định (rows): trước đây chỉ có lịch cố định thì bị coi là "trống"
 const syncInfo = t => { const p = document.getElementById('profileSyncInfo'); if(p) p.textContent = (t === 'Đã đồng bộ') ? '' : (t || ''); };   // trạng thái bình thường thì không hiện dòng nào
@@ -8886,7 +8884,7 @@ function mergeUnitsOf(st0){
   });
   const notes = st.notes && typeof st.notes === 'object' ? st.notes : {};
   Object.keys(notes).forEach(k => add('nt:' + k, {ident:'nt|' + k, v:notes[k], h:mergeItemHash(notes[k])}));
-  const SKIP = {events:1, todos:1, notes:1, rows:1, tags:1, repeatTypes:1, view:1, gcal:1};   // view và kết nối Google Calendar là riêng từng máy, không làm base bị bẩn giả
+  const SKIP = {events:1, todos:1, notes:1, rows:1, tags:1, repeatTypes:1, view:1};   // view là riêng từng máy
   Object.keys(st).forEach(k => { if(!SKIP[k] && st[k] !== undefined) add('k:' + k, {ident:'k|' + k, v:st[k], h:mergeItemHash(st[k])}); });
   // đơn vị nhiều phần tử (cụm series): băm các băm đã sắp xếp → chỉ khác thứ tự mảng thì không tính là sửa
   units.forEach(u => { u.hash = u.items.length === 1 ? u.items[0].h : mergeHex(hash53(u.items.map(i => i.h).sort().join(','))); });
@@ -8978,53 +8976,16 @@ function mergeStates(base, local, remote, tsLocal, tsRemote){
   });
   return finish(res);
 }
-// Base có mốc tài liệu và dấu vân tay theo đơn vị gộp; chỉ nạp một lần khi attach để các tab không đọc nhầm state/base của nhau.
-const baseKeyFor = uid => KEY + ':base:' + (uid || 'guest');
-const baseHashOf = st => stableStringify(computeBase(norm(mergeClone(st))));
-function setBase(json, ts){
-  try{
-    const st = norm(JSON.parse(json));
-    if(!Array.isArray(st.events) || !Array.isArray(st.todos)) return false;
-    const b = {v:1, rts:+ts || 0, h:computeBase(st)};
-    sync.base = b; sync.remoteTs = b.rts;
-    try{ localStorage.setItem(baseKeyFor(curUid), JSON.stringify(b)); }catch(e){}   // base trong RAM mới là nguồn chính; đầy bộ nhớ chỉ khiến reload phải dùng luật cũ.
-    return true;
-  }catch(e){ return false; }
-}
-function loadBase(){
-  sync.base = null;
-  try{
-    const b = JSON.parse(localStorage.getItem(baseKeyFor(curUid)) || 'null');
-    if(b && b.v === 1 && Number.isFinite(+b.rts) && b.h && typeof b.h === 'object' && !Array.isArray(b.h)) sync.base = {v:1, rts:+b.rts, h:b.h};
-  }catch(e){}   // không có base hợp lệ thì attach chủ động dùng nhánh tương thích an toàn.
-  sync.remoteTs = sync.base ? sync.base.rts : null;
-  return sync.base;
-}
-function baseMatches(st){ return !!(sync.base && baseHashOf(st) === stableStringify(sync.base.h)); }
 const SAFE_MAX = 5;
 const safeKey = () => KEY + ':safety:' + (curUid || memOwner || 'guest');
-const conflictSafeKey = () => safeKey() + ':conflict';
-function safeList(){
-  try{
-    const a = JSON.parse(localStorage.getItem(safeKey()));
-    const c = JSON.parse(localStorage.getItem(conflictSafeKey()));
-    return [...(Array.isArray(a) ? a : []), ...(Array.isArray(c) ? c : []).map(x => ({...x, conflict:true}))];
-  }catch(e){ try{ const a = JSON.parse(localStorage.getItem(safeKey())); return Array.isArray(a) ? a : []; }catch(_) { return []; } }
-}
-function safeWrite(list){
-  safeTrim(list);
-  try{ localStorage.setItem(safeKey(), JSON.stringify(list.filter(x => !x.conflict))); }catch(e){}
-  try{ localStorage.setItem(conflictSafeKey(), JSON.stringify(list.filter(x => x.conflict).map(({conflict, ...x}) => x))); }catch(e){}
-}
+function safeList(){ try{ const a = JSON.parse(localStorage.getItem(safeKey())); return Array.isArray(a) ? a : []; }catch(e){ return []; } }
 function safeSnap(reason, obj){
   try{
     const json = typeof obj === 'string' ? obj : JSON.stringify(obj);
     let st; try{ st = norm(JSON.parse(json)); }catch(e){ return; }
     if(!hasData(st)) return;   // bản trống không đáng giữ
-    // Giữ nguyên hành vi cũ cho các snapshot thông thường để MERGE_ENABLED=false không đổi luật backup.
-    // Ô xung đột riêng được safeSnapConflict quản lý, tránh việc tự chụp cũ làm thay đổi danh sách legacy.
-    const list = safeList().filter(x => !x.conflict);
-    const dup = list.findIndex(x => x.json === json);
+    const list = safeList();
+    const dup = list.findIndex(x => x.json === json);   // đã có bản y hệt (ở bất kỳ vị trí nào): đưa lên cuối thay vì nhân đôi, để không bị cắt bỏ sớm
     if(dup >= 0 && dup === list.length - 1) return;
     if(dup >= 0){ const [x] = list.splice(dup, 1); x.t = Date.now(); list.push(x); }
     else list.push({t:Date.now(), reason, json});
@@ -9032,34 +8993,12 @@ function safeSnap(reason, obj){
     localStorage.setItem(safeKey(), JSON.stringify(list));
   }catch(e){}
 }
-// Ô riêng giữ bản đầu tiên của chuỗi xung đột và hai bản mới nhất, vì SAFE_MAX thường không đủ cho nhiều vòng gộp liên tiếp.
-function safeSnapConflict(reason, obj){
-  try{
-    const json = typeof obj === 'string' ? obj : JSON.stringify(obj);
-    let st; try{ st = norm(JSON.parse(json)); }catch(e){ return; }
-    if(!hasData(st)) return;
-    const list = safeList(), conflicts = list.filter(x => x.conflict), regular = list.filter(x => !x.conflict);
-    if(conflicts.some(x => x.json === json)) return;
-    if(!conflicts.length && regular.length){
-      const first = regular.shift();   // nếu trước đây đã chụp bản gốc, chuyển nó sang ô bảo vệ để 10 vòng xung đột không đẩy mất.
-      conflicts.push({...first, conflict:true, reason:first.reason + ' · bản gốc được giữ qua xung đột'});
-    }
-    conflicts.push({t:Date.now(), reason, json, conflict:true});
-    safeWrite([...regular, ...conflicts]);
-  }catch(e){}
-}
-/* Tối đa SAFE_MAX bản thường + 3 bản xung đột; giữ bản xung đột đầu tiên và hai bản gần nhất. */
+/* bản tự chụp tối đa SAFE_MAX; bản “Sao lưu thủ công” (manual) tính riêng, tối đa SAFE_MAX bản, nên bấm sao lưu không đẩy mất các bản tự chụp (và ngược lại) */
 function safeTrim(list){
-  const regular = list.filter(x => !x.conflict), conflict = list.filter(x => x.conflict);
-  const dropRegular = man => { const i = regular.findIndex(x => !!x.manual === man); if(i >= 0) regular.splice(i, 1); return i >= 0; };
-  while(regular.filter(x => !x.manual).length > SAFE_MAX) dropRegular(false);
-  while(regular.filter(x => x.manual).length > SAFE_MAX) dropRegular(true);
-  while(conflict.length > 3) conflict.splice(1, 1);   // không bao giờ bỏ bản đầu tiên của chuỗi xung đột
-  const all = () => [...regular, ...conflict];
-  while(all().length > 1 && JSON.stringify(all()).length > 2500000){
-    if(!dropRegular(false) && !dropRegular(true)){ if(conflict.length > 1) conflict.splice(1, 1); else break; }
-  }
-  list.splice(0, list.length, ...all());
+  const drop = man => { const i = list.findIndex(x => !!x.manual === man); if(i >= 0) list.splice(i, 1); return i >= 0; };
+  while(list.filter(x => !x.manual).length > SAFE_MAX) drop(false);
+  while(list.filter(x => x.manual).length > SAFE_MAX) drop(true);
+  while(list.length > 1 && JSON.stringify(list).length > 2500000) if(!drop(false)) drop(true);   // giữ trong hạn mức localStorage: bỏ bản tự chụp cũ trước
 }
 function manualBackup(){
   let json, st; try{ json = JSON.stringify(state); st = norm(JSON.parse(json)); }catch(e){ toast('Không sao lưu được.'); return; }
@@ -9068,7 +9007,8 @@ function manualBackup(){
     const list = safeList(), last = list[list.length - 1];
     if(last && last.json === json){ last.manual = true; last.reason = 'sao lưu thủ công'; last.t = Date.now(); }   // dữ liệu y hệt bản gần nhất: đánh dấu bản đó là sao lưu thủ công thay vì tạo bản trùng
     else list.push({t:Date.now(), reason:'sao lưu thủ công', json, manual:true});
-    safeWrite(list);
+    safeTrim(list);
+    localStorage.setItem(safeKey(), JSON.stringify(list));
   }catch(e){ toast('Không sao lưu được: bộ nhớ trình duyệt đã đầy.'); return; }
   const box = versionBox(); if(box && !box.hidden) renderVersions();
   toast('Đã sao lưu · ' + safeCounts(json) + '. Xem ở “Phiên bản trước đó”.', 3500);
@@ -9097,7 +9037,7 @@ async function restoreVersion(t){
   safeSnap('trước khi khôi phục phiên bản cũ', state);
   st.view = state.view;   // chế độ xem là của riêng từng thiết bị
   if(state.gcal) st.gcal = state.gcal;   // giữ kết nối Google Calendar hiện tại
-  state = st; sync.sawData = true; sync.overwrite = true; save(); render();
+  state = st; sync.sawData = true; save(); render();
   renderVersions(); toast('Đã khôi phục phiên bản đã chọn.');
 }
 function pushSoon(){ clearTimeout(sync.timer); sync.timer = setTimeout(pushNow, 800); }
@@ -9106,58 +9046,34 @@ async function pushNow(){
   if(sync.busy){ sync.dirty = true; return; }
   clearTimeout(sync.retry);
   sync.busy = true;
-  let blocked = false, mergeRounds = 0;
+  let blocked = false;   // bị chặn có chủ đích: giữ nguyên thông báo, không ghi đè bằng "Đã đồng bộ"
   try{
     do{
       sync.dirty = false;
-      if(!sync.doc) break;
-      if(curUid && memOwner !== curUid){ blocked = true; break; }
+      if(!sync.doc) break;   // vừa đăng xuất/đổi tài khoản giữa chừng
+      if(curUid && memOwner !== curUid){ blocked = true; break; }   // dữ liệu trong bộ nhớ không phải của tài khoản này: tuyệt đối không ghi lên cloud của nó
       if(hasData(state)) sync.sawData = true;
-      else if(!sync.sawData && !sync.allowEmpty){ blocked = true; syncInfo('Đã chặn ghi dữ liệu trống đè lên cloud.'); break; }
+      else if(!sync.sawData && !sync.allowEmpty){ blocked = true; syncInfo('Đã chặn ghi dữ liệu trống đè lên cloud.'); break; }   // trống mà chưa từng có dữ liệu trong phiên này và không bấm "Xóa toàn bộ" → gần như chắc chắn là nạp nhầm
       const json = JSON.stringify(state);
-      const bytes = new TextEncoder().encode(json).length;
+      const bytes = new TextEncoder().encode(json).length;   // tiếng Việt có dấu chiếm 2-3 byte/ký tự; giới hạn tài liệu Firestore là 1 MiB tính theo byte
       if(json.length >= 890000 || bytes > 1000000){
         blocked = true; setAcctSync('bad');
         syncInfo('Dữ liệu quá lớn (' + Math.round(bytes / 1024) + ' KB) nên chưa đồng bộ được (giới hạn ≈ 900 KB). Hãy xóa bớt dữ liệu cũ.');
         break;
       }
       pushStartAt = Date.now();
-      // Chụp mọi mốc trước transaction: callback có thể chạy lại và state có thể tiếp tục đổi trong lúc chờ.
-      const doc = sync.doc, ts = syncTs, baseTs = sync.base ? sync.base.rts : (sync.remoteTs == null ? ts : sync.remoteTs);
-      const overwrite = !!sync.overwrite;
-      sync.attemptTs.add(ts);
-      if(sync.attemptTs.size > 100){ const first = sync.attemptTs.values().next().value; sync.attemptTs.delete(first); }
-      let timer;
-      const txPromise = (doc.firestore || fb.db).runTransaction(async tx => {
+      // Kiểm ts ngay trong transaction (đọc rồi ghi cùng một giao dịch): nếu máy khác đã ghi bản MỚI HƠN mốc máy này biết thì KHÔNG ghi đè.
+      // Chụp doc/ts trước khi chờ: trong lúc chờ có thể đăng xuất, đổi tài khoản hoặc người dùng sửa tiếp (syncTs tăng).
+      const doc = sync.doc, ts = syncTs, base = sync.remoteTs == null ? ts : sync.remoteTs;
+      const res = await (doc.firestore || fb.db).runTransaction(async tx => {   // callback có thể chạy lại khi tranh chấp: chỉ đọc biến chụp sẵn, không đổi trạng thái ngoài
         const snap = await tx.get(doc), cur = snap.exists ? snap.data() : null, cts = cur ? (+cur.ts || 0) : 0;
-        const ownLate = sync.attemptTs.has(cts);
-        if(!overwrite && cur && cts > ts && cur.json !== json && !ownLate && validRemote(cur.json)) return {conflict:true, json:cur.json, ts:cts};
-        if(!overwrite && cur && cts > baseTs && cur.json !== json && !ownLate && validRemote(cur.json)) return {conflict:true, json:cur.json, ts:cts};
-        // Ghi đè có chủ đích bỏ gộp, nhưng vẫn đọc trong transaction. Nếu đồng hồ máy chậm hơn cloud, tăng mốc ngay trong transaction để bản thay thế không mang ts cũ hơn.
-        const writeTs = overwrite && cur && cts >= ts ? cts + 1 : ts;
-        sync.attemptTs.add(writeTs);
-        if(sync.attemptTs.size > 100) sync.attemptTs.delete(sync.attemptTs.values().next().value);
-        tx.set(doc, {json, ts:writeTs, updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
-        return {conflict:false, writtenTs:writeTs, overwritten:overwrite && cur && cts > baseTs ? {json:cur.json, ts:cts} : null};
+        if(cur && typeof cur.json === 'string' && cts > base && cur.json !== json && validRemote(cur.json)) return {conflict:true, json:cur.json, ts:cts};   // bản đám mây hỏng/không đọc được thì không giữ lại làm gì: cho ghi đè, nếu không máy này sẽ kẹt không đẩy được nữa
+        tx.set(doc, {json, ts, updatedAt: firebase.firestore.FieldValue.serverTimestamp()});
+        return {conflict:false};
       });
-      const res = await Promise.race([txPromise, new Promise((_, reject) => { timer = setTimeout(() => { const e = new Error('transaction timeout'); e.code = 'deadline-exceeded'; reject(e); }, 30000); })]).finally(() => clearTimeout(timer));
-      if(sync.doc !== doc) break;
+      if(sync.doc !== doc) break;   // đã đăng xuất/đổi tài khoản trong lúc chờ: bỏ kết quả
       if(res.conflict){
-        if(MERGE_ENABLED && sync.base){
-          if(mergeRounds >= 4){
-            blocked = true; syncInfo('Đã tạm dừng sau 4 lần gộp liên tiếp; dữ liệu trên thiết bị vẫn được giữ nguyên. Sẽ tự thử lại.');
-            sync.retry = setTimeout(pushNow, 20000); break;
-          }
-          mergeRounds++;
-          safeSnapConflict('bản trên máy khi hai thiết bị cùng sửa', state);
-          safeSnapConflict('bản đám mây mới hơn (thiết bị khác vừa sửa)', res.json);
-          setAcctSync('busy'); syncInfo('Thiết bị khác vừa sửa, đang gộp thay đổi…');
-          pendingRemote = {json:res.json, ts:res.ts, force:true, merge:true};
-          applyRemote();
-          if(pendingRemote) { blocked = true; break; }   // hộp thoại/kéo thả đang mở: chỉ để chờ, không sửa state.
-          continue;   // applyRemote đặt dirty; thử đẩy kết quả gộp trong chính lượt này.
-        }
-        // Tương thích cũ khi không có base hoặc MERGE_ENABLED=false: nhận nguyên bản mây và giữ bản local.
+        // Hai thiết bị cùng sửa: giữ cả hai bản rồi đi theo luồng nhận bản đám mây sẵn có (applyRemote cũng chụp bản trên máy; safeSnap không nhân đôi)
         blocked = true;
         safeSnap('bản trên máy khi hai thiết bị cùng sửa', state);
         safeSnap('bản đám mây mới hơn (thiết bị khác vừa sửa)', res.json);
@@ -9166,28 +9082,15 @@ async function pushNow(){
         applyRemote();
         break;
       }
-      if(res.overwritten){
-        safeSnap('bản đám mây trước khi ghi đè có chủ đích', res.overwritten.json);
-        toast('Đã giữ bản đám mây cũ trong “Phiên bản trước đó” trước khi thay thế.', 6000);
-      }
-      if(res.stale){
-        if(MERGE_ENABLED && validRemote(res.json)) setBase(res.json, res.ts);
-        sync.dirty = true;
-      } else {
-        const sentTs = Number.isFinite(+res.writtenTs) ? +res.writtenTs : ts;
-        if(overwrite && sentTs > syncTs){ syncTs = sentTs; saveTs(); }
-        if(MERGE_ENABLED) setBase(json, sentTs); else sync.remoteTs = sentTs;
-        if(overwrite) sync.overwrite = false;
-        sync.allowEmpty = false;
-      }
-      if(syncTs !== ts) sync.dirty = true;   // đã có sửa mới trong lúc transaction chờ: gửi tiếp snapshot mới nhất.
+      sync.remoteTs = ts;
     } while(sync.dirty);
     if(!blocked){ setAcctSync('ok'); syncInfo('Đã đồng bộ'); }
   }catch(e){
     setAcctSync('bad'); syncInfo('Đồng bộ lỗi (' + ((e && e.code) || '?') + ').');
     const c = e && e.code;
-    if(!['permission-denied','invalid-argument','failed-precondition','resource-exhausted'].includes(c)) sync.retry = setTimeout(pushNow, 20000);
-  } finally { sync.busy = false; }
+    if(!['permission-denied','invalid-argument','failed-precondition','resource-exhausted'].includes(c)) sync.retry = setTimeout(pushNow, 20000);   // lỗi tạm thời (mạng…): tự thử lại, không bắt người dùng phải sửa gì đó mới đồng bộ tiếp
+  }
+  sync.busy = false;
 }
 function applyRemote(){
   if(!pendingRemote) return;
@@ -9196,51 +9099,26 @@ function applyRemote(){
   if(r.ts <= syncTs && !r.force) return;
   let st; try{ st = norm(JSON.parse(r.json)); }catch(e){ return; }
   if(!Array.isArray(st.events) || !Array.isArray(st.todos)) return;
-  if(r.merge && MERGE_ENABLED && sync.base){
-    const result = mergeStates(sync.base.h, state, st, syncTs, r.ts);
-    safeSnapConflict('bản trên máy trước khi gộp ba chiều', state);
-    safeSnapConflict('bản đám mây trước khi gộp ba chiều', r.json);
-    state = result.state;
-    syncTs = Math.max(nowTs(), r.ts + 1); sync.sawData = hasData(state);
-    setBase(r.json, r.ts);   // base luôn là bản remote, không phải kết quả gộp chưa ghi lên mây.
-    mirror(); saveTs(); initHistory(); render(); abSoon();
-    setAcctSync('busy');
-    if(result.stats.conflicts || result.stats.keptAgainstDelete){
-      toast('Có ' + result.stats.conflicts + ' xung đột và ' + result.stats.keptAgainstDelete + ' mục được giữ để tránh xóa nhầm. Bản còn lại nằm ở “Phiên bản trước đó”.', 8000);
-      syncInfo('Đã gộp thay đổi từ thiết bị khác');
-    } else syncInfo('Đã gộp thay đổi từ thiết bị khác');
-    pushNow();   // nếu pushNow hiện tại đang chạy, cờ dirty sẽ yêu cầu vòng tiếp theo.
-    return;
-  }
-  if(!st.gcal && state.gcal) st.gcal = state.gcal;
-  if(hasData(state)) safeSnap('bản trên máy trước khi nhận bản từ đám mây', state);
-  st.view = state.view;
-  state = st; syncTs = r.ts; sync.sawData = hasData(state);
-  if(MERGE_ENABLED) setBase(r.json, r.ts); else sync.remoteTs = r.ts;
-  mirror(); saveTs(); initHistory(); render(); abSoon();
+  if(!st.gcal && state.gcal) st.gcal = state.gcal;   // bản đám mây cũ (từ phiên bản trước) chưa có cài đặt Google Calendar: không để mất cài đặt đang có
+  if(hasData(state)) safeSnap('bản trên máy trước khi nhận bản từ đám mây', state);   // giữ lại bản cũ của thiết bị này trước khi bị bản đám mây thay thế
+  st.view = state.view;   // chế độ xem là của riêng từng thiết bị
+  state = st; syncTs = r.ts; sync.remoteTs = r.ts; sync.sawData = hasData(state);   // chỉ nhớ mốc khi THỰC SỰ đã nhận (đang hoãn vì hộp thoại thì chưa được coi là đã biết)
+  mirror();
+  saveTs(); initHistory(); render(); abSoon();
   setAcctSync('ok'); syncInfo('Vừa cập nhật từ thiết bị khác');
   if(r.conflict) toast('Thiết bị khác vừa sửa cùng lúc. Đã nhận bản mới hơn; bản trên máy được giữ ở “Phiên bản trước đó”.', 7000);
 }
 const validRemote = j => { try{ const s = norm(JSON.parse(j)); return Array.isArray(s.events) && Array.isArray(s.todos); }catch(e){ return false; } };
 const jsonHasData = j => { try{ return hasData(norm(JSON.parse(j))); }catch(e){ return false; } };
-function retryIfChanged(){
-  if(!sync.ready || !sync.doc || sync.busy) return;
-  const changed = sync.base ? !baseMatches(state) : (syncTs > (sync.remoteTs || 0));
-  if(changed || sync.overwrite) pushNow();
-}
-// Transaction Firestore không xếp hàng offline như set(); hai listener này giúp đẩy lại ngay khi có mạng/trở lại tab.
-window.addEventListener('online', retryIfChanged);
-document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible') retryIfChanged(); });
 function detach(){
   if(sync.unsub){ try{ sync.unsub(); }catch(e){} sync.unsub = null; }
-  sync.doc = null; sync.ready = false; sync.remoteTs = null; sync.base = null; sync.overwrite = false; clearTimeout(sync.retry);
-  pendingRemote = null;
+  sync.doc = null; sync.ready = false; sync.remoteTs = null; clearTimeout(sync.retry);
+  pendingRemote = null;   // dữ liệu đám mây đang chờ áp dụng của tài khoản cũ KHÔNG được phép lọt sang tài khoản mới
 }
 function attach(doc, opts){
   opts = opts || {};
   detach();
   sync.doc = doc; sync.ready = false; sync.sawData = false; sync.allowEmpty = false;
-  if(MERGE_ENABLED) loadBase();
   setAcctSync('busy'); syncInfo('Đang kết nối…');
   sync.unsub = doc.onSnapshot(async snap => {
     const d = snap.exists ? snap.data() : null, rts = d ? (+d.ts || 0) : 0;
@@ -9248,54 +9126,25 @@ function attach(doc, opts){
     if(!sync.ready && !snap.metadata.fromCache){
       sync.ready = true;
       if(!d){
-        if(MERGE_ENABLED) setBase(JSON.stringify(norm(emptyState())), 0);
-        else sync.remoteTs = 0;
-        if(hasData(state)){ if(!syncTs){ syncTs = nowTs(); saveTs(); } pushNow(); }
-        else { setAcctSync('ok'); syncInfo('Đã đồng bộ'); }
-      } else if(!d || typeof d.json !== 'string' || !validRemote(d.json)){
-        syncInfo('Dữ liệu trên đám mây không hợp lệ; bản trên thiết bị chưa bị thay thế.'); setAcctSync('bad');
-      } else if(!MERGE_ENABLED){
-        // Nhánh tương thích: giữ nguyên luật kết nối của index.merge.html trước phiên gộp.
-        if(rts > syncTs){ pendingRemote = {json:d.json, ts:rts}; applyRemote(); }
-        else if(!hasData(state) && jsonHasData(d.json)){ pendingRemote = {json:d.json, ts:rts, force:true}; applyRemote(); }
-        else if(rts < syncTs){ sync.remoteTs = rts; safeSnap('bản đám mây trước khi bị bản trên máy ghi đè', d.json); pushNow(); }
-        else { sync.remoteTs = rts; setAcctSync('ok'); syncInfo('Đã đồng bộ'); }
-      } else if(sync.base){
-        const localUnchanged = baseMatches(state), remoteUnchanged = rts === sync.base.rts;
-        if(remoteUnchanged){
-          if(localUnchanged){ setBase(d.json, rts); setAcctSync('ok'); syncInfo('Đã đồng bộ'); }
-          else { sync.remoteTs = rts; pushNow(); }
-        } else if(localUnchanged){ pendingRemote = {json:d.json, ts:rts, force:true}; applyRemote(); }
-        else { pendingRemote = {json:d.json, ts:rts, force:true, merge:true}; applyRemote(); }
-      } else {
-        // Không có base: không hợp nhất để tránh làm sống lại mục đã xóa; giữ luật mới hơn thắng và báo phần chênh lệch.
-        const cloudWins = rts > syncTs || (!hasData(state) && jsonHasData(d.json));
-        safeSnapConflict('bản trên thiết bị khi kết nối không có base', state);
-        safeSnapConflict('bản đám mây khi kết nối không có base', d.json);
-        const loserMissing = cloudWins ? missingFrom(norm(JSON.parse(d.json)), state) : missingFrom(state, norm(JSON.parse(d.json)));
-        if(cloudWins){ pendingRemote = {json:d.json, ts:rts, force:true}; applyRemote(); }
-        else {
-          setBase(d.json, rts);
-          if(loserMissing) toast('Có ' + loserMissing + ' mục chỉ có trên đám mây; bản này được giữ trong “Phiên bản trước đó”.', 8000);
-          pushNow();
-        }
-        if(cloudWins){
-          if(loserMissing) toast('Có ' + loserMissing + ' mục chỉ có trên thiết bị; bản này được giữ trong “Phiên bản trước đó”.', 8000);
-        }
+        // chưa có dữ liệu trên tài khoản: tự đẩy dữ liệu đang có trên thiết bị lên (không mất gì)
+        sync.remoteTs = 0;   // đám mây chưa có gì
+        if(hasData(state)){
+          if(!syncTs){ syncTs = nowTs(); saveTs(); } pushNow();
+        } else { setAcctSync('ok'); syncInfo('Đã đồng bộ'); }
+      } else if(d && typeof d.json === 'string' && rts > syncTs){
+        pendingRemote = {json:d.json, ts:rts}; applyRemote();
+      } else if(d && typeof d.json === 'string' && !hasData(state) && jsonHasData(d.json)){
+        // máy đang trống nhưng đám mây còn dữ liệu (mốc thời gian có thể bị lệch do nạp nhầm): luôn lấy dữ liệu từ đám mây, KHÔNG đẩy bản trống lên
+        pendingRemote = {json:d.json, ts:rts, force:true}; applyRemote();
+      } else if(rts < syncTs){
+        sync.remoteTs = rts;   // vừa đọc đúng bản này: ghi lên được nếu chưa ai ghi xen vào
+        if(d && typeof d.json === 'string') safeSnap('bản đám mây trước khi bị bản trên máy ghi đè', d.json);
+        pushNow();
       }
+      else { sync.remoteTs = rts; setAcctSync('ok'); syncInfo('Đã đồng bộ'); }
       return;
     }
-    if(sync.ready && d && typeof d.json === 'string' && rts > syncTs){
-      // Đang reset/khôi phục/nhập file: không để snapshot đến trước lần push cướp state có chủ đích.
-      // Đẩy mốc lên trên cloud nếu đồng hồ máy chậm; pushNow sẽ chụp bản cloud trong transaction rồi ghi thẳng.
-      if(sync.overwrite){ syncTs = Math.max(syncTs, nowTs(), rts + 1); saveTs(); pushNow(); return; }
-      if(sync.attemptTs.has(rts)){ if(MERGE_ENABLED) setBase(d.json, rts); else sync.remoteTs = rts; return; }
-      if(MERGE_ENABLED && sync.base){
-        if(baseMatches(state)) pendingRemote = {json:d.json, ts:rts};
-        else pendingRemote = {json:d.json, ts:rts, force:true, merge:true};
-      } else pendingRemote = {json:d.json, ts:rts};
-      applyRemote();
-    }
+    if(sync.ready && d && typeof d.json === 'string' && rts > syncTs){ pendingRemote = {json:d.json, ts:rts}; applyRemote(); }
   }, e => { setAcctSync('bad'); syncInfo(e && e.code === 'permission-denied'
         ? 'Không có quyền đọc/ghi dữ liệu của tài khoản này.'
         : 'Đồng bộ bị ngắt (' + ((e && e.code) || '?') + '). Tải lại trang.'); });
@@ -9627,8 +9476,7 @@ document.getElementById('profileDelete').addEventListener('click', async () => {
     try{ await fb.db.doc('users/' + uid + '/planner/main').delete(); }catch(e){ dataDeleted = false; }
     await fb.user.delete();
     closeDialog(profileDlg);
-    try{ localStorage.removeItem(NOTIFY_KEY + ':' + uid); localStorage.removeItem(baseKeyFor(uid)); }catch(e){}   // xóa base riêng của tài khoản vừa xóa, không đụng các khóa dữ liệu cũ.
-
+    try{ localStorage.removeItem(NOTIFY_KEY + ':' + uid); }catch(e){}
     alert(dataDeleted
       ? 'Đã xóa tài khoản. Dữ liệu trên thiết bị này vẫn được giữ lại.'
       : 'Đã xóa tài khoản, nhưng không thể xóa dữ liệu đám mây liên quan (có thể do mất mạng). Dữ liệu trên thiết bị này vẫn được giữ lại; liên hệ quản trị viên nếu cần xóa hẳn dữ liệu cũ trên máy chủ.');
@@ -10651,7 +10499,7 @@ function fixedFieldCmp(a,b,key){
   return String(av).localeCompare(String(bv),'vi',{numeric:true,sensitivity:'base'});
 }
 /* lớp đã nghỉ hoặc Tạm nghỉ nằm cuối danh sách Lớp; lớp “Nghỉ từ …” chưa tới ngày vẫn nằm cùng lớp chưa nghỉ */
-const isOffRow = ev => ev.status === 'cancelled' || endedNow(ev);   // Chỉ lớp đã nghỉ hẳn (hoặc huỷ) mới xuống cuối; tạm nghỉ vẫn xếp như bình thường
+const isOffRow = ev => { const o = offOf(ev); return ev.status === 'cancelled' || (!!o && (o.type === 'pause' || o.from <= todayStr())); };   // Nghỉ chưa tới ngày thì vẫn xếp cùng các lớp chưa nghỉ; xuống cuối khi đã nghỉ
 function fixedList(kind){
   const list = fixedSeries(kind);
   const st = state.fixedSort?.[kind] || {key:'manual',dir:1};
@@ -13196,7 +13044,7 @@ profileForm.addEventListener('click', e => {
   if(a === 'notify') enableScheduleNotifications();
   if(a === 'ics') download('lich-trinh.ics', toICS(), 'text/calendar');
   if(a === 'import') $('#file').click();
-  if(a === 'reset' && resetCodeOk()) askConfirm('Xóa toàn bộ dữ liệu (lịch, deadline, ghi chú)?\n\nĐang đăng nhập thì dữ liệu trên đám mây và trên MỌI thiết bị khác của tài khoản này cũng bị xóa theo.\nMột bản an toàn được giữ lại trên máy này để khôi phục (Tài khoản → Dữ liệu & sao lưu → Phiên bản trước đó).', {title:'Xóa toàn bộ dữ liệu', ok:'Xóa tất cả', danger:true}).then(ok => { if(!ok) return; safeSnap('trước khi xóa toàn bộ', state); sync.allowEmpty = true; sync.overwrite = true; state = emptyState(); state.view = innerWidth<800?'agenda':'table'; weekStart = mondayOf(todayStr()); save(); render(); });
+  if(a === 'reset' && resetCodeOk()) askConfirm('Xóa toàn bộ dữ liệu (lịch, deadline, ghi chú)?\n\nĐang đăng nhập thì dữ liệu trên đám mây và trên MỌI thiết bị khác của tài khoản này cũng bị xóa theo.\nMột bản an toàn được giữ lại trên máy này để khôi phục (Tài khoản → Dữ liệu & sao lưu → Phiên bản trước đó).', {title:'Xóa toàn bộ dữ liệu', ok:'Xóa tất cả', danger:true}).then(ok => { if(!ok) return; safeSnap('trước khi xóa toàn bộ', state); sync.allowEmpty = true; state = emptyState(); state.view = innerWidth<800?'agenda':'table'; weekStart = mondayOf(todayStr()); save(); render(); });
 });
 $('#file').onchange = e => {
   const file = e.target.files[0]; if(!file) return;
@@ -13209,7 +13057,7 @@ $('#file').onchange = e => {
       if(await askConfirm('Trong file: ' + cnt(st) + '\nĐang có: ' + cnt(state) + '\n\nThay thế dữ liệu hiện tại bằng dữ liệu trong file? Dữ liệu hiện tại được giữ lại trong “Phiên bản trước đó”.', {title:'Khôi phục từ file', ok:'Thay thế'})){
         safeSnap('trước khi khôi phục từ file', state);
         st.view = state.view; if(state.gcal) st.gcal = state.gcal;   // chế độ xem & kết nối Google Calendar là của riêng thiết bị/tài khoản, không lấy từ file
-        state = st; sync.sawData = true; sync.overwrite = true; save(); render();
+        state = st; sync.sawData = true; save(); render();
         toast('Đã khôi phục dữ liệu từ file.');
       }
     }catch(_){ alert('File không hợp lệ. Hãy chọn file .json đã sao lưu từ trang này.'); }
