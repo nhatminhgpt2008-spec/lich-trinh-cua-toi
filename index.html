@@ -9561,6 +9561,8 @@ function offOf(ev){
   return null;
 }
 const offAt = (off, date) => !off ? '' : off.type === 'end' ? (date >= off.from ? 'end' : '') : (date >= off.from && date <= off.to ? 'pause' : '');
+const pausePast = o => !!o && o.type === 'pause' && o.to < todayStr();   // Tạm nghỉ đã qua: chỉ còn là lịch sử (buổi vẫn gạch ngang), KHÔNG còn là trạng thái hiện tại của lớp
+const offCur = ev => { const o = offOf(ev); return o && !pausePast(o) ? o : null; };   // trạng thái nghỉ HIỆN TẠI (dùng cho form Sửa, so sánh khi lưu, tag, nút Khôi phục)
 const endedNow = ev => { const o = offOf(ev); return !!o && o.type === 'end' && o.from <= todayStr(); };
 const offIndex = () => new Map(state.events.map(e => [e.id, e]));
 const offForEv = (ev, byId) => offOf(ev.overrideOf ? byId.get(ev.overrideOf) : ev);   // buổi ngoại lệ (dời/sửa riêng) theo trạng thái của lớp gốc
@@ -10743,15 +10745,13 @@ addEventListener('scroll', () => { if(fxPop) fxPopPlace(); }, {capture:true, pas
 const fxSeriesScore = x => Math.max(0,...(x.vs||[x.cur]).map(v => eventSearchScoreFor(v, query, searchDateForEvent(v))));
 const fxShow = list => !searchTextActive() ? list : qScope === 'dl' ? [] : list.filter(x => fxSeriesScore(x) > 0).sort((a,b) => Number(isOffRow(a.cur)) - Number(isOffRow(b.cur)) || fxSeriesScore(b) - fxSeriesScore(a));
 let fxShowEnded = true; try{ fxShowEnded = localStorage.getItem('lt_showEnded') !== '0'; }catch(_){}   // mặc định HIỆN lớp đã nghỉ để không tưởng mất dữ liệu
-const pausePast = o => !!o && o.type === 'pause' && o.to < todayStr();   // Tạm nghỉ đã qua: không hiện trạng thái ở mục Lớp
 function offTagHTML(ev){
-  const o = offOf(ev);
-  if(pausePast(o)) return '';
+  const o = offCur(ev);
   if(o) return o.type === 'end' ? `<span class="tag x">Nghỉ từ ${dmy(o.from)}</span>` : `<span class="tag x">Tạm nghỉ ${dmy(o.from)} – ${dmy(o.to)}</span>`;
   return ev.status === 'cancelled' ? '<span class="tag x">Nghỉ</span>' : '';
 }
 function offBtnsHTML(ev){
-  return offOf(ev) && !pausePast(offOf(ev)) ? `<button type="button" class="fx-offbtn" data-offact="restore" data-id="${esc(ev.id)}">Khôi phục</button>` : '';   // nằm ngay cạnh tag “Nghỉ từ …”
+  return offCur(ev) ? `<button type="button" class="fx-offbtn" data-offact="restore" data-id="${esc(ev.id)}">Khôi phục</button>` : '';   // nằm ngay cạnh tag “Nghỉ từ …”
 }
 function fixedHTML(){ return otherFixedHTML(); }
 function otherFixedHTML(){
@@ -11305,7 +11305,7 @@ function openModal(id, date, defaults, slot){
   $('#delBtn').hidden = !ev;
   const rec = !!ev && isRec(ev);
   applyKind(); tmWk = true; syncRepeat();
-  { const o = ev && isRec(ev) ? offOf(ev) : null, base = o ? o.from : ((date || todayStr()) < mondayOf(todayStr()) ? todayStr() : (date || todayStr()));
+  { const o = ev && isRec(ev) ? offCur(ev) : null, base = o ? o.from : ((date || todayStr()) < mondayOf(todayStr()) ? todayStr() : (date || todayStr()));
     syncOffUI();   // dựng đủ 3 lựa chọn trước khi gán: nếu ô Trạng thái còn 2 lựa chọn của lịch một lần, “Tạm nghỉ” gán vào sẽ bị mất và form hiện nhầm “Bình thường”
     if(offUIOn() && o) f.elements.status.value = o.type === 'end' ? 'cancelled' : 'pause';
     else if(slotModeOn() && occurrenceCancelled(ev, editing.date, editing.slot.start, editing.slot.end)) f.elements.status.value = 'slotoff';
@@ -11570,7 +11570,7 @@ $('#odCancel').addEventListener('click', () => closeDialog(dlgOffDate));
 $('#odSave').addEventListener('click', () => {
   const a = odForm.elements.odFrom.value, b = odForm.elements.odTo.value, err = $('#odErr'), pause = offDateMode === 'pause';
   if(!ISO_DATE_RE.test(a)){ err.textContent = 'Hãy chọn ngày bắt đầu.'; err.hidden = false; return; }
-  { const c0 = editing && editing.id ? state.events.find(x => x.id === editing.id) : null, o0 = c0 && isRec(c0) ? offOf(c0) : null, cs = mondayOf(todayStr());
+  { const c0 = editing && editing.id ? state.events.find(x => x.id === editing.id) : null, o0 = c0 && isRec(c0) ? offCur(c0) : null, cs = mondayOf(todayStr());
     if(a < cs && !(o0 && o0.from === a)){ err.textContent = 'Không áp dụng cho các tuần đã qua. Hãy chọn từ tuần ' + dmy(cs) + ' trở đi.'; err.hidden = false; return; } }
   if(pause && (!ISO_DATE_RE.test(b) || b < a)){ err.textContent = 'Ngày kết thúc phải từ ngày bắt đầu trở đi.'; err.hidden = false; return; }
   f.elements.offFrom.value = a; f.elements.offTo.value = pause ? b : (f.elements.offTo.value || addDays(a, 13));
@@ -11701,7 +11701,7 @@ async function saveForm(){
   const {d, extra, times, offReq, slotWant} = r;
   const err = m => { $('#err').textContent = m; };
   const ev = editing.id ? state.events.find(x => x.id === editing.id) : null;
-  const curOff = ev && isRec(ev) ? offOf(ev) : null, offChanged = !!offReq && !offSameAs(curOff, offReq), sk = ev ? seriesOf(ev) : '';
+  const curOff = ev && isRec(ev) ? offCur(ev) : null, offChanged = !!offReq && !offSameAs(curOff, offReq), sk = ev ? seriesOf(ev) : '';
   const occ = editing.date || (ev && ev.date) || d.date;
   const slotMulti = !!(ev && isRec(ev) && editing.slot && ev.times && (ev.times[wd(occ)] || []).length > 1);   // ngày có ≥2 khung giờ: tách đúng khung giờ; ngày 1 khung giờ: tách cả buổi
   const slotMode = slotMulti || !!(ev && isRec(ev) && editing.slot && slotWant !== null);
