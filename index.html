@@ -1775,6 +1775,19 @@ button.np-gl:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}   /*
 .hubCard.sel{background:color-mix(in srgb,var(--c) 14%,var(--surface));border-color:var(--c);box-shadow:inset 0 0 0 1px var(--c)}
 .hubCard.nsel{opacity:.55}
 .hubCard.nsel:hover{opacity:.95}
+.hubSum .hubSumAct{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
+#dlgTags .hubMode{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+#dlgTags .hubMode button{border:0;border-radius:0;background:transparent;color:var(--muted);font-size:12.5px;font-weight:600;padding:6px 12px;min-height:0;height:auto;width:auto;cursor:pointer}
+#dlgTags .hubMode button+button{border-left:1px solid var(--line)}
+#dlgTags .hubMode button.on{background:var(--accent);color:var(--accent-ink)}
+#dlgTags .hubMode button:not(.on):hover{color:var(--ink);background:var(--line-soft)}
+#dlgTags .hubMode button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.hubCard.sel.hid{background:var(--surface);border-color:var(--line);box-shadow:none}
+.hubCard.hid .hubMain b{text-decoration:line-through}
+.hubCard.hid .hubChk{background:var(--danger);border-color:var(--danger)}
+.hubCard.sel.hid .hubChk::after{content:"✕";width:auto;height:auto;border:0;transform:none;color:#fff;font-size:10px;font-weight:700;line-height:1}
+.lg.sel.off{background:var(--surface);box-shadow:none;border-style:dashed;font-weight:600}
+.lg.sel.off{text-decoration:line-through;text-decoration-color:var(--bd)}
 .hubChk{width:18px;height:18px;border-radius:5px;border:2px solid var(--c);display:grid;place-items:center;flex:none}
 .hubCard.sel .hubChk{background:var(--c)}
 .hubCard.sel .hubChk::after{content:"";width:8px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:translateY(-1px) rotate(-45deg)}
@@ -9506,10 +9519,15 @@ let calCap = innerWidth <= 700 ? 2 : 3;   // số dòng tối đa mỗi ô ở c
 let lastTA = null;
 const hiddenTypes = new Set(['__cancel']);
 /* LỌC THEO TAG — dùng chung cho Bảng, Danh sách và Công việc.
-   tagSel rỗng = hiện tất cả; có phần tử = CHỈ hiện các tag đã chọn (bấm một tag = xem riêng tag đó, bấm thêm để xem nhiều tag). */
+   tagSel rỗng = hiện tất cả. Có phần tử thì tùy chế độ tagMode:
+     'show' (mặc định) = CHỈ hiện các tag đã chọn (bấm một tag = xem riêng tag đó, bấm thêm để xem nhiều tag);
+     'hide' = ẨN các tag đã chọn, hiện mọi tag còn lại (kể cả lịch không có tag). */
 const tagSel = new Set();
 const tagSelActive = () => tagSel.size > 0 && state.tags.some(t => tagSel.has(t.id));   // id tag đã bị xóa thì không còn tính là đang lọc
-const tagOk = o => !tagSelActive() || tagSel.has(o.ev.type);
+let tagMode = 'show';   // 'show' = lọc hiển thị · 'hide' = lọc không hiển thị
+const tagHit = id => tagMode === 'hide' ? !tagSel.has(id) : tagSel.has(id);   // tag này có được hiện theo bộ lọc không
+const tagOk = o => !tagSelActive() || tagHit(o.ev.type);
+function tagModeSet(m){ tagMode = m === 'hide' ? 'hide' : 'show'; saveUI(); }
 function tagSelToggle(id){ tagSel.has(id) ? tagSel.delete(id) : tagSel.add(id); saveUI(); }
 function tagSelClear(){ tagSel.clear(); saveUI(); }
 /* bản cũ lưu việc ẨN từng tag trong hiddenTypes: đổi sang kiểu chọn tag mới (giữ đúng những tag đang hiện) để không bị ẩn mà không có chỗ bật lại */
@@ -10178,13 +10196,13 @@ function renderLegend(all){
   const tsel = tagSelActive();
   const sel = state.tags.filter(t => tagSel.has(t.id));
   $('#lgroup').innerHTML = tsel
-    ? `<button type="button" class="lg clr" id="tagClear" title="Hiện lại tất cả tag">✕ Bỏ lọc tag</button>` + sel.map(t =>
-        `<button type="button" class="lg sel" data-type="${esc(t.id)}" aria-pressed="true" style="--bd:${esc(t.color)}" title="Bấm để bỏ tag này khỏi bộ lọc"><i></i>${esc(t.name)} <span aria-hidden="true">×</span></button>`).join('')
+    ? `<button type="button" class="lg clr" id="tagClear" title="Hiện lại tất cả tag">${tagMode === 'hide' ? '✕ Bỏ ẩn tag' : '✕ Bỏ lọc tag'}</button>` + sel.map(t =>
+        `<button type="button" class="lg sel${tagMode === 'hide' ? ' off' : ''}" data-type="${esc(t.id)}" aria-pressed="true" style="--bd:${esc(t.color)}" title="${tagMode === 'hide' ? 'Đang ẩn tag này — bấm để hiện lại' : 'Bấm để bỏ tag này khỏi bộ lọc'}"><i></i>${esc(t.name)} <span aria-hidden="true">×</span></button>`).join('')
     : '';
   const tb = $('#tagToggle'), bd = $('#tagBadge');
   tb.classList.toggle('on', tsel);
   bd.hidden = true; bd.textContent = '';   // không hiện số "đã chọn/tổng" trên nút Tag khi đang lọc; nút vẫn sáng lên (class on) để biết đang lọc
-  const ttl = tsel ? `Mở bảng Tag (đang lọc ${sel.length}/${state.tags.length} tag)` : 'Mở bảng Tag';
+  const ttl = tsel ? `Mở bảng Tag (${tagMode === 'hide' ? 'đang ẩn' : 'đang lọc'} ${sel.length}/${state.tags.length} tag)` : 'Mở bảng Tag';
   tb.title = ttl; tb.setAttribute('aria-label', ttl);
 }
 /* trạng thái “đang diễn ra”: đúng ngày hôm nay, giờ hiện tại nằm trong [bắt đầu, kết thúc) */
@@ -11638,7 +11656,18 @@ function buildData(){
     times[day] = out;
   }
   if(d.repeat === 'none'){                      // mỗi (thứ, khung giờ) là một lịch một lần trong tuần của Ngày bắt đầu
-    const mon = mondayOf(d.date), occ = [];
+    /* Lịch đang lặp được đổi sang “Không lặp” mà ô Ngày vẫn là ngày bắt đầu của chuỗi lặp (người dùng không đụng tới):
+       lịch một lần phải nằm ở tuần của BUỔI ĐANG CHỌN (tối thiểu từ tuần này), không phải tuần bắt đầu của chuỗi.
+       Trước đây nó rơi vào tuần bắt đầu cũ (đã qua) trong khi chuỗi lặp bị cắt từ tuần này → lịch biến mất, giờ vừa sửa không thấy đâu. */
+    let base = d.date;
+    { const cur = editing && editing.id ? state.events.find(x => x.id === editing.id) : null;
+      if(cur && isRec(cur) && editing.date && d.date === cur.date){
+        base = editing.date; const cs = isWk(cur) ? mondayOf(todayStr()) : todayStr(); if(base < cs) base = cs;
+        if(!isWk(cur)){   // chuỗi lặp theo ngày/tháng/năm không có “thứ”: chỉ đặt đúng ngày đang chọn
+          const k = d.days.find(x => times[x] && times[x].length) ?? d.days[0], sl = times[k] || [];
+          d.days = [wd(base)]; times[d.days[0]] = sl; }
+      } }
+    const mon = mondayOf(base), occ = [];
     d.days.forEach(day => times[day].forEach(sl => occ.push({date:addDays(mon, day), start:sl.start, end:sl.end})));
     occ.sort((x,y) => x.date.localeCompare(y.date) || toMin(x.start) - toMin(y.start));
     Object.assign(d, occ[0]); d.days = []; d.times = null;
@@ -11665,12 +11694,28 @@ function makeOverride(ev, occ, slotOverride, props){
   }
   state.events.push({id:uid(), skip:[], skipSlots:[], ...props, repeat:'none', until:'', days:[], times:null, overrideOf:ev.id, overrideDate:occ, ...(slotOverride ? {overrideStart:slotOverride.start, overrideEnd:slotOverride.end} : {})});
 }
+/* Khung giờ MỚI của buổi đang sửa khi lưu “chỉ ngày này”.
+   Trước đây khi ngày có ≥2 khung giờ, khung giờ GỐC (slotOverride, dùng để đánh dấu buổi bị thay) bị dùng luôn làm giờ của buổi mới
+   → buổi tách ra giữ nguyên giờ cũ, giờ vừa sửa bị mất. Nay lấy giờ từ form: khung giờ không có trong danh sách gốc là khung vừa sửa.
+   ov = khung giờ gốc cần thay (tự suy ra khi form không cho biết khung nào và đúng một khung gốc đã bị đổi). */
+function pickOccSlot(ev, d, times, occ, slotOverride){
+  const day = wd(occ), same = (a, b) => !!a && !!b && a.start === b.start && a.end === b.end;
+  const orig = ev.times && ev.times[day] && ev.times[day].length ? ev.times[day] : [{start:ev.start, end:ev.end}];
+  const nw = (times && times[day]) || [];
+  let ov = slotOverride || null;
+  if(!ov && orig.length > 1){ const gone = orig.filter(o => !nw.some(x => same(x, o))); if(gone.length === 1) ov = gone[0]; }
+  const eo = ov || (orig.length === 1 ? orig[0] : null);   // khung giờ gốc đang sửa
+  let slot;
+  if(!nw.length) slot = eo || {start:d.start, end:d.end};
+  else if(eo && nw.some(x => same(x, eo))) slot = eo;       // giờ của khung này không đổi
+  else { const fresh = nw.filter(x => !orig.some(o => same(o, x))); slot = fresh[0] || eo || nw[0]; }
+  return {slot, ov};
+}
 // tách buổi đang sửa thành một lịch một lần riêng cho đúng ngày đang xem, không đụng các tuần/thứ khác của lịch lặp
 function saveOnlyOcc(ev, d, times, occ, slotOverride){
-  const day = wd(occ);
-  const slot = slotOverride || ((times && times[day] && times[day][0]) || {start:d.start, end:d.end});
+  const {slot, ov} = pickOccSlot(ev, d, times, occ, slotOverride);
   const {repeat:_rp, until:_un, days:_dd, times:_tm, date:_dt, start:_st, end:_en, ...rest} = d;
-  makeOverride(ev, occ, slotOverride, {...rest, date:occ, start:slot.start, end:slot.end});
+  makeOverride(ev, occ, ov, {...rest, date:occ, start:slot.start, end:slot.end});
 }
 /* ====== PHẠM VI ÁP DỤNG (dùng chung cho Bảng kéo thả, Danh sách, Lớp) ======
    Một lớp lặp có thể gồm nhiều “phiên bản” nối tiếp nhau (mỗi lần chọn “Từ tuần này trở đi” sẽ tách thêm một phiên bản).
@@ -11798,7 +11843,10 @@ async function saveForm(){
     }
     extra.forEach(x => state.events.push({id:uid(), skip:[], ...x}));
     weekStart = mondayOf(editing.id && d.repeat !== 'none' ? weekStart : d.date);
-    if(tagSelActive() && d.type !== undefined && !tagSel.has(d.type)){ tagSel.add(d.type); saveUI(); }   // đang lọc theo tag: tag của lịch vừa lưu phải hiện
+    if(tagSelActive() && d.type !== undefined){   // đang lọc theo tag: tag của lịch vừa lưu phải hiện (chế độ ẩn: bỏ tag đó khỏi danh sách bị ẩn)
+      if(tagMode === 'hide'){ if(tagSel.has(d.type)){ tagSel.delete(d.type); saveUI(); } }
+      else if(!tagSel.has(d.type)){ tagSel.add(d.type); saveUI(); }
+    }
   }catch(ex){
     state.events = JSON.parse(snap); console.error(ex);
     return err('Không lưu được, dữ liệu đã được giữ nguyên như cũ. (' + ((ex && ex.message) || ex) + ')');
@@ -13110,15 +13158,17 @@ function tagStats(){
 const hubHoursVN = m => String(Math.round(m / 60 * 100) / 100).replace('.', ',');
 const hubStatLine = (n, min, cx, cf) => `${n} buổi · ${hubHoursVN(min)} giờ · ${cx} buổi nghỉ · ${cf} buổi trùng lịch`;
 function hubSumHTML(st, tsel){
-  const head = tsel ? `Đang lọc <b>${state.tags.filter(t => tagSel.has(t.id)).length}/${state.tags.length}</b> tag` : `Đang hiện <b>${state.tags.length}</b> tag`;
-  return `<span>${head} · Tuần ${dmy(mondayOf(weekStart))}</span><button type="button" class="btn" data-act="clr" data-k="clr" ${tsel ? '' : 'disabled'}>Hiện tất cả</button>`;
+  const hide = tagMode === 'hide', n = state.tags.filter(t => tagSel.has(t.id)).length;
+  const head = tsel ? `${hide ? 'Đang ẩn' : 'Đang lọc'} <b>${n}/${state.tags.length}</b> tag` : `Đang hiện <b>${state.tags.length}</b> tag`;
+  const mode = `<span class="hubMode" role="group" aria-label="Chế độ lọc tag"><button type="button" data-act="mode" data-mode="show" data-k="mode:show" class="${hide ? '' : 'on'}" aria-pressed="${!hide}" title="Chỉ hiện các tag được chọn">Chỉ hiện</button><button type="button" data-act="mode" data-mode="hide" data-k="mode:hide" class="${hide ? 'on' : ''}" aria-pressed="${hide}" title="Ẩn các tag được chọn, hiện phần còn lại">Ẩn</button></span>`;
+  return `<span>${head} · Tuần ${dmy(mondayOf(weekStart))}</span><span class="hubSumAct">${mode}<button type="button" class="btn" data-act="clr" data-k="clr" ${tsel ? '' : 'disabled'}>Hiện tất cả</button></span>`;
 }
 /* đổi lựa chọn tag tại chỗ (không vẽ lại cả danh sách) để các hiệu ứng chạy mượt */
 function hubSelSync(){
   const tsel = tagSelActive();
   dlgTags.querySelectorAll('.hubCard').forEach(c => {
-    const sel = tsel && tagSel.has(c.dataset.id);
-    c.classList.toggle('sel', sel); c.classList.toggle('nsel', tsel && !sel); c.setAttribute('aria-checked', String(sel));
+    const sel = tsel && tagSel.has(c.dataset.id), hide = tagMode === 'hide';
+    c.classList.toggle('sel', sel); c.classList.toggle('hid', sel && hide); c.classList.toggle('nsel', tsel && (hide ? sel : !sel)); c.setAttribute('aria-checked', String(sel));
   });
   const s = $('#hubSum'); if(s) s.innerHTML = hubSumHTML(null, tsel);   // dòng tóm tắt không còn dùng số liệu, khỏi tính lại thống kê mỗi lần bấm
 }
@@ -13180,16 +13230,16 @@ function hubSwitch(to){
 }
 function hubViewHTML(st, tsel){
   const cards = state.tags.map(t => {
-    const s = st.S[t.id], sel = tsel && tagSel.has(t.id), nsel = tsel && !sel, pct = st.totalMin ? Math.round(s.min / st.totalMin * 100) : 0;
+    const s = st.S[t.id], hide = tagMode === 'hide', sel = tsel && tagSel.has(t.id), nsel = tsel && (hide ? sel : !sel), pct = st.totalMin ? Math.round(s.min / st.totalMin * 100) : 0;
     const meta = hubStatLine(s.n, s.min, s.cx, s.cf);   // chỉ số liệu của tuần đang xem
-    return `<div class="hubCard${sel ? ' sel' : ''}${nsel ? ' nsel' : ''}" role="checkbox" aria-checked="${sel}" tabindex="0" data-act="sel" data-id="${esc(t.id)}" data-k="sel:${esc(t.id)}" style="--c:${esc(t.color)}">
+    return `<div class="hubCard${sel ? ' sel' : ''}${sel && hide ? ' hid' : ''}${nsel ? ' nsel' : ''}" role="checkbox" aria-checked="${sel}" tabindex="0" data-act="sel" data-id="${esc(t.id)}" data-k="sel:${esc(t.id)}" style="--c:${esc(t.color)}">
       <span class="hubChk" aria-hidden="true"></span>
       <div class="hubMain"><b>${esc(t.name)}</b><small>${esc(meta)}</small><div class="hubBar" title="${pct}% số giờ trong tuần"><i style="width:${pct}%"></i></div></div>
     </div>`;
   }).join('');
   const sw = (k, name, col, note) => `<label class="hubSw"><i style="--c:${esc(col)}"></i><span>${name}<small>${note}</small></span><input type="checkbox" role="switch" data-act="vis" data-id="${k}" data-k="vis:${k}" ${hiddenTypes.has(k) ? '' : 'checked'}></label>`;
   return `<div class="hubSum" id="hubSum">${hubSumHTML(st, tsel)}</div>
-    <div class="hubList" role="group" aria-label="Chọn tag để lọc">${cards}</div>
+    <div class="hubList" role="group" aria-label="Chọn tag để lọc (chế độ Chỉ hiện hoặc Ẩn ở dòng trên)">${cards}</div>
     <div class="hubSec">Hiển thị thêm</div>
     ${sw('__dl', 'Deadline', statusColor('dl'), `${st.dl.total} deadline · ${st.dl.late} quá hạn · ${st.dl.done} hoàn thành · ${st.dl.pend} chưa hoàn thành`)}
     ${sw('__cancel', 'Nghỉ', statusColor('cancel'), `${st.cancel} buổi nghỉ`)}
@@ -13327,6 +13377,7 @@ dlgTags.addEventListener('click', e => {
   if(a === 'vis') return;                                   // công tắc: xử lý ở sự kiện change
   if(a === 'sel'){ tagSelToggle(id); hubSelSync(); hubRenderSoon(true); }
   else if(a === 'clr'){ tagSelClear(); hubSelSync(); hubRenderSoon(true); }
+  else if(a === 'mode'){ if(tagMode !== b.dataset.mode){ tagModeSet(b.dataset.mode); drawHub(); hubRenderSoon(true); } }   // đổi chế độ lọc, giữ nguyên các tag đã chọn
   else if(a === 'del'){ hubDel = hubDel === id ? null : id; drawHub(); }
   else if(a === 'delno'){ hubDel = null; drawHub(); }
   else if(a === 'delok'){ const m = $('#hubMerge'); hubMergeTag(id, m ? m.value : ''); hubDel = null; drawHub(); hubRenderSoon(); }
@@ -13920,7 +13971,7 @@ function innerScrollSnap(){
 function uiSnap(){
   if(!UIS) return;
   try{
-    const s = {hv:2, view:state.view, week:weekStart, cd:calDate, hid:[...hiddenTypes], tsel:[...tagSel], q:qRaw.lich, qd:qRaw.dl, qa:qRaw.all, qs:qScope, fxf:fxFilter, guide:guideOpen, sx:scrollX, sy:scrollY, nps:[...npSel], npf:npScope, isc:innerScrollSnap(), dlg:null, lta:lastTA, ls:lastSched, ci:calInfo ? calInfoRef : calInfoPending, ciw:calInfo ? 1 : 0};
+    const s = {hv:2, view:state.view, week:weekStart, cd:calDate, hid:[...hiddenTypes], tsel:[...tagSel], tm:tagMode, q:qRaw.lich, qd:qRaw.dl, qa:qRaw.all, qs:qScope, fxf:fxFilter, guide:guideOpen, sx:scrollX, sy:scrollY, nps:[...npSel], npf:npScope, isc:innerScrollSnap(), dlg:null, lta:lastTA, ls:lastSched, ci:calInfo ? calInfoRef : calInfoPending, ciw:calInfo ? 1 : 0};
     const ae = document.activeElement, fc = ae && ae.closest && ae.closest('dialog[open]') && ae.name ? {name:ae.name, a:ae.selectionStart, b:ae.selectionEnd} : null;
     if(dlg.open){ readTimes(); s.dlg = {k:'ev', id:editing && editing.id, date:editing && editing.date, slot:editing && editing.slot, form:formSnap(f), days:daysBoxes().map(b => b.checked), times:timesDraft};
       if(dlgRepeat.open){ rtRead(); s.dlg.sub = {k:'repeat', draft:rtDraft.map(t => ({...t}))}; } }
@@ -13954,6 +14005,7 @@ if(uiSaved){
   calDate = (/^\d{4}-\d{2}-\d{2}$/.test(uiSaved.cd) && mondayOf(uiSaved.cd) === weekStart) ? uiSaved.cd : weekStart;
   if(uiSaved.hv === 2 && Array.isArray(uiSaved.hid)){ hiddenTypes.clear(); uiSaved.hid.forEach(x => hiddenTypes.add(x)); }   // đã có trạng thái lưu: theo đúng lựa chọn lần trước (kể cả đã bật hiện Nghỉ)
   if(Array.isArray(uiSaved.tsel)) uiSaved.tsel.forEach(x => { if(typeof x === 'string') tagSel.add(x); });
+  tagMode = uiSaved.tm === 'hide' ? 'hide' : 'show';
   if(typeof uiSaved.q === 'string') qRaw.lich = uiSaved.q;
   if(typeof uiSaved.qd === 'string') qRaw.dl = uiSaved.qd;
   if(typeof uiSaved.qa === 'string') qRaw.all = uiSaved.qa;
@@ -14874,7 +14926,7 @@ setInterval(minuteRender, 60000);
 (()=>{try{
   const $g=i=>document.getElementById(i), LS=localStorage, TZ=Intl.DateTimeFormat().resolvedOptions().timeZone, API='https://www.googleapis.com/calendar/v3/calendars/primary/events';
   let tok=null, tokMe='', exp=0, tc=null, busy=false, again=false, timer=0, needAuth=false;   // needAuth: đang bật nhưng cần cấp quyền lại
-  const say=t=>{ const e=$g('gcStatus'); if(!e) return; if(/^Đã đồng bộ/.test(t)) t=''; e.textContent=t; e.title=t; const c=$g('gcStat'); if(c) c.dataset.sy=/lỗi|Cần|Chưa tự|chưa đúng|Hãy |Không /.test(t)?'bad':/Đang/.test(t)?'busy':/^Đã (đồng bộ|sao chép|lưu)/.test(t)?'ok':''; };
+  const say=t=>{ const e=$g('gcStatus'); if(!e) return; e.textContent=t; e.title=t; const c=$g('gcStat'); if(c) c.dataset.sy=/lỗi|Cần|Chưa tự|chưa đúng|Hãy |Không /.test(t)?'bad':/Đang/.test(t)?'busy':/^Đã (đồng bộ|sao chép|lưu)/.test(t)?'ok':''; };
   /* Cài đặt kết nối nằm trong state.gcal = {cid, on, color, dl} → đi theo TÀI KHOẢN qua đồng bộ đám mây (không còn lưu riêng từng thiết bị).
      Kết nối ở một máy thì mọi máy đăng nhập cùng tài khoản đều tự đồng bộ; ngắt kết nối cũng áp dụng cho mọi máy. */
   const G=()=>{ const g=state&&state.gcal; return g&&typeof g==='object'?g:null; };
@@ -14920,7 +14972,7 @@ setInterval(minuteRender, 60000);
     for(let w=mondayOf(from); w<=to; w=addDays(w,7)) weekOccs(w).forEach(o=>{
       if(o.cancelled||o.date<from||o.date>to||!o.ev.start||!o.ev.end) return;
       let ed=o.date; if(o.ev.end<=o.ev.start) ed=addDays(o.date,1);
-      m.set(o.ev.id+'|'+o.date+'|'+o.ev.start,{cid:o.ev.id,key:o.ev.id+'|'+o.date+'|'+o.ev.start,pre:o.ev.id+'|'+o.date+'|',sum:o.ev.title||'(Không tiêu đề)',s:iso(o.date,o.ev.start),e:iso(ed,o.ev.end),col:cOn&&o.ev.type?colorOf(tagOf(o.ev.type).color):''});
+      m.set(o.ev.id+'|'+o.date+'|'+o.ev.start,{cid:o.ev.id,ser:seriesOf(o.ev),key:o.ev.id+'|'+o.date+'|'+o.ev.start,pre:o.ev.id+'|'+o.date+'|',sum:o.ev.title||'(Không tiêu đề)',s:iso(o.date,o.ev.start),e:iso(ed,o.ev.end),col:cOn&&o.ev.type?colorOf(tagOf(o.ev.type).color):''});
     });
     /* Deadline → sự kiện riêng. Khoá 'dl|id|d' (cả ngày, không có giờ hạn) hoặc 'dl|id|t' (có giờ: khung 30 phút KẾT THÚC đúng hạn chót).
        Đổi giữa hai kiểu = khoá khác → xoá cái cũ, tạo cái mới (không phải đổi ngày/giờ thành ngày cả ngày trên cùng một sự kiện). */
@@ -14992,6 +15044,11 @@ setInterval(minuteRender, 60000);
         todo.forEach(d=>{
           if(d.dl){ ins++; add(d,s=>send('POST',API,d,s,{id:gid(d.key)}).catch(e=>{ if(/409/.test(e.message)) return send('PATCH',API+'/'+gid(d.key),d,s,{status:'confirmed'}); throw e; })); return; }   // deadline luôn tạo mới theo khoá, không ghép với sự kiện có sẵn trên Google
           let i=stale.findIndex(g=>lk(g).startsWith(d.pre));            // cùng lớp + cùng ngày nhưng đổi giờ/tên → sửa chính sự kiện đó
+          if(i<0&&d.ser){   // sửa "từ buổi này trở đi" tạo phiên bản mới (id mới, cùng series): ghép với sự kiện cũ cùng series + cùng ngày thay vì tạo mới
+            const dk=d.key.split('|'), serOfKey=k=>{ const e=state.events.find(x=>x.id===String(k).split('|')[0]); return e?seriesOf(e):String(k).split('|')[0]; };
+            const fit=g=>{ const k=String(lk(g)); if(k.startsWith('dl|')) return false; const p=k.split('|'); return p[1]===dk[1]&&serOfKey(k)===d.ser; };
+            i=stale.findIndex(g=>fit(g)&&String(lk(g)).split('|')[2]===dk[2]); if(i<0) i=stale.findIndex(fit);
+          }
           if(i>=0){ const g=stale.splice(i,1)[0]; note(g,d.key); upd++; add(d,s=>send('PATCH',API+'/'+g.id,d,s)); return; }
           const ds=ms(d.s+offs(d.s)), de=ms(d.e+offs(d.e)), nd=nm(d.sum), st=g=>ms(g.start.dateTime)===ds, en=g=>ms(g.end.dateTime)===de, nt=g=>{ const x=nm(g.summary); return x&&nd&&(x===nd||(Math.min(x.length,nd.length)>=3&&(x.includes(nd)||nd.includes(x)))); };
           i=free.findIndex(g=>st(g)&&nm(g.summary)===nd);                      // trùng tên + giờ bắt đầu
@@ -15001,7 +15058,7 @@ setInterval(minuteRender, 60000);
           ins++; add(d,s=>send('POST',API,d,s,{id:gid(d.key)}).catch(e=>{ if(/409/.test(e.message)) return send('PATCH',API+'/'+gid(d.key),d,s,{status:'confirmed'}); throw e; }));
         });
         const nLinked=stale.length+[...want.keys()].filter(k=>gs.some(g=>lk(g)===k)).length;
-        let skipDel=0; if(stale.length>5&&(want.size===0||stale.length>nLinked*0.5)){ skipDel=stale.length; stale.length=0; }   // an toàn: dữ liệu app trống/lệch bất thường thì KHÔNG xoá hàng loạt trên Google
+        let skipDel=0; if(stale.length>5&&want.size===0){ skipDel=stale.length; stale.length=0; }   // chỉ chặn xoá hàng loạt khi app hoàn toàn trống (dữ liệu chưa tải); sửa lịch/series bình thường vẫn phải xoá bản cũ   // an toàn: dữ liệu app trống/lệch bất thường thì KHÔNG xoá hàng loạt trên Google
         stale.forEach(g=>{ del++; add({cid:''},()=>api('DELETE',API+'/'+g.id)); });
         return {jobs,ins,upd,lnk,del,skipDel};
       };
@@ -15030,8 +15087,9 @@ setInterval(minuteRender, 60000);
       meet.forEach((u,id)=>addMeetLink(state.events.find(e=>e.id===id),u));   // kéo link Google Meet từ Google về ô trong app (không ghi đè link đã có)
       state.events.forEach(ev=>{ if(ev.meet&&ev.meetCode) addMeetLink(ev,'https://meet.google.com/'+ev.meetCode); });
       if(nm2||changed){ save(); render(); }
-      needAuth=false; gcBtn(); say(`Đã đồng bộ ${new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})}${(fail||meetFail)?' · có '+(fail+meetFail)+' lỗi':''}`);
-      if(created) toast('Đã tạo Google Meet', 2500); else if(interactive===true) toast('Đã đồng bộ Google Calendar');
+      needAuth=false; gcBtn(); const rep=[ins&&('tạo '+ins), upd&&('sửa '+upd), lnk&&('liên kết '+lnk), del&&('xoá '+del), skipDel&&('bỏ qua xoá '+skipDel)].filter(Boolean).join(' · ')||'không có thay đổi';   // báo cáo lượt đồng bộ
+      say(`Đã đồng bộ ${new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})} · ${rep}${(fail||meetFail)?' · có '+(fail+meetFail)+' lỗi':''}`);
+      if(created) toast('Đã tạo Google Meet', 2500); else if(interactive===true) toast('Đã đồng bộ Google Calendar · '+rep, 3500);
     }catch(e){ if(interactive==='auto'){ needAuth=true; gcBtn(); say('Chưa tự kết nối được Google ('+e.message+'). Bấm “Kết nối lại” để thử lại.'); if(!/khác tài khoản/.test(e.message)) armGesture(); } else { say('Lỗi đồng bộ: '+e.message); if(interactive===true){ needAuth=true; gcBtn(); toast('Lỗi: '+e.message,3000); } else if(/hết hạn/.test(e.message)){ needAuth=true; gcBtn(); armGesture(); } } }
     finally{ busy=false; if(again){ again=false; sched(0); } }   // có thay đổi mới trong lúc đang đồng bộ: chạy lại ngay
   }
