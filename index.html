@@ -14921,7 +14921,7 @@ setInterval(minuteRender, 60000);
 /* ===== Đồng bộ app → Google Calendar (một chiều, mức từng buổi) =====
    - Gửi tên + thời gian + màu tag (colorId gần nhất) và deadline (khoá lichKey bắt đầu bằng 'dl|'). Mỗi buổi gắn extendedProperties.private.lichKey = "idLớp|ngày|giờ" để nhận ra lần sau.
    - Sự kiện đã có trên Google (chưa gắn khoá) mà trùng tên + giờ bắt đầu → chỉ GẮN KHOÁ (PATCH), không tạo mới, không đụng mô tả/địa điểm/khách mời/nhắc.
-   - Chỉ xoá những sự kiện CÓ lichKey mà app không còn; sự kiện riêng trên Google không bao giờ bị xoá.
+   - Chỉ xoá những sự kiện CÓ lichKey mà app không còn; sự kiện riêng trên Google không bao giờ bị xoá (ngoại lệ duy nhất: bản sao TRÙNG HỆT một sự kiện của app — cùng tên, giờ bắt đầu, giờ kết thúc, không mô tả/địa điểm/khách/Meet, do chính bạn tạo — được dọn để không bị nhân đôi; hai sự kiện cùng lichKey cũng chỉ giữ một).
    - Phạm vi: 14 ngày trước → 120 ngày sau. Cần Client ID (Google Cloud: bật Calendar API, OAuth Web, thêm địa chỉ trang web vào Authorized JavaScript origins). */
 (()=>{try{
   const $g=i=>document.getElementById(i), LS=localStorage, TZ=Intl.DateTimeFormat().resolvedOptions().timeZone, API='https://www.googleapis.com/calendar/v3/calendars/primary/events';
@@ -14974,6 +14974,8 @@ setInterval(minuteRender, 60000);
       let ed=o.date; if(o.ev.end<=o.ev.start) ed=addDays(o.date,1);
       m.set(o.ev.id+'|'+o.date+'|'+o.ev.start,{cid:o.ev.id,ser:seriesOf(o.ev),key:o.ev.id+'|'+o.date+'|'+o.ev.start,pre:o.ev.id+'|'+o.date+'|',sum:o.ev.title||'(Không tiêu đề)',s:iso(o.date,o.ev.start),e:iso(ed,o.ev.end),col:cOn&&o.ev.type?colorOf(tagOf(o.ev.type).color):''});
     });
+    /* Hai buổi của app trùng hệt (cùng tên, giờ bắt đầu, giờ kết thúc — vd. hai phiên bản của một lớp chồng nhau) chỉ đẩy MỘT sự kiện sang Google */
+    { const seen=new Set(); m.forEach((d,k)=>{ const x=nz(d.sum)+'|'+d.s+'|'+d.e; if(seen.has(x)) m.delete(k); else seen.add(x); }); }
     /* Deadline → sự kiện riêng. Khoá 'dl|id|d' (cả ngày, không có giờ hạn) hoặc 'dl|id|t' (có giờ: khung 30 phút KẾT THÚC đúng hạn chót).
        Đổi giữa hai kiểu = khoá khác → xoá cái cũ, tạo cái mới (không phải đổi ngày/giờ thành ngày cả ngày trên cùng một sự kiện). */
     if(DL_ON()){
@@ -15024,8 +15026,18 @@ setInterval(minuteRender, 60000);
   const confOk=(g,d)=>{ const c=mcode(d); return !c||noCopy()||gconf(g)===c; };
   const same=(g,d)=>g.summary===d.sum&&(d.allDay?(g.start.date===d.s&&g.end.date===d.e):(ms(g.start.dateTime)===ms(d.s+offs(d.s))&&ms(g.end.dateTime)===ms(d.e+offs(d.e))))&&remOk(g,d)&&confOk(g,d)&&colOk(g,d);
   const offs=x=>{ const o=-new Date(x).getTimezoneOffset(), a=Math.abs(o); return (o<0?'-':'+')+String(Math.floor(a/60)).padStart(2,'0')+':'+String(a%60).padStart(2,'0'); };
+  let isVerify=false, verifyNext=false;
+  /* run: cùng một trình duyệt (nhiều tab / PWA + trình duyệt) chỉ chạy MỘT lượt đồng bộ tại một thời điểm */
   async function run(interactive){
-    if(!on()) return;   // tài khoản này chưa bật (hoặc đã ngắt) đồng bộ Google Calendar
+    if(!on()) return;
+    if(busy){ again=true; return; }
+    const LK=typeof navigator!=='undefined'&&navigator.locks;
+    if(LK&&LK.request) return LK.request('lich-gcal-sync',()=>runCore(interactive));
+    return runCore(interactive);
+  }
+  async function runCore(interactive){
+    if(!on()) return;
+    const wasVerify=isVerify; isVerify=false;   // tài khoản này chưa bật (hoặc đã ngắt) đồng bộ Google Calendar
     if(busy){ again=true; return; } busy=true;
     try{
       if(!await auth(interactive)){ needAuth=true; gcBtn(); say('Cần đăng nhập Google lại: bấm “Kết nối lại”.'); armGesture(); return; }
@@ -15037,7 +15049,9 @@ setInterval(minuteRender, 60000);
       const safe=f=>f().catch(e=>{ if(/hết hạn/.test(e.message)) fatal=e; else fail++; });   // một sự kiện lỗi (vd. sự kiện của người khác, không có quyền sửa) không làm dừng cả lượt
       const setGs=r=>{ if(!r||!r.id) return; const ix=gs.findIndex(x=>x.id===r.id); if(ix>=0) gs[ix]=r; else gs.push(r); };
       const plan=()=>{
-        const linked=new Map(), free=[]; gs.forEach(g=>{ const k=lk(g); if(k&&String(k).startsWith('dl|')&&!DL_ON()) return; k?linked.set(k,g):free.push(g); });   // tắt đồng bộ deadline: giữ nguyên những gì đã có trên Google, không xoá
+        const linked=new Map(), free=[], byKey=new Map(), dupG=[]; gs.forEach(g=>{ const k=lk(g); if(k&&String(k).startsWith('dl|')&&!DL_ON()) return; if(!k){ free.push(g); return; } const a=byKey.get(k); if(a) a.push(g); else byKey.set(k,[g]); });
+        /* nhiều sự kiện cùng lichKey (hai thiết bị đồng bộ cùng lúc): giữ MỘT — ưu tiên bản có id cố định gid(key), rồi theo id — để mọi thiết bị chọn cùng một bản; các bản còn lại bị dọn */
+        byKey.forEach((a,k)=>{ const id0=gid(k); a.sort((x,y)=>(y.id===id0)-(x.id===id0)||(x.id<y.id?-1:x.id>y.id?1:0)); linked.set(k,a[0]); for(let i=1;i<a.length;i++) dupG.push(a[i]); });   // tắt đồng bộ deadline: giữ nguyên những gì đã có trên Google, không xoá
         const jobs=[]; let ins=0,upd=0,lnk=0,del=0; const todo=[], add=(d,f)=>jobs.push({d,f});
         want.forEach((d,k)=>{ const g=linked.get(k); if(g){ linked.delete(k); note(g,k); if(!same(g,d)){ upd++; add(d,s=>send('PATCH',API+'/'+g.id,d,s)); } } else todo.push(d); });
         const stale=[...linked.values()];
@@ -15057,10 +15071,17 @@ setInterval(minuteRender, 60000);
           if(i>=0){ const g=free.splice(i,1)[0]; note(g,d.key); lnk++; add(d,s=>send('PATCH',API+'/'+g.id,d,s)); return; }   // liên kết + đồng bộ tên/giờ theo app; mô tả/địa điểm/khách mời giữ nguyên
           ins++; add(d,s=>send('POST',API,d,s,{id:gid(d.key)}).catch(e=>{ if(/409/.test(e.message)) return send('PATCH',API+'/'+gid(d.key),d,s,{status:'confirmed'}); throw e; }));
         });
-        const nLinked=stale.length+[...want.keys()].filter(k=>gs.some(g=>lk(g)===k)).length;
         let skipDel=0; if(stale.length>5&&want.size===0){ skipDel=stale.length; stale.length=0; }   // chỉ chặn xoá hàng loạt khi app hoàn toàn trống (dữ liệu chưa tải); sửa lịch/series bình thường vẫn phải xoá bản cũ   // an toàn: dữ liệu app trống/lệch bất thường thì KHÔNG xoá hàng loạt trên Google
         stale.forEach(g=>{ del++; add({cid:''},()=>api('DELETE',API+'/'+g.id)); });
-        return {jobs,ins,upd,lnk,del,skipDel};
+        let dd=0;   // số bản trùng được dọn
+        if(want.size>0){   // app trống bất thường thì không dọn gì
+          dupG.forEach(g=>{ dd++; add({cid:''},()=>api('DELETE',API+'/'+g.id)); });
+          const twin=new Set(); want.forEach(d=>{ if(!d.dl&&!d.allDay) twin.add(nz(d.sum)+'|'+ms(d.s+offs(d.s))+'|'+ms(d.e+offs(d.e))); });
+          free.forEach(g=>{   // sự kiện chưa gắn khoá nhưng là bản sao hệt của sự kiện app, không có gì riêng (mô tả/địa điểm/khách/Meet), do chính bạn tạo, không lặp lại
+            if(!g.start||!g.start.dateTime||!g.end||!g.end.dateTime||g.recurringEventId||g.description||g.location||g.hangoutLink||g.conferenceData||(g.attendees&&g.attendees.length)||(g.organizer&&g.organizer.self===false)||(g.creator&&g.creator.self===false)) return;
+            if(twin.has(nz(g.summary)+'|'+ms(g.start.dateTime)+'|'+ms(g.end.dateTime))){ dd++; add({cid:''},()=>api('DELETE',API+'/'+g.id)); } });
+        }
+        return {jobs,ins,upd,lnk,del,skipDel,dd};
       };
       let P=plan(), replan=false;
       /* Google Meet: lớp nào bật Meet mà chưa có mã → dùng lại Meet đã có trên Google (nếu có), không thì tạo MỘT link ở buổi đầu tiên; các buổi còn lại gắn cùng mã đó */
@@ -15079,19 +15100,20 @@ setInterval(minuteRender, 60000);
         if(code){ give(code); meet.set(ev.id,'https://meet.google.com/'+code); created++; } else meetFail++;
       }
       if(replan) P=plan();
-      const {jobs,ins,upd,lnk,del,skipDel}=P;
+      const {jobs,ins,upd,lnk,del,skipDel,dd}=P;
       for(let i=0;i<jobs.length&&!fatal;i+=5) await Promise.all(jobs.slice(i,i+5).map(j=>safe(()=>j.f(false))));
       if(fatal) throw fatal;
+      if(!wasVerify&&(ins||lnk)) verifyNext=true;   // vừa tạo/liên kết: vài giây sau đọc lại và dọn nếu thiết bị khác cũng vừa tạo cùng lúc
       let nm2=0;
       const addMeetLink=(ev,u)=>{ if(ev&&!getLinks(ev).some(l=>l.url===safeUrl(u))){ const a=getLinks(ev); a.push({url:u,name:'Google Meet'}); ev.links=a; ev.link=a[0].url; ev.linkName=a[0].name; nm2++; } };
       meet.forEach((u,id)=>addMeetLink(state.events.find(e=>e.id===id),u));   // kéo link Google Meet từ Google về ô trong app (không ghi đè link đã có)
       state.events.forEach(ev=>{ if(ev.meet&&ev.meetCode) addMeetLink(ev,'https://meet.google.com/'+ev.meetCode); });
       if(nm2||changed){ save(); render(); }
-      needAuth=false; gcBtn(); const rep=[ins&&('tạo '+ins), upd&&('sửa '+upd), lnk&&('liên kết '+lnk), del&&('xoá '+del), skipDel&&('bỏ qua xoá '+skipDel)].filter(Boolean).join(' · ')||'không có thay đổi';   // báo cáo lượt đồng bộ
+      needAuth=false; gcBtn(); const rep=[ins&&('tạo '+ins), upd&&('sửa '+upd), lnk&&('liên kết '+lnk), del&&('xoá '+del), dd&&('dọn trùng '+dd), skipDel&&('bỏ qua xoá '+skipDel)].filter(Boolean).join(' · ')||'không có thay đổi';   // báo cáo lượt đồng bộ
       say(`Đã đồng bộ ${new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})} · ${rep}${(fail||meetFail)?' · có '+(fail+meetFail)+' lỗi':''}`);
       if(created) toast('Đã tạo Google Meet', 2500); else if(interactive===true) toast('Đã đồng bộ Google Calendar · '+rep, 3500);
     }catch(e){ if(interactive==='auto'){ needAuth=true; gcBtn(); say('Chưa tự kết nối được Google ('+e.message+'). Bấm “Kết nối lại” để thử lại.'); if(!/khác tài khoản/.test(e.message)) armGesture(); } else { say('Lỗi đồng bộ: '+e.message); if(interactive===true){ needAuth=true; gcBtn(); toast('Lỗi: '+e.message,3000); } else if(/hết hạn/.test(e.message)){ needAuth=true; gcBtn(); armGesture(); } } }
-    finally{ busy=false; if(again){ again=false; sched(0); } }   // có thay đổi mới trong lúc đang đồng bộ: chạy lại ngay
+    finally{ busy=false; if(again){ again=false; sched(0); } if(verifyNext){ verifyNext=false; setTimeout(()=>{ isVerify=true; sched(); },5000); } }   // có thay đổi mới trong lúc đang đồng bộ: chạy lại ngay
   }
   /* Tự kết nối khi vào trang: thử lặng lẽ trước; trình duyệt chặn popup nếu không có thao tác của người dùng nên nếu chưa được, lần chạm/bấm đầu tiên sẽ thử lại (tối đa 2 lần mỗi lần mở trang để không làm phiền) */
   let armN=0, autoTried=false;
