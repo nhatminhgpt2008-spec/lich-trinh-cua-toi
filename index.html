@@ -11851,8 +11851,9 @@ async function saveForm(){
     state.events = JSON.parse(snap); console.error(ex);
     return err('Không lưu được, dữ liệu đã được giữ nguyên như cũ. (' + ((ex && ex.message) || ex) + ')');
   }
+  if(!note && state.view === 'fixed' && d.repeat === 'none') note = 'Đã lưu lịch một lần. Mục Lớp chỉ hiện lịch lặp — xem lịch này ở Bảng / Danh sách. Muốn nó có trong Lớp, hãy sửa và chọn kiểu lặp (vd. Mỗi tuần).';
   save(); closeDialog(dlg); render();
-  if(note) toast(note, 4500);
+  if(note) toast(note, 6000);
   if(d.meet && window.gcalApi) window.gcalApi.now();   // tạo link Meet ngay, không đợi 4 giây
 }
 $('#closeBtn').onclick = () => closeDialog(dlg);
@@ -11967,7 +11968,8 @@ $('#addBtn').onclick = e => { e.stopPropagation(); addMenu.hidden ? openAddMenu(
 addMenu.onclick = e => {
   const b = e.target.closest('button[data-add]'); if(!b) return;
   closeAddMenu();
-  if(b.dataset.add === 'event') openModal(null, defDate()); else openTodo(null);
+  if(b.dataset.add === 'event') openModal(null, defDate(), state.view === 'fixed' ? {repeat:'weekly'} : undefined);   // mục Lớp chỉ liệt kê lịch LẶP: thêm từ đây thì mặc định “Mỗi tuần” để lịch mới hiện ngay trong Lớp
+  else openTodo(null);
 };
 document.addEventListener('click', e => { if(!addMenu.hidden && !addMenu.contains(e.target)) closeAddMenu(); });
 document.addEventListener('keydown', e => { if(e.key === 'Escape' && !addMenu.hidden){ closeAddMenu(); $('#addBtn').focus(); } });
