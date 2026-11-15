@@ -7724,6 +7724,8 @@ body:not([data-view="cal"]):not([data-view="monthAgenda"]) #mNoteBtn{display:non
 #dlgMNote .mnRow{display:flex;align-items:center;gap:10px;margin:0 0 6px}
 #dlgMNote .mnHead{font-size:13px;font-weight:700;color:var(--accent);flex:1;min-width:0}
 #dlgMNote .mnNone{background:transparent;padding:8px 14px}
+#dlgMNote .mnItem.mnCur{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}   /* tuần chứa hôm nay */
+#dlgMNote .mnNow{margin-left:8px;padding:1px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:11px;font-weight:700;vertical-align:1px}
 #dlgMNote .mnNone .mnRow{margin:0 0 4px}
 #dlgMNote .mnNone .mnHead{color:var(--muted)}
 #dlgMNote .mnHint{color:var(--muted);font-size:12.5px}
@@ -7964,7 +7966,7 @@ body:not([data-view="cal"]):not([data-view="monthAgenda"]) #mNoteBtn{display:non
   <form id="noteForm" onsubmit="return false" autocomplete="off">
     <div class="dlgHead">
       <div><h2 id="noteTitle">Ghi chú tuần</h2><p class="abssub" id="noteSub"></p></div>
-      <div class="hdR"><button type="button" class="iconbtn" id="noteBack" title="Quay lại ghi chú tháng" aria-label="Quay lại ghi chú tháng" hidden><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><button type="button" class="iconbtn" id="noteCloseX" aria-label="Đóng">×</button></div>
+      <div class="hdR"><button type="button" class="iconbtn" id="noteBack" title="Quay lại ghi chú tháng" aria-label="Quay lại ghi chú tháng"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><button type="button" class="iconbtn" id="noteCloseX" aria-label="Đóng">×</button></div>
     </div>
     <textarea id="noteText" rows="10" data-rte hidden aria-label="Ghi chú cho tuần này"></textarea>
     <div class="actions"><button type="button" class="btn" id="noteClear">Xóa ghi chú</button><span class="grow"></span><button type="button" class="btn primary" id="noteDone">Xong</button></div>
@@ -9930,7 +9932,7 @@ function calRange(){
 }
 const calTitle = () => `Tháng ${+calDate.slice(5,7)}, ${calDate.slice(0,4)}`;
 const isMonthView = () => state.view === 'cal' || state.view === 'monthAgenda';
-function calMonthBounds(){ const first = calDate.slice(0,7) + '-01', d = parse(first); return {from:first, to:fmt(new Date(d.getFullYear(), d.getMonth()+1, 0))}; }
+function calMonthBounds(d0){ const first = (d0 || calDate).slice(0,7) + '-01', d = parse(first); return {from:first, to:fmt(new Date(d.getFullYear(), d.getMonth()+1, 0))}; }
 function calShift(date, n){
   const d = parse(date), day = d.getDate();
   d.setDate(1); d.setMonth(d.getMonth() + n);
@@ -10708,7 +10710,7 @@ function openFxPop(kind, col){
   // Việc sắp xếp luôn áp dụng vào cột chứa nút phễu đang mở.
   const sortIsTime = col === 'when';
   const sortLabels = sortIsTime ? ['Sớm nhất → Muộn nhất', 'Muộn nhất → Sớm nhất'] : ['A → Z', 'Z → A'];
-  const sortHTML = `<div class="fx-pop-sort" role="group" aria-label="Sắp xếp theo ${esc(FX_LBL[kind]?.[col] || col)}"><span>Sắp xếp theo: <strong>${esc(FX_LBL[kind]?.[col] || col)}</strong></span><div class="fx-pop-sort-actions"><button type="button" data-fxpsort="asc" class="${sort.key === col && sort.dir === 1 ? 'on' : ''}" aria-pressed="${sort.key === col && sort.dir === 1}">${sortIsTime ? '↑ ' : ''}${sortLabels[0]}</button><button type="button" data-fxpsort="desc" class="${sort.key === col && sort.dir === -1 ? 'on' : ''}" aria-pressed="${sort.key === col && sort.dir === -1}">${sortIsTime ? '↓ ' : ''}${sortLabels[1]}</button></div><button type="button" class="fx-pop-sort-reset${sort.key === 'manual' ? ' on' : ''}" data-fxpsort="manual" aria-pressed="${sort.key === 'manual'}">Thứ tự thủ công (kéo thả)</button></div>`;
+  const sortHTML = `<div class="fx-pop-sort" role="group" aria-label="Sắp xếp theo ${esc(FX_LBL[kind]?.[col] || col)}"><span>Sắp xếp theo: <strong>${esc(FX_LBL[kind]?.[col] || col)}</strong></span><div class="fx-pop-sort-actions"><button type="button" data-fxpsort="asc" class="${sort.key === col && sort.dir === 1 ? 'on' : ''}" aria-pressed="${sort.key === col && sort.dir === 1}">${sortLabels[0]}</button><button type="button" data-fxpsort="desc" class="${sort.key === col && sort.dir === -1 ? 'on' : ''}" aria-pressed="${sort.key === col && sort.dir === -1}">${sortLabels[1]}</button></div><button type="button" class="fx-pop-sort-reset${sort.key === 'manual' ? ' on' : ''}" data-fxpsort="manual" aria-pressed="${sort.key === 'manual'}">Thứ tự thủ công (kéo thả)</button></div>`;
   el.innerHTML = `${sortHTML}${many ? '<input type="search" class="fx-pop-q" placeholder="Tìm giá trị…" aria-label="Tìm giá trị">' : ''}<div class="fx-pop-act"><button type="button" data-fxp="all">Chọn tất cả</button><button type="button" data-fxp="none">Bỏ chọn tất cả</button></div><div class="fx-pop-list"></div>`;
   document.body.appendChild(el);
   fxPopList(); fxPopPlace();
@@ -13162,7 +13164,7 @@ const hubStatLine = (n, min, cx, cf) => `${n} buổi · ${hubHoursVN(min)} giờ
 function hubSumHTML(st, tsel){
   const hide = tagMode === 'hide', n = state.tags.filter(t => tagSel.has(t.id)).length;
   const head = tsel ? `${hide ? 'Đang ẩn' : 'Đang lọc'} <b>${n}/${state.tags.length}</b> tag` : `Đang hiện <b>${state.tags.length}</b> tag`;
-  const mode = `<span class="hubMode" role="group" aria-label="Chế độ lọc tag"><button type="button" data-act="mode" data-mode="show" data-k="mode:show" class="${hide ? '' : 'on'}" aria-pressed="${!hide}" title="Chỉ hiện các tag được chọn">Chỉ hiện</button><button type="button" data-act="mode" data-mode="hide" data-k="mode:hide" class="${hide ? 'on' : ''}" aria-pressed="${hide}" title="Ẩn các tag được chọn, hiện phần còn lại">Ẩn</button></span>`;
+  const mode = `<span class="hubMode" role="group" aria-label="Chế độ lọc tag"><button type="button" data-act="mode" data-mode="hide" data-k="mode:hide" class="${hide ? 'on' : ''}" aria-pressed="${hide}" title="Ẩn các tag được chọn, hiện phần còn lại">Ẩn</button><button type="button" data-act="mode" data-mode="show" data-k="mode:show" class="${hide ? '' : 'on'}" aria-pressed="${!hide}" title="Chỉ hiện các tag được chọn">Hiện</button></span>`;
   return `<span>${head} · Tuần ${dmy(mondayOf(weekStart))}</span><span class="hubSumAct">${mode}<button type="button" class="btn" data-act="clr" data-k="clr" ${tsel ? '' : 'disabled'}>Hiện tất cả</button></span>`;
 }
 /* đổi lựa chọn tag tại chỗ (không vẽ lại cả danh sách) để các hiệu ứng chạy mượt */
@@ -13602,22 +13604,20 @@ function noteFocus(){
 }
 const noteGet = k => String((state.notes && state.notes[k]) || '');
 /* các tuần (thứ Hai) có phần nào nằm trong tháng đang xem, kèm ghi chú nếu có */
-function monthNoteWeeks(all){
-  const r = calMonthBounds(), out = [];
+/* Tháng của bảng ghi chú: dạng Tháng → tháng đang chọn; dạng Tuần → tháng chứa tuần đang xem (tính theo thứ Năm) */
+const noteMonthAnchor = () => (state.view === 'cal' || state.view === 'monthAgenda') ? undefined : addDays(mondayOf(weekStart), 3);
+function monthNoteWeeks(all, anchor){
+  const r = calMonthBounds(anchor), out = [];
   for(let k = mondayOf(r.from); k <= r.to; k = addDays(k, 7)){ const t = noteGet(k); if(all || t.trim()) out.push({key:k, text:t}); }
   return out;
 }
 function noteSync(){
-  { const mb = $('#mNoteBtn'); if(mb){ let has = false; try{ has = monthNoteWeeks().length > 0; }catch(_){} mb.classList.toggle('on', has); const t = has ? 'Ghi chú tháng (đã có ghi chú)' : 'Ghi chú tháng'; mb.title = t; mb.setAttribute('aria-label', t); } }
-  const b = $('#noteBtn'); if(!b) return;
-  const has = !!noteGet(mondayOf(weekStart)).trim();
-  b.classList.toggle('on', has);
-  const t = has ? 'Ghi chú tuần (đã có ghi chú)' : 'Ghi chú tuần';
-  b.title = t; b.setAttribute('aria-label', t);
+  let has = false; try{ has = monthNoteWeeks(false, noteMonthAnchor()).length > 0; }catch(_){}
+  const t = has ? 'Ghi chú tháng (đã có ghi chú)' : 'Ghi chú tháng';
+  ['#mNoteBtn', '#noteBtn'].forEach(id => { const b = $(id); if(!b) return; b.classList.toggle('on', has); b.title = t; b.setAttribute('aria-label', t); });
 }
 function openWeekNote(key){
   noteKey = (typeof key === 'string' && key) || mondayOf(weekStart);
-  { const bk = $('#noteBack'); if(bk) bk.hidden = !mnReturn; }   // nút Quay lại chỉ hiện khi mở từ bảng Ghi chú tháng
   $('#noteSub').textContent = `Tuần ${dmy(noteKey)}`;
   noteText.value = noteGet(noteKey);
   if(!dlgNote.open) dlgNote.showModal();
@@ -13634,14 +13634,15 @@ function noteFlush(){
   noteSync();
 }
 const dlgMNote = $('#dlgMNote');
-function openMonthNote(){
-  const r = calMonthBounds(), list = monthNoteWeeks(true), keep = $('#mnList').scrollTop;
+function openMonthNote(back){
+  const anc = noteMonthAnchor(), r = calMonthBounds(anc), list = monthNoteWeeks(true, anc), keep = $('#mnList').scrollTop, curWk = mondayOf(todayStr());
   $('#mnSub').textContent = `Tháng ${+r.from.slice(5,7)}/${r.from.slice(0,4)}`;
   $('#mnList').innerHTML = list.map(n => n.text.trim()
-    ? `<div class="mnItem"><div class="mnRow"><div class="mnHead">Tuần ${dmy(n.key)}</div><button type="button" class="btn mnEdit" data-wk="${n.key}" aria-label="Sửa ghi chú tuần ${dmy(n.key)}">Sửa</button></div><div class="mnBody">${bodyHTML(n.text)}</div></div>`
-    : `<div class="mnItem mnNone"><div class="mnRow"><div class="mnHead">Tuần ${dmy(n.key)}</div><button type="button" class="btn mnEdit" data-wk="${n.key}" aria-label="Sửa ghi chú tuần ${dmy(n.key)}">Sửa</button></div><div class="mnHint">Chưa có ghi chú</div></div>`).join('');
+    ? `<div class="mnItem${n.key === curWk ? ' mnCur' : ''}"><div class="mnRow"><div class="mnHead">Tuần ${dmy(n.key)}${n.key === curWk ? '<span class="mnNow">Tuần này</span>' : ''}</div><button type="button" class="btn mnEdit" data-wk="${n.key}" aria-label="Sửa ghi chú tuần ${dmy(n.key)}">Sửa</button></div><div class="mnBody">${bodyHTML(n.text)}</div></div>`
+    : `<div class="mnItem mnNone${n.key === curWk ? ' mnCur' : ''}"><div class="mnRow"><div class="mnHead">Tuần ${dmy(n.key)}${n.key === curWk ? '<span class="mnNow">Tuần này</span>' : ''}</div><button type="button" class="btn mnEdit" data-wk="${n.key}" aria-label="Sửa ghi chú tuần ${dmy(n.key)}">Sửa</button></div><div class="mnHint">Chưa có ghi chú</div></div>`).join('');
   $('#mnList').scrollTop = keep;
   if(!dlgMNote.open) dlgMNote.showModal();
+  if(!back){ const c = $('#mnList .mnCur'); if(c) c.scrollIntoView({block:'center'}); }   // mở mới: cuộn tới tuần hiện tại (quay lại từ Sửa thì giữ vị trí cũ)
 }
 /* bấm Sửa / Thêm: đóng bảng tổng hợp, mở hộp soạn ghi chú của đúng tuần đó; soạn xong (Xong / Esc) quay lại bảng tổng hợp đã cập nhật */
 let mnPending = null, mnReturn = false;
@@ -13650,7 +13651,7 @@ $('#mnList').addEventListener('click', e => {
   mnPending = b.dataset.wk; closeDialog(dlgMNote);
 });
 dlgMNote.addEventListener('close', () => { if(mnPending){ const k = mnPending; mnPending = null; mnReturn = true; openWeekNote(k); } });
-dlgNote.addEventListener('close', () => { if(mnReturn){ mnReturn = false; setTimeout(openMonthNote, 0); } });   // setTimeout: để noteFlush (đăng ký ngay bên dưới) lưu xong rồi mới dựng lại bảng tổng hợp
+dlgNote.addEventListener('close', () => { if(mnReturn){ mnReturn = false; setTimeout(() => openMonthNote(true), 0); } });   // setTimeout: để noteFlush (đăng ký ngay bên dưới) lưu xong rồi mới dựng lại bảng tổng hợp
 $('#mnDone').addEventListener('click', () => closeDialog(dlgMNote));
 $('#mnCloseX').addEventListener('click', () => closeDialog(dlgMNote));
 dlgMNote.addEventListener('click', e => { if(bdHit(e, dlgMNote)) closeDialog(dlgMNote); });
@@ -13790,7 +13791,7 @@ document.addEventListener('keydown', e => {
     const nb = $('#noteBtn'), mnb = $('#mNoteBtn'), grp = [wm, ta, tg, nb, mnb].filter(Boolean);
     const place = () => { if(mq.matches){ grp.forEach(b => bar.appendChild(b)); } else { const ref = lg.querySelector('.lgclip'); grp.forEach(b => lg.insertBefore(b, ref));   /* chèn trước vùng tag đang lọc, đúng thứ tự W/M · Bảng/Danh sách · Tag */ } };
     place(); mq.addEventListener('change', place);
-    bar.addEventListener('click', e => { if(e.target.closest('#tagToggle')) openTags(); else if(e.target.closest('#noteBtn')) openWeekNote(); else if(e.target.closest('#mNoteBtn')) openMonthNote(); });   /* ở trên thanh đầu, nút Tag không còn nằm trong #legend nên tự bắt click */
+    bar.addEventListener('click', e => { if(e.target.closest('#tagToggle')) openTags(); else if(e.target.closest('#noteBtn, #mNoteBtn')) openMonthNote(); });   /* ở trên thanh đầu, nút Tag không còn nằm trong #legend nên tự bắt click */
   } }
 { const chip=$('#wkChip'), j=$('#jump');   /* chip Tuần/Tháng = nút chọn ngày (đã gộp nút lịch) */
   if(chip && j){
@@ -15259,10 +15260,9 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&document.b
 d.addEventListener('click',function(e){
  var b=e.target.closest('.gdi'); if(!b)return; var g=b.dataset.g;
  if(g==='table'||g==='deadline'||g==='fixed'){ var s=$('#viewSeg button[data-v="'+g+'"]'); if(s)s.click(); }
- else if(g==='note'){   /* Ghi chú: dạng Tháng mở tổng hợp tháng, còn lại mở ghi chú của tuần đang xem */
-  var sv2=(typeof state!=='undefined'&&state.view)||document.body.dataset.view;
+ else if(g==='note'){   /* Ghi chú: luôn mở bảng tổng hợp ghi chú của tháng (dạng Tuần thì tháng chứa tuần đang xem) */
   open(false);
-  if(sv2==='cal'||sv2==='monthAgenda'){ if(typeof openMonthNote==='function')openMonthNote(); } else if(typeof openWeekNote==='function')openWeekNote();
+  if(typeof openMonthNote==='function')openMonthNote();
   return; }
  else if(g==='week'){   /* Tuần: giữ nguyên dạng Bảng/Danh sách đang dùng */
   var want=(state.view==='agenda'||state.view==='monthAgenda')?'agenda':'table';
