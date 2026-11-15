@@ -14990,7 +14990,7 @@ setInterval(minuteRender, 60000);
     a=Math.imul(c^(a>>>18),597399067); b=Math.imul(d^(b>>>22),2869860233); c=Math.imul(a^(c>>>17),951274213); d=Math.imul(b^(d>>>19),2716044179); a^=(b^c^d); b^=a; c^=a; d^=a; return [a,b,c,d].map(x=>(x>>>0).toString(16).padStart(8,'0')).join(''); };
   const uuidOf=key=>{ const x=h128('lich-label|'+key); return x.slice(0,8)+'-'+x.slice(8,12)+'-4'+x.slice(13,16)+'-'+'89ab'[parseInt(x[16],16)&3]+x.slice(17,20)+'-'+x.slice(20,32); };
   const labOf=(key,hex,name)=>HEX6.test(hex||'')?{key,hex:String(hex).toLowerCase(),name:Array.from(String(name||'').trim()).slice(0,50).join('')}:null;
-  const lv=u=>LM?u+(u.includes('?')?'&':'?')+'eventLabelVersion=1':u;   // bật nhãn màu: Google bỏ qua colorId khi có tham số này
+  const lv=u=>LM?u+(u.includes('?')?'&':'?')+'eventLabelVersion=1':u;   // bật nhãn màu: Google bỏ qua colorId khi có tham số này. CHỈ dùng cho insert/patch (events.list và events.get không có tham số này; chúng luôn trả eventLabelId)
   /* Calendars.get / Calendars.update theo đúng hướng dẫn "Labels" của Google: ĐỌC cả lịch → sửa danh sách nhãn → GHI LẠI bằng PUT. Không dùng PATCH (mỗi lần tốn 3 đơn vị hạn mức, tài liệu không nêu hỗ trợ labelProperties).
      eventLabelVersion là tham số của Events; ví dụ Calendars trong tài liệu không có nó → gọi KHÔNG kèm tham số trước, chỉ khi Google trả 400 mới thử lại có tham số (trước đây luôn gửi kèm: nếu Google từ chối thì rơi về 11 màu mà không rõ vì sao). */
   const calCall=async(m,body)=>{ try{ return await api(m,CAL,body); }catch(e){ if(e.status===400) return api(m,CAL+'?eventLabelVersion=1',body); throw e; } };
@@ -15001,7 +15001,7 @@ setInterval(minuteRender, 60000);
     if(sig===labSig&&Date.now()-labAt<600000) return true;   // vừa kiểm tra xong, không đổi gì: khỏi hỏi lại Google mỗi lần lưu (có sự kiện lỗi thì lượt sau kiểm tra lại)
     const cal=await calCall('GET'), cur=(cal&&cal.labelProperties&&cal.labelProperties.eventLabels)||[];
     const byId=new Map(cur.map(l=>[l.id,l])); let dirty=false;   // đọc rồi ghi lại cả danh sách: giữ nguyên nhãn do người dùng tự tạo trên Google
-    need.forEach((l,id)=>{ const e=byId.get(id); if(!e||String(e.backgroundColor||'').toLowerCase()!==l.hex||(e.name||'')!==l.name){ byId.set(id,{...(e||{}),id,backgroundColor:l.hex,name:l.name}); dirty=true; } });
+    need.forEach((l,id)=>{ const e=byId.get(id); if(!e||String(e.backgroundColor||'').toLowerCase()!==l.hex||(e.name||'')!==l.name){ const nl={...(e||{}),id,backgroundColor:l.hex,name:l.name}; if(!l.name) delete nl.name; byId.set(id,nl); dirty=true; } });
     if(dirty){
       if(byId.size>200){ const er=new Error('quá 200 nhãn màu trên lịch'); er.detail='lịch đang có '+byId.size+' nhãn (tối đa 200) — hãy xoá bớt nhãn không dùng trong Google Calendar'; throw er; }
       await calCall('PUT',{...cal,labelProperties:{eventLabels:[...byId.values()]}});
@@ -15009,7 +15009,7 @@ setInterval(minuteRender, 60000);
     labSig=sig; labAt=Date.now(); return true;
   }
   /* nhãn do chính app tạo (id suy ra từ khoá): dùng để gỡ nhãn cũ khi sự kiện không còn tag; nhãn người dùng tự gắn trên Google không bao giờ bị gỡ */
-  const OURS=()=>new Set(['dl','dl-pin','dl-done'].concat((state.tags||[]).map(t=>'tag:'+t.id)).map(uuidOf));
+  let OURSC=null; const OURS=()=>OURSC||(OURSC=new Set(['dl','dl-pin','dl-done'].concat((state.tags||[]).map(t=>'tag:'+t.id)).map(uuidOf)));   // nhớ tạm trong một lượt (gọi cho từng sự kiện); runCore/plan đặt lại
   const COLOR_ON=()=>{ const g=G(); return !g||g.color!==false; };
   const REMIND_DL=900;   // deadline cả ngày: nhắc lúc 9:00 sáng hôm trước
   function desired(from,to){
@@ -15038,7 +15038,7 @@ setInterval(minuteRender, 60000);
   }
   async function list(from,to){
     let out=[],pt='';
-    do{ const q=new URLSearchParams({timeMin:new Date(from+'T00:00:00').toISOString(),timeMax:new Date(addDays(to,2)+'T00:00:00').toISOString(),singleEvents:'true',maxResults:'2500',showDeleted:'false'}); if(LM) q.set('eventLabelVersion','1'); if(pt) q.set('pageToken',pt);
+    do{ const q=new URLSearchParams({timeMin:new Date(from+'T00:00:00').toISOString(),timeMax:new Date(addDays(to,2)+'T00:00:00').toISOString(),singleEvents:'true',maxResults:'2500',showDeleted:'false'}); if(pt) q.set('pageToken',pt);
       const r=await api('GET',API+'?'+q); out=out.concat((r&&r.items)||[]); pt=r&&r.nextPageToken; }while(pt);
     return out.filter(g=>{ if(g.status==='cancelled'||!g.start) return false;
       if(!g.start.dateTime){ const k=lk(g); return !!(k&&String(k).startsWith('dl|')&&g.start.date&&g.start.date>=from&&g.start.date<=to); }   // sự kiện cả ngày: chỉ lấy loại deadline do app tạo, không đụng sự kiện cả ngày của bạn
@@ -15101,6 +15101,7 @@ setInterval(minuteRender, 60000);
       const safe=f=>f().catch(e=>{ if(/hết hạn/.test(e.message)) fatal=e; else fail++; });   // một sự kiện lỗi (vd. sự kiện của người khác, không có quyền sửa) không làm dừng cả lượt
       const setGs=r=>{ if(!r||!r.id) return; const ix=gs.findIndex(x=>x.id===r.id); if(ix>=0) gs[ix]=r; else gs.push(r); };
       const plan=()=>{
+        OURSC=null; want.forEach(d=>{ d.gl=''; });
         const linked=new Map(), free=[], byKey=new Map(), dupG=[]; gs.forEach(g=>{ const k=lk(g); if(!k){ free.push(g); return; } const a=byKey.get(k); if(a) a.push(g); else byKey.set(k,[g]); });
         /* nhiều sự kiện cùng lichKey (hai thiết bị đồng bộ cùng lúc): giữ MỘT — ưu tiên bản có id cố định gid(key), rồi theo id — để mọi thiết bị chọn cùng một bản; các bản còn lại bị dọn */
         byKey.forEach((a,k)=>{ const id0=gid(k); a.sort((x,y)=>(y.id===id0)-(x.id===id0)||(x.id<y.id?-1:x.id>y.id?1:0)); linked.set(k,a[0]); for(let i=1;i<a.length;i++) dupG.push(a[i]); });   // tắt đồng bộ deadline: giữ nguyên những gì đã có trên Google, không xoá
@@ -15148,14 +15149,14 @@ setInterval(minuteRender, 60000);
         let r=null; try{ r=await f(true); }catch(e){ if(/hết hạn/.test(e.message)) throw e; meetFail++; continue; }
         setGs(r); replan=true;
         let code=r?gconf(r):'';
-        for(let n=0;n<3&&r&&r.id&&!code;n++){ await sleep(900); try{ r=await api('GET',lv(API+'/'+r.id)); }catch(e){ break; } setGs(r); code=r?gconf(r):''; }   // Google đôi khi tạo Meet chậm vài giây
+        for(let n=0;n<3&&r&&r.id&&!code;n++){ await sleep(900); try{ r=await api('GET',API+'/'+r.id); }catch(e){ break; } setGs(r); code=r?gconf(r):''; }   // Google đôi khi tạo Meet chậm vài giây
         if(code){ give(code); meet.set(ev.id,'https://meet.google.com/'+code); created++; } else meetFail++;
       }
       if(replan) P=plan();
       const {jobs,ins,upd,lnk,del,skipDel,dd}=P;
       for(let i=0;i<jobs.length&&!fatal;i+=5) await Promise.all(jobs.slice(i,i+5).map(j=>safe(()=>j.f(false))));
       if(fatal) throw fatal;
-      if(LM&&fail) labAt=0;   // có sự kiện lỗi khi đang dùng nhãn (vd. nhãn bị xoá trên Google): lượt sau đọc lại danh sách nhãn thay vì tin bộ nhớ đệm
+      if(LM&&fail){ labAt=0; if(!wasVerify) verifyNext=true; }   // có sự kiện lỗi khi đang dùng nhãn (vd. nhãn bị xoá trên Google): lượt sau đọc lại danh sách nhãn thay vì tin bộ nhớ đệm
       if(!wasVerify&&(ins||lnk)) verifyNext=true;   // vừa tạo/liên kết: vài giây sau đọc lại và dọn nếu thiết bị khác cũng vừa tạo cùng lúc
       let nm2=0;
       const addMeetLink=(ev,u)=>{ if(ev&&!getLinks(ev).some(l=>l.url===safeUrl(u))){ const a=getLinks(ev); a.push({url:u,name:'Google Meet'}); ev.links=a; ev.link=a[0].url; ev.linkName=a[0].name; nm2++; } };
