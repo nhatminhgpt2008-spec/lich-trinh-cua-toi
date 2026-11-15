@@ -14928,7 +14928,7 @@ setInterval(minuteRender, 60000);
    - Phạm vi: 14 ngày trước → 120 ngày sau. Cần Client ID (Google Cloud: bật Calendar API, OAuth Web, thêm địa chỉ trang web vào Authorized JavaScript origins). */
 (()=>{try{
   const $g=i=>document.getElementById(i), LS=localStorage, TZ=Intl.DateTimeFormat().resolvedOptions().timeZone, CAL='https://www.googleapis.com/calendar/v3/calendars/primary', API=CAL+'/events', SC_CAL='https://www.googleapis.com/auth/calendar.calendars';
-  let tok=null, tokMe='', exp=0, tc=null, busy=false, again=false, timer=0, needAuth=false, scopeOk=true, LM=false, labSig='', labAt=0, labFail='';   // scopeOk: token đã có quyền sửa nhãn màu của lịch · LM: lượt đồng bộ này dùng nhãn màu tùy ý (false = colorId 11 màu) · labFail: lý do không dùng được nhãn   // needAuth: đang bật nhưng cần cấp quyền lại
+  let tok=null, tokMe='', exp=0, tc=null, busy=false, again=false, timer=0, needAuth=false, scopeOk=true, LM=false, labSig='', labAt=0, labFail='', labMiss=0;   // scopeOk: token đã có quyền sửa nhãn màu của lịch · LM: lượt đồng bộ này dùng nhãn màu tùy ý (false = colorId 11 màu) · labFail: lý do không dùng được nhãn   // needAuth: đang bật nhưng cần cấp quyền lại
   const say=t=>{ const e=$g('gcStatus'); if(!e) return; e.textContent=t; e.title=t; const c=$g('gcStat'); if(c) c.dataset.sy=/lỗi|Cần|Chưa tự|chưa đúng|Hãy |Không /.test(t)?'bad':/Đang/.test(t)?'busy':/^Đã (đồng bộ|sao chép|lưu)/.test(t)?'ok':''; };
   /* Cài đặt kết nối nằm trong state.gcal = {cid, on, color} (Deadline đi chung với Tag: luôn được đồng bộ, màu theo chip Tag) → đi theo TÀI KHOẢN qua đồng bộ đám mây (không còn lưu riêng từng thiết bị).
      Kết nối ở một máy thì mọi máy đăng nhập cùng tài khoản đều tự đồng bộ; ngắt kết nối cũng áp dụng cho mọi máy. */
@@ -14991,9 +14991,10 @@ setInterval(minuteRender, 60000);
   const uuidOf=key=>{ const x=h128('lich-label|'+key); return x.slice(0,8)+'-'+x.slice(8,12)+'-4'+x.slice(13,16)+'-'+'89ab'[parseInt(x[16],16)&3]+x.slice(17,20)+'-'+x.slice(20,32); };
   const labOf=(key,hex,name)=>HEX6.test(hex||'')?{key,hex:String(hex).toLowerCase(),name:Array.from(String(name||'').trim()).slice(0,50).join('')}:null;
   const lv=u=>LM?u+(u.includes('?')?'&':'?')+'eventLabelVersion=1':u;   // bật nhãn màu: Google bỏ qua colorId khi có tham số này. CHỈ dùng cho insert/patch (events.list và events.get không có tham số này; chúng luôn trả eventLabelId)
-  /* Calendars.get / Calendars.update theo đúng hướng dẫn "Labels" của Google: ĐỌC cả lịch → sửa danh sách nhãn → GHI LẠI bằng PUT. Không dùng PATCH (mỗi lần tốn 3 đơn vị hạn mức, tài liệu không nêu hỗ trợ labelProperties).
-     eventLabelVersion là tham số của Events; ví dụ Calendars trong tài liệu không có nó → gọi KHÔNG kèm tham số trước, chỉ khi Google trả 400 mới thử lại có tham số (trước đây luôn gửi kèm: nếu Google từ chối thì rơi về 11 màu mà không rõ vì sao). */
-  const calCall=async(m,body)=>{ try{ return await api(m,CAL,body); }catch(e){ if(e.status===400) return api(m,CAL+'?eventLabelVersion=1',body); throw e; } };
+  /* Calendars.get / Calendars.update: ĐỌC cả lịch → sửa danh sách nhãn → GHI LẠI bằng PUT (không dùng PATCH: tốn 3 đơn vị hạn mức).
+     LUÔN gửi eventLabelVersion=1 trước: tài liệu Google ghi rõ muốn dùng nhãn phải có tham số này; thiếu nó Google vẫn trả 200 nhưng có thể không trả / không lưu labelProperties (nhãn "biến mất" âm thầm → sự kiện về màu mặc định).
+     Chỉ khi Google trả 400 (không nhận tham số) mới thử lại không kèm tham số. */
+  const calCall=async(m,body)=>{ try{ return await api(m,CAL+'?eventLabelVersion=1',body); }catch(e){ if(e.status===400) return api(m,CAL,body); throw e; } };
   async function ensureLabels(want){
     const need=new Map(); want.forEach(d=>{ if(d.lab) need.set(uuidOf(d.lab.key),d.lab); });
     if(!need.size) return false;
@@ -15005,6 +15006,9 @@ setInterval(minuteRender, 60000);
     if(dirty){
       if(byId.size>200){ const er=new Error('quá 200 nhãn màu trên lịch'); er.detail='lịch đang có '+byId.size+' nhãn (tối đa 200) — hãy xoá bớt nhãn không dùng trong Google Calendar'; throw er; }
       await calCall('PUT',{...cal,labelProperties:{eventLabels:[...byId.values()]}});
+      const chk=await calCall('GET'), got=new Map((((chk&&chk.labelProperties&&chk.labelProperties.eventLabels)||[])).map(l=>[l.id,l]));   // đọc lại để chắc chắn Google ĐÃ lưu (200 chưa đủ)
+      const miss=[...need].filter(([id,l])=>{ const e=got.get(id); return !e||String(e.backgroundColor||'').toLowerCase()!==l.hex; });
+      if(miss.length){ const er=new Error('Google không lưu nhãn'); er.detail='Google trả OK nhưng chưa lưu '+miss.length+' nhãn màu'; throw er; }
     }
     labSig=sig; labAt=Date.now(); return true;
   }
@@ -15037,9 +15041,11 @@ setInterval(minuteRender, 60000);
     return m;
   }
   async function list(from,to){
-    let out=[],pt='';
-    do{ const q=new URLSearchParams({timeMin:new Date(from+'T00:00:00').toISOString(),timeMax:new Date(addDays(to,2)+'T00:00:00').toISOString(),singleEvents:'true',maxResults:'2500',showDeleted:'false'}); if(pt) q.set('pageToken',pt);
-      const r=await api('GET',API+'?'+q); out=out.concat((r&&r.items)||[]); pt=r&&r.nextPageToken; }while(pt);
+    let out=[],pt='',withV=LM;   // đọc kèm eventLabelVersion=1 để chắc chắn Google trả eventLabelId; nếu Google không nhận tham số (400) thì đọc lại không kèm
+    for(let tryN=0;tryN<2;tryN++){ out=[]; pt=''; try{
+      do{ const q=new URLSearchParams({timeMin:new Date(from+'T00:00:00').toISOString(),timeMax:new Date(addDays(to,2)+'T00:00:00').toISOString(),singleEvents:'true',maxResults:'2500',showDeleted:'false'}); if(withV) q.set('eventLabelVersion','1'); if(pt) q.set('pageToken',pt);
+        const r=await api('GET',API+'?'+q); out=out.concat((r&&r.items)||[]); pt=r&&r.nextPageToken; }while(pt);
+      break; }catch(e){ if(e.status===400&&withV){ withV=false; continue; } throw e; } }
     return out.filter(g=>{ if(g.status==='cancelled'||!g.start) return false;
       if(!g.start.dateTime){ const k=lk(g); return !!(k&&String(k).startsWith('dl|')&&g.start.date&&g.start.date>=from&&g.start.date<=to); }   // sự kiện cả ngày: chỉ lấy loại deadline do app tạo, không đụng sự kiện cả ngày của bạn
       const d=fmt(new Date(g.start.dateTime)); return d>=from&&d<=to; });   // chỉ xét sự kiện nằm trong phạm vi đã tính (tránh xoá nhầm ở rìa)
@@ -15063,6 +15069,13 @@ setInterval(minuteRender, 60000);
     return b;
   };
   async function send(m,url,d,seed,extra){
+    const r=await send0(m,url,d,seed,extra);
+    if(LM&&d.lab&&d.col&&r&&r.id&&(r.eventLabelId||'')!==uuidOf(d.lab.key)){   // Google trả 200 nhưng KHÔNG áp nhãn → không để sự kiện về màu mặc định: gắn màu gần nhất trong 11 màu
+      labMiss++; try{ await api('PATCH',API+'/'+r.id,{colorId:d.col}); }catch(e){ if(/hết hạn/.test(e.message)) throw e; }
+    }
+    return r;
+  }
+  async function send0(m,url,d,seed,extra){
     const c=seed?'seed':(mcode(d)&&!noCopy()?'copy':'');
     try{ return await api(m,lv(url+(c?(url.includes('?')?'&':'?')+CQ:'')),body(d,c,extra)); }
     catch(e){ if(c==='copy'&&/Google 400/.test(e.message)){ LS.setItem('gcal_noconf','1'); meetFail++; return api(m,lv(url),body(d,'',extra)); } throw e; }
@@ -15089,7 +15102,7 @@ setInterval(minuteRender, 60000);
       if(!await auth(interactive)){ needAuth=true; gcBtn(); say('Cần đăng nhập Google lại: bấm “Kết nối lại”.'); armGesture(); return; }
       say('Đang đồng bộ…');
       const from=addDays(todayStr(),-14), to=addDays(todayStr(),120), want=desired(from,to);
-      LM=false; labFail='';
+      LM=false; labFail=''; labMiss=0;
       if(COLOR_ON()&&[...want.values()].some(d=>d.lab)){   // màu tùy ý: tạo/cập nhật nhãn trên lịch trước; không được thì quay về 11 màu
         if(!scopeOk) labFail='cần cấp thêm quyền — bấm “Kết nối lại”';
         else{ try{ LM=await ensureLabels(want); }catch(e){ if(/hết hạn/.test(e.message)) throw e; const dt=e.detail?': '+e.detail:''; labSig=''; labFail=e.status===403?'chưa có quyền sửa nhãn màu của lịch'+dt:(e.status===400||e.status===404)?'Google từ chối nhãn màu ('+e.status+')'+dt:e.message+dt; } }
@@ -15156,7 +15169,7 @@ setInterval(minuteRender, 60000);
       const {jobs,ins,upd,lnk,del,skipDel,dd}=P;
       for(let i=0;i<jobs.length&&!fatal;i+=5) await Promise.all(jobs.slice(i,i+5).map(j=>safe(()=>j.f(false))));
       if(fatal) throw fatal;
-      if(LM&&fail){ labAt=0; if(!wasVerify) verifyNext=true; }   // có sự kiện lỗi khi đang dùng nhãn (vd. nhãn bị xoá trên Google): lượt sau đọc lại danh sách nhãn thay vì tin bộ nhớ đệm
+      if(LM&&(fail||labMiss)){ labAt=0; if(!wasVerify) verifyNext=true; }   // có sự kiện lỗi khi đang dùng nhãn (vd. nhãn bị xoá trên Google): lượt sau đọc lại danh sách nhãn thay vì tin bộ nhớ đệm (cũng khi Google không áp nhãn)
       if(!wasVerify&&(ins||lnk)) verifyNext=true;   // vừa tạo/liên kết: vài giây sau đọc lại và dọn nếu thiết bị khác cũng vừa tạo cùng lúc
       let nm2=0;
       const addMeetLink=(ev,u)=>{ if(ev&&!getLinks(ev).some(l=>l.url===safeUrl(u))){ const a=getLinks(ev); a.push({url:u,name:'Google Meet'}); ev.links=a; ev.link=a[0].url; ev.linkName=a[0].name; nm2++; } };
@@ -15164,7 +15177,7 @@ setInterval(minuteRender, 60000);
       state.events.forEach(ev=>{ if(ev.meet&&ev.meetCode) addMeetLink(ev,'https://meet.google.com/'+ev.meetCode); });
       if(nm2||changed){ save(); render(); }
       needAuth=!scopeOk&&COLOR_ON(); gcBtn(); const rep=[ins&&('tạo '+ins), upd&&('sửa '+upd), lnk&&('liên kết '+lnk), del&&('xoá '+del), dd&&('dọn trùng '+dd), skipDel&&('bỏ qua xoá '+skipDel)].filter(Boolean).join(' · ')||'không có thay đổi';   // báo cáo lượt đồng bộ
-      say(`Đã đồng bộ ${new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})} · ${rep}${(fail||meetFail)?' · có '+(fail+meetFail)+' lỗi':''}${LM?' · màu: nhãn tùy ý':''}${labFail?' · màu: dùng 11 màu cố định ('+labFail+')':''}`);
+      say(`Đã đồng bộ ${new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})} · ${rep}${(fail||meetFail)?' · có '+(fail+meetFail)+' lỗi':''}${LM&&!labMiss?' · màu: nhãn tùy ý':''}${labMiss?' · màu: '+labMiss+' sự kiện Google chưa nhận nhãn, đã dùng màu gần nhất':''}${labFail?' · màu: dùng 11 màu cố định ('+labFail+')':''}`);
       if(created) toast('Đã tạo Google Meet', 2500); else if(interactive===true) toast('Đã đồng bộ Google Calendar · '+rep, 3500);
     }catch(e){ if(interactive==='auto'){ needAuth=true; gcBtn(); say('Chưa tự kết nối được Google ('+e.message+'). Bấm “Kết nối lại” để thử lại.'); if(!/khác tài khoản/.test(e.message)) armGesture(); } else { say('Lỗi đồng bộ: '+e.message); if(interactive===true){ needAuth=true; gcBtn(); toast('Lỗi: '+e.message,3000); } else if(/hết hạn/.test(e.message)){ needAuth=true; gcBtn(); armGesture(); } } }
     finally{ busy=false; if(again){ again=false; sched(0); } if(verifyNext){ verifyNext=false; setTimeout(()=>{ isVerify=true; sched(); },5000); } }   // có thay đổi mới trong lúc đang đồng bộ: chạy lại ngay
